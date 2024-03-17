@@ -7,14 +7,15 @@ import Dashboard from "./pages/dashboard/Dashboard";
 function App() {
   return (
     <Routes>
+      {/* error pages */}
+      <Route path="error/500" element={<Error500 />} />
+
       {/* secured routes  */}
       <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />} />
       </Route>
 
-      {/* error pages */}
-      <Route path="/error/500" element={<Error500 />} />
     </Routes>
   );
 }

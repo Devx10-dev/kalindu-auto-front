@@ -46,7 +46,6 @@ function LoadKeycloak() {
         const response = await fetch(
           `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`
         );
-        console.log(response);
         if (response.ok) {
           setIsKeycloakUp(true);
         } else {
@@ -58,10 +57,17 @@ function LoadKeycloak() {
     };
 
     checkServerStatus();
+    return () => {
+      if (keycloak) {
+        // when logout, redirect to exact same location
+        keycloak.logout({ redirectUri: window.location.href });
+      }
+    };
   }, []);
 
   // if keycloak is running then we need to initialize the keycloak instance
   useEffect(() => {
+
     if (isKeycloakUp && !keycloak) {
       const initializedKeycloak = initializeKeycloak();
       initializedKeycloak
@@ -78,19 +84,14 @@ function LoadKeycloak() {
 
           if (setAccessToken) setAccessToken(keycloak.token);
           if (setRoles) setRoles(keycloak.realmAccess?.roles);
+          // isSuccess = true;
         })
         .catch(() => {
           navigate(ERROR_500_PAGE);
         });
-
-      // Cleanup function
-      return () => {
-        if (keycloak) {
-          keycloak.logout();
-        }
-      };
     }
-  }, [isKeycloakUp, navigate]);
+
+  }, [isKeycloakUp]);
 
   if (isKeycloakUp && keycloak && keycloak.authenticated) {
     return <Layout />;
