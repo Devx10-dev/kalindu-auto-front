@@ -5,6 +5,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Error500 from "./pages/error/500";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import SpareParts from "./pages/sparePart/SpareParts";
+import RegisterCreditor from "./pages/dashboard/creditors/Register-creditor";
 
 function App() {
   return (
@@ -20,6 +21,11 @@ function App() {
             <Route path="model" element={<VehicleModel />} />
             <Route path="part" element={<SpareParts />} />
           </Route>
+
+          <Route
+            path="/dashboard/creditors/register"
+            element={<RegisterCreditor />}
+          />
         </Route>
       </Route>
     </Routes>
