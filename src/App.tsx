@@ -3,6 +3,7 @@ import Home from "./components/Home";
 import Keycloak from "./components/auth/Keycloak";
 import Error500 from "./pages/error/500";
 import Dashboard from "./pages/dashboard/Dashboard";
+import RegisterCreditor from "./pages/dashboard/creditors/Register-creditor";
 
 function App() {
   return (
@@ -13,10 +14,12 @@ function App() {
       {/* secured routes  */}
       <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} >
+        <Route path="/dashboard/creditors/register" element={<RegisterCreditor />} />
+        </Route>
       </Route>
-
     </Routes>
+  
   );
 }
 
