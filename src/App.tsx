@@ -3,7 +3,9 @@ import Home from "./components/Home";
 import Keycloak from "./components/auth/Keycloak";
 import Error500 from "./pages/error/500";
 import Dashboard from "./pages/dashboard/Dashboard";
-import RegisterCreditor from "./pages/dashboard/creditors/Register-creditor";
+import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
+import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
+import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 
 function App() {
   return (
@@ -17,6 +19,9 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} >
         <Route path="/dashboard/creditors/register" element={<RegisterCreditor />} />
         </Route>
+            <Route path="/dashboard/creditors/creditor-management" element={<CreditorManagement />} />
+            <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} />
+
       </Route>
     </Routes>
   
