@@ -45,8 +45,8 @@ const NavLinks: NavLink[] = [
         // icon: <GiArchiveRegister />,
       },
       {
-        label: "View Bills",
-        href: "/dashboard/creditors/view-bills",
+        label: "Creditor Management",
+        href: "/dashboard/creditors/creditor-management",
         // icon: <FaRegListAlt />,
       },
     ],

@@ -5,7 +5,9 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Error500 from "./pages/error/500";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import SpareParts from "./pages/sparePart/SpareParts";
-import RegisterCreditor from "./pages/dashboard/creditors/Register-creditor";
+import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
+import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
+import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 
 function App() {
   return (
@@ -27,6 +29,9 @@ function App() {
             element={<RegisterCreditor />}
           />
         </Route>
+            <Route path="/dashboard/creditors/creditor-management" element={<CreditorManagement />} />
+            <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} />
+
       </Route>
     </Routes>
   );

@@ -7,7 +7,7 @@ import Loading from "@/components/Loading";
 
 export default function SettingsAccountPage() {
   const queryClient = useQueryClient();
-  const { isLoading, error, data } = useQuery({
+  const { isLoading, error, data, } = useQuery({
     queryKey: ["posts"],
     queryFn: fetchSinglePost,
   });
