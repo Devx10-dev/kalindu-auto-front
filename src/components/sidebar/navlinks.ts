@@ -86,7 +86,7 @@ const NavLinks: NavLink[] = [
   //user-management
   {
     label: "User Management",
-    href: "/user-management",
+    href: "/dashboard/user-management",
     sublinks: [
       {
         label: "Register User",
