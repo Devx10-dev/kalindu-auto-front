@@ -1,19 +1,22 @@
-import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
-import { BrowserRouter } from "react-router-dom";
+import Keycloak from "./components/auth/Keycloak";
+import Error500 from "./pages/error/500";
 import Dashboard from "./pages/dashboard/Dashboard";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <Routes>
+      {/* error pages */}
+      <Route path="error/500" element={<Error500 />} />
+
+      {/* secured routes  */}
+      <Route path="/" element={<Keycloak />}>
+        <Route index element={<Home />} />
+        <Route path="dashboard" element={<Dashboard />} />
+      </Route>
+
+    </Routes>
   );
 }
 
