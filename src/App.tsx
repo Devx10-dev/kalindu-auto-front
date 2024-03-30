@@ -19,12 +19,13 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} >
         <Route path="/dashboard/creditors/register" element={<RegisterCreditor />} />
         </Route>
-            <Route path="/dashboard/creditors/creditor-management" element={<CreditorManagement />} />
+            <Route path="/dashboard/creditors/manage" element={<CreditorManagement />} />
             <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} />
 
-      </Route>
-    </Routes>
-  
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

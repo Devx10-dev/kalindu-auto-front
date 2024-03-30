@@ -1,4 +1,3 @@
-"use client";
 import { Separator } from "@/components/ui/separator";
 import { RegisterForm } from "./components/RegisterForm";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

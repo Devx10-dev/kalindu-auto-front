@@ -56,7 +56,7 @@ const NavLinks: NavLink[] = [
       },
       {
         label: "Creditor Management",
-        href: "/dashboard/creditors/creditor-management",
+        href: "/dashboard/creditors/manage",
         // icon: <FaRegListAlt />,
       },
     ],
