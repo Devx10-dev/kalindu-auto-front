@@ -50,7 +50,7 @@ export function RegisterForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-2 grid-rows-4 w-1/2 gap-x-7 gap-y-0">
+        <div className="grid grid-cols-2 grid-rows-4 w-1/2 gap-x-7 gap-y-0 grid-flow-row">
           <FormField
             control={form.control}
             name="shopName"
@@ -134,7 +134,6 @@ export function RegisterForm() {
                     {...field}
                   />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}

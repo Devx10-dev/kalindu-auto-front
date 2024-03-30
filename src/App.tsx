@@ -29,7 +29,7 @@ function App() {
             element={<RegisterCreditor />}
           />
         </Route>
-            <Route path="/dashboard/creditors/creditor-management" element={<CreditorManagement />} />
+            <Route path="/dashboard/creditors/manage" element={<CreditorManagement />} />
             <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} />
 
       </Route>
