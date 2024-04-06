@@ -1,8 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Keycloak from "./components/auth/Keycloak";
-import Error500 from "./pages/error/500";
 import Dashboard from "./pages/dashboard/Dashboard";
+import Error500 from "./pages/error/500";
+import VehicleModel from "./pages/sparePart/VehicleModel";
+import SpareParts from "./pages/sparePart/SpareParts";
 
 function App() {
   return (
@@ -13,9 +15,13 @@ function App() {
       {/* secured routes  */}
       <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />}>
+          <Route path="vehicle">
+            <Route path="model" element={<VehicleModel />} />
+            <Route path="part" element={<SpareParts />} />
+          </Route>
+        </Route>
       </Route>
-
     </Routes>
   );
 }

@@ -1,13 +1,3 @@
-// import { BsCashCoin } from "react-icons/bs";
-// import { AiOutlineCreditCard } from "react-icons/ai";
-// import { MdOutlineInsertPageBreak } from "react-icons/md";
-// import { FaRegListAlt } from "react-icons/fa";
-// import { GiArchiveRegister } from "react-icons/gi";
-// import { FaBalanceScale } from "react-icons/fa";
-// import { MdOutlineCreditScore } from "react-icons/md";
-// import { PiEngineBold } from "react-icons/pi";
-// import { IconType } from "react-icons/lib";
-
 interface NavLinkSublink {
   label: string;
   href: string;
@@ -79,6 +69,22 @@ const NavLinks: NavLink[] = [
         label: "Engine Stock",
         href: "/dashboard/reports/engine-stock",
         // icon: <PiEngineBold />,
+      },
+    ],
+  },
+  {
+    label: "Spare Part Inventory",
+    href: "/creditors",
+    sublinks: [
+      {
+        label: "Vehicles",
+        href: "/dashboard/vehicle/model",
+        // icon: <GiArchiveRegister />,
+      },
+      {
+        label: "Spare Parts",
+        href: "/dashboard/vehicle/part",
+        // icon: <FaRegListAlt />,
       },
     ],
   },
