@@ -1,13 +1,15 @@
-interface NavLinkSublink {
-  label: string;
-  href: string;
-}
+// import { BsCashCoin } from "react-icons/bs";
+// import { AiOutlineCreditCard } from "react-icons/ai";
+// import { MdOutlineInsertPageBreak } from "react-icons/md";
+// import { FaRegListAlt } from "react-icons/fa";
+// import { GiArchiveRegister } from "react-icons/gi";
+// import { FaBalanceScale } from "react-icons/fa";
+// import { MdOutlineCreditScore } from "react-icons/md";
+// import { PiEngineBold } from "react-icons/pi";
+// import { IconType } from "react-icons/lib";
 
-interface NavLink {
-  label: string;
-  href: string;
-  sublinks?: NavLinkSublink[];
-}
+import { NavLink } from "@/types/ui/sidebar";
+
 const NavLinks: NavLink[] = [
   {
     label: "Invoices",
