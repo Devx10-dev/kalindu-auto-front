@@ -10,7 +10,7 @@ import {
 
 export default function TablePagination() {
   return (
-    <Pagination>
+    <Pagination className="w-min ml-1000">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious href="#" />

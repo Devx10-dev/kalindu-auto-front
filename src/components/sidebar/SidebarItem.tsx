@@ -15,6 +15,8 @@ import { NavLink } from "@/types/ui/sidebar";
 export function SidebarItem(props: { link: NavLink }) {
   const [isOpen, setIsOpen] = React.useState(true);
   const location = useLocation();
+  console.log(location.pathname);
+  
   return (
     <Collapsible
       open={isOpen}
@@ -35,7 +37,7 @@ export function SidebarItem(props: { link: NavLink }) {
                 <Link to={sublink.href}>
                   <p
                     className={`rounded-md px-4 py-3 mt-2 text-md ${
-                      location.pathname === sublink.href
+                      location.pathname.includes(sublink.href)
                         ? " bg-slate-300 p-1"
                         : "hover:bg-slate-200 p-1"
                     } rounded-md flex items-center gap-1`}
