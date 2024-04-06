@@ -8,16 +8,8 @@
 // import { PiEngineBold } from "react-icons/pi";
 // import { IconType } from "react-icons/lib";
 
-interface NavLinkSublink {
-  label: string;
-  href: string;
-}
+import { NavLink } from "@/types/ui/sidebar";
 
-interface NavLink {
-  label: string;
-  href: string;
-  sublinks?: NavLinkSublink[];
-}
 const NavLinks: NavLink[] = [
   {
     label: "Invoices",

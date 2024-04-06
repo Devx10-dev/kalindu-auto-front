@@ -14,18 +14,22 @@ function App() {
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
-      <Route path="/" element={<Keycloak />}>
-        <Route index element={<Home />} />
-        <Route path="dashboard" element={<Dashboard />} >
-        <Route path="/dashboard/creditors/register" element={<RegisterCreditor />} />
-        </Route>
-            <Route path="/dashboard/creditors/manage" element={<CreditorManagement />} />
-            <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} />
+      {/* <Route path="/" element={<Keycloak />}> */}
+      <Route index element={<Home />} />
+      <Route path="dashboard" element={<Dashboard />}>
+        <Route
+          path="/dashboard/creditors/register"
+          element={<RegisterCreditor />}
+        />
+        <Route
+          path="/dashboard/creditors/manage"
+          element={<CreditorManagement />}
+        />
+        <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} />
+      </Route>
 
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </>
+      {/* </Route> */}
+    </Routes>
   );
 }
 
