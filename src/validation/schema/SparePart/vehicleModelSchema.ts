@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const vehicleFormSchema = z.object({
+export const vehicleModelSchema = z.object({
   model: z
     .string({ required_error: "Vehicle model is Required" })
     .min(2, {
@@ -17,3 +17,5 @@ export const vehicleFormSchema = z.object({
       message: "Description must not be longer than 255 characters.",
     }),
 });
+
+export type VehicleModel = z.infer<typeof vehicleModelSchema>;

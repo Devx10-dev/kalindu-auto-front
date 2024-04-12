@@ -24,7 +24,7 @@ const useAxiosPrivate = () => {
         return request;
       },
       //   pass the error to next block
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
 
     // catch and handle every response
@@ -61,11 +61,13 @@ const useAxiosPrivate = () => {
           // send the previous request again after set correct credentials
           return axiosPrivate.request(prevRequest);
         } else if (error?.response?.status === 403) {
-          navigate("/error/error403");
+          console.error(error);
+          console.log("403 -> " + error);
+          // navigate("/error/error403");
         }
 
         return Promise.reject(error);
-      },
+      }
     );
 
     // remove previously caught up response and request

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import useAuth from "@/hooks/useAuth";
 import Layout from "../layout/Layout";
+import Loading from "../Loading";
 
 const ERROR_500_PAGE = "/error/500";
 
@@ -67,7 +68,6 @@ function LoadKeycloak() {
 
   // if keycloak is running then we need to initialize the keycloak instance
   useEffect(() => {
-
     if (isKeycloakUp && !keycloak) {
       const initializedKeycloak = initializeKeycloak();
       initializedKeycloak
@@ -90,7 +90,6 @@ function LoadKeycloak() {
           navigate(ERROR_500_PAGE);
         });
     }
-
   }, [isKeycloakUp]);
 
   if (isKeycloakUp && keycloak && keycloak.authenticated) {
@@ -98,7 +97,7 @@ function LoadKeycloak() {
   } else if (isKeycloakUp === false) {
     return <div>Keycloak server is down</div>;
   } else {
-    return <div>Authenticating...</div>;
+    return <Loading />;
   }
 }
 

@@ -19,6 +19,7 @@ import {
   PaginationPrevious,
 } from "../ui/pagination";
 import { Table, TableCell, TableHead, TableRow } from "../ui/table";
+import truncate from "@/utils/truncate";
 
 export default function DataTable({
   vehicleModels,
@@ -32,12 +33,12 @@ export default function DataTable({
   if (vehicleModels)
     vehicleModels.map((vehicle) => {
       vehicleTypeOptions.push({
-        label: vehicle.type,
-        value: vehicle.type,
+        label: vehicle.vehicleType,
+        value: vehicle.vehicleType,
       });
       vehicleBrandOptions.push({
-        label: vehicle.brand,
-        value: vehicle.brand,
+        label: vehicle.vehicleBrand,
+        value: vehicle.vehicleBrand,
       });
     });
 
@@ -87,13 +88,13 @@ export default function DataTable({
                     {capitalize(vehicle.model)}
                   </TableCell>
                   <TableCell className="p-2">
-                    {capitalize(vehicle.type)}
+                    {capitalize(vehicle.vehicleType)}
                   </TableCell>
                   <TableCell className="p-2">
-                    {capitalize(vehicle.brand)}
+                    {capitalize(vehicle.vehicleBrand)}
                   </TableCell>
                   <TableCell className="p-2">
-                    {vehicle.description ?? "-"}
+                    {truncate(vehicle.description ?? "", 30) ?? "-"}
                   </TableCell>
                   <TableCell className="p-2">
                     <div className="flex justify-center">

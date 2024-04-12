@@ -1,4 +1,4 @@
-import { VehicleForm } from "@/components/form/sparePart/VehicleForm";
+import VehicleForm from "@/components/form/sparePart/VehicleForm";
 import SparePartIcon from "@/components/icon/SparePartIcon";
 import { FormModal } from "@/components/modal/FormModal";
 import DataTable from "@/components/table/DataTable";
