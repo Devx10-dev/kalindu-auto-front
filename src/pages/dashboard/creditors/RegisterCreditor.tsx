@@ -1,14 +1,14 @@
 import { Separator } from "@/components/ui/separator";
 import { RegisterForm } from "./components/RegisterForm";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchSinglePost } from "@/service/creditorService";
 import Loading from "@/components/Loading";
+import { fetchCreditorData } from "./service/creditor-service";
 
 export default function SettingsAccountPage() {
   const queryClient = useQueryClient();
   const { isLoading, error, data, } = useQuery({
-    queryKey: ["posts"],
-    queryFn: fetchSinglePost,
+    queryKey: ["creditors"],
+    queryFn: fetchCreditorData,
   });
 
   if (isLoading) {

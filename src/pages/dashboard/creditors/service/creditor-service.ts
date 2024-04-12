@@ -3,18 +3,18 @@ import axios from "axios"
 // TODO : If this file got larger make separate files for the ENDPOINTS
 
 const BASE_API = axios.create({
-    baseURL : "https://jsonplaceholder.typicode.com"
+    baseURL : "http://localhost:8090/creditor"
 })
 
 // ======================================== ENDPOINTS =============================================
 
 const ENDPOINTS = {
-    FETCH_CREDITORS : "/posts/1"
+    FETCH_CREDITORS : ""
 }
 
 // ================================= GET SERVICE FUNCTIONS ========================================
 
-export const fetchSinglePost = async () => {
+export const fetchCreditorData = async () => {
  const response = await BASE_API.get(ENDPOINTS.FETCH_CREDITORS);
  return response.data;
 }
