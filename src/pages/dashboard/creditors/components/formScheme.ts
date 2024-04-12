@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const accountFormSchema = z.object({
+export const creditorFormSchema = z.object({
   shopName: z
     .string({ required_error: "Name is Required" })
     .min(2, {
@@ -28,7 +28,6 @@ export const accountFormSchema = z.object({
     .length(10, {
       message: "Phone number must be 10 digits",
     })
-    .max(9999999999, { message: "Phone number must be 10 digits" })
     .refine((val) => val.toString().length === 10, {
       message: "Phone number must be 10 digits",
     }),
@@ -41,6 +40,6 @@ export const accountFormSchema = z.object({
       message: "Phone number must be 10 digits",
     })
     .max(9999999999, { message: "Phone number must be 10 digits" }),
-  creditLimit: z.number().optional(),
+  creditLimit: z.string(),
   maxCreditDuePeriod: z.string({ required_error: "Due Period is Required" }),
 });

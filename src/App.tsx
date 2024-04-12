@@ -23,28 +23,22 @@ function App() {
             <Route path="model" element={<VehicleModel />} />
             <Route path="part" element={<SpareParts />} />
           </Route>
-      {/* <Route path="/" element={<Keycloak />}> */}
-      <Route index element={<Home />} />
-      <Route path="dashboard" element={<Dashboard />}>
-        <Route
-          path="/dashboard/creditors/register"
-          element={<RegisterCreditor />}
-        />
-        <Route
-          path="/dashboard/creditors/manage"
-          element={<CreditorManagement />}
-        />
-        <Route path="/dashboard/creditors/manage/:id" element={<ViewCreditor />} />
-      </Route>
-
-          <Route
-            path="/dashboard/creditors/register"
-            element={<RegisterCreditor />}
-          />
+          {/* <Route
+            path="/dashboard/creditors/manage/:id"
+            element={<ViewCreditor />}
+          /> */}
+          <Route path="creditors" >
+            <Route path="register" element={<RegisterCreditor />} />
+            <Route path="manage" element={<CreditorManagement />}>
+              <Route path=":id" element={<ViewCreditor />} />
+            </Route>
+          </Route>
+          {/* <Route`
+            path="/dashboard/creditors/manage"
+            element={<CreditorManagement />}
+          /> */}
+          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
         </Route>
-            <Route path="/dashboard/creditors/manage" element={<CreditorManagement />} />
-            <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} />
-
       </Route>
     </Routes>
   );

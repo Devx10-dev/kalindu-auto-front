@@ -1,14 +1,15 @@
+import { useCallback, useMemo } from "react";
 import NavLinks from "./navlinks";
 import { SidebarItem } from "./SidebarItem";
 
 function Sidebar() {
-
+  const sidebarItems = useMemo(() => {
+    return NavLinks.map((link) => <SidebarItem key={link.label} link={link} />);
+  }, [NavLinks]); 
   return (
     <div className="h-full pr-2 pl-2 w-full">
       <ul className="mt-5">
-        {NavLinks.map((link) => (
-            <SidebarItem link={link} />
-        ))}
+        {sidebarItems} 
       </ul>
     </div>
   );

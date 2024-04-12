@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { accountFormSchema } from "./formScheme";
+import { creditorFormSchema } from "./formScheme";
 import {
   Form,
   FormControl,
@@ -22,29 +22,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type AccountFormValues = z.infer<typeof accountFormSchema>;
+type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 // This can come from your database or API.
-const defaultValues: Partial<AccountFormValues> = {
-  // name: "Your name",
-  // dob: new Date("2023-01-23"),
-};
+const defaultValues: Partial<CreditorFormValues> = {};
 
-export function RegisterForm() {
-  const form = useForm<AccountFormValues>({
-    resolver: zodResolver(accountFormSchema),
+export function RegisterForm(props: {
+  createCreditorMutation;
+}) {
+  const form = useForm<CreditorFormValues>({
+    resolver: zodResolver(creditorFormSchema),
     defaultValues,
   });
 
-  function onSubmit(data: AccountFormValues) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  function onSubmit(data: CreditorFormValues) {
+    props.createCreditorMutation.mutate(data);
   }
 
   return (
@@ -111,7 +103,7 @@ export function RegisterForm() {
                   <Input
                     placeholder="Primary contact"
                     className="w-full"
-                    type="text"
+                    type="tel"
                     {...field}
                   />
                 </FormControl>
@@ -130,7 +122,7 @@ export function RegisterForm() {
                   <Input
                     placeholder="Secondary contact"
                     className="w-full"
-                    type="text"
+                    type="number"
                     {...field}
                   />
                 </FormControl>
@@ -148,6 +140,7 @@ export function RegisterForm() {
                   <Input
                     placeholder="Credit limit"
                     className="w-full"
+                    type="number"
                     {...field}
                   />
                 </FormControl>
@@ -174,7 +167,7 @@ export function RegisterForm() {
                         value={field.value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Theme" />
+                          <SelectValue placeholder="Max Credit Due Period" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="30">30 days</SelectItem>

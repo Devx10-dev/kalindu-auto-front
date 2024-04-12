@@ -4,17 +4,14 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { PlusCircle } from "lucide-react";
 import { AddNewTransaction } from "./components/AddNewTransaction";
 import { ViewTransaction } from "./components/ViewTransaction";
 import { Label } from "@radix-ui/react-label";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@radix-ui/react-separator";
 
 const ViewCreditor = () => {
   const transactionHistory = [
@@ -69,22 +66,34 @@ const ViewCreditor = () => {
             <CardHeader className="border mb-10">
               <h3 className="text-lg font-bold">Selected Creditor</h3>
             </CardHeader>
-            
+
             <CardContent className="flex flex-col gap-2">
               <Label>Name : </Label>
-              <Badge className="rounded-md p-2 text-lg mb-5" variant={'secondary'}>
+              <Badge
+                className="rounded-md p-2 text-lg mb-5"
+                variant={"secondary"}
+              >
                 <p>{" Susantha Popa Garage"}</p>{" "}
               </Badge>
               <Label>Total Due : </Label>
-              <Badge className="rounded-md p-2 text-lg mb-5" variant={"secondary"}>
+              <Badge
+                className="rounded-md p-2 text-lg mb-5"
+                variant={"secondary"}
+              >
                 Rs 69000
               </Badge>
               <Label>Emergency Contact : </Label>
-              <Badge className="rounded-md p-2 text-lg mb-5" variant={"secondary"}>
+              <Badge
+                className="rounded-md p-2 text-lg mb-5"
+                variant={"secondary"}
+              >
                 0714989848
               </Badge>
               <Label>Due Date : </Label>
-              <Badge className="rounded-md p-2 text-lg mb-5" variant={"secondary"}>
+              <Badge
+                className="rounded-md p-2 text-lg mb-5"
+                variant={"secondary"}
+              >
                 2024-01-01
               </Badge>
 

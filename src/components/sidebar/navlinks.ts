@@ -8,7 +8,7 @@
 // import { PiEngineBold } from "react-icons/pi";
 // import { IconType } from "react-icons/lib";
 
-import { NavLink } from "@/types/ui/sidebar";
+import { NavLink } from "@/types/sidebar";
 
 const NavLinks: NavLink[] = [
   {

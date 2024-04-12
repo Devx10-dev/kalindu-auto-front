@@ -1,14 +1,28 @@
 import { Separator } from "@/components/ui/separator";
 import { RegisterForm } from "./components/RegisterForm";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Loading from "@/components/Loading";
-import { fetchCreditorData } from "./service/creditor-service";
+import { useQueryClient, useQuery,useMutation } from "@tanstack/react-query";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import CreditorService from "./service/CreditorService";
+import { useEffect, useState } from "react";
+import { creditorFormSchema } from "./components/formScheme";
+import { z } from "zod";
 
-export default function SettingsAccountPage() {
+type CreditorFormValues = z.infer<typeof creditorFormSchema>;
+
+export default function RegisterCreditor() {
+  const axiosPrivate = useAxiosPrivate();
+  const creditorService = new CreditorService(axiosPrivate);
   const queryClient = useQueryClient();
-  const { isLoading, error, data, } = useQuery({
+
+  const { isLoading } = useQuery({
     queryKey: ["creditors"],
-    queryFn: fetchCreditorData,
+    queryFn: ()=>creditorService.fetchCreditors(),
+  });
+
+  const createCreditorMutation = useMutation({
+    mutationFn: (data: CreditorFormValues) => creditorService.createCreditor(data),
+    onSuccess: queryClient.invalidateQueries(["creditors"])
   });
 
   if (isLoading) {
@@ -23,7 +37,7 @@ export default function SettingsAccountPage() {
           </p>
         </div>
         <Separator />
-        <RegisterForm />
+        <RegisterForm createCreditorMutation={createCreditorMutation}/>
       </div>
     );
 }

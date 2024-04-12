@@ -15,7 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { fetchVehicleModels } from "@/service/sparePartInventory/vehicleServices";
 import { Fragment, useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function VehicleModel() {
   const { toast } = useToast();
@@ -29,7 +29,10 @@ function VehicleModel() {
     isError,
     error,
     data: vehicleModelResponse,
-  } = useQuery("vehicle models", () => fetchVehicleModels(axiosPrivate));
+  } = useQuery({
+    queryKey: ["vehicleModels"],
+    queryFn: () => fetchVehicleModels(axiosPrivate),
+  });
 
   useEffect(() => {
     console.log(error);

@@ -13,11 +13,10 @@ module.exports = {
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
-      
     ],
-    "@typescript-eslint/no-unused-vars":"off"
   },
   rules: {
-    "@typescript-eslint/no-explicit-any": "any",
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/no-unused-vars": 0,
   },
 };

@@ -10,7 +10,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Link, useLocation } from "react-router-dom";
-import { NavLink } from "@/types/ui/sidebar";
+import { NavLink } from "@/types/sidebar";
 
 export function SidebarItem(props: { link: NavLink }) {
   const [isOpen, setIsOpen] = React.useState(true);

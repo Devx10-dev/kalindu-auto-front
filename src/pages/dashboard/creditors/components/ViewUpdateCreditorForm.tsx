@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { accountFormSchema } from "./formScheme";
+import { creditorFormSchema } from "./formScheme";
 import {
   Form,
   FormControl,
@@ -22,21 +22,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type AccountFormValues = z.infer<typeof accountFormSchema>;
+type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 // This can come from your database or API.
-const defaultValues: Partial<AccountFormValues> = {
+const defaultValues: Partial<CreditorFormValues> = {
   // name: "Your name",
   // dob: new Date("2023-01-23"),
 };
 
 export function ViewUpdateCreditorForm() {
-  const form = useForm<AccountFormValues>({
-    resolver: zodResolver(accountFormSchema),
+  const form = useForm<CreditorFormValues>({
+    resolver: zodResolver(creditorFormSchema),
     defaultValues,
   });
 
-  function onSubmit(data: AccountFormValues) {
+  function onSubmit(data: CreditorFormValues) {
     toast({
       title: "You submitted the following values:",
       description: (
