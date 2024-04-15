@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -22,13 +21,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 // This can come from your database or API.
 const defaultValues: Partial<CreditorFormValues> = {};
 
 export function RegisterForm(props: {
-  createCreditorMutation;
+  createCreditor;
 }) {
   const form = useForm<CreditorFormValues>({
     resolver: zodResolver(creditorFormSchema),
@@ -36,7 +36,8 @@ export function RegisterForm(props: {
   });
 
   function onSubmit(data: CreditorFormValues) {
-    props.createCreditorMutation.mutate(data);
+    props.createCreditor(data);
+    if(props.createCreditor.isSuccess) form.reset();
   }
 
   return (
@@ -50,7 +51,7 @@ export function RegisterForm(props: {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Name" {...field} className="w-full" />
+                  <Input {...field} className="w-full" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -64,7 +65,6 @@ export function RegisterForm(props: {
                 <FormLabel>Contact Person Name</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Contact person name"
                     className="w-full"
                     {...field}
                   />
@@ -82,7 +82,7 @@ export function RegisterForm(props: {
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Email address"
+      
                     className="w-full"
                     type="email"
                     {...field}
@@ -101,7 +101,7 @@ export function RegisterForm(props: {
                 <FormLabel>Primary Contact No </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Primary contact"
+          
                     className="w-full"
                     type="tel"
                     {...field}
@@ -120,7 +120,7 @@ export function RegisterForm(props: {
                 <FormLabel>Secondary Contact No </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Secondary contact"
+          
                     className="w-full"
                     type="number"
                     {...field}
@@ -138,7 +138,7 @@ export function RegisterForm(props: {
                 <FormLabel>Credit Limit </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Credit limit"
+  
                     className="w-full"
                     type="number"
                     {...field}
@@ -167,7 +167,7 @@ export function RegisterForm(props: {
                         value={field.value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Max Credit Due Period" />
+                          <SelectValue placeholder="Max credit due period"/>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="30">30 days</SelectItem>

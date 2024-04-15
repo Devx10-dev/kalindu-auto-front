@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/sidebar/Sidebar";
-
+import { Toaster } from "@/components/ui/toaster"
 import { Outlet } from "react-router-dom";
 
 function Dashboard() {
@@ -17,6 +17,7 @@ function Dashboard() {
           <Outlet />
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 function Loading() {
     return (
-      <div className="flex items-center justify-center w-full h-[100vh] text-gray-900 dark:text-gray-100 dark:bg-gray-950">
+      <div className="flex items-center justify-center w-full h-[100vh] text-gray-900 dark:text-gray-100 dark:bg-gray-950 bg-opacity-50">
         <div>
           <h1 className="text-md md:text-4xl font-bold flex items-center">
             L

@@ -15,8 +15,9 @@ import { Button } from "@/components/ui/button";
 import { Search, View } from "lucide-react";
 import TablePagination from "../../../../components/TablePagination";
 import { Link } from "react-router-dom";
+import { Creditor } from "@/types/creditor/creditorTypes";
 
-const CreditorsTable = () => {
+const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [creditors, setCreditors] = useState([
     "Creditor 1",
@@ -68,11 +69,11 @@ const CreditorsTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredCreditors.map((creditor) => (
-              <TableRow key={creditor}>
-                <TableCell className="font-medium">{creditor}</TableCell>
-                <TableCell>{creditor}</TableCell>
-                <TableCell>{creditor}</TableCell>
+            {props.creditorData?.map((creditor) => (
+              <TableRow key={creditor.id}>
+                <TableCell className="font-medium">{creditor.shopName}</TableCell>
+                <TableCell>{creditor.primaryContact}</TableCell>
+                <TableCell>{creditor.secondaryContact}</TableCell>
                 <TableCell className="text-right">
                   <Link to={"/dashboard/creditors/manage/1"}>
                     <Button className="mr-5 bg-slate-200 text-black hover:bg-slate-600 hover:text-white">
@@ -87,7 +88,7 @@ const CreditorsTable = () => {
           </TableBody>
         </Table>
       </div>
-      <TablePagination />
+
     </>
   );
 };

@@ -15,5 +15,5 @@ export type CreditorResponseData = {
   page: number;
   totalPages: number;
   error?: number;
-  creditor:Creditor[];
+  creditors:Creditor[];
 }
