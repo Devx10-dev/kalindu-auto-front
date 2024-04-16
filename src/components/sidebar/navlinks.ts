@@ -22,7 +22,7 @@ const NavLinks: NavLink[] = [
       },
       {
         label: "Create Creditor Invoice",
-        href: "/dashboard/invoices/create/creditor-invoice",
+        href: "/dashboard/invoice/creditor",
         // icon: <AiOutlineCreditCard />,
       },
       {
