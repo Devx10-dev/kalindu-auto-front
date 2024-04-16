@@ -8,6 +8,7 @@
 // import { PiEngineBold } from "react-icons/pi";
 // import { IconType } from "react-icons/lib";
 
+<<<<<<< HEAD
 interface NavLinkSublink {
   label: string;
   href: string;
@@ -18,6 +19,10 @@ interface NavLink {
   href: string;
   sublinks?: NavLinkSublink[];
 }
+=======
+import { NavLink } from "@/types/sidebar";
+
+>>>>>>> 81f67c97990a47c271607bd9b51c84531e120b10
 const NavLinks: NavLink[] = [
   {
     label: "Invoices",
@@ -55,8 +60,13 @@ const NavLinks: NavLink[] = [
         // icon: <GiArchiveRegister />,
       },
       {
+<<<<<<< HEAD
         label: "View Bills",
         href: "/dashboard/creditors/view-bills",
+=======
+        label: "Creditor Management",
+        href: "/dashboard/creditors/manage",
+>>>>>>> 81f67c97990a47c271607bd9b51c84531e120b10
         // icon: <FaRegListAlt />,
       },
     ],
@@ -82,6 +92,7 @@ const NavLinks: NavLink[] = [
       },
     ],
   },
+<<<<<<< HEAD
 
   //user-management
   {
@@ -92,6 +103,21 @@ const NavLinks: NavLink[] = [
         label: "Register User",
         href: "/dashboard/user-management/register",
         // icon: <FaBalanceScale />,
+=======
+  {
+    label: "Spare Part Inventory",
+    href: "/creditors",
+    sublinks: [
+      {
+        label: "Vehicles",
+        href: "/dashboard/vehicle/model",
+        // icon: <GiArchiveRegister />,
+      },
+      {
+        label: "Spare Parts",
+        href: "/dashboard/vehicle/part",
+        // icon: <FaRegListAlt />,
+>>>>>>> 81f67c97990a47c271607bd9b51c84531e120b10
       },
     ],
   },

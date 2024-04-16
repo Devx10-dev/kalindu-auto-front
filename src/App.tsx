@@ -1,28 +1,58 @@
-import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ViewUser from "./pages/dashboard/user-management/ViewUser"
 import RegiserUser from "./pages/dashboard/user-management/RegisterUser"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Keycloak from "./components/auth/Keycloak";
+import Error500 from "./pages/error/500";
+import VehicleModel from "./pages/sparePart/VehicleModel";
+import SpareParts from "./pages/sparePart/SpareParts";
+import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
+import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
+import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 
-const queryClient = new QueryClient();
 
 function App() {
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard/>} >
+  
+    <Routes>
+      {/* error pages */}
+      <Route path="error/500" element={<Error500 />} />
+
+      {/* secured routes  */}
+      <Route path="/" element={<Keycloak />}>
+        <Route index element={<Home />} />
+        <Route path="dashboard" element={<Dashboard />}>
+          <Route path="vehicle">
+            <Route path="model" element={<VehicleModel />} />
+            <Route path="part" element={<SpareParts />} />
+          </Route>
+          {/* <Route
+            path="/dashboard/creditors/manage/:id"
+            element={<ViewCreditor />}
+          /> */}
+          <Route path="creditors" >
+            <Route path="register" element={<RegisterCreditor />} />
+            <Route path="manage" element={<CreditorManagement />}>
+              <Route path=":id" element={<ViewCreditor />} />
+            </Route>
+          </Route>
+          {/* <Route`
+            path="/dashboard/creditors/manage"
+            element={<CreditorManagement />}
+          /> */}
+          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
+
+          <Route path="users" element={<Dashboard/>} >
 
             {/* Routes for user management */}
-            <Route path="/dashboard/user-management" element={<ViewUser/>} />
-            <Route path="/dashboard/user-management/register" element={<RegiserUser/>} />
+            <Route path="user-list" element={<ViewUser/>} />
+            <Route path="register" element={<RegiserUser/>} />
           </Route>
-        </Routes>
-      </QueryClientProvider>
-    </>
+        </Route>
+      </Route>
+    </Routes>
+
   );
 }
 

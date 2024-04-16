@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Link, useLocation } from "react-router-dom";
 import NavLinks from "./navlinks";
 
@@ -35,6 +36,20 @@ function Sidebar() {
             )}
           </li>
         ))}
+=======
+import { useCallback, useMemo } from "react";
+import NavLinks from "./navlinks";
+import { SidebarItem } from "./SidebarItem";
+
+function Sidebar() {
+  const sidebarItems = useMemo(() => {
+    return NavLinks.map((link) => <SidebarItem key={link.label} link={link} />);
+  }, [NavLinks]); 
+  return (
+    <div className="h-full pr-2 pl-2 w-full">
+      <ul className="mt-5">
+        {sidebarItems} 
+>>>>>>> 81f67c97990a47c271607bd9b51c84531e120b10
       </ul>
     </div>
   );
