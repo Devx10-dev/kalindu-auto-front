@@ -17,7 +17,7 @@ const NavLinks: NavLink[] = [
     sublinks: [
       {
         label: "Create Cash Invoice",
-        href: "/dashboard/invoices/create/cash-invoice",
+        href: "/dashboard/invoice/cash",
         // icon: <BsCashCoin />,
       },
       {
