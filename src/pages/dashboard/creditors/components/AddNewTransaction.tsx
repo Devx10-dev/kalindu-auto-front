@@ -23,9 +23,9 @@ export function AddNewTransaction() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Add new Transaction</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Add new transaction here
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

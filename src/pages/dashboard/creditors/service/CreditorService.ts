@@ -4,7 +4,6 @@ import axios, { AxiosInstance } from "axios";
 
 const GET_ALL_CREDITORS_URL = "/creditor";
 const CREATE_CREDITOR_URL = "/creditor/create";
-const DEFAULT_PAGE_SIZE = 10;
 
 class CreditorService {
   private api: AxiosInstance;
@@ -13,7 +12,7 @@ class CreditorService {
     this.api = api;
   }
 
-  async fetchCreditors(pageNo: number = 0, pageSize: number = 10): Promise<CreditorResponseData> {
+  async fetchCreditors(pageNo: number = 0, pageSize: number = 7): Promise<CreditorResponseData> {
     if(pageNo >= 1) pageNo = pageNo - 1;
     let pagedURL = `${GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
     console.log(pagedURL);

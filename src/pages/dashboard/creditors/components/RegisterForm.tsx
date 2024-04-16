@@ -36,8 +36,8 @@ export function RegisterForm(props: {
   });
 
   function onSubmit(data: CreditorFormValues) {
-    props.createCreditor(data);
-    if(props.createCreditor.isSuccess) form.reset();
+    props.createCreditor?.mutate(data);
+    if(props.createCreditor?.isSuccess) form.reset();
   }
 
   return (

@@ -75,7 +75,7 @@ const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
                 <TableCell>{creditor.primaryContact}</TableCell>
                 <TableCell>{creditor.secondaryContact}</TableCell>
                 <TableCell className="text-right">
-                  <Link to={"/dashboard/creditors/manage/1"}>
+                  <Link to={"/dashboard/creditors/1123342"}>
                     <Button className="mr-5 bg-slate-200 text-black hover:bg-slate-600 hover:text-white">
                       <View className="mr-2 h-4 w-4" />
                       View Transactions

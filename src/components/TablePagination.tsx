@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -16,7 +16,17 @@ export default function TablePagination(props: {
   onPageChange?: (page: number) => void;
 }) {
   const { pageNo = 1, pageSize = 10, totalPages = 1 } = props;
-  const [currentPage, setCurrentPage] = useState(pageNo);
+  const [currentPage, setCurrentPage] = useState(() => {
+    // Check local storage for a stored currentPage value
+    const storedPage = localStorage.getItem("currentPage");
+    // Return storedPage if it exists, otherwise use the default pageNo
+    return storedPage ? parseInt(storedPage, 10) : pageNo;
+  });
+
+  // Update local storage whenever currentPage changes
+  useEffect(() => {
+    localStorage.setItem("currentPage", currentPage.toString());
+  }, [currentPage]);
 
   const renderPageNumbers = () => {
     const pages = [];
