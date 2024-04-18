@@ -1,9 +1,9 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { refreshToken } from "../components/auth/Keycloak";
 import axiosPrivate from "../service/apiService";
 import useAuth from "./useAuth";
+import { useEffect } from "react";
 
 const ERROR_500_PAGE = "error/500";
 
@@ -61,9 +61,7 @@ const useAxiosPrivate = () => {
           // send the previous request again after set correct credentials
           return axiosPrivate.request(prevRequest);
         } else if (error?.response?.status === 403) {
-          console.error(error);
-          console.log("403 -> " + error);
-          // navigate("/error/error403");
+          navigate("/error/error403");
         }
 
         return Promise.reject(error);
@@ -75,7 +73,7 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [accessToken, refreshToken]);
+  }, [accessToken, navigate, setAccessToken]);
 
   return axiosPrivate;
 };

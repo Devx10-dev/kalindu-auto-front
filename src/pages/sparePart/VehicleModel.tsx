@@ -13,33 +13,37 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import { fetchVehicleModels } from "@/service/sparePartInventory/vehicleServices";
-import { Fragment, useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+import { VehicleModel as VehicleModelType } from "@/validation/schema/SparePart/vehicleModelSchema";
+import { useQuery } from "@tanstack/react-query";
+import { Fragment, useState } from "react";
 
-function VehicleModel() {
+export default function VehicleModel() {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
 
+  const [pageNo, setPageNo] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
+  const [formData, setFormData] = useState<VehicleModelType>();
   const [show, setShow] = useState(false);
+
+  const vehicleService = new VehicleService(axiosPrivate);
 
   const {
     isLoading,
-    isError,
+    data: vehicleModels,
     error,
-    data: vehicleModelResponse,
-  } = useQuery("vehicle models", () => fetchVehicleModels(axiosPrivate));
+  } = useQuery({
+    queryKey: ["vehicleModels"],
+    queryFn: () => vehicleService.fetchVehicleModels(pageNo, pageSize),
+  });
 
-  useEffect(() => {
-    console.log(error);
-    if (error) {
-      toast({
-        title: "Scheduled: Catch up ",
-        description: "Friday, February 10, 2023 at 5:57 PM",
-      });
-    }
-  }, [error, toast]);
+  if (error) {
+    toast({
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+    });
+  }
 
   return (
     <Fragment>
@@ -66,23 +70,24 @@ function VehicleModel() {
               </Button>
             </div>
             <DataTable
-              vehicleModels={
-                vehicleModelResponse ? vehicleModelResponse.vehicleModels : []
-              }
+              vehicleModels={vehicleModels ? vehicleModels.vehicleModels : []}
             />
           </CardContent>
           <FormModal
             title="Add new vehicle"
             titleDescription="Add new vehicle details to the system"
-            onSubmit={() => console.log("submit")}
             show={show}
             onClose={() => setShow(false)}
-            component={<VehicleForm />}
+            component={
+              <VehicleForm
+                formData={formData}
+                service={vehicleService}
+                onClose={() => setShow(false)}
+              />
+            }
           />
         </div>
       )}
     </Fragment>
   );
 }
-
-export default VehicleModel;

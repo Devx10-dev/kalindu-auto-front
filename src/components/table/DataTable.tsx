@@ -18,7 +18,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
-import { Table, TableCell, TableHead, TableRow } from "../ui/table";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 import truncate from "@/utils/truncate";
 
 export default function DataTable({
@@ -66,37 +74,30 @@ export default function DataTable({
         </Button>
         <Button type="submit">Filter</Button>
       </div>
-      <Card className="p-2 pb-0">
-        <Table style={{ minWidth: "800px", overflowX: "scroll" }}>
-          <thead>
+        <Table className="border rounded-md text-md mb-5">
+          <TableCaption>Vehicle Details</TableCaption>
+          <TableHeader>
             <TableRow>
-              <TableHead className="fs-18 fw-600 p-2">Vehicle</TableHead>
-              <TableHead className="fs-18 fw-600 p-2">Vehicle Type</TableHead>
-              <TableHead className="fs-18 fw-600 p-2">Vehicle Brand</TableHead>
-              <TableHead className="fs-18 fw-600 p-2">Description</TableHead>
-              <TableHead className="fs-18 fw-600 p-2 text-center">
-                Actions
-              </TableHead>
+              <TableHead>Vehicle</TableHead>
+              <TableHead>Vehicle Type</TableHead>
+              <TableHead>Vehicle Brand</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
-          </thead>
-
-          <tbody>
+          </TableHeader>
+          <TableBody>
             {vehicleModels &&
-              vehicleModels.map((vehicle, index) => (
-                <TableRow key={index}>
-                  <TableCell className="p-2">
+              vehicleModels.map((vehicle) => (
+                <TableRow key={vehicle.id}>
+                  <TableCell className="font-medium">
                     {capitalize(vehicle.model)}
                   </TableCell>
-                  <TableCell className="p-2">
-                    {capitalize(vehicle.vehicleType)}
-                  </TableCell>
-                  <TableCell className="p-2">
-                    {capitalize(vehicle.vehicleBrand)}
-                  </TableCell>
-                  <TableCell className="p-2">
+                  <TableCell>{capitalize(vehicle.vehicleType)}</TableCell>
+                  <TableCell>{capitalize(vehicle.vehicleBrand)}</TableCell>
+                  <TableCell>
                     {truncate(vehicle.description ?? "", 30) ?? "-"}
                   </TableCell>
-                  <TableCell className="p-2">
+                  <TableCell className="text-right">
                     <div className="flex justify-center">
                       <IconButton
                         icon={<EditIcon height="24" width="24" />}
@@ -112,34 +113,8 @@ export default function DataTable({
                   </TableCell>
                 </TableRow>
               ))}
-          </tbody>
+          </TableBody>
         </Table>
-
-        <Pagination className="justify-end m-2">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </Card>
     </Fragment>
   );
 }
