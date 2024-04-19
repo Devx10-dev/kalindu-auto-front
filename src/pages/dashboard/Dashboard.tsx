@@ -9,8 +9,8 @@ function Dashboard() {
       <div className="w-full h-16 p-2 bg-slate-700 border-b-4 border-orange-200">
         <Navbar />
       </div>
-      <div className="flex flex-row h-full w-full">
-        <div className="w-1/6 h-full bg-slate-100">
+      <div className="flex flex-row w-full" style={{height:"calc(100vh - 4rem)"}}>
+        <div className="w-1/6 h-fit bg-slate-100">
           <Sidebar />
         </div>
         <div className="p-6 w-5/6">

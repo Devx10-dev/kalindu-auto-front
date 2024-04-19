@@ -17,12 +17,12 @@ const NavLinks: NavLink[] = [
     sublinks: [
       {
         label: "Create Cash Invoice",
-        href: "/dashboard/invoices/create/cash-invoice",
+        href: "/dashboard/invoice/cash",
         // icon: <BsCashCoin />,
       },
       {
         label: "Create Creditor Invoice",
-        href: "/dashboard/invoices/create/creditor-invoice",
+        href: "/dashboard/invoice/creditor",
         // icon: <AiOutlineCreditCard />,
       },
       {
