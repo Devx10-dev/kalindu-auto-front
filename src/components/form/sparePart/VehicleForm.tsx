@@ -1,133 +1,202 @@
 import {
-  VehicleModel,
-  vehicleModelSchema,
-} from "@/validation/schema/SparePart/vehicleModelSchema";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
-import Loading from "@/components/Loading";
-import ErrorMessage from "@/components/formElements/ErrorMessage";
-import { RequiredLabel } from "@/components/formElements/FormLabel";
-import { Input } from "@/components/ui/input";
-import useAxiosPrivate from "@/hooks/usePrivateAxios";
+  OptionalLabel,
+  RequiredLabel,
+} from "@/components/formElements/FormLabel";
+import { Button } from "@/components/ui/button";
 import {
-  fetchVehicleBrands,
-  fetchVehicleTypes,
-} from "@/service/sparePartInventory/vehicleServices";
-import { Option } from "@/types/component/propTypes";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+import { VehicleModel, vehicleModelSchema } from "@/validation/schema/SparePart/vehicleModelSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { ToastAction } from "@radix-ui/react-toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
-import { Fragment } from "react/jsx-runtime";
+import { z } from "zod";
 
-export default function VehicleForm() {
-  const axiosPrivate = useAxiosPrivate();
-  const {
-    register,
-    handleSubmit,
-    trigger,
-    control,
-    formState: { errors, isValid },
-  } = useForm<VehicleModel>({
-    resolver: zodResolver(vehicleModelSchema),
+type vehicleModelValues = z.infer<typeof vehicleModelSchema>;
+
+const defaultValues: Partial<vehicleModelValues> = {};
+
+export default function VehicleForm({
+  service,
+  onClose,
+}: {
+  service: VehicleService;
+  onClose: () => void;
+}) {
+  const queryClient = useQueryClient();
+
+  const { data: vehicleTypes } = useQuery({
+    queryKey: ["vehicleTypes"],
+    queryFn: () => service.fetchVehicleTypes(),
   });
 
-  const {
-    isLoading: isVehicleTypesLoading,
-    isError: isVehicleTypesError,
-    error: vehicleTypesError,
-    data: vehicleTypes,
-  } = useQuery("vehicle types", () => fetchVehicleTypes(axiosPrivate));
+  const { data: vehicleBrands } = useQuery({
+    queryKey: ["vehicleBrands"],
+    queryFn: () => service.fetchVehicleBrands(),
+  });
 
-  const {
-    isLoading: isVehicleBrandsLoading,
-    isError: isVehicleBrandsError,
-    error: vehicleBrandsError,
-    data: vehicleBrands,
-  } = useQuery("vehicle brands", () => fetchVehicleBrands(axiosPrivate));
+  const form = useForm<vehicleModelValues>({
+    resolver: zodResolver(vehicleModelSchema),
+    defaultValues,
+  });
 
-  const onSubmit: SubmitHandler<VehicleModel> = (data) => {
-    console.log(data);
+  const typeOptions =
+    vehicleTypes?.map((type) => ({
+      value: type,
+      label: type.type,
+    })) || [];
+
+  const brandOptions =
+    vehicleBrands?.map((brand) => ({
+      value: brand,
+      label: brand.brand,
+    })) || [];
+
+  const createVehicleMutation = useMutation({
+    mutationFn: (formData: VehicleModel) =>
+      service.createVehicleModel(formData),
+    onSuccess: () => {
+      // Handle onSuccess logic here
+      queryClient.invalidateQueries({ queryKey: ["vehicleModels"] });
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "Successfully inserted vehicle.",
+        action: (
+          <ToastAction altText="View Vehicles">View Vehicles</ToastAction>
+        ),
+      });
+    },
+    onError: (data) => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong : " + data.name,
+        description: data.message,
+        duration: 5000,
+      });
+    },
+  });
+
+  const handleSubmit = async () => {
+    try {
+      if (form.getValues()) {
+        await createVehicleMutation.mutateAsync(form.getValues());
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
-  const vehicleTypeOptions: Option[] = [];
-  const vehicleBrandOptions: Option[] = [];
-
-  useEffect(() => {
-    vehicleTypes?.forEach((type) => {
-      vehicleTypeOptions.push({
-        label: type.type,
-        value: type.id.toString(),
-      });
-    });
-  }, [isVehicleTypesLoading]);
-
-  useEffect(() => {
-    vehicleBrands?.forEach((brand) => {
-      vehicleBrandOptions.push({
-        label: brand.brand,
-        value: brand.id.toString(),
-      });
-    });
-  }, [isVehicleBrandsLoading]);
-
-  console.log(vehicleTypes);
-  console.log(vehicleTypeOptions);
+  console.log(form.getValues());
 
   return (
-    <Fragment>
-      {isVehicleTypesLoading || isVehicleBrandsLoading ? (
-        <Loading />
-      ) : (
-        <Fragment>
-          <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <div className="w-full col-span-1 row-span-1">
-                <RequiredLabel label="Vehicle Model" />
-                <Controller
-                  name="model"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <Input
-                        placeholder="Please enter vehicle model"
-                        {...field}
-                        className="w-full fs-16"
-                      />
-                      {errors.model && (
-                        <ErrorMessage error={errors.model.message ?? ""} />
-                      )}
-                    </>
-                  )}
-                />
-              </div>
-
-              <div className="w-full col-span-1 row-span-1">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Type" />
-                <Controller
-                  name="type"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <CreatableSelect
-                        className="select-place-holder"
-                        placeholder={"Select or add new vehicle type"}
-                        {...field}
-                        isClearable
-                        options={vehicleTypeOptions}
-                      />
-                      {errors.model && (
-                        <ErrorMessage error={errors.model.message ?? ""} />
-                      )}
-                    </>
-                  )}
-                />
-              </div>
-            </div>
-            <input type="submit">Submit</input>
-          </form>
-        </Fragment>
-      )}
-    </Fragment>
+                <FormControl>
+                  <CreatableSelect
+                    className="select-place-holder"
+                    placeholder={"Select or add new vehicle type"}
+                    {...field}
+                    isClearable
+                    options={typeOptions}
+                    value={field.value}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="brand"
+            render={({ field }) => (
+              <FormItem className="w-full col-span-1 row-span-1">
+                <RequiredLabel label="Vehicle Brand" />
+                <FormControl>
+                  <CreatableSelect
+                    className="select-place-holder"
+                    placeholder={"Select or add new vehicle brand"}
+                    {...field}
+                    isClearable
+                    options={brandOptions}
+                    value={field.value}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="model"
+            render={({ field }) => (
+              <FormItem className="w-full col-span-1 row-span-1">
+                <RequiredLabel label="Vehicle Model" />
+                <FormControl>
+                  <Input
+                    {...field}
+                    className="w-full"
+                    placeholder="Please enter vehicle model"
+                    value={field.value || ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem className="w-full col-span-1 row-span-1">
+                <OptionalLabel label="Description" />
+                <FormControl>
+                  <Input
+                    className="w-full"
+                    type="text"
+                    {...field}
+                    placeholder="Add a description"
+                    value={field.value || ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button onClick={onClose} variant={"outline"}>
+            Cancel
+          </Button>
+          <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
+          <div style={{ gap: "8px" }}>
+            <Button type="submit">Save</Button>
+            <Button type="reset" variant={"outline"}>
+              Reset
+            </Button>
+          </div>
+        </div>
+      </form>
+    </Form>
   );
 }

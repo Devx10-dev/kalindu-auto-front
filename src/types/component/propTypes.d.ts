@@ -1,3 +1,4 @@
+import { Service } from "@/service/apiService";
 
 export type IconProps = {
   width: string;
@@ -35,7 +36,7 @@ export type FormModalProps = {
   title: string;
   titleDescription?: string;
   component: JSX.Element;
-  onSubmit: () => void;
+  service?: Service
 };
 
 export interface ToastFunction {

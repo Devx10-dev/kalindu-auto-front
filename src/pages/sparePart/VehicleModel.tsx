@@ -1,4 +1,5 @@
 import Loading from "@/components/Loading";
+import PageHeader from "@/components/card/PageHeader";
 import VehicleForm from "@/components/form/sparePart/VehicleForm";
 import CarIcon from "@/components/icon/CarIcon";
 import PlusIcon from "@/components/icon/PlusIcon";
@@ -7,42 +8,39 @@ import DataTable from "@/components/table/DataTable";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardHeader
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import { fetchVehicleModels } from "@/service/sparePartInventory/vehicleServices";
-import { Fragment, useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+import { useQuery } from "@tanstack/react-query";
+import { Fragment, useState } from "react";
 
-function VehicleModel() {
+export default function VehicleModel() {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
 
+  const [pageNo, setPageNo] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
   const [show, setShow] = useState(false);
+
+  const vehicleService = new VehicleService(axiosPrivate);
 
   const {
     isLoading,
-    isError,
+    data: vehicleModels,
     error,
-    data: vehicleModelResponse,
   } = useQuery({
     queryKey: ["vehicleModels"],
-    queryFn: () => fetchVehicleModels(axiosPrivate),
+    queryFn: () => vehicleService.fetchVehicleModels(pageNo, pageSize),
   });
 
-  useEffect(() => {
-    console.log(error);
-    if (error) {
-      toast({
-        title: "Scheduled: Catch up ",
-        description: "Friday, February 10, 2023 at 5:57 PM",
-      });
-    }
-  }, [error, toast]);
+  if (error) {
+    toast({
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+    });
+  }
 
   return (
     <Fragment>
@@ -51,15 +49,11 @@ function VehicleModel() {
       ) : (
         <div className="mr-5 ml-2">
           <CardHeader>
-            <CardTitle
-              className="text-color"
+            <PageHeader
+              title="Vehicles"
+              description="Manage all vehicles details with their models, brands, and types."
               icon={<CarIcon height="30" width="28" color="#162a3b" />}
-            >
-              Vehicles
-            </CardTitle>
-            <CardDescription>
-              Manage all vehicles details with their models, brands, and types.
-            </CardDescription>
+            />
           </CardHeader>
           <CardContent style={{ width: "98%" }}>
             <div className="mb-3">
@@ -69,23 +63,24 @@ function VehicleModel() {
               </Button>
             </div>
             <DataTable
-              vehicleModels={
-                vehicleModelResponse ? vehicleModelResponse.vehicleModels : []
-              }
+              vehicleModels={vehicleModels ? vehicleModels.vehicleModels : []}
+              vehicleService={vehicleService}
             />
           </CardContent>
           <FormModal
             title="Add new vehicle"
             titleDescription="Add new vehicle details to the system"
-            onSubmit={() => console.log("submit")}
             show={show}
             onClose={() => setShow(false)}
-            component={<VehicleForm />}
+            component={
+              <VehicleForm
+                service={vehicleService}
+                onClose={() => setShow(false)}
+              />
+            }
           />
         </div>
       )}
     </Fragment>
   );
 }
-
-export default VehicleModel;

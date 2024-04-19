@@ -22,7 +22,7 @@ function App() {
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
-      <Route path="/" >
+      <Route path="/" element={<Keycloak/>}>
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}

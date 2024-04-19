@@ -1,60 +1,64 @@
-import { ResponseData } from "@/types/component/commonTypes";
 import {
   VehicleBrand,
-  VehicleModelFormData,
   VehicleModelResponseData,
   VehicleType,
 } from "@/types/sparePartInventory/vehicleTypes";
+import { VehicleModel } from "@/validation/schema/SparePart/vehicleModelSchema";
 import { AxiosInstance } from "axios";
+import { Service } from "../apiService";
 
-const VEHICLE_URL = "/vehicle";
+const VEHICLE_MODEL_URL = "/vehicle/model";
+const VEHICLE_TYPE_URL = "/vehicle/type";
+const VEHICLE_BRAND_URL = "/vehicle/brand";
 
-export const fetchVehicleModels = async (api: AxiosInstance) => {
-  try {
-    const response = await api.get<VehicleModelResponseData>(
-      `${VEHICLE_URL}/model/0/10`
-    );
+class VehicleService extends Service {
+  constructor(api: AxiosInstance) {
+    super(api);
+  }
 
-    return response.data;
-  } catch (error : any) {
-    if (!error.response) {
-      throw new Error("Server not responding!");
+  async fetchVehicleModels(
+    pageNo: number,
+    pageSize: number
+  ): Promise<VehicleModelResponseData> {
+    try {
+      const response = await this.api.get<VehicleModelResponseData>(
+        `${VEHICLE_MODEL_URL}/${pageNo}/${pageSize}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch vehicle models");
     }
-    throw new Error("Failed to fetch vehicle models");
   }
-};
 
-export const fetchVehicleTypes = async (api: AxiosInstance) => {
-  try {
-    const response = await api.get<VehicleType[]>(`${VEHICLE_URL}/type`);
+  async fetchVehicleTypes(): Promise<VehicleType[]> {
+    try {
+      const response = await this.api.get<VehicleType[]>(`${VEHICLE_TYPE_URL}`);
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch vehicle types");
+    }
+  }
 
+  async fetchVehicleBrands(): Promise<VehicleBrand[]> {
+    try {
+      const response = await this.api.get<VehicleBrand[]>(
+        `${VEHICLE_BRAND_URL}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch vehicle brands");
+    }
+  }
+
+  async createVehicleModel(vehicleModel: VehicleModel): Promise<VehicleModel> {
+    const response = await this.api.post(VEHICLE_MODEL_URL, {
+      model: vehicleModel.model,
+      description: vehicleModel.description,
+      vehicleType: vehicleModel.type.value.type,
+      vehicleBrand: vehicleModel.brand.value.brand,
+    });
     return response.data;
-  } catch (error) {
-    throw new Error("Failed to fetch vehicle types: " + error.message);
   }
-};
+}
 
-export const fetchVehicleBrands = async (api: AxiosInstance) => {
-  try {
-    const response = await api.get<VehicleBrand[]>(`${VEHICLE_URL}/brand`);
-
-    return response.data;
-  } catch (error) {
-    throw new Error("Failed to fetch vehicle brands: " + error.message);
-  }
-};
-
-export const addVehicleModel = async (
-  api: AxiosInstance,
-  formData: VehicleModelFormData
-) => {
-  try {
-    const response = await api.post<ResponseData<VehicleModelFormData>>(
-      `${VEHICLE_URL}/model`,
-      formData
-    );
-    return response.data.data;
-  } catch (error) {
-    throw new Error("Failed to add vehicle model: " + error.message);
-  }
-};
+export { VehicleService };
