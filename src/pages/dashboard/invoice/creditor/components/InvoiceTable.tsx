@@ -24,6 +24,7 @@ const InvoiceTable: React.FC = () => {
           <TableHead>Quantity</TableHead>
           <TableHead>Price</TableHead>
           <TableHead>Total</TableHead>
+          <TableHead>Creditor Name</TableHead>
           <TableHead>Action</TableHead>
         </TableRow>
         {items.map((item, index) => (
@@ -32,6 +33,7 @@ const InvoiceTable: React.FC = () => {
             <TableCell>{item.quantity}</TableCell>
             <TableCell>LKR {item.price.toFixed(2)}</TableCell>
             <TableCell>LKR {(item.quantity * item.price).toFixed(2)}</TableCell>
+            <TableCell>{item.creditorName}</TableCell>
             <TableCell>
               <Button onClick={() => handleRemoveItem(index)}>Remove</Button>
             </TableCell>

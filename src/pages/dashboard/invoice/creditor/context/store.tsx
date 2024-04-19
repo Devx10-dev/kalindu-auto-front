@@ -5,6 +5,7 @@ interface InvoiceItem {
   name: string;
   quantity: number;
   price: number;
+  creditorName: string;
 }
 
 interface InvoiceState {
@@ -12,11 +13,13 @@ interface InvoiceState {
   newItem: string;
   newQuantity: number;
   newPrice: number;
+  newCreditorName: string;
   addItem: (item: InvoiceItem) => void;
   removeItem: (index: number) => void;
   setNewItem: (item: string) => void;
   setNewQuantity: (quantity: number) => void;
   setNewPrice: (price: number) => void;
+  setNewCreditorName: (creditorName: string) => void;
 }
 
 const useInvoiceStore = create<InvoiceState>((set) => ({
@@ -24,6 +27,7 @@ const useInvoiceStore = create<InvoiceState>((set) => ({
   newItem: "",
   newQuantity: 1,
   newPrice: 0,
+  newCreditorName: "",
   addItem: (item) => set((state) => ({ items: [...state.items, item] })),
   removeItem: (index) =>
     set((state) => ({
@@ -32,6 +36,7 @@ const useInvoiceStore = create<InvoiceState>((set) => ({
   setNewItem: (item) => set({ newItem: item }),
   setNewQuantity: (quantity) => set({ newQuantity: quantity }),
   setNewPrice: (price) => set({ newPrice: price }),
+  setNewCreditorName: (creditorName) => set({ newCreditorName: creditorName }),
 }));
 
 export default useInvoiceStore;
