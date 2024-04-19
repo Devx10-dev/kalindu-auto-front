@@ -1,4 +1,5 @@
 import Loading from "@/components/Loading";
+import PageHeader from "@/components/card/PageHeader";
 import VehicleForm from "@/components/form/sparePart/VehicleForm";
 import CarIcon from "@/components/icon/CarIcon";
 import PlusIcon from "@/components/icon/PlusIcon";
@@ -7,14 +8,11 @@ import DataTable from "@/components/table/DataTable";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardHeader
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
-import { VehicleModel as VehicleModelType } from "@/validation/schema/SparePart/vehicleModelSchema";
 import { useQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 
@@ -24,7 +22,6 @@ export default function VehicleModel() {
 
   const [pageNo, setPageNo] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  const [formData, setFormData] = useState<VehicleModelType>();
   const [show, setShow] = useState(false);
 
   const vehicleService = new VehicleService(axiosPrivate);
@@ -52,15 +49,11 @@ export default function VehicleModel() {
       ) : (
         <div className="mr-5 ml-2">
           <CardHeader>
-            <CardTitle
-              className="text-color"
+            <PageHeader
+              title="Vehicles"
+              description="Manage all vehicles details with their models, brands, and types."
               icon={<CarIcon height="30" width="28" color="#162a3b" />}
-            >
-              Vehicles
-            </CardTitle>
-            <CardDescription>
-              Manage all vehicles details with their models, brands, and types.
-            </CardDescription>
+            />
           </CardHeader>
           <CardContent style={{ width: "98%" }}>
             <div className="mb-3">
@@ -71,6 +64,7 @@ export default function VehicleModel() {
             </div>
             <DataTable
               vehicleModels={vehicleModels ? vehicleModels.vehicleModels : []}
+              vehicleService={vehicleService}
             />
           </CardContent>
           <FormModal
@@ -80,7 +74,6 @@ export default function VehicleModel() {
             onClose={() => setShow(false)}
             component={
               <VehicleForm
-                formData={formData}
                 service={vehicleService}
                 onClose={() => setShow(false)}
               />

@@ -10,11 +10,11 @@ export type VehicleBrand = {
   brand: string;
 };
 
-export type VehicleModelFormData = {
+export type VehicleModel = {
   id?: number;
   model: string;
-  vehicleBrand: Option;
-  vehicleType: Option;
+  vehicleBrand: string;
+  vehicleType: string;
   description?: string;
 };
 

@@ -13,15 +13,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
-import { Option } from "@/types/component/propTypes";
+import { VehicleModel } from "@/types/sparePartInventory/vehicleTypes";
 import {
-  VehicleModel,
-  vehicleModelSchema,
+  vehicleModelSchema
 } from "@/validation/schema/SparePart/vehicleModelSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import { z } from "zod";
@@ -31,11 +29,9 @@ type vehicleModelValues = z.infer<typeof vehicleModelSchema>;
 const defaultValues: Partial<vehicleModelValues> = {};
 
 export default function VehicleForm({
-  formData,
   service,
   onClose,
 }: {
-  formData: VehicleModel | undefined;
   service: VehicleService;
   onClose: () => void;
 }) {
@@ -90,14 +86,18 @@ export default function VehicleForm({
 
   const handleSubmit = async () => {
     try {
-      if (formData) {
-        console.log(formData);
+      if (form.getValues()) {
+        const formData = form.getValues();
+
+        console.log(formData); // Logging the form data
         // Transform selected object into string values
         const transformedFormData = {
           ...formData,
-          type: formData.type.toString(),
-          brand: formData.brand.toString(),
+          type: formData.type.type.toString(),
+          brand: formData.brand.brand.toString(),
         };
+
+        console.log(transformedFormData);
 
         await createVehicleMutation.mutateAsync(transformedFormData);
         onClose();
@@ -112,33 +112,6 @@ export default function VehicleForm({
     defaultValues,
   });
 
-  console.log(formData);
-
-  const createOption = (label: string) => ({
-    label,
-    value: label.toLowerCase().replace(/\W/g, ""),
-  });
-
-  const defaultOptions = [
-    createOption("One"),
-    createOption("Two"),
-    createOption("Three"),
-  ];
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState(defaultOptions);
-  const [value, setValue] = useState<Option | null>();
-
-  const handleCreate = (inputValue: string) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      const newOption = createOption(inputValue);
-      setIsLoading(false);
-      setOptions((prev) => [...prev, newOption]);
-      setValue(newOption);
-    }, 1000);
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
@@ -151,13 +124,12 @@ export default function VehicleForm({
                 <RequiredLabel label="Vehicle Type" />
                 <FormControl>
                   <CreatableSelect
+                    className="select-place-holder"
+                    placeholder={"Select or add new vehicle type"}
+                    {...field}
                     isClearable
-                    isDisabled={isLoading}
-                    isLoading={isLoading}
-                    onChange={(newValue) => setValue(newValue)}
-                    onCreateOption={handleCreate}
-                    options={options}
-                    value={value}
+                    options={typeOptions}
+                    value={field.value}
                   />
                 </FormControl>
 

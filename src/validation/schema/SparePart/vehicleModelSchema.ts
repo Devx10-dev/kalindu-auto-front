@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { number, string, z } from "zod";
 
 export const vehicleModelSchema = z.object({
   model: z
@@ -9,13 +9,19 @@ export const vehicleModelSchema = z.object({
     .max(255, {
       message: "Vehicle model must not be longer than 255 characters.",
     }),
-  type: z.string({ required_error: "At least one vehicle type is Required" }),
-  brand: z.string({ required_error: "At least one vehicle brand is Required" }),
-  description: z
-    .string()
-    .max(255, {
-      message: "Description must not be longer than 255 characters.",
-    }),
+  type: z
+    .object({
+      type: string(),
+      id: number(),
+    })
+    .required(),
+  brand: z
+    .object({
+      brand: string(),
+      id: number(),
+    })
+    .required(),
+  description: z.string().optional(),
 });
 
 export type VehicleModel = z.infer<typeof vehicleModelSchema>;
