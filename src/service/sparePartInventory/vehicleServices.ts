@@ -11,8 +11,7 @@ const VEHICLE_MODEL_URL = "/vehicle/model";
 const VEHICLE_TYPE_URL = "/vehicle/type";
 const VEHICLE_BRAND_URL = "/vehicle/brand";
 
-class VehicleService extends Service{
-
+class VehicleService extends Service {
   constructor(api: AxiosInstance) {
     super(api);
   }
@@ -52,7 +51,12 @@ class VehicleService extends Service{
   }
 
   async createVehicleModel(vehicleModel: VehicleModel): Promise<VehicleModel> {
-    const response = await this.api.post(VEHICLE_MODEL_URL, vehicleModel);
+    const response = await this.api.post(VEHICLE_MODEL_URL, {
+      model: vehicleModel.model,
+      description: vehicleModel.description,
+      vehicleType: vehicleModel.type.value.type,
+      vehicleBrand: vehicleModel.brand.value.brand,
+    });
     return response.data;
   }
 }

@@ -13,10 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
-import { VehicleModel } from "@/types/sparePartInventory/vehicleTypes";
-import {
-  vehicleModelSchema
-} from "@/validation/schema/SparePart/vehicleModelSchema";
+import { VehicleModel, vehicleModelSchema } from "@/validation/schema/SparePart/vehicleModelSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -47,15 +44,20 @@ export default function VehicleForm({
     queryFn: () => service.fetchVehicleBrands(),
   });
 
+  const form = useForm<vehicleModelValues>({
+    resolver: zodResolver(vehicleModelSchema),
+    defaultValues,
+  });
+
   const typeOptions =
     vehicleTypes?.map((type) => ({
-      value: type.type,
+      value: type,
       label: type.type,
     })) || [];
 
   const brandOptions =
     vehicleBrands?.map((brand) => ({
-      value: brand.brand,
+      value: brand,
       label: brand.brand,
     })) || [];
 
@@ -87,19 +89,7 @@ export default function VehicleForm({
   const handleSubmit = async () => {
     try {
       if (form.getValues()) {
-        const formData = form.getValues();
-
-        console.log(formData); // Logging the form data
-        // Transform selected object into string values
-        const transformedFormData = {
-          ...formData,
-          type: formData.type.type.toString(),
-          brand: formData.brand.brand.toString(),
-        };
-
-        console.log(transformedFormData);
-
-        await createVehicleMutation.mutateAsync(transformedFormData);
+        await createVehicleMutation.mutateAsync(form.getValues());
         onClose();
       }
     } catch (error) {
@@ -107,10 +97,7 @@ export default function VehicleForm({
     }
   };
 
-  const form = useForm<vehicleModelValues>({
-    resolver: zodResolver(vehicleModelSchema),
-    defaultValues,
-  });
+  console.log(form.getValues());
 
   return (
     <Form {...form}>

@@ -1,4 +1,4 @@
-import { number, string, z } from "zod";
+import { number, object, string, z } from "zod";
 
 export const vehicleModelSchema = z.object({
   model: z
@@ -11,14 +11,14 @@ export const vehicleModelSchema = z.object({
     }),
   type: z
     .object({
-      type: string(),
-      id: number(),
+      label: string(),
+      value: object({ type: string(), id: number() }),
     })
     .required(),
   brand: z
     .object({
-      brand: string(),
-      id: number(),
+      label: string(),
+      value: object({ brand: string(), id: number() }),
     })
     .required(),
   description: z.string().optional(),
