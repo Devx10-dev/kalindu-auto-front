@@ -82,7 +82,7 @@ function ProfileForm() {
     console.log(values);
   }
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pl-2 pr-12">
       <div>
         <h3 className="text-lg font-bold">Register User</h3>
         <p className="text-sm text-muted-foreground">
