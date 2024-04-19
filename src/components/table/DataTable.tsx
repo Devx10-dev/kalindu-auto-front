@@ -49,6 +49,8 @@ export default function DataTable({
     queryFn: () => vehicleService.fetchVehicleBrands(),
   });
 
+  console.log(vehicleBrands)
+
   const resetFilter = () => {
     setSelectedBrand(null);
     setSelectedType(null);
@@ -68,7 +70,7 @@ export default function DataTable({
             <SelectValue placeholder="Select Vehicle Type" />
           </SelectTrigger>
           <SelectContent>
-            {vehicleTypes?.map((type) => (
+            {vehicleTypes !== undefined && vehicleTypes?.map((type) => (
               <SelectItem key={type.id} value={type.type}>
                 {capitalize(type.type)}
               </SelectItem>
@@ -83,7 +85,7 @@ export default function DataTable({
             <SelectValue placeholder="Select Vehicle Brand" />
           </SelectTrigger>
           <SelectContent>
-            {vehicleBrands?.map((brand) => (
+            {vehicleBrands !== undefined && vehicleBrands?.map((brand) => (
               <SelectItem key={brand.id} value={brand.brand}>
                 {capitalize(brand.brand)}
               </SelectItem>

@@ -74,6 +74,24 @@ const NavLinks: NavLink[] = [
       },
     ],
   },
+
+  //user-management
+  {
+    label: "Users",
+    href: "/dashboard/users",
+    sublinks: [
+      {
+        label: "Manage Users",
+        href: "/dashboard/users/user-list",
+      },
+      {
+        label: "Register User",
+        href: "/dashboard/users/register",
+       
+      },
+    ],
+  },
+
   {
     label: "Spare Part Inventory",
     href: "/creditors",
