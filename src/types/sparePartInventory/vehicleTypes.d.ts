@@ -1,3 +1,4 @@
+import { Option } from "../component/propTypes";
 
 export type VehicleType = {
   id: number;
@@ -9,7 +10,7 @@ export type VehicleBrand = {
   brand: string;
 };
 
-export type VehicleModelFormData = {
+export type VehicleModel = {
   id?: number;
   model: string;
   vehicleBrand: string;
