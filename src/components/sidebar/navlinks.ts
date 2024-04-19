@@ -8,21 +8,8 @@
 // import { PiEngineBold } from "react-icons/pi";
 // import { IconType } from "react-icons/lib";
 
-<<<<<<< HEAD
-interface NavLinkSublink {
-  label: string;
-  href: string;
-}
-
-interface NavLink {
-  label: string;
-  href: string;
-  sublinks?: NavLinkSublink[];
-}
-=======
 import { NavLink } from "@/types/sidebar";
 
->>>>>>> 81f67c97990a47c271607bd9b51c84531e120b10
 const NavLinks: NavLink[] = [
   {
     label: "Invoices",
@@ -60,13 +47,8 @@ const NavLinks: NavLink[] = [
         // icon: <GiArchiveRegister />,
       },
       {
-<<<<<<< HEAD
-        label: "View Bills",
-        href: "/dashboard/creditors/view-bills",
-=======
         label: "Creditor Management",
         href: "/dashboard/creditors/manage",
->>>>>>> 81f67c97990a47c271607bd9b51c84531e120b10
         // icon: <FaRegListAlt />,
       },
     ],
@@ -92,18 +74,24 @@ const NavLinks: NavLink[] = [
       },
     ],
   },
-<<<<<<< HEAD
 
   //user-management
   {
-    label: "User Management",
-    href: "/dashboard/user-management",
+    label: "Users",
+    href: "/dashboard/users",
     sublinks: [
       {
+        label: "Manage Users",
+        href: "/dashboard/users/user-list",
+      },
+      {
         label: "Register User",
-        href: "/dashboard/user-management/register",
-        // icon: <FaBalanceScale />,
-=======
+        href: "/dashboard/users/register",
+       
+      },
+    ],
+  },
+
   {
     label: "Spare Part Inventory",
     href: "/creditors",
@@ -117,7 +105,6 @@ const NavLinks: NavLink[] = [
         label: "Spare Parts",
         href: "/dashboard/vehicle/part",
         // icon: <FaRegListAlt />,
->>>>>>> 81f67c97990a47c271607bd9b51c84531e120b10
       },
     ],
   },

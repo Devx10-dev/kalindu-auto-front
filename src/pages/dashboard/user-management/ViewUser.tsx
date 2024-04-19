@@ -1,50 +1,48 @@
-import { Payment, columns } from "./view-user/table-components/columns";
-import { DataTable } from "./view-user/table-components/data-table";
+import UsersTable from "./view-user/table-components/UsersTable";
 
 function getData() {
-  // Fetch data from your API here.
   return [
     {
       id: "1",
-      fullName: "John Doe",
+      username: "john.doe",
+      firstName: "John",
+      mobileNo: "0774567890",
       designation: "Manager",
-      email: "john.doe@example.com",
-      mobileNumber: "0774567890",
     },
     {
       id: "2",
-      fullName: "Jane Smith",
+      username: "jane.smith",
+      firstName: "Jane",
+      mobileNo: "0778654321",
       designation: "Cashier",
-      email: "jane.smith@gmail.com",
-      mobileNumber: "0778654321",
     },
     {
       id: "3",
-      fullName: "Alice Johnson",
+      username: "alice.johnson",
+      firstName: "Alice",
+      mobileNo: "0772334455",
       designation: "Cashier",
-      email: "alice.johnson@example.com",
-      mobileNumber: "0772334455",
     },
     {
       id: "4",
-      fullName: "Bob Brown",
+      username: "bob.brown",
+      firstName: "Bob",
+      mobileNo: "0775123456",
       designation: "Cashier",
-      email: "bob.brown@example.com",
-      mobileNumber: "0775123456",
     },
     {
       id: "5",
-      fullName: "Emily Davis",
+      username: "emily.davis",
+      firstName: "Emily",
+      mobileNo: "0778444555",
       designation: "Cashier",
-      email: "emily.davis@example.com",
-      mobileNumber: "0778444555",
     },
     {
       id: "6",
-      fullName: "Charlie Wilson",
+      username: "charlie.wilson",
+      firstName: "Charlie",
+      mobileNo: "0774333222",
       designation: "Owner",
-      email: "charlie.wilson@example.com",
-      mobileNumber: "0774333222",
     },
   ];
 }
@@ -53,16 +51,18 @@ export default function userManagementPage() {
   const data = getData();
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-bold">User management</h3>
-        <p className="text-sm text-muted-foreground">
-          View and manage all users in the system.
-        </p>
+    <>
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-lg font-bold">User management</h3>
+          <p className="text-sm text-muted-foreground">
+            View and manage all users in the system.
+          </p>
+        </div>
+        <div className="w-full">
+          <UsersTable userData={data}/>
+        </div>
       </div>
-      <div className="w-full">
-        <DataTable columns={columns} data={data} />
-      </div>
-    </div>
+    </>
   );
 }

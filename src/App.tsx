@@ -20,7 +20,7 @@ function App() {
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
-      <Route path="/" element={<Keycloak />}>
+      <Route path="/" >
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           <Route path="vehicle">
@@ -43,7 +43,7 @@ function App() {
           /> */}
           {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
 
-          <Route path="users" element={<Dashboard/>} >
+          <Route path="users">
 
             {/* Routes for user management */}
             <Route path="user-list" element={<ViewUser/>} />

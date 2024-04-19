@@ -19,20 +19,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 //for the validations
 const formSchema = z.object({
   fullName: z.string().min(1, { message: "Full name is required." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  address: z.string().min(1, { message: "Address is required." }),
+  email: z
+    .string()
+    // .email({ message: "Invalid email address." })
+    .optional(),
+  address: z.string().optional(),
   mobileNumber: z
     .string()
     .regex(/^0\d{9}$/, { message: "Invalid contact number." }),
   homeNumber: z
     .string()
-    .regex(/^0\d{9}$/, { message: "Invalid contact number." }),
+    // .regex(/^0\d{9}$/, { message: "Invalid contact number." })
+    .optional(),
   designation: z.enum(["Manager", "Cashier"], {
     errorMap: () => ({ message: "Please select a valid designation." }),
   }),
@@ -84,6 +96,23 @@ function ProfileForm() {
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter the username" {...field} />
+                  </FormControl>
+                  {/* <FormDescription>
+                    This is the public display name.
+                  </FormDescription> */}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="fullName"
               render={({ field }) => (
                 <FormItem>
@@ -98,13 +127,78 @@ function ProfileForm() {
 
             <FormField
               control={form.control}
+              name="designation"
+              render={({ field }) => (
+                <FormItem className="col-span-2">
+                  <FormLabel>Designation</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className={"w-[200px] justify-between"}>
+                        <SelectValue placeholder="Select the Designation" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Manager">Manager</SelectItem>
+                      <SelectItem value="Cashier">Cashier</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  {/* <FormDescription>
+                    Your password must be at least 8 characters long, contain at
+                    least one number, and one uppercase letter.
+                  </FormDescription> */}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter the same password here"
+                      {...field}
+                    />
+                    
+                  </FormControl>
+                  {/* <FormDescription>
+                    Enter the same password as above
+                  </FormDescription> */}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email Address</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter user's email address"
+                      placeholder="Enter user's email address (Optional)"
                       {...field}
                     />
                   </FormControl>
@@ -121,7 +215,7 @@ function ProfileForm() {
                   <FormLabel>Address</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter user's address"
+                      placeholder="Enter user's address (Optional)"
                       className="resize-none h-24"
                       {...field}
                     />
@@ -153,91 +247,11 @@ function ProfileForm() {
                   <FormLabel>Home Number</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter the land phone number"
+                      placeholder="Enter the land phone number (Optional)"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>Eg: 0112345678</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="designation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Designation</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className={"w-[200px] justify-between"}>
-                        <SelectValue placeholder="Select the Designation" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Manager">Manager</SelectItem>
-                      <SelectItem value="Cashier">Cashier</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter the username" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is the public display name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="col-span-2">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Your password must be at least 8 characters long, contain at
-                    least one number, and one uppercase letter.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="col-span-2x">
-                  <FormLabel>Verify Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter the same password here"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter the same password as above
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
