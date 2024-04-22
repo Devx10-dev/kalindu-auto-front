@@ -1,23 +1,21 @@
-import { ViewEditCreditor } from "./ViewEditCreditor";
-import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, View } from "lucide-react";
-import TablePagination from "../../../../components/TablePagination";
-import { Link } from "react-router-dom";
 import { Creditor } from "@/types/creditor/creditorTypes";
+import { Search, View } from "lucide-react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { ViewEditCreditor } from "./ViewEditCreditor";
 
-const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
+const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [creditors, setCreditors] = useState([
     "Creditor 1",
@@ -37,10 +35,6 @@ const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
   }) => {
     setSearchQuery(e.target.value);
   };
-
-  const filteredCreditors = creditors.filter((creditor) =>
-    creditor.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <>
@@ -71,7 +65,9 @@ const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
           <TableBody>
             {props.creditorData?.map((creditor) => (
               <TableRow key={creditor.id}>
-                <TableCell className="font-medium">{creditor.shopName}</TableCell>
+                <TableCell className="font-medium">
+                  {creditor.shopName}
+                </TableCell>
                 <TableCell>{creditor.primaryContact}</TableCell>
                 <TableCell>{creditor.secondaryContact}</TableCell>
                 <TableCell className="text-right">
@@ -88,7 +84,6 @@ const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
           </TableBody>
         </Table>
       </div>
-
     </>
   );
 };

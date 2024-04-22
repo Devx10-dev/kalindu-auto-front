@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -8,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useState } from "react";
 
 export default function TablePagination(props: {
   pageNo?: number;
@@ -15,14 +15,18 @@ export default function TablePagination(props: {
   totalPages?: number;
   onPageChange?: (page: number) => void;
 }) {
-  const { pageNo = 1, pageSize = 10, totalPages = 1 } = props;
+  const { pageNo = 1, totalPages = 1 } = props;
   const [currentPage, setCurrentPage] = useState(pageNo);
 
   const renderPageNumbers = () => {
     const pages = [];
 
     for (let i = 1; i <= totalPages; i++) {
-      if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - 2 && i <= currentPage + 2)
+      ) {
         pages.push(
           <PaginationItem key={`page-${i}`}>
             <PaginationLink
@@ -49,7 +53,7 @@ export default function TablePagination(props: {
         );
       }
     }
-  
+
     return pages;
   };
 
