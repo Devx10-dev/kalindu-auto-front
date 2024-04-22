@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from "react";
-import NavLinks from "./navlinks";
+import { useMemo } from "react";
 import { SidebarItem } from "./SidebarItem";
+import NavLinks from "./navlinks";
 
 function Sidebar() {
   const sidebarItems = useMemo(() => {

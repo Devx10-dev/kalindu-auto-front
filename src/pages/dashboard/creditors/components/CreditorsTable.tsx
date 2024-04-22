@@ -1,23 +1,41 @@
-import { ViewEditCreditor } from "./ViewEditCreditor";
-import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, View } from "lucide-react";
-import TablePagination from "../../../../components/TablePagination";
-import { Link } from "react-router-dom";
 import { Creditor } from "@/types/creditor/creditorTypes";
+import { Search, View } from "lucide-react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { ViewEditCreditor } from "./ViewEditCreditor";
 
 const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [creditors, setCreditors] = useState([
+    "Creditor 1",
+    "Creditor 2",
+    "Creditor 3",
+    "Creditor 4",
+    "Creditor 5",
+    "Creditor 6",
+    "Creditor 7",
+    "Creditor 8",
+    "Creditor 9",
+    "Creditor 10",
+  ]);
+
+  const handleSearch = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setSearchQuery(e.target.value);
+  };
+
   return (
     <>
       <div className="flex flex-col justify-end">
@@ -39,7 +57,7 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
           </TableHeader>
           <TableBody>
             {props.creditorData?.map((creditor) => (
-              <TableRow key={creditor.creditorID}>
+              <TableRow key={creditor.id}>
                 <TableCell className="font-medium">
                   {creditor.shopName}
                 </TableCell>
