@@ -3,7 +3,7 @@ import VehicleForm from "@/components/form/sparePart/VehicleForm";
 import CarIcon from "@/components/icon/CarIcon";
 import PlusIcon from "@/components/icon/PlusIcon";
 import { FormModal } from "@/components/modal/FormModal";
-import VehicleModelsGrid from "@/components/table/VehicleModelsGrid";
+import VehicleModelsGrid from "@/components/table/sparePartInventory/VehicleModelsGrid";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
