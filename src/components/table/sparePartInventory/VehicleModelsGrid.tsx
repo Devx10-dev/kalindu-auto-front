@@ -10,19 +10,19 @@ import truncate from "@/utils/truncate";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
-import Loading from "../Loading";
-import IconButton from "../button/IconButton";
-import EditIcon from "../icon/EditIcon";
-import SparePartIcon from "../icon/SparePartIcon";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import Loading from "../../Loading";
+import IconButton from "../../button/IconButton";
+import EditIcon from "../../icon/EditIcon";
+import SparePartIcon from "../../icon/SparePartIcon";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "../../ui/select";
 import {
   Table,
   TableBody,
@@ -31,9 +31,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import { toast } from "../ui/use-toast";
-import { MOBILE_SCREEN_WIDTH } from "../sidebar/Sidebar";
+} from "../../ui/table";
+import { toast } from "../../ui/use-toast";
+import { MOBILE_SCREEN_WIDTH } from "../../sidebar/Sidebar";
 
 export default function VehicleModelsGrid({
   setShow,
