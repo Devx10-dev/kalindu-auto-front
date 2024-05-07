@@ -1,4 +1,5 @@
 import {
+  ChassisNo,
   VehicleBrand,
   VehicleModel,
   VehicleModelGridProps,
@@ -14,6 +15,7 @@ import Loading from "../../Loading";
 import IconButton from "../../button/IconButton";
 import EditIcon from "../../icon/EditIcon";
 import SparePartIcon from "../../icon/SparePartIcon";
+import { MOBILE_SCREEN_WIDTH } from "../../sidebar/Sidebar";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import {
@@ -33,7 +35,6 @@ import {
   TableRow,
 } from "../../ui/table";
 import { toast } from "../../ui/use-toast";
-import { MOBILE_SCREEN_WIDTH } from "../../sidebar/Sidebar";
 
 export default function VehicleModelsGrid({
   setShow,
@@ -78,7 +79,7 @@ export default function VehicleModelsGrid({
     queryFn: () => vehicleService.fetchVehicleBrands(),
   });
 
-  const { data: vehicleChassisNos } = useQuery<string[]>({
+  const { data: vehicleChassisNos } = useQuery<ChassisNo[]>({
     queryKey: ["vehicleChassisNos"],
     queryFn: () => vehicleService.fetchVehicleChassisNos(),
   });
@@ -172,7 +173,6 @@ export default function VehicleModelsGrid({
                 "rgba(255, 255, 255, 0.1) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.20) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
             }}
           >
-            
             <Input
               style={{ flex: 4 }}
               value={searchQuery}
@@ -180,63 +180,73 @@ export default function VehicleModelsGrid({
               type="text"
               placeholder="Search ..."
             />
-            <div style={{display: `${isMobileView ? "none" : "flex"}`}} className="gap-2">
-            <div style={{ flex: 2 }}>
-              <Select
-                onValueChange={(value) => setSelectedType(value)}
-                value={selectedType ?? undefined}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Vehicle Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {vehicleTypes !== undefined &&
-                    [{ id: -1, type: "All" }, ...vehicleTypes]?.map((type) => (
-                      <SelectItem key={type.id} value={type.type}>
-                        {capitalize(type.type)}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div style={{ flex: 2 }}>
-              <Select
-                onValueChange={(value) => setSelectedBrand(value)}
-                value={selectedBrand ?? undefined}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Vehicle Brand" />
-                </SelectTrigger>
-                <SelectContent>
-                  {vehicleBrands !== undefined &&
-                    [{ id: -1, brand: "All" }, ...vehicleBrands]?.map(
-                      (brand) => (
-                        <SelectItem key={brand.id} value={brand.brand}>
-                          {capitalize(brand.brand)}
-                        </SelectItem>
-                      )
-                    )}
-                </SelectContent>
-              </Select>
-            </div>
-            <div style={{ flex: 2 }}>
-              <Select
-                onValueChange={(value) => setSelectedChassisNo(value)}
-                value={selectedChassisNo ?? undefined}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Chassis No" />
-                </SelectTrigger>
-                <SelectContent>
-                  {vehicleChassisNos !== undefined &&
-                    ["All", ...vehicleChassisNos]?.map((chassisNo) => (
-                      <SelectItem key={Math.random()} value={chassisNo}>
-                        {chassisNo}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <div
+              style={{ display: `${isMobileView ? "none" : "flex"}` }}
+              className="gap-2"
+            >
+              <div style={{ flex: 2 }}>
+                <Select
+                  onValueChange={(value) => setSelectedType(value)}
+                  value={selectedType ?? undefined}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Vehicle Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vehicleTypes !== undefined &&
+                      [{ id: -1, type: "All" }, ...vehicleTypes]?.map(
+                        (type) => (
+                          <SelectItem key={type.id} value={type.type}>
+                            {capitalize(type.type)}
+                          </SelectItem>
+                        )
+                      )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div style={{ flex: 2 }}>
+                <Select
+                  onValueChange={(value) => setSelectedBrand(value)}
+                  value={selectedBrand ?? undefined}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Vehicle Brand" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vehicleBrands !== undefined &&
+                      [{ id: -1, brand: "All" }, ...vehicleBrands]?.map(
+                        (brand) => (
+                          <SelectItem key={brand.id} value={brand.brand}>
+                            {capitalize(brand.brand)}
+                          </SelectItem>
+                        )
+                      )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div style={{ flex: 2 }}>
+                <Select
+                  onValueChange={(value) => setSelectedChassisNo(value)}
+                  value={selectedChassisNo ?? undefined}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Chassis No" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vehicleChassisNos !== undefined &&
+                      [{ id: -1, chassisNo: "All" }, ...vehicleChassisNos]?.map(
+                        (chassisNo) => (
+                          <SelectItem
+                            key={chassisNo.id}
+                            value={chassisNo.chassisNo}
+                          >
+                            {chassisNo.chassisNo}
+                          </SelectItem>
+                        )
+                      )}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="gap-2 flex-2">

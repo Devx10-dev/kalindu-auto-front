@@ -11,11 +11,25 @@ export const vehicleModelSchema = z.object({
       message: "Vehicle model must not be longer than 255 characters.",
     }),
   chassisNo: z
-    .string({ required_error: "Chassis number is Required" })
-    .min(1, { message: "Chassis number is Required" })
-    .max(255, {
-      message: "Vehicle model must not be longer than 255 characters.",
-    }),
+    .object({
+      label: z
+        .string()
+        .min(2, { message: "Chassis No must be atleast 2 characters." }),
+      value: z
+        .object({
+          chassisNo: z
+            .string()
+            .min(2, { message: "Chassis No must be atleast 2 characters." }),
+          id: z.number(),
+        })
+        .or(
+          z
+            .string()
+            .min(2, { message: "Chassis No must be atleast 2 characters." })
+        ),
+      __isNew__: z.boolean(),
+    })
+    .required(),
   type: z
     .object({
       label: z

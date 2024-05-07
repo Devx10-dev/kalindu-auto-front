@@ -1,4 +1,5 @@
 import {
+  ChassisNo,
   VehicleBrand,
   VehicleModelResponseData,
   VehicleType,
@@ -70,9 +71,9 @@ class VehicleService extends Service {
     }
   }
 
-  async fetchVehicleChassisNos(): Promise<string[]> {
+  async fetchVehicleChassisNos(): Promise<ChassisNo[]> {
     try {
-      const response = await this.api.get<string[]>(
+      const response = await this.api.get<ChassisNo[]>(
         `${VEHICLE_CHASSIS_NO_URL}`
       );
       return response.data;
@@ -84,7 +85,6 @@ class VehicleService extends Service {
   async createVehicleModel(vehicleModel: VehicleModel): Promise<VehicleModel> {
     const response = await this.api.post(VEHICLE_MODEL_URL, {
       model: vehicleModel.model,
-      chassisNo: vehicleModel.chassisNo,
       description: vehicleModel.description,
       vehicleType:
         typeof vehicleModel.type.value === "string"
@@ -94,6 +94,10 @@ class VehicleService extends Service {
         typeof vehicleModel.brand.value === "string"
           ? vehicleModel.brand.value
           : vehicleModel.brand.value.brand,
+      chassisNo:
+        typeof vehicleModel.chassisNo.value === "string"
+          ? vehicleModel.chassisNo.value
+          : vehicleModel.chassisNo.value.chassisNo,
     });
     return response.data;
   }
@@ -102,7 +106,6 @@ class VehicleService extends Service {
     const response = await this.api.put(VEHICLE_MODEL_URL, {
       id: vehicleModel.id,
       model: vehicleModel.model,
-      chassisNo: vehicleModel.chassisNo,
       description: vehicleModel.description,
       vehicleType:
         typeof vehicleModel.type.value === "string"
@@ -112,9 +115,14 @@ class VehicleService extends Service {
         typeof vehicleModel.brand.value === "string"
           ? vehicleModel.brand.value
           : vehicleModel.brand.value.brand,
+      chassisNo:
+        typeof vehicleModel.chassisNo.value === "string"
+          ? vehicleModel.chassisNo.value
+          : vehicleModel.chassisNo.value.chassisNo,
     });
     return response.data;
   }
 }
 
 export { VehicleService };
+

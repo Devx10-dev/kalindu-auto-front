@@ -1,4 +1,5 @@
 import {
+  ChassisNo,
   VehicleBrand,
   VehicleModel,
   VehicleModelGridProps,
@@ -66,7 +67,7 @@ export default function SparePartGrid({
     };
   }, []); // Only run this effect once on component mount
 
-  const { data: vehicleChassisNos } = useQuery<string[]>({
+  const { data: vehicleChassisNos } = useQuery<ChassisNo[]>({
     queryKey: ["vehicleChassisNos"],
     queryFn: () => vehicleService.fetchVehicleChassisNos(),
   });
