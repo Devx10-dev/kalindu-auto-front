@@ -32,9 +32,9 @@ const NavLinks: NavLink[] = [
       },
       {
         label: "View Invoices",
-        href: "/dashboard/invoices/view-invoices",
+        href: "/dashboard/invoice/view-invoices",
         // icon: <FaRegListAlt />,
-      },
+      }
     ],
   },
   {

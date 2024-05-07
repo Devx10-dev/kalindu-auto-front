@@ -12,6 +12,7 @@ import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 import CashInvoice from "./pages/dashboard/invoice/creditor/CreditorInvoice";
 import CreditorInvoice from "./pages/dashboard/invoice/creditor/CreditorInvoice";
+import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoice />} />
+            <Route path="view-invoices" element={<ViewAllInvoices />} />
           </Route>
 
           <Route path="vehicle">
