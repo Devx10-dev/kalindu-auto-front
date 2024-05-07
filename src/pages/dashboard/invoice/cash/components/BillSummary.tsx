@@ -56,9 +56,9 @@ const BillSummary: React.FC = () => {
         <div>
           <h2 className="text-xl font-bold mb-8">Bill Summary</h2>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <div className="flex flex-col gap-2">
-            <Label>Discount Percentage</Label>
+            <Label>Discount Percentage (%)</Label>
             <Input
               type="number"
               value={discountPercentage}
@@ -67,7 +67,7 @@ const BillSummary: React.FC = () => {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label>Discount Amount</Label>
+            <Label>Discount Amount (LKR)</Label>
             <Input
               type="number"
               value={discountAmount}
@@ -75,8 +75,14 @@ const BillSummary: React.FC = () => {
               placeholder="Discount Amount"
             />
           </div>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
+          </div>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
+          </div>
           <div className="flex flex-col gap-2">
-            <Label>VAT Percentage</Label>
+            <Label>VAT Percentage (%)</Label>
             <Input
               type="number"
               value={vatPercentage}
@@ -85,13 +91,19 @@ const BillSummary: React.FC = () => {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label>VAT Amount</Label>
+            <Label>VAT Amount (LKR)</Label>
             <Input
               type="number"
               value={vatAmount}
               onChange={handleVatAmountChange}
               placeholder="VAT Amount"
             />
+          </div>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
+          </div>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
           </div>
         </div>
         <div className="flex justify-start text-left mt-4">

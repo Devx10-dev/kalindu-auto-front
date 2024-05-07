@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Delete, Printer } from "lucide-react";
-import useInvoiceStore from "./context/Store";
+
 import InvoiceTable from "./components/InvoiceTable";
 import AddItem from "./components/AddItem";
 import CustomerDetails from "./components/CustomerDetails";
@@ -35,6 +33,7 @@ const CashInvoice: React.FC = () => {
         </div>
       </div> */}
       <BillSummary />
+      
     </div>
   );
 };
