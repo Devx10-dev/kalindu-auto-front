@@ -7,6 +7,7 @@ interface InvoiceItem {
   description: string;
   discount: number;
   code: string;
+  isOutsourced: boolean;
 }
 
 interface InvoiceState {
@@ -26,6 +27,7 @@ interface InvoiceState {
   setNewDiscount: (discount: number) => void;
   setNewCode: (code: string) => void;
   clearNewItem: () => void;
+  toggleItemOutsourced: (index: number) => void; // Add this line
 }
 
 const useInvoiceStore = create<InvoiceState>((set) => ({
@@ -56,6 +58,12 @@ const useInvoiceStore = create<InvoiceState>((set) => ({
       newDiscount: 0,
       newCode: "",
     }),
+  toggleItemOutsourced: (index) =>
+    set((state) => ({
+      items: state.items.map((item, i) =>
+        i === index ? { ...item, isOutsourced: !item.isOutsourced } : item
+      ),
+    })),
 }));
 
 export default useInvoiceStore;

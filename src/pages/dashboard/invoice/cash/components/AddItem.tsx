@@ -32,6 +32,7 @@ const AddItem: React.FC = () => {
         description: newDescription,
         discount: newDiscount,
         code: newCode,
+        isOutsourced: false,
       });
       clearNewItem();
     }

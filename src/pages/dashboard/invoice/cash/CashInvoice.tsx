@@ -4,21 +4,22 @@ import useInvoiceStore from "./context/Store";
 import InvoiceTable from "./components/InvoiceTable";
 import AddItem from "./components/AddItem";
 import CustomerDetails from "./components/CustomerDetails";
+import BillSummary from "./components/BillSummary";
 
 const CashInvoice: React.FC = () => {
-  const { items } = useInvoiceStore();
+  // const { items } = useInvoiceStore();
 
-  const total = items.reduce(
-    (acc, item) => acc + item.quantity * item.price,
-    0
-  );
+  // const total = items.reduce(
+  //   (acc, item) => acc + item.quantity * (item.price-item.discount),
+  //   0
+  // );
 
   return (
     <div>
       <CustomerDetails />
       <AddItem />
       <InvoiceTable />
-      <div className="flex justify-start text-left">
+      {/* <div className="flex justify-start text-left">
         <div className="text-left">
           <p className="text-xl bg-slate-200 text-slate-900 p-5 rounded-md">
             Total : {total.toFixed(2)}
@@ -32,7 +33,8 @@ const CashInvoice: React.FC = () => {
             Cancel
           </Button>
         </div>
-      </div>
+      </div> */}
+      <BillSummary />
     </div>
   );
 };

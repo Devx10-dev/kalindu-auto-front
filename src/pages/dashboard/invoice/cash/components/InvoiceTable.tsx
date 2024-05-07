@@ -6,14 +6,19 @@ import {
     TableHead,
     TableRow,
   } from "@/components/ui/table";
+  import { Switch } from "@/components/ui/switch";
   import { Button } from "@/components/ui/button";
   import useInvoiceStore from "../context/Store";
   
   const InvoiceTable: React.FC = () => {
-    const { items, removeItem } = useInvoiceStore();
+    const { items, removeItem, toggleItemOutsourced } = useInvoiceStore();
   
     const handleRemoveItem = (index: number) => {
       removeItem(index);
+    };
+
+    const handleToggleOutsourced = (index: number) => {
+      toggleItemOutsourced(index);
     };
   
     return (
@@ -25,6 +30,7 @@ import {
             <TableHead>Price</TableHead>
             <TableHead>Discount</TableHead>
             <TableHead>Total</TableHead>
+            <TableHead>Outsource</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
           {items.map((item, index) => (
@@ -35,6 +41,12 @@ import {
               <TableCell>{item.discount}</TableCell>
               <TableCell>LKR {((item.quantity * item.price)-(item.quantity* item.discount)).toFixed(2)}</TableCell>
               <TableCell>
+              <Switch
+                checked={item.isOutsourced}
+                onCheckedChange={() => handleToggleOutsourced(index)}
+              />
+              </TableCell>
+              <TableCell> 
                 <Button onClick={() => handleRemoveItem(index)}>Remove</Button>
               </TableCell>
             </TableRow>
