@@ -14,12 +14,18 @@ export default defineConfig({
     }),
   ],
 
+  preview: {
+    host: true,
+    port: 8080
+  },
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {
+    port: 8080,
     proxy: {
       '/api': {
         target: 'http://localhost:8090',
