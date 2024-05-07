@@ -10,7 +10,7 @@ import SpareParts from "./pages/sparePart/SpareParts";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
-import CashInvoice from "./pages/dashboard/invoice/creditor/CreditorInvoice";
+import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
 import CreditorInvoice from "./pages/dashboard/invoice/creditor/CreditorInvoice";
 
 
@@ -22,7 +22,8 @@ function App() {
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
-      <Route path="/" element={<Keycloak/>}>
+      <Route path="/" >
+      {/* <Route path="/" element={<Keycloak/>}> */}
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
