@@ -1,38 +1,72 @@
-
 import InvoiceTable from "./components/InvoiceTable";
 import AddItem from "./components/AddItem";
 import CustomerDetails from "./components/CustomerDetails";
 import BillSummary from "./components/BillSummary";
+import useInvoiceStore from "./context/Store";
+import { useState } from "react";
+import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
+
+
+interface OutsourcedItem {
+  index: number;
+  itemName: string;
+  itemCode: string;
+  quantity: number;
+  companyName: string;
+  buyingPrice: number;
+}
 
 const CashInvoice: React.FC = () => {
-  // const { items } = useInvoiceStore();
+  const { items } = useInvoiceStore();
+  const total = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
+  const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
 
-  // const total = items.reduce(
-  //   (acc, item) => acc + item.quantity * (item.price-item.discount),
-  //   0
-  // );
+  const handleToggleOutsourced = (index: number) => {
+    const outsourcedItem = outsourcedItems.find((item) => item.index === index);
+    if (outsourcedItem) {
+      setOutsourcedItems(outsourcedItems.filter((item) => item.index !== index));
+    } else {
+      setOutsourcedItems([
+        ...outsourcedItems,
+        {
+          index,
+          itemName: items[index].name,
+          itemCode: items[index].code,
+          quantity: items[index].quantity,
+          companyName: '',
+          buyingPrice: 0,
+        },
+      ]);
+    }
+  };
+
+  const handleCompanyNameChange = (index: number, value: string) => {
+    setOutsourcedItems(
+      outsourcedItems.map((item) =>
+        item.index === index ? { ...item, companyName: value } : item
+      )
+    );
+  };
+
+  const handleBuyingPriceChange = (index: number, value: number) => {
+    setOutsourcedItems(
+      outsourcedItems.map((item) =>
+        item.index === index ? { ...item, buyingPrice: value } : item
+      )
+    );
+  };
 
   return (
-    <div>
+    <div className="mb-20">
       <CustomerDetails />
       <AddItem />
-      <InvoiceTable />
-      {/* <div className="flex justify-start text-left">
-        <div className="text-left">
-          <p className="text-xl bg-slate-200 text-slate-900 p-5 rounded-md">
-            Total : {total.toFixed(2)}
-          </p>
-          <Button className="mt-4 mb-5">
-            <Printer className={"mr-2"} />
-            Print Invoice
-          </Button>
-          <Button className="mt-4 mb-5 bg-red-500 ml-2">
-            <Delete className={"mr-2"} />
-            Cancel
-          </Button>
-        </div>
-      </div> */}
+      <InvoiceTable handleToggleOutsourced={handleToggleOutsourced} />
       <BillSummary />
+      <OutsourcedItemDetails
+        outsourcedItems={outsourcedItems}
+        onCompanyNameChange={handleCompanyNameChange}
+        onBuyingPriceChange={handleBuyingPriceChange}
+      />
       
     </div>
   );
