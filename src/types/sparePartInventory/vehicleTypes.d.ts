@@ -10,6 +10,11 @@ export type VehicleBrand = {
   brand: string;
 };
 
+export type ChassisNo = {
+  id: number;
+  chassisNo: string;
+};
+
 export type VehicleModel = {
   id?: number;
   chassisNo: string;

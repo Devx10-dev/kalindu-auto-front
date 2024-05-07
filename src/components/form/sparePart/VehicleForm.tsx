@@ -54,6 +54,11 @@ export default function VehicleForm({
     queryFn: () => service.fetchVehicleBrands(),
   });
 
+  const { data: chassisNos } = useQuery({
+    queryKey: ["chassisNos"],
+    queryFn: () => service.fetchVehicleChassisNos(),
+  });
+
   const form = useForm<vehicleModelValues>({
     resolver: zodResolver(vehicleModelSchema),
     defaultValues,
@@ -69,7 +74,7 @@ export default function VehicleForm({
             label: vehicleModel.vehicleBrand,
             __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false } 
+        : { label: "", value: "", __isNew__: false }
     );
     form.setValue(
       "type",
@@ -81,14 +86,22 @@ export default function VehicleForm({
           }
         : { label: "", value: "", __isNew__: false }
     );
+    form.setValue(
+      "chassisNo",
+      vehicleModel
+        ? {
+            value: vehicleModel.chassisNo,
+            label: vehicleModel.chassisNo,
+            __isNew__: false,
+          }
+        : { label: "", value: "", __isNew__: false }
+    );
     form.setValue("model", vehicleModel ? vehicleModel.model : "");
-    form.setValue("chassisNo", vehicleModel ? vehicleModel.chassisNo : "");
     form.setValue(
       "description",
       vehicleModel ? vehicleModel.description || "" : undefined
     );
   };
-  
 
   const typeOptions =
     vehicleTypes?.map((type) => ({
@@ -101,6 +114,13 @@ export default function VehicleForm({
     vehicleBrands?.map((brand) => ({
       value: brand,
       label: brand.brand,
+      __isNew__: false,
+    })) || [];
+
+  const chassisNoOptions =
+    chassisNos?.map((chassisNo) => ({
+      value: chassisNo,
+      label: chassisNo.chassisNo,
       __isNew__: false,
     })) || [];
 
@@ -190,8 +210,12 @@ export default function VehicleForm({
         label: vehicleModel.vehicleType,
         __isNew__: false,
       });
+      form.setValue("chassisNo", {
+        value: vehicleModel.chassisNo,
+        label: vehicleModel.chassisNo,
+        __isNew__: false,
+      });
       form.setValue("model", vehicleModel.model);
-      form.setValue("chassisNo", vehicleModel.chassisNo);
       form.setValue("description", vehicleModel.description ?? "");
     }
   }, [vehicleModel, form]);
@@ -268,13 +292,15 @@ export default function VehicleForm({
             name="chassisNo"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <RequiredLabel label="Chassis Number" />
+                <RequiredLabel label="Chassis No" />
                 <FormControl>
-                  <Input
+                  <CreatableSelect
+                    className="select-place-holder"
+                    placeholder={"Select or add new chassis no"}
                     {...field}
-                    className="w-full"
-                    placeholder="Please enter chassis number"
-                    value={field.value || undefined}
+                    isClearable
+                    options={chassisNoOptions}
+                    value={field.value}
                   />
                 </FormControl>
 
