@@ -5,6 +5,7 @@ import BillSummary from "./components/BillSummary";
 import useInvoiceStore from "./context/Store";
 import { useState } from "react";
 import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
+import CommissionDetails from "./components/CommisionDetails";
 
 
 interface OutsourcedItem {
@@ -67,7 +68,7 @@ const CashInvoice: React.FC = () => {
         onCompanyNameChange={handleCompanyNameChange}
         onBuyingPriceChange={handleBuyingPriceChange}
       />
-      
+      <CommissionDetails />
     </div>
   );
 };

@@ -95,7 +95,7 @@ const AddItem: React.FC = () => {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label>Discount</Label>
+              <Label>Discount (per item)</Label>
               <Input
                 type="number"
                 value={newDiscount}
