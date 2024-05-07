@@ -7,11 +7,11 @@ interface InvoiceItem {
   description: string;
   discount: number;
   code: string;
-  isOutsourced: boolean;
 }
 
 interface InvoiceState {
   items: InvoiceItem[];
+  outsourcedItemIndices: number[];
   newItem: string;
   newQuantity: number;
   newPrice: number;
@@ -27,11 +27,12 @@ interface InvoiceState {
   setNewDiscount: (discount: number) => void;
   setNewCode: (code: string) => void;
   clearNewItem: () => void;
-  toggleItemOutsourced: (index: number) => void; // Add this line
+  toggleItemOutsourced: (index: number) => void;
 }
 
 const useInvoiceStore = create<InvoiceState>((set) => ({
   items: [],
+  outsourcedItemIndices: [],
   newItem: "",
   newQuantity: 1,
   newPrice: 0,
@@ -60,9 +61,9 @@ const useInvoiceStore = create<InvoiceState>((set) => ({
     }),
   toggleItemOutsourced: (index) =>
     set((state) => ({
-      items: state.items.map((item, i) =>
-        i === index ? { ...item, isOutsourced: !item.isOutsourced } : item
-      ),
+      outsourcedItemIndices: state.outsourcedItemIndices.includes(index)
+        ? state.outsourcedItemIndices.filter((i) => i !== index)
+        : [...state.outsourcedItemIndices, index],
     })),
 }));
 
