@@ -1,24 +1,25 @@
 import PageHeader from "@/components/card/PageHeader";
-import VehicleForm from "@/components/form/sparePart/VehicleForm";
-import CarIcon from "@/components/icon/CarIcon";
+import SparePartForm from "@/components/form/sparePart/SparePartForm";
 import PlusIcon from "@/components/icon/PlusIcon";
 import SparePartIcon from "@/components/icon/SparePartIcon";
 import { FormModal } from "@/components/modal/FormModal";
-import VehicleModelsGrid from "@/components/table/sparePartInventory/VehicleModelsGrid";
+import SparePartGrid from "@/components/table/sparePartInventory/SparePartGrid";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { SparePartService } from "@/service/sparePartInventory/sparePartService";
-import { VehicleModel as VehicleModelType } from "@/types/sparePartInventory/vehicleTypes";
+import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+import { SparePartItem } from "@/types/sparePartInventory/sparePartTypes";
 import { Fragment, useState } from "react";
 
 export default function VehicleSparePart() {
   const axiosPrivate = useAxiosPrivate();
 
   const [show, setShow] = useState(false);
-  const [vehicle, setVehicle] = useState<VehicleModelType | null>(null);
+  const [sparePart, setSparePart] = useState<SparePartItem | null>(null);
 
   const sparePartService = new SparePartService(axiosPrivate);
+  const vehicleService = new VehicleService(axiosPrivate);
 
   return (
     <Fragment>
@@ -37,23 +38,25 @@ export default function VehicleSparePart() {
               Spare Part
             </Button>
           </div>
-          <VehicleModelsGrid
+          <SparePartGrid
             setShow={setShow}
+            setSparePart={setSparePart}
+            sparePartService={sparePartService}
             vehicleService={vehicleService}
-            setVehicle={setVehicle}
           />
         </CardContent>
         <FormModal
-          title="Add new vehicle"
-          titleDescription="Add new vehicle details to the system"
+          title="Add new Spare Part"
+          titleDescription="Add new spare part details to the system"
           show={show}
           onClose={() => setShow(false)}
           component={
-            <VehicleForm
-              service={vehicleService}
+            <SparePartForm
               onClose={() => setShow(false)}
-              vehicleModel={vehicle}
-              setVehicle={setVehicle}
+              setSparePart={setSparePart}
+              sparePart={sparePart}
+              sparePartservice={sparePartService}
+              vehicleService={vehicleService}
             />
           }
         />

@@ -1,11 +1,9 @@
 import {
-  ChassisNo,
-  VehicleBrand,
-  VehicleModel,
-  VehicleModelGridProps,
-  VehicleModelResponseData,
-  VehicleType,
-} from "@/types/sparePartInventory/vehicleTypes";
+  SparePartGridProps,
+  SparePartItem,
+  SparePartsResponseData,
+} from "@/types/sparePartInventory/sparePartTypes";
+import { ChassisNo } from "@/types/sparePartInventory/vehicleTypes";
 import capitalize from "@/utils/capitalize";
 import truncate from "@/utils/truncate";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +12,6 @@ import { Fragment } from "react/jsx-runtime";
 import Loading from "../../Loading";
 import IconButton from "../../button/IconButton";
 import EditIcon from "../../icon/EditIcon";
-import SparePartIcon from "../../icon/SparePartIcon";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import {
@@ -34,8 +31,6 @@ import {
   TableRow,
 } from "../../ui/table";
 import { toast } from "../../ui/use-toast";
-import { MOBILE_SCREEN_WIDTH } from "../../sidebar/Sidebar";
-import { SparePartGridProps } from "@/types/sparePartInventory/sparePartTypes";
 
 export default function SparePartGrid({
   setShow,
@@ -45,27 +40,11 @@ export default function SparePartGrid({
 }: SparePartGridProps) {
   const [pageNo, setPageNo] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
+    null
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [isMobileView, setIsMobileView] = useState(false);
-
-  useEffect(() => {
-    function checkScreenWidth() {
-      setIsMobileView(window.innerWidth < MOBILE_SCREEN_WIDTH);
-    }
-
-    // Initial check
-    checkScreenWidth();
-
-    // Listen for screen resize events
-    window.addEventListener("resize", checkScreenWidth);
-
-    // Cleanup function to remove the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("resize", checkScreenWidth);
-    };
-  }, []); // Only run this effect once on component mount
 
   const { data: vehicleChassisNos } = useQuery<ChassisNo[]>({
     queryKey: ["vehicleChassisNos"],
@@ -74,28 +53,26 @@ export default function SparePartGrid({
 
   const {
     isLoading,
-    data: vehicleModels,
+    data: spareParts,
     error,
     refetch,
-  } = useQuery<VehicleModelResponseData>({
-    queryKey: ["vehicleModels"],
+  } = useQuery<SparePartsResponseData>({
+    queryKey: ["spareParts"],
     queryFn: () =>
-      vehicleService.fetchFilteredVehicleModels(
+      sparePartService.fetchFilteredSpaerParts(
         pageNo,
         pageSize,
-        selectedType,
-        selectedBrand,
         selectedChassisNo
       ),
   });
 
-  const [viewVehicleModels, setViewVehicleModels] = useState<VehicleModel[]>(
-    vehicleModels?.vehicleModels ?? []
+  const [viewSpareParts, setViewSpareParts] = useState<SparePartItem[]>(
+    spareParts?.spareParts ?? []
   );
 
   useEffect(() => {
-    setViewVehicleModels(vehicleModels?.vehicleModels ?? []);
-  }, [vehicleModels]);
+    setViewSpareParts(spareParts?.spareParts ?? []);
+  }, [spareParts]);
 
   const refetchModels = () => {
     refetch();
@@ -109,19 +86,22 @@ export default function SparePartGrid({
   }
 
   function globalSearch() {
-    if (vehicleModels) {
+    if (spareParts) {
       if (searchQuery.length === 0) {
-        setViewVehicleModels(vehicleModels.vehicleModels);
+        setViewSpareParts(spareParts.spareParts);
         return;
       }
 
-      const results: VehicleModel[] = [];
-      for (const row of vehicleModels.vehicleModels) {
+      const results: SparePartItem[] = [];
+      for (const row of spareParts.spareParts) {
         for (const key in row) {
           if (
-            Object.prototype.hasOwnProperty.call(row, key as keyof VehicleModel)
+            Object.prototype.hasOwnProperty.call(
+              row,
+              key as keyof SparePartItem
+            )
           ) {
-            const value = row[key as keyof VehicleModel];
+            const value = row[key as keyof SparePartItem];
             if (
               value
                 ?.toString()
@@ -134,7 +114,7 @@ export default function SparePartGrid({
           }
         }
       }
-      setViewVehicleModels(results);
+      setViewSpareParts(results);
     }
   }
 
@@ -142,8 +122,8 @@ export default function SparePartGrid({
     globalSearch();
   }, [searchQuery]);
 
-  const handleEditClick = (vehicle: VehicleModel) => {
-    setVehicle(vehicle);
+  const handleEditClick = (sparePart: SparePartItem) => {
+    setSparePart(sparePart);
     setShow(true);
   };
 
@@ -168,50 +148,7 @@ export default function SparePartGrid({
               type="text"
               placeholder="Search ..."
             />
-            <div
-              style={{ display: `${isMobileView ? "none" : "flex"}` }}
-              className="gap-2"
-            >
-              <div style={{ flex: 2 }}>
-                <Select
-                  onValueChange={(value) => setSelectedType(value)}
-                  value={selectedType ?? undefined}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Vehicle Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {vehicleTypes !== undefined &&
-                      [{ id: -1, type: "All" }, ...vehicleTypes]?.map(
-                        (type) => (
-                          <SelectItem key={type.id} value={type.type}>
-                            {capitalize(type.type)}
-                          </SelectItem>
-                        )
-                      )}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div style={{ flex: 2 }}>
-                <Select
-                  onValueChange={(value) => setSelectedBrand(value)}
-                  value={selectedBrand ?? undefined}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Vehicle Brand" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {vehicleBrands !== undefined &&
-                      [{ id: -1, brand: "All" }, ...vehicleBrands]?.map(
-                        (brand) => (
-                          <SelectItem key={brand.id} value={brand.brand}>
-                            {capitalize(brand.brand)}
-                          </SelectItem>
-                        )
-                      )}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="gap-2">
               <div style={{ flex: 2 }}>
                 <Select
                   onValueChange={(value) => setSelectedChassisNo(value)}
@@ -222,11 +159,16 @@ export default function SparePartGrid({
                   </SelectTrigger>
                   <SelectContent>
                     {vehicleChassisNos !== undefined &&
-                      ["All", ...vehicleChassisNos]?.map((chassisNo) => (
-                        <SelectItem key={Math.random()} value={chassisNo}>
-                          {chassisNo}
-                        </SelectItem>
-                      ))}
+                      [{ id: -1, chassisNo: "All" }, ...vehicleChassisNos]?.map(
+                        (chassisNo) => (
+                          <SelectItem
+                            key={Math.random()}
+                            value={chassisNo.chassisNo}
+                          >
+                            {chassisNo.chassisNo}
+                          </SelectItem>
+                        )
+                      )}
                   </SelectContent>
                 </Select>
               </div>
@@ -239,41 +181,36 @@ export default function SparePartGrid({
             </div>
           </div>
           <Table className="border rounded-md text-md mb-5 table-responsive">
-            <TableCaption>Vehicle Details</TableCaption>
+            <TableCaption>Spare Part Details</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>Vehicle</TableHead>
-                <TableHead>Vehicle Type</TableHead>
-                <TableHead>Vehicle Brand</TableHead>
+                <TableHead>Spare Part</TableHead>
+                <TableHead>Code</TableHead>
                 <TableHead>Chassis No</TableHead>
+                <TableHead>Quantity</TableHead>
                 <TableHead>Remark</TableHead>
                 <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {viewVehicleModels &&
-                viewVehicleModels.map((vehicle) => (
-                  <TableRow key={vehicle.id}>
+              {viewSpareParts &&
+                viewSpareParts.map((sparePart) => (
+                  <TableRow key={sparePart.id}>
                     <TableCell className="font-medium">
-                      {capitalize(vehicle.model)}
+                      {capitalize(sparePart.partName)}
                     </TableCell>
-                    <TableCell>{capitalize(vehicle.vehicleType)}</TableCell>
-                    <TableCell>{capitalize(vehicle.vehicleBrand)}</TableCell>
-                    <TableCell>{vehicle.chassisNo}</TableCell>
+                    <TableCell>{sparePart.code ?? "-"}</TableCell>
+                    <TableCell>{sparePart.chassisNo}</TableCell>
+                    <TableCell>{sparePart.quantity}</TableCell>
                     <TableCell>
-                      {truncate(vehicle.description ?? "", 30) ?? "-"}
+                      {truncate(sparePart.description ?? "", 30) ?? "-"}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-center">
                         <IconButton
                           icon={<EditIcon height="20" width="20" />}
-                          tooltipMsg="Edit Vehicle"
-                          handleOnClick={() => handleEditClick(vehicle)}
-                        />
-                        <IconButton
-                          icon={<SparePartIcon height="20" width="20" />}
-                          handleOnClick={() => console.log("hello")}
-                          tooltipMsg="View Spare parts"
+                          tooltipMsg="Edit Spare Part"
+                          handleOnClick={() => handleEditClick(sparePart)}
                         />
                       </div>
                     </TableCell>
