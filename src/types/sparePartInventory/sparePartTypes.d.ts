@@ -7,7 +7,7 @@ export type SparePartItem = {
   quantity?: number;
   code?: string;
   description?: string;
-  vechicleModels: string[];
+  chassisNo: string;
 };
 
 export interface SparePartGridProps {
@@ -16,3 +16,10 @@ export interface SparePartGridProps {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   setSparePart: React.Dispatch<React.SetStateAction<SparePartItem | null>>
 }
+
+export type SparePartsResponseData = {
+  currentPage: number;
+  totalItems: number;
+  totalPages: number;
+  spareParts: SparePartItem[];
+};
