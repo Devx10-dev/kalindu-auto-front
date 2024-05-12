@@ -6,16 +6,23 @@ import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import CreditorInvoiceAPI from "./api/creditorInvoiceAPI";
 import { useQuery } from "@tanstack/react-query";
 import Select from "react-select";
-
 import useCreditorInvoiceStore from "./context/useCreditorInvoiceStore";
+import { useToast } from "@/components/ui/use-toast";
 
 const CreditorInvoiceBase: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
   const creditorService = new CreditorInvoiceAPI(axiosPrivate);
-  const { setCreditor, creditorID, creditorName, getOutsourcedItems } =
-    useCreditorInvoiceStore();
+  const {
+    setCreditor,
+    creditorID,
+    creditorName,
+    getOutsourcedItems,
+    getRequestData,
+    invoiceItemDTOList,
+  } = useCreditorInvoiceStore();
   const noCreditorSelected = !creditorID;
   const hasOutsourcedItems = getOutsourcedItems().length > 0;
+  const { toast } = useToast();
 
   const { data } = useQuery({
     queryKey: ["creditors"],
@@ -26,6 +33,25 @@ const CreditorInvoiceBase: React.FC = () => {
     value: id,
     label: shopName,
   }));
+
+  //TODO complete this function with the API
+  //TODO add printing logic here
+  function printAndSaveInvoice() {
+    if (!creditorID)
+      return toast({
+        title: "Please select creditor",
+        description: "",
+        variant: "destructive",
+      });
+    if (invoiceItemDTOList.length == 0)
+      return toast({
+        title: "No items added to the invoice",
+        description: "",
+        variant: "destructive",
+      });
+
+    console.log(getRequestData());
+  }
 
   return (
     <div className="mb-20">
@@ -56,9 +82,14 @@ const CreditorInvoiceBase: React.FC = () => {
 
       <InvoiceTable />
 
-      {hasOutsourcedItems && <OutsourcedItemDetails />}
-
-      <BillSummary />
+      {hasOutsourcedItems && (
+        <div className="pb-[350px]">
+          <OutsourcedItemDetails />
+        </div>
+      )}
+      <div className="fixed bottom-0 bg-slate-200 border">
+        <BillSummary printAndSaveInvoice={printAndSaveInvoice} />
+      </div>
     </div>
   );
 };
