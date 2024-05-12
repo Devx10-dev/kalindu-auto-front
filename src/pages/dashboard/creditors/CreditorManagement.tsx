@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CreditorsTable from "./components/CreditorsTable";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import CreditorService from "./service/CreditorService";
+import CreditorService from "./api/CreditorAPI";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import Loading from "@/components/Loading";
 import TablePagination from "@/components/TablePagination";

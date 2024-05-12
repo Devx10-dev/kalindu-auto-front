@@ -1,4 +1,3 @@
-// components/InvoiceTable.tsx
 import {
   Table,
   TableBody,
@@ -6,41 +5,58 @@ import {
   TableHead,
   TableRow,
 } from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import useInvoiceStore from "../context/store";
+import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
+import { useEffect } from "react";
 
 const InvoiceTable: React.FC = () => {
-  const { items, removeItem } = useInvoiceStore();
-
-  const handleRemoveItem = (index: number) => {
-    removeItem(index);
-  };
+  const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
+    useCreditorInvoiceStore();
+  useEffect(() => {
+    console.log(invoiceItemDTOList);
+  }, [invoiceItemDTOList]);
 
   return (
-    <Table className="border rounded-md text-md mb-5 mt-10">
-      <TableBody>
-        <TableRow>
-          <TableHead>Item</TableHead>
-          <TableHead>Quantity</TableHead>
-          <TableHead>Price</TableHead>
-          <TableHead>Total</TableHead>
-          <TableHead>Creditor Name</TableHead>
-          <TableHead>Action</TableHead>
-        </TableRow>
-        {items.map((item, index) => (
-          <TableRow key={index}>
-            <TableCell>{item.name}</TableCell>
-            <TableCell>{item.quantity}</TableCell>
-            <TableCell>LKR {item.price.toFixed(2)}</TableCell>
-            <TableCell>LKR {(item.quantity * item.price).toFixed(2)}</TableCell>
-            <TableCell>{item.creditorName}</TableCell>
-            <TableCell>
-              <Button onClick={() => handleRemoveItem(index)}>Remove</Button>
-            </TableCell>
+    <div>
+      <Table className="border rounded-md text-md mb-5 mt-10">
+        <TableBody>
+          <TableRow>
+            <TableHead>Item</TableHead>
+            <TableHead>Quantity</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead>Discount</TableHead>
+            <TableHead>Total</TableHead>
+            <TableHead>Outsource</TableHead>
+            <TableHead>Action</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+          {invoiceItemDTOList.map((item: any, index: any) => (
+            <TableRow key={index}>
+              <TableCell>{item.itemName}</TableCell>
+              <TableCell>{item.quantity}</TableCell>
+              <TableCell>LKR {item.price}</TableCell>
+              <TableCell>LKR {item.discount}</TableCell>
+              <TableCell>
+                LKR{" "}
+                {(
+                  item.quantity * item.price -
+                  item.quantity * item.discount
+                ).toFixed(2)}
+              </TableCell>
+              <TableCell>
+                <Switch
+                  checked={item.outsourcedStatus}
+                  onCheckedChange={(state) => setOutsourcedStatus(item, state)}
+                />
+              </TableCell>
+              <TableCell>
+                <Button onClick={() => removeInvoiceItem(item)}>Remove</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

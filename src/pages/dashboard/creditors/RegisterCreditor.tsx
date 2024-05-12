@@ -3,7 +3,7 @@ import { RegisterForm } from "./components/RegisterForm";
 import Loading from "@/components/Loading";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import CreditorService from "./service/CreditorService";
+import CreditorService from "./api/CreditorAPI";
 import { creditorFormSchema } from "./components/formScheme";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
