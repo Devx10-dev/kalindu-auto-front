@@ -17,7 +17,7 @@ class CreditorInvoiceAPI {
     pageSize: number = 10
   ): Promise<CreditorResponseData> {
     if (pageNo >= 1) pageNo = pageNo - 1;
-    let pagedURL = `${CreditorInvoiceEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
+    const pagedURL = `${CreditorInvoiceEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
     const response = await this.api.get<CreditorResponseData>(pagedURL);
     return response.data;
   }

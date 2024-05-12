@@ -55,7 +55,6 @@ class CreditorAPI {
     );
     return response.data;
   }
-
 }
 
 export default CreditorAPI;

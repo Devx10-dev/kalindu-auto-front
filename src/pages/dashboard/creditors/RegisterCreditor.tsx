@@ -1,9 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { z } from "zod";
 import { RegisterForm } from "./components/RegisterForm";
-import { creditorFormSchema } from "./components/formScheme";
-
-type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export default function RegisterCreditor() {
   return (
