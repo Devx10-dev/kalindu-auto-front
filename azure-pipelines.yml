@@ -9,6 +9,10 @@ trigger:
 pool: mypool
 
 steps:
+
+- task: CmdLine@2
+  inputs:
+    script: 'ls; pwd;'
 - task: Npm@1
   inputs:
     command: 'custom'
