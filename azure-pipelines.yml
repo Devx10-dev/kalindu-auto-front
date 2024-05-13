@@ -9,12 +9,10 @@ trigger:
 pool: mypool
 
 steps:
-- task: NodeTool@0
+- task: Npm@1
   inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+    command: 'custom'
+    customCommand: 'run build'
+    customRegistry: 'useFeed'
+    customFeed: 'd7df4472-1c9c-4de7-9189-ae3759ae8573'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
