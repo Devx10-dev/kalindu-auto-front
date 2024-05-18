@@ -63,8 +63,8 @@ const BillSummary = (props: summaryProps) => {
 
   return (
     <Card className="w-full">
-      <CardContent className="p-3 shadow-sm  bg-slate-200 w-full">
-        <h2 className="text-xl font-bold mb-8">Bill Summary</h2>
+      <CardContent className="p-3 shadow-sm  bg-slate-200 w-full max-h-fit">
+        <h2 className="text-md font-bold mb-8">Bill Summary</h2>
         <div className="grid grid-cols-7 gap-4">
           <div className="flex flex-col gap-2">
             <Label>Discount Percentage (%)</Label>
@@ -102,14 +102,14 @@ const BillSummary = (props: summaryProps) => {
               placeholder="VAT Amount"
             />
           </div>
-          <span className="text-xl bg-slate-200 text-slate-900 p-5 rounded-md">
+          <span className="text-md text-slate-900 p-5 rounded-md">
             Total : LKR {totalWithVat.toFixed(2)}
           </span>
           <Button
             className="mt-4 mb-5"
             onClick={() => props.printAndSaveInvoice()}
           >
-            <Printer className={"mr-2"} /> Print Invoice
+          <Printer className={"mr-2"} /> Print Invoice
           </Button>
           <Button className="mt-4 mb-5 bg-red-400 ml-2 text-black">
             <Delete className={"mr-2"} /> Cancel
