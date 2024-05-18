@@ -21,6 +21,7 @@ const BillSummary = (props: summaryProps) => {
     setVatPercentage,
     vatAmount,
     setVatAmount,
+    getRequestData,
   } = useInvoiceStore();
 
   const subtotal = invoiceItemDTOList.reduce(
@@ -59,6 +60,12 @@ const BillSummary = (props: summaryProps) => {
     const amount = parseFloat(e.target.value);
     setVatAmount(amount);
     setVatPercentage((amount / discountedTotal) * 100);
+  };
+
+  const printAndSaveInvoice = () => {
+    const requestData = getRequestData();
+    console.log(requestData);
+    // Add any additional logic for printing or saving the invoice
   };
 
   return (
@@ -107,7 +114,7 @@ const BillSummary = (props: summaryProps) => {
           </span>
             <Button
                 className="mt-4 mb-5"
-                onClick={() => props.printAndSaveInvoice()}
+                onClick={() => printAndSaveInvoice()}
             >
               <Printer className={"mr-2"} /> Print Invoice
             </Button>
