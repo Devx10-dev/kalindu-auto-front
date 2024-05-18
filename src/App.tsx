@@ -3,7 +3,7 @@ import Home from "./components/Home";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ViewUser from "./pages/dashboard/user-management/ViewUser"
 import RegiserUser from "./pages/dashboard/user-management/RegisterUser"
-import Keycloak from "./components/auth/Keycloak";
+// import Keycloak from "./components/auth/Keycloak";
 import Error500 from "./pages/error/500";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import SpareParts from "./pages/sparePart/SpareParts";
@@ -23,7 +23,8 @@ function App() {
 
       {/* secured routes  */}
       {/* <Route path="/" > */}
-      <Route path="/" element={<Keycloak/>}>
+      <Route path="/" >
+        {/*<Route path="/" element={<Keycloak/>}>*/}
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}

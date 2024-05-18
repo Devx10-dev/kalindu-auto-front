@@ -1,120 +1,147 @@
-import { Input } from "@/components/ui/input";
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { PlusCircle, XCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import useInvoiceStore from "../context/Store";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PlusCircle, XCircle } from "lucide-react";
+import useCashInvoiceStore from "../context/useCashInvoiceStore.tsx";
+
+
+const formSchema = z.object({
+  itemName: z.string(),
+  price: z.any(), // TODO : add number and make validation work
+  quantity: z.any(), // TODO : add number and make validation work
+  code: z.string().optional(),
+  description: z.string().optional(),
+  discount: z.any().optional(),
+});
 
 const AddItem: React.FC = () => {
-  const {
-    newItem,
-    newQuantity,
-    newPrice,
-    newDescription,
-    newDiscount,
-    newCode,
-    setNewItem,
-    setNewQuantity,
-    setNewPrice,
-    setNewDescription,
-    setNewDiscount,
-    setNewCode,
-    addItem,
-    clearNewItem,
-  } = useInvoiceStore();
+  const { addInvoiceItem } = useCashInvoiceStore();
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      itemName: "",
+      price: 1,
+      quantity: 1,
+      code: "",
+      description: "",
+      discount: 0,
+    },
+  });
 
-  const handleAddItem = () => {
-    if (newItem && newQuantity > 0 && newPrice >= 0) {
-      addItem({
-        name: newItem,
-        quantity: newQuantity,
-        price: newPrice,
-        description: newDescription,
-        discount: newDiscount,
-        code: newCode,
-        isOutsourced: false,
-      });
-      clearNewItem();
-    }
-  };
-
-  const handleClearItem = () => {
-    clearNewItem();
+  const onSubmit = (data: any) => {
+    addInvoiceItem(data);
+    form.reset()
   };
 
   return (
-    <Card>
-      <CardContent className="p-3 shadow-sm bg-slate-200">
-        <div className="grid  gap-4">
-          <div className="grid grid-cols-4 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label>Item Name</Label>
-              <Input
-                type="text"
-                value={newItem}
-                onChange={(e) => setNewItem(e.target.value)}
-                placeholder="Item name"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Price</Label>
-              <Input
-                type="number"
-                value={newPrice}
-                onChange={(e) => setNewPrice(parseFloat(e.target.value))}
-                placeholder="Price"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Quantity</Label>
-              <Input
-                type="number"
-                value={newQuantity}
-                onChange={(e) => setNewQuantity(parseInt(e.target.value))}
-                placeholder="Quantity"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Code</Label>
-              <Input
-                type="text"
-                value={newCode}
-                onChange={(e) => setNewCode(e.target.value)}
-                placeholder="Code"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label>Description</Label>
-              <Input
-                type="text"
-                value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
-                placeholder="Description"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Discount</Label>
-              <Input
-                type="number"
-                value={newDiscount}
-                onChange={(e) => setNewDiscount(parseFloat(e.target.value))}
-                placeholder="Discount"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-end gap-4 mt-4">
-          <Button className="" onClick={handleAddItem}>
-            <PlusCircle className="mr-2" /> Add Item
-          </Button>
-          <Button className="bg-slate-500" onClick={handleClearItem}>
-            <XCircle className="mr-2" /> Clear
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      <Card>
+        <CardContent className="p-3 shadow-sm bg-slate-300">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+              <div className="grid grid-cols-4 gap-4">
+                <FormField
+                    control={form.control}
+                    name="itemName"
+                    render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Item Name</FormLabel>
+                          <FormControl>
+                            <Input type="text" placeholder="Item name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Price</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Price" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="quantity"
+                    render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Quantity</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Quantity" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="code"
+                    render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Code</FormLabel>
+                          <FormControl>
+                            <Input type="text" placeholder="Code" {...field} />
+                          </FormControl>
+                        </FormItem>
+                    )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Input type="text" placeholder="Description" {...field} />
+                          </FormControl>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="discount"
+                    render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Discount" {...field} />
+                          </FormControl>
+                        </FormItem>
+                    )}
+                />
+              </div>
+              <div className="flex justify-end gap-4">
+                <Button type="submit" className="">
+                  <PlusCircle className="mr-2" /> Add Item
+                </Button>
+                <Button type="reset" className="bg-slate-500">
+                  <XCircle className="mr-2" /> Clear
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
   );
 };
 
