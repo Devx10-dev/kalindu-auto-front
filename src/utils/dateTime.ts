@@ -14,3 +14,16 @@ export const formatDateToISO = (inputDate: string | Date): string => {
   const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   return formattedDate;
 };
+
+export function convertArrayToISOFormat(doneAt: number[]): string {
+  // Destructure the array into individual components
+  const [year, month, day, hours, minutes, seconds, milliseconds] = doneAt;
+
+  // Create a new Date object
+  const date = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+
+  // Format the date to a readable string
+  // For example: "YYYY-MM-DD HH:MM:SS"
+  const formattedDate = date.toISOString().replace('T', ' ').split('.')[0];
+  return formattedDate;
+}
