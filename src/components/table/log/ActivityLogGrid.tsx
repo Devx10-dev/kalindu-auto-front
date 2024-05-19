@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { formatDateToISO } from "@/utils/dateTime";
+import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
 import { MOBILE_SCREEN_WIDTH } from "@/components/sidebar/Sidebar";
 
 // TODO: Add pagination to the grid
@@ -313,7 +313,9 @@ function ActivityLogGrid({
                     <TableCell>{activityLog.doneBy}</TableCell>
                     <TableCell>{toNormalCase(activityLog.feature)}</TableCell>
                     <TableCell>{toNormalCase(activityLog.dbaction)}</TableCell>
-                    <TableCell>{activityLog.doneAt}</TableCell>
+                    <TableCell>
+                      {convertArrayToISOFormat(activityLog.doneAt)}
+                    </TableCell>
                     <TableCell>{activityLog.description}</TableCell>
                   </TableRow>
                 ))}
