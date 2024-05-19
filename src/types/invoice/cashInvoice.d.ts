@@ -10,6 +10,7 @@ export type InvoiceItem = {
 };
 
 export type InvoiceState = {
+
     customerName?: string;
     vehicleNumber?: string;
     totalPrice?: number;
@@ -19,6 +20,10 @@ export type InvoiceState = {
     discountAmount?: number;
     vatPercentage?: number;
     vatAmount?: number;
+
+    commissionName?: string;
+    commissionAmount?: number;
+
 
     setCustomer: (name?: string) => void;
     setVehicleNumber: (number?: string) => void;
@@ -35,5 +40,9 @@ export type InvoiceState = {
     setDiscountAmount: (amount: number) => void;
     setVatPercentage: (percentage: number) => void;
     setVatAmount: (amount: number) => void;
+
+    setCommissionName: (name?: string) => void;
+    setCommissionAmount: (amount?: number) => void;
+
     getRequestData: () => any;
 };

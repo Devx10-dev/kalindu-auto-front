@@ -14,6 +14,10 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
         vatPercentage: 0,
         vatAmount: 0,
 
+        //commisions details
+        commissionName: undefined,
+        commissionAmount: undefined,
+
         invoiceItemDTOList: [],
 
         addInvoiceItem: (item: InvoiceItem) =>
@@ -84,8 +88,24 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
             set((state) => ({...state, discountAmount: amount})),
         setVatPercentage: (percentage: number) =>
             set((state) => ({...state, vatPercentage: percentage})),
+
         setVatAmount: (amount: number) =>
-            set((state) => ({...state, vatAmount: amount})),
+            set((state) => ({
+                ...state,
+                vatAmount: amount
+            })),
+
+        setCommissionName: (commissionName?: string) =>
+            set((state) => ({
+                ...state,
+                commissionName: commissionName,
+            })),
+
+        setCommissionAmount: (CommissionAmount?: number) =>
+            set((state) => ({
+                ...state,
+                commissionAmount: CommissionAmount,
+            })),
 
         getRequestData: () => {
             const state = get();

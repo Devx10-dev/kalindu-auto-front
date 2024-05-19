@@ -7,6 +7,7 @@ import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
 import useCashInvoiceStore from "./context/useCashInvoiceStore";
 import { useToast } from "@/components/ui/use-toast";
 import CustomerDetails from "@/pages/dashboard/invoice/cash/components/CustomerDetails.tsx";
+import Commissions from "@/pages/dashboard/invoice/cash/components/Commisions.tsx";
 
 const CreditorInvoiceBase: React.FC = () => {
   // const axiosPrivate = useAxiosPrivate();
@@ -44,6 +45,9 @@ const CreditorInvoiceBase: React.FC = () => {
               <OutsourcedItemDetails />
             </div>
         )}
+
+          <Commissions />
+
         <div className="fixed bottom-0 bg-slate-200 border">
           <BillSummary printAndSaveInvoice={printAndSaveInvoice} />
         </div>
