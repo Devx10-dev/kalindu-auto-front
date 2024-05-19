@@ -108,6 +108,17 @@ const NavLinks: NavLink[] = [
       },
     ],
   },
+
+  {
+    label: "Logs",
+    href: "/log",
+    sublinks: [
+      {
+        label: "Activity Logs",
+        href: "/dashboard/log/activity",
+      },
+    ],
+  },
   // Add more links as needed
 ];
 

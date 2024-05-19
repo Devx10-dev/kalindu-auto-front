@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import DoubleLeftIcon from "../icon/DoubleLeftIcon";
 import { Drawer, DrawerContent } from "../ui/drawer";
 import { SidebarItem } from "./SidebarItem";
 import NavLinks from "./navlinks";
-import DoubleLeftIcon from "../icon/DoubleLeftIcon";
 
 export const MOBILE_SCREEN_WIDTH = 1000;
 
@@ -53,7 +53,7 @@ function Sidebar({
       {/* Drawer for smaller screens */}
       {isMobileView && (
         <div className="sidebar-drawer">
-          <Drawer open={showDrawer} direction="left" >
+          <Drawer open={showDrawer} direction="left">
             <DrawerContent
               style={{
                 // overflowY: "scroll",

@@ -14,6 +14,13 @@ class Service {
   constructor(api: AxiosInstance) {
     this.api = api;
   }
+
+  public sanitizeParam(param: string | undefined | null): string | null {
+    if (param === null || param === undefined) {
+      return null;
+    }
+    return encodeURIComponent(param.trim());
+  }
 }
 
 export { Service };
