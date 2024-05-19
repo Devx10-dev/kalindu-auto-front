@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import { toast } from "../../ui/use-toast";
+import { useLocation } from "react-router-dom";
 
 export default function SparePartGrid({
   setShow,
@@ -38,6 +39,7 @@ export default function SparePartGrid({
   sparePartService,
   setSparePart,
 }: SparePartGridProps) {
+const {state} = useLocation()
   const [pageNo, setPageNo] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
@@ -64,7 +66,13 @@ export default function SparePartGrid({
         pageSize,
         selectedChassisNo
       ),
+    retry: 2,
   });
+
+  useEffect(() => {
+    if (state && state.data)
+      setSelectedChassisNo(state.data)
+  }, [state])
 
   const [viewSpareParts, setViewSpareParts] = useState<SparePartItem[]>(
     spareParts?.spareParts ?? []

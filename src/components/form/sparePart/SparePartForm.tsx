@@ -50,6 +50,7 @@ export default function SparePartForm({
   const { data: chassisNos } = useQuery({
     queryKey: ["chassisNos"],
     queryFn: () => vehicleService.fetchVehicleChassisNos(),
+    retry: 2,
   });
 
   const form = useForm<SparePartValues>({

@@ -47,16 +47,19 @@ export default function VehicleForm({
   const { data: vehicleTypes } = useQuery({
     queryKey: ["vehicleTypes"],
     queryFn: () => service.fetchVehicleTypes(),
+    retry: 2,
   });
 
   const { data: vehicleBrands } = useQuery({
     queryKey: ["vehicleBrands"],
     queryFn: () => service.fetchVehicleBrands(),
+    retry: 2,
   });
 
   const { data: chassisNos } = useQuery({
     queryKey: ["chassisNos"],
     queryFn: () => service.fetchVehicleChassisNos(),
+    retry: 2
   });
 
   const form = useForm<vehicleModelValues>({

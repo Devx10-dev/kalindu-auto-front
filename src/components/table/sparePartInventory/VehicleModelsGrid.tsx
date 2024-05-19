@@ -35,12 +35,17 @@ import {
   TableRow,
 } from "../../ui/table";
 import { toast } from "../../ui/use-toast";
+import { useNavigate } from "react-router-dom";
+
+const SPARE_PART_PAGE = "/dashboard/vehicle/part";
 
 export default function VehicleModelsGrid({
   setShow,
   vehicleService,
   setVehicle,
 }: VehicleModelGridProps) {
+  const navigate = useNavigate();
+
   const [pageNo, setPageNo] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -72,16 +77,19 @@ export default function VehicleModelsGrid({
   const { data: vehicleTypes } = useQuery<VehicleType[]>({
     queryKey: ["vehicleTypes"],
     queryFn: () => vehicleService.fetchVehicleTypes(),
+    retry: 2,
   });
 
   const { data: vehicleBrands } = useQuery<VehicleBrand[]>({
     queryKey: ["vehicleBrands"],
     queryFn: () => vehicleService.fetchVehicleBrands(),
+    retry: 2,
   });
 
   const { data: vehicleChassisNos } = useQuery<ChassisNo[]>({
     queryKey: ["vehicleChassisNos"],
     queryFn: () => vehicleService.fetchVehicleChassisNos(),
+    retry: 2,
   });
 
   const {
@@ -99,6 +107,7 @@ export default function VehicleModelsGrid({
         selectedBrand,
         selectedChassisNo
       ),
+    retry: 2,
   });
 
   const [viewVehicleModels, setViewVehicleModels] = useState<VehicleModel[]>(
@@ -157,6 +166,10 @@ export default function VehicleModelsGrid({
   const handleEditClick = (vehicle: VehicleModel) => {
     setVehicle(vehicle);
     setShow(true);
+  };
+
+  const handleViewClick = (chassiNo: string) => {
+    navigate(SPARE_PART_PAGE, { state: { data: chassiNo } });
   };
 
   return (
@@ -289,7 +302,9 @@ export default function VehicleModelsGrid({
                         />
                         <IconButton
                           icon={<SparePartIcon height="20" width="20" />}
-                          handleOnClick={() => console.log("hello")}
+                          handleOnClick={() =>
+                            handleViewClick(vehicle.chassisNo)
+                          }
                           tooltipMsg="View Spare parts"
                         />
                       </div>
