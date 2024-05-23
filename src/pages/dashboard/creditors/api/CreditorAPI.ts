@@ -14,7 +14,7 @@ class CreditorAPI {
 
   async fetchCreditors(pageNo: number = 0, pageSize: number = 10): Promise<CreditorResponseData> {
     if(pageNo >= 1) pageNo = pageNo - 1;
-    let pagedURL = `${CreditorEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
+    const pagedURL = `${CreditorEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
     const response = await this.api.get<CreditorResponseData>(pagedURL);
     return response.data;
 }
@@ -23,6 +23,8 @@ class CreditorAPI {
     const response = await this.api.post(CreditorEndpoints.CREATE_CREDITOR_URL, creditor);
     return response.data;
   }
+
+  async getCreditorTransactions()
 }
 
 export default CreditorAPI;
