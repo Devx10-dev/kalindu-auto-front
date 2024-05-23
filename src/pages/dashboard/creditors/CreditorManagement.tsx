@@ -1,20 +1,20 @@
-import { useState } from "react";
-import CreditorsTable from "./components/CreditorsTable";
-import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import CreditorService from "./api/CreditorAPI";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
 import Loading from "@/components/Loading";
 import TablePagination from "@/components/TablePagination";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import CreditorAPI from "./api/CreditorAPI";
+import CreditorsTable from "./components/CreditorsTable";
 
 export default function CreditorManagement() {
     const axiosPrivate = useAxiosPrivate();
-    const creditorService = new CreditorService(axiosPrivate);
+    const creditorAPI = new CreditorAPI(axiosPrivate);
     const queryClient = useQueryClient();
     const [pageNo, setPageNo] = useState(0);
 
     const { isLoading, data } = useQuery({
         queryKey: ['creditors', pageNo],
-        queryFn: () => creditorService.fetchCreditors(pageNo),
+        queryFn: () => creditorAPI.fetchCreditors(pageNo),
     });
 
     const onPageChange = (pageNo: number) => {
