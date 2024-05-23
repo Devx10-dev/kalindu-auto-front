@@ -7,7 +7,7 @@ export type Creditor = {
   secondaryContact?: string;
   address?: string;
   maxDuePeriod?: string;
-  creditLimit?: number;
+  creditLimit?: string;
   status?: string;
 };
 
