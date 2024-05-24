@@ -27,7 +27,7 @@ const NavLinks: NavLink[] = [
       },
       {
         label: "Create Dummy Invoice",
-        href: "/dashboard/invoices/create/dummy-invoice",
+        href: "/dashboard/invoice/dummy",
         // icon: <MdOutlineInsertPageBreak />,
       },
       {

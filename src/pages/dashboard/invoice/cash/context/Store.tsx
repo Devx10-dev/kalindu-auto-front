@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface InvoiceItem {
+export interface InvoiceItem {
   name: string;
   quantity: number;
   price: number;
@@ -9,7 +9,7 @@ interface InvoiceItem {
   code: string;
 }
 
-interface InvoiceState {
+export interface InvoiceState {
   items: InvoiceItem[];
   outsourcedItemIndices: number[];
   newItem: string;
