@@ -31,18 +31,17 @@ export function SidebarItem(props: { link: NavLink }) {
       </div>
       <CollapsibleContent className="space-y-2">
         {props.link.sublinks && (
-          <ul className="ml-2 ">
+          <ul className="ml-2">
             {props.link.sublinks.map((sublink) => (
               <li key={sublink.label}>
                 <Link to={sublink.href}>
                   <p
-                    className={`rounded-md px-4 py-3 mt-2 text-md ${
+                    className={`rounded-md px-4 py-3 text-md ${
                       location.pathname.includes(sublink.href)
                         ? " bg-slate-300 p-1"
                         : "hover:bg-slate-200 p-1"
                     } rounded-md flex items-center gap-1`}
                   >
-                    {/* {sublink.icon} */}
                     {sublink.label}
                   </p>
                 </Link>

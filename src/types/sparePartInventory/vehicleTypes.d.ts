@@ -10,8 +10,14 @@ export type VehicleBrand = {
   brand: string;
 };
 
+export type ChassisNo = {
+  id: number;
+  chassisNo: string;
+};
+
 export type VehicleModel = {
   id?: number;
+  chassisNo: string;
   model: string;
   vehicleBrand: string;
   vehicleType: string;
@@ -22,5 +28,11 @@ export type VehicleModelResponseData = {
   currentPage: number;
   totalItems: number;
   totalPages: number;
-  vehicleModels: VehicleModelFormData[];
+  vehicleModels: VehicleModel[];
 };
+
+export interface VehicleModelGridProps {
+  vehicleService: VehicleService;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setVehicle: React.Dispatch<React.SetStateAction<VehicleModelType | null>>
+}

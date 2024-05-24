@@ -6,13 +6,13 @@ import RegiserUser from "./pages/dashboard/user-management/RegisterUser";
 import Keycloak from "./components/auth/Keycloak";
 import Error500 from "./pages/error/500";
 import VehicleModel from "./pages/sparePart/VehicleModel";
-import SpareParts from "./pages/sparePart/SpareParts";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
 import CreditorInvoice from "./pages/dashboard/invoice/creditor/CreditorInvoice";
 import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import SpareParts from "./pages/sparePart/SpareParts";
 
 function App() {
   return (
@@ -21,7 +21,6 @@ function App() {
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
-      {/* <Route path="/" > */}
       <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>

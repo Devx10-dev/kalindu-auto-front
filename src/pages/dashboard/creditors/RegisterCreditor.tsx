@@ -1,13 +1,13 @@
-import { Separator } from "@/components/ui/separator";
-import { RegisterForm } from "./components/RegisterForm";
 import Loading from "@/components/Loading";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import CreditorService from "./service/CreditorService";
-import { creditorFormSchema } from "./components/formScheme";
-import { z } from "zod";
-import { useToast } from "@/components/ui/use-toast";
+import { Separator } from "@/components/ui/separator";
 import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
+import { RegisterForm } from "./components/RegisterForm";
+import { creditorFormSchema } from "./components/formScheme";
+import CreditorService from "./service/CreditorService";
 
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 

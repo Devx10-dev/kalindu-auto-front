@@ -13,12 +13,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { SparePartService } from "@/service/sparePartInventory/sparePartService";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
-import { VehicleModel as VehicleModalDataType } from "@/types/sparePartInventory/vehicleTypes";
+import { SparePartItem } from "@/types/sparePartInventory/sparePartTypes";
 import {
-  VehicleModel,
-  vehicleModelSchema,
-} from "@/validation/schema/SparePart/vehicleModelSchema";
+  SparePart,
+  spaerPartSchema,
+} from "@/validation/schema/SparePart/sparePartSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,98 +28,59 @@ import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import { z } from "zod";
 
-type vehicleModelValues = z.infer<typeof vehicleModelSchema>;
+type SparePartValues = z.infer<typeof spaerPartSchema>;
 
-const defaultValues: Partial<vehicleModelValues> = {};
+const defaultValues: Partial<SparePartValues> = {};
 
-export default function VehicleForm({
-  service,
+export default function SparePartForm({
+  vehicleService,
+  sparePartservice,
   onClose,
-  vehicleModel,
-  setVehicle,
+  sparePart,
+  setSparePart,
 }: {
-  service: VehicleService;
+  vehicleService: VehicleService;
+  sparePartservice: SparePartService;
   onClose: () => void;
-  vehicleModel: VehicleModalDataType | null;
-  setVehicle: React.Dispatch<React.SetStateAction<VehicleModalDataType | null>>;
+  sparePart: SparePartItem | null;
+  setSparePart: React.Dispatch<React.SetStateAction<SparePartItem | null>>;
 }) {
   const queryClient = useQueryClient();
 
-  const { data: vehicleTypes } = useQuery({
-    queryKey: ["vehicleTypes"],
-    queryFn: () => service.fetchVehicleTypes(),
-    retry: 2,
-  });
-
-  const { data: vehicleBrands } = useQuery({
-    queryKey: ["vehicleBrands"],
-    queryFn: () => service.fetchVehicleBrands(),
-    retry: 2,
-  });
-
   const { data: chassisNos } = useQuery({
     queryKey: ["chassisNos"],
-    queryFn: () => service.fetchVehicleChassisNos(),
-    retry: 2
+    queryFn: () => vehicleService.fetchVehicleChassisNos(),
+    retry: 2,
   });
 
-  const form = useForm<vehicleModelValues>({
-    resolver: zodResolver(vehicleModelSchema),
+  const form = useForm<SparePartValues>({
+    resolver: zodResolver(spaerPartSchema),
     defaultValues,
   });
 
   const resetForm = () => {
-    form.setValue("id", vehicleModel ? vehicleModel.id : undefined);
-    form.setValue(
-      "brand",
-      vehicleModel
-        ? {
-            value: vehicleModel.vehicleBrand,
-            label: vehicleModel.vehicleBrand,
-            __isNew__: false,
-          }
-        : { label: "", value: "", __isNew__: false }
-    );
-    form.setValue(
-      "type",
-      vehicleModel
-        ? {
-            value: vehicleModel.vehicleType,
-            label: vehicleModel.vehicleType,
-            __isNew__: false,
-          }
-        : { label: "", value: "", __isNew__: false }
-    );
+    form.setValue("id", sparePart ? sparePart.id : undefined);
     form.setValue(
       "chassisNo",
-      vehicleModel
+      sparePart
         ? {
-            value: vehicleModel.chassisNo,
-            label: vehicleModel.chassisNo,
+            value: sparePart.chassisNo,
+            label: sparePart.chassisNo,
             __isNew__: false,
           }
         : { label: "", value: "", __isNew__: false }
     );
-    form.setValue("model", vehicleModel ? vehicleModel.model : "");
+    form.setValue("partName", sparePart ? sparePart.partName : "");
+    form.setValue(
+      "quantity",
+      sparePart ? sparePart?.quantity?.toString() ?? "0" : "0"
+    );
+    form.setValue("code", sparePart ? sparePart?.code ?? "" : "");
     form.setValue(
       "description",
-      vehicleModel ? vehicleModel.description || "" : undefined
+      sparePart ? sparePart.description || "" : undefined
     );
   };
-
-  const typeOptions =
-    vehicleTypes?.map((type) => ({
-      value: type,
-      label: type.type,
-      __isNew__: false,
-    })) || [];
-
-  const brandOptions =
-    vehicleBrands?.map((brand) => ({
-      value: brand,
-      label: brand.brand,
-      __isNew__: false,
-    })) || [];
 
   const chassisNoOptions =
     chassisNos?.map((chassisNo) => ({
@@ -127,50 +89,50 @@ export default function VehicleForm({
       __isNew__: false,
     })) || [];
 
-  const createVehicleMutation = useMutation({
-    mutationFn: (formData: VehicleModel) =>
-      service.createVehicleModel(formData),
+  const createSparePartMutation = useMutation({
+    mutationFn: (formData: SparePart) =>
+      sparePartservice.createSparePart(formData),
     onSuccess: () => {
       // Handle onSuccess logic here
-      queryClient.invalidateQueries({ queryKey: ["vehicleModels"] });
+      queryClient.invalidateQueries({ queryKey: ["spareParts"] });
       toast({
         variant: "default",
         title: "Success",
-        description: "Successfully inserted vehicle.",
+        description: "Successfully inserted spare part.",
         action: (
-          <ToastAction altText="View Vehicles">View Vehicles</ToastAction>
+          <ToastAction altText="View Spare parts">View Spare Parts</ToastAction>
         ),
       });
     },
     onError: (data) => {
       toast({
         variant: "destructive",
-        title: "Vehicle model creation is failed",
+        title: "Spare Part creation is failed",
         description: data.message,
         duration: 5000,
       });
     },
   });
 
-  const updateVehicleMutation = useMutation({
-    mutationFn: (formData: VehicleModel) =>
-      service.updateVehicleModel(formData),
+  const updateSparePartMutation = useMutation({
+    mutationFn: (formData: SparePart) =>
+      sparePartservice.updateSparePart(formData),
     onSuccess: () => {
       // Handle onSuccess logic here
-      queryClient.invalidateQueries({ queryKey: ["vehicleModels"] });
+      queryClient.invalidateQueries({ queryKey: ["spareParts"] });
       toast({
         variant: "default",
         title: "Success",
-        description: "Successfully updated vehicle.",
+        description: "Successfully updated spare part.",
         action: (
-          <ToastAction altText="View Vehicles">View Vehicles</ToastAction>
+          <ToastAction altText="View Spare Parts">View Spare Parts</ToastAction>
         ),
       });
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Vehicle model update failed",
+        title: "Spare part update failed",
         description: error.message,
         duration: 5000,
       });
@@ -180,18 +142,18 @@ export default function VehicleForm({
   const handleCancel = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    setVehicle(null);
+    setSparePart(null);
     onClose(); // Close the form
   };
 
   const handleSubmit = async () => {
     try {
       if (form.getValues()) {
-        if (vehicleModel === null) {
-          await createVehicleMutation.mutateAsync(form.getValues());
+        if (sparePart === null) {
+          await createSparePartMutation.mutateAsync(form.getValues());
           onClose();
         } else {
-          await updateVehicleMutation.mutateAsync(form.getValues());
+          await updateSparePartMutation.mutateAsync(form.getValues());
           onClose();
         }
       }
@@ -201,29 +163,19 @@ export default function VehicleForm({
   };
 
   useEffect(() => {
-    if (vehicleModel) {
-      form.setValue("id", vehicleModel.id);
-      form.setValue("brand", {
-        value: vehicleModel.vehicleBrand,
-        label: vehicleModel.vehicleBrand,
-        __isNew__: false,
-      });
-      form.setValue("type", {
-        value: vehicleModel.vehicleType,
-        label: vehicleModel.vehicleType,
-        __isNew__: false,
-      });
+    if (sparePart) {
+      form.setValue("id", sparePart.id);
       form.setValue("chassisNo", {
-        value: vehicleModel.chassisNo,
-        label: vehicleModel.chassisNo,
+        value: sparePart.chassisNo,
+        label: sparePart.chassisNo,
         __isNew__: false,
       });
-      form.setValue("model", vehicleModel.model);
-      form.setValue("description", vehicleModel.description ?? "");
+      form.setValue("partName", sparePart.partName);
+      form.setValue("code", sparePart.code ?? "");
+      form.setValue("quantity", sparePart.quantity?.toString() ?? "0");
+      form.setValue("description", sparePart.description ?? "");
     }
-  }, [vehicleModel, form]);
-
-  console.log(form.getValues());
+  }, [sparePart, form]);
 
   return (
     <Form {...form}>
@@ -231,59 +183,56 @@ export default function VehicleForm({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <FormField
             control={form.control}
-            name="type"
+            name="partName"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <RequiredLabel label="Vehicle Type" />
-                <FormControl>
-                  <CreatableSelect
-                    className="select-place-holder"
-                    placeholder={"Select or add new vehicle type"}
-                    {...field}
-                    isClearable
-                    options={typeOptions}
-                    value={field.value}
-                  />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="brand"
-            render={({ field }) => (
-              <FormItem className="w-full col-span-1 row-span-1">
-                <RequiredLabel label="Vehicle Brand" />
-                <FormControl>
-                  <CreatableSelect
-                    className="select-place-holder"
-                    placeholder={"Select or add new vehicle brand"}
-                    {...field}
-                    isClearable
-                    options={brandOptions}
-                    value={field.value}
-                  />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="model"
-            render={({ field }) => (
-              <FormItem className="w-full col-span-1 row-span-1">
-                <RequiredLabel label="Vehicle Model" />
+                <RequiredLabel label="Spare Part" />
                 <FormControl>
                   <Input
                     {...field}
                     className="w-full"
-                    placeholder="Please enter vehicle model"
+                    placeholder="Please enter spare part"
                     value={field.value || ""}
-                    disabled={vehicleModel !== null}
+                    disabled={sparePart !== null}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem className="w-full col-span-1 row-span-1">
+                <RequiredLabel label="Spare Part Code" />
+                <FormControl>
+                  <Input
+                    {...field}
+                    className="w-full"
+                    placeholder="Please enter spare part code"
+                    value={field.value || ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="quantity"
+            render={({ field }) => (
+              <FormItem className="w-full col-span-1 row-span-1">
+                <RequiredLabel label="Quantity" />
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={0}
+                    defaultValue={0}
+                    {...field}
+                    className="w-full"
+                    placeholder="Please enter quantity"
+                    value={field.value || 0}
                   />
                 </FormControl>
                 <FormMessage />
