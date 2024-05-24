@@ -15,10 +15,15 @@ steps:
 - task: Npm@1
   inputs:
     command: 'install'
+
 - task: Npm@1
   inputs:
     command: 'custom'
     customCommand: 'run build'
     customRegistry: 'useFeed'
-    customFeed: 'd7df4472-1c9c-4de7-9189-ae3759ae8573'
-
+    customFeed: '51ca76c0-56bb-4bdc-ba4d-b89aba67a091/7e118a4c-a812-4d96-a659-7955a6ae8da5'
+- task: Npm@1
+  inputs:
+    command: 'publish'
+    publishRegistry: 'useFeed'
+    publishFeed: '51ca76c0-56bb-4bdc-ba4d-b89aba67a091/7e118a4c-a812-4d96-a659-7955a6ae8da5'
