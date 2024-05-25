@@ -1,42 +1,132 @@
 import IconButton from "@/components/button/IconButton";
 import CancelIcon from "@/components/icon/CancelIcon";
-import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableRow,
 } from "@/components/ui/table";
+import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
+import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 
-function DummyInvoiceItemsGrid() {
+function DummyInvoiceItemsGrid({
+  items,
+  setItems,
+  outsourcedItems,
+  setOutsourcedItems,
+}: {
+  items: DummyInvoiceItem[];
+  outsourcedItems: OutsourcedItem[];
+  setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
+  setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
+}) {
+  const onChangeCheckHandle = (item: DummyInvoiceItem) => {
+    if (item.outsourced) {
+      setOutsourcedItems(
+        outsourcedItems.filter(
+          (outsourcedItem) => outsourcedItem.index !== item.id
+        )
+      );
+      setItems(
+        items.map((dummyItem) =>
+          dummyItem.id === item.id
+            ? { ...dummyItem, outsourced: false }
+            : dummyItem
+        )
+      );
+    } else {
+      setItems(
+        items.map((dummyItem) =>
+          dummyItem.id === item.id
+            ? { ...dummyItem, outsourced: true }
+            : dummyItem
+        )
+      );
+      setOutsourcedItems([
+        {
+          index: item.id,
+          buyingPrice: undefined,
+          companyName: undefined,
+          itemCode: item.code,
+          itemName: item.name,
+          quantity: item.quantity,
+        },
+        ...outsourcedItems,
+      ]);
+    }
+  };
+
+  const removeItem = (item: DummyInvoiceItem) => {
+    if (item.outsourced) {
+      setOutsourcedItems(
+        outsourcedItems.filter(
+          (outsourcedItem) => outsourcedItem.index !== item.id
+        )
+      );
+    }
+    setItems(items.filter((dummyItem) => dummyItem.id !== item.id));
+  };
+
   return (
     <Table className="border rounded-md text-md mb-5 table-responsive">
+      <TableCaption>Dummy Invoice items</TableCaption>
       <TableBody>
-        <TableRow>
-          <TableHead>Item</TableHead>
-          <TableHead align="right">Quantity</TableHead>
-          <TableHead align="right">Price</TableHead>
-          <TableHead align="right">Dummy Price</TableHead>
-          <TableHead align="right">Discount</TableHead>
-          <TableHead align="right">Total</TableHead>
-          <TableHead>Outsource</TableHead>
-          <TableHead>Action</TableHead>
+        <TableRow style={{ height: "36px" }}>
+          <TableHead style={{ height: "36px" }}>Item</TableHead>
+          <TableHead style={{ height: "36px" }} align="right">
+            Quantity
+          </TableHead>
+          <TableHead style={{ height: "36px" }} align="right">
+            Price
+          </TableHead>
+          <TableHead style={{ height: "36px" }} align="right">
+            Dummy Price
+          </TableHead>
+          <TableHead style={{ height: "36px" }} align="right">
+            Discount
+          </TableHead>
+          <TableHead style={{ height: "36px" }} align="right">
+            Total
+          </TableHead>
+          <TableHead style={{ height: "36px" }}>Outsource</TableHead>
+          <TableHead style={{ height: "36px" }}>Action</TableHead>
         </TableRow>
-        {[1, 2].map((item, index) => (
+        {items.map((item, index) => (
           <TableRow key={index}>
-            <TableCell>{"Front Buffer"}</TableCell>
-            <TableCell align="right">{2}</TableCell>
-            <TableCell align="right">2000.00</TableCell>
-            <TableCell align="right">250.00</TableCell>
-            <TableCell align="right">3500.00</TableCell>
-            <TableCell align="right">4500.00</TableCell>
-            <TableCell align="center">
-              <Switch checked />
+            <TableCell className="p-0">{item.name}</TableCell>
+            <TableCell className="p-0" align="right">
+              {item.quantity}
             </TableCell>
-            <TableCell>
+            <TableCell className="p-0" align="right">
+              {item.price}
+            </TableCell>
+            <TableCell className="p-0" align="right">
+              {item.dummyPrice}
+            </TableCell>
+            <TableCell className="p-0" align="right">
+              {item.discount}
+            </TableCell>
+            <TableCell className="p-0" align="right">
+              {item.discount !== undefined
+                ? (item.price * item.quantity - item.discount).toFixed(2)
+                : (item.price * item.quantity).toFixed(2)}
+            </TableCell>
+            <TableCell className="p-0" align="center">
+              <Checkbox
+                defaultChecked={false}
+                checked={item.outsourced}
+                onCheckedChange={() => onChangeCheckHandle(item)}
+              />
+            </TableCell>
+            <TableCell
+              className="p-0"
+              style={{ height: "36px", padding: 0, margin: 0 }}
+            >
               <IconButton
-                handleOnClick={() => console.log("yee")}
+                handleOnClick={() => removeItem(item)}
                 icon={<CancelIcon height="25" width="25" />}
                 tooltipMsg="Remove Item"
                 variant="ghost"
