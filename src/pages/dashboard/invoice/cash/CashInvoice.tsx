@@ -1,63 +1,42 @@
 import InvoiceTable from "./components/InvoiceTable";
 import AddItem from "./components/AddItem";
-import CustomerDetails from "./components/CustomerDetails";
 import BillSummary from "./components/BillSummary";
-import useInvoiceStore from "./context/Store";
-import { useState } from "react";
 import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
+<<<<<<< HEAD
 import CommissionDetails from "./components/CommisionDetails";
+=======
+// import useAxiosPrivate from "@/hooks/usePrivateAxios";
+// import CreditorInvoiceAPI from "./api/cashInvoiceAPI";
+import useCashInvoiceStore from "./context/useCashInvoiceStore";
+import { useToast } from "@/components/ui/use-toast";
+import CustomerDetails from "@/pages/dashboard/invoice/cash/components/CustomerDetails.tsx";
+import Commissions from "@/pages/dashboard/invoice/cash/components/Commisions.tsx";
+
+const CreditorInvoiceBase: React.FC = () => {
+  // const axiosPrivate = useAxiosPrivate();
+  const {
+    getOutsourcedItems,
+    invoiceItemDTOList,
+  } = useCashInvoiceStore();
+  const hasOutsourcedItems = getOutsourcedItems().length > 0;
+  const { toast } = useToast();
+>>>>>>> 1cd666e3224907648aabf4b9a2bc449ca4a2fdc6
 
 
-interface OutsourcedItem {
-  index: number;
-  itemName: string;
-  itemCode: string;
-  quantity: number;
-  companyName: string;
-  buyingPrice: number;
-}
+  //TODO :: complete this function with the API
+  //TODO :: add printing logic here
+  function printAndSaveInvoice() {
+    if (invoiceItemDTOList.length == 0)
+      return toast({
+        title: "No items added to the invoice",
+        description: "",
+        variant: "destructive",
+      });
 
-const CashInvoice: React.FC = () => {
-  const { items } = useInvoiceStore();
-  const total = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
-  const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
-
-  const handleToggleOutsourced = (index: number) => {
-    const outsourcedItem = outsourcedItems.find((item) => item.index === index);
-    if (outsourcedItem) {
-      setOutsourcedItems(outsourcedItems.filter((item) => item.index !== index));
-    } else {
-      setOutsourcedItems([
-        ...outsourcedItems,
-        {
-          index,
-          itemName: items[index].name,
-          itemCode: items[index].code,
-          quantity: items[index].quantity,
-          companyName: '',
-          buyingPrice: 0,
-        },
-      ]);
-    }
-  };
-
-  const handleCompanyNameChange = (index: number, value: string) => {
-    setOutsourcedItems(
-      outsourcedItems.map((item) =>
-        item.index === index ? { ...item, companyName: value } : item
-      )
-    );
-  };
-
-  const handleBuyingPriceChange = (index: number, value: number) => {
-    setOutsourcedItems(
-      outsourcedItems.map((item) =>
-        item.index === index ? { ...item, buyingPrice: value } : item
-      )
-    );
-  };
+  }
 
   return (
+<<<<<<< HEAD
     <div className="mb-20">
       <CustomerDetails />
       <AddItem />
@@ -70,7 +49,29 @@ const CashInvoice: React.FC = () => {
       />
       <CommissionDetails />
     </div>
+=======
+      <div className="mb-20">
+        <h2 className="text-2xl font-bold mb-4">Create Cash Invoice</h2>
+
+        <CustomerDetails />
+        <AddItem />
+
+        <InvoiceTable />
+
+        {hasOutsourcedItems && (
+            <div className="pb-[350px]">
+              <OutsourcedItemDetails />
+            </div>
+        )}
+
+          <Commissions />
+
+        <div className="fixed bottom-0 bg-slate-200 border">
+          <BillSummary printAndSaveInvoice={printAndSaveInvoice} />
+        </div>
+      </div>
+>>>>>>> 1cd666e3224907648aabf4b9a2bc449ca4a2fdc6
   );
 };
 
-export default CashInvoice;
+export default CreditorInvoiceBase;
