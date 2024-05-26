@@ -20,6 +20,7 @@ export type InvoiceState = {
   setDiscountAmount: (amount: number) => void;
   setVatPercentage: (percentage: number) => void;
   setVatAmount: (amount: number) => void;
+  setTotalPrice: (amount: number) => void;
   getRequestData: () => any;
 };
 

@@ -70,6 +70,7 @@ const CreditorInvoiceBase: React.FC = () => {
           }}
           className="w-1/2"
           placeholder="Select Creditor"
+          
         />
         {noCreditorSelected && (
           <span className="text-md text-red-600">

@@ -79,6 +79,8 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({ ...state, vatPercentage: percentage })),
   setVatAmount: (amount: number) =>
     set((state) => ({ ...state, vatAmount: amount })),
+  setTotalPrice: (amount: number) =>
+    set((state) => ({ ...state, totalPrice: amount })),
 
   getRequestData: () => {
     const state = get();
