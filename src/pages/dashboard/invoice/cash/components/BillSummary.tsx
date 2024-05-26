@@ -5,12 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Delete, Printer } from "lucide-react";
 import useInvoiceStore from "../context/useCashInvoiceStore";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import {useToast} from "@/components/ui/use-toast.ts";
+import {CashInvoiceService} from "@/service/invoice/cashInvoiceApi.ts";
 
-type summaryProps = {
-  printAndSaveInvoice: () => void;
-};
 
-const BillSummary = (props: summaryProps) => {
+
+const BillSummary = () => {
   const {
     invoiceItemDTOList,
     discountPercentage,
@@ -24,6 +25,9 @@ const BillSummary = (props: summaryProps) => {
     getRequestData,
   } = useInvoiceStore();
 
+  const axiosPrivate = useAxiosPrivate();
+  const cashInvoiceService = new CashInvoiceService(axiosPrivate);
+
   const subtotal = invoiceItemDTOList.reduce(
       (acc: any, item: any) => acc + item.quantity * item.price - item.quantity * item.discount,
       0
@@ -35,7 +39,7 @@ const BillSummary = (props: summaryProps) => {
   const handleDiscountPercentageChange = (
       e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const percentage = parseFloat(e.target.value);
+    const percentage = Math.max(parseFloat(e.target.value), 0);
     setDiscountPercentage(percentage);
     setDiscountAmount((subtotal * percentage) / 100);
   };
@@ -43,7 +47,7 @@ const BillSummary = (props: summaryProps) => {
   const handleDiscountAmountChange = (
       e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const amount = parseFloat(e.target.value);
+    const amount = Math.max(parseFloat(e.target.value), 0);
     setDiscountAmount(amount);
     setDiscountPercentage((amount / subtotal) * 100);
   };
@@ -51,22 +55,37 @@ const BillSummary = (props: summaryProps) => {
   const handleVatPercentageChange = (
       e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const percentage = parseFloat(e.target.value);
+    const percentage = Math.max(parseFloat(e.target.value), 0);
     setVatPercentage(percentage);
     setVatAmount((discountedTotal * percentage) / 100);
   };
 
   const handleVatAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const amount = parseFloat(e.target.value);
+    const amount = Math.max(parseFloat(e.target.value), 0);
     setVatAmount(amount);
     setVatPercentage((amount / discountedTotal) * 100);
   };
 
-  const printAndSaveInvoice = () => {
-    const requestData = getRequestData();
-    console.log(requestData);
-    // Add any additional logic for printing or saving the invoice
-  };
+  const {toast} = useToast();
+  async function printAndSaveInvoice() {
+    if (invoiceItemDTOList.length === 0) {
+      return toast({
+        title: "No items added to the invoice",
+        description: "",
+        variant: "destructive",
+      });
+    }
+
+    try {
+      const requestData = getRequestData();
+      const createdInvoice = await cashInvoiceService.createCashInvoice(requestData);
+      console.log("Cash invoice created:", createdInvoice);
+      // Handle success response, such as printing the invoice or displaying a success message
+    } catch (error) {
+      console.error("Error creating cash invoice:", error);
+      // Handle error
+    }
+  }
 
   return (
       <Card className="w-full">
