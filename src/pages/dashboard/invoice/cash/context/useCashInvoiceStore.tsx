@@ -14,7 +14,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
         vatPercentage: 0,
         vatAmount: 0,
 
-        //commisions details
+        //commissions details
         commissionName: undefined,
         commissionAmount: undefined,
 
