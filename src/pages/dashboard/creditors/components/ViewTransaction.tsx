@@ -16,7 +16,7 @@ export function ViewTransaction() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-      <Button variant={"outline"}>View Transaction Details</Button>
+      <Button variant={"outline"}>View Invoice</Button>
       </SheetTrigger>
       <SheetContent side={'right'}>
         <SheetHeader>

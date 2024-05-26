@@ -21,6 +21,8 @@ const BillSummary = (props: summaryProps) => {
     setVatPercentage,
     vatAmount,
     setVatAmount,
+    setTotalPrice,
+    
   } = useInvoiceStore();
 
   const subtotal = invoiceItemDTOList.reduce(
@@ -30,6 +32,7 @@ const BillSummary = (props: summaryProps) => {
 
   const discountedTotal = subtotal - (discountAmount || 0);
   const totalWithVat = discountedTotal + (vatAmount || 0);
+  setTotalPrice(totalWithVat)
 
   const handleDiscountPercentageChange = (
     e: React.ChangeEvent<HTMLInputElement>
