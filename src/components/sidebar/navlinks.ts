@@ -59,7 +59,7 @@ const NavLinks: NavLink[] = [
     sublinks: [
       {
         label: "Daily Sales and Expenses",
-        href: "/dashboard/reports/daily-sales-expenses",
+        href: "/dashboard/reports/daily-sales",
         // icon: <FaBalanceScale />,
       },
       {
