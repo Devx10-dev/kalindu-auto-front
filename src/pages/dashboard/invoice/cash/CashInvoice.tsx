@@ -26,16 +26,13 @@ const CashInvoiceBase: React.FC = () => {
 
             <CustomerDetails/>
             <AddItem/>
-
             <InvoiceTable/>
-
+            <Commissions/>
             {hasOutsourcedItems && (
                 <div className="pb-[350px]">
                     <OutsourcedItemDetails/>
                 </div>
             )}
-
-            <Commissions/>
 
             <div className="fixed bottom-0 bg-slate-200 border">
                 <BillSummary />

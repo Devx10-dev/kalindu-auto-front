@@ -6,17 +6,18 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
         invoiceID: undefined,
         customerName: undefined,
         vehicleNumber: undefined,
-        totalPrice: undefined,
 
         // final bill summary items
         discountPercentage: 0,
         discountAmount: 0,
         vatPercentage: 0,
         vatAmount: 0,
+        totalPrice: undefined,
 
         //commissions details
         commissionName: undefined,
         commissionAmount: undefined,
+        commissionRemark: undefined,
 
         invoiceItemDTOList: [],
 
@@ -82,17 +83,22 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
                 (item) => item.outsourcedStatus === true
             );
         },
+
         setDiscountPercentage: (percentage: number) =>
             set((state) => ({...state, discountPercentage: percentage})),
         setDiscountAmount: (amount: number) =>
             set((state) => ({...state, discountAmount: amount})),
         setVatPercentage: (percentage: number) =>
             set((state) => ({...state, vatPercentage: percentage})),
-
         setVatAmount: (amount: number) =>
             set((state) => ({
                 ...state,
                 vatAmount: amount
+            })),
+        setTotalPrice: (price: number) =>
+            set((state) => ({
+                ...state,
+                totalPrice: price,
             })),
 
         setCommissionName: (commissionName?: string) =>
@@ -107,17 +113,29 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
                 commissionAmount: CommissionAmount,
             })),
 
+        setCommissionRemark: (commissionRemark?: string) =>
+            set((state) => ({
+                ...state,
+                commissionRemark: commissionRemark,
+            })),
+
         getRequestData: () => {
             const state = get();
 
             return {
-                invoiceID: "RANDOM ID", //TODO RANDOM ID GENERATIONS
-                customerName: state.customerName,
-                vehicleNumber: state.vehicleNumber,
-                totalPrice: state.totalPrice,
-                discount: state.discountAmount,
                 vat: state.vatAmount,
-                invoiceItemsDTOList: state.invoiceItemDTOList,
+                discount: state.discountAmount,
+                invoiceId: "RANDOM ID", //TODO RANDOM ID GENERATIONS
+                customerName: state.customerName,
+                vehicleNo: state.vehicleNumber,
+                totalPrice: state.totalPrice,
+                totalDiscount: state.discountAmount,   //TODO :: what is this
+                invoiceItems: state.invoiceItemDTOList,
+                commission: {
+                    name: state.commissionName,
+                    amount: state.commissionAmount,
+                    remark: state.commissionRemark
+                }
 
             }
         }

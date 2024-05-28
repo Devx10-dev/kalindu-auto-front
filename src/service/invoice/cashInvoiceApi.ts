@@ -2,7 +2,7 @@ import { AxiosInstance } from "axios";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
 import { Service } from "../apiService";
 
-const CASH_INVOICE_URL = "invoice/cash";
+const CASH_INVOICE_URL = "invoice";
 
 class CashInvoiceService extends Service {
     constructor(api: AxiosInstance) {

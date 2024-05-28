@@ -5,7 +5,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import useCashInvoiceStore from "../context/useCashInvoiceStore.tsx";
 
 const Commissions: React.FC = () => {
-    const { setCommissionName , setCommissionAmount, commissionName , commissionAmount} = useCashInvoiceStore();
+    const {
+        setCommissionName ,
+        setCommissionAmount,
+        setCommissionRemark,
+        commissionName ,
+        commissionAmount,
+        commissionRemark
+    } = useCashInvoiceStore();
 
     return (
         <Card className='mb-3'>
@@ -23,12 +30,22 @@ const Commissions: React.FC = () => {
                             />
                         </div>
                         <div className="flex flex-col gap-2 flex-grow">
+                            <Label>Remark</Label>
+                            <Input
+                                type="text"
+                                //this should be number and cannot be negative
+                                value={commissionRemark}
+                                onChange={(e) => setCommissionRemark(e.target.value)}
+                                placeholder="Small remark about the commission"
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2 flex-grow">
                             <Label>Amount (LKR) </Label>
                             <Input
                                 type="number"
                                 //this should be number and cannot be negative
                                 value={commissionAmount}
-                                onChange={(e) => setCommissionAmount(parseInt(e.target.value))  }
+                                onChange={(e) => setCommissionAmount(parseInt(e.target.value))}
                                 placeholder="Enter the total commise amount"
                             />
                         </div>

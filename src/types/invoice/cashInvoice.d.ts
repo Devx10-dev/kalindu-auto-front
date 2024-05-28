@@ -2,8 +2,10 @@ export type InvoiceItem = {
     invoiceID?: string;
     itemName?: string;
     code?: string;
-    totalPrice?: string | number;
-    VAT?: string | number;
+    price?: number;
+    quantity?: number;
+    discount?: number;
+    description?: string;
     outsourcedStatus?: boolean;
     companyName?: string;
     buyingPrice?: number;
@@ -22,6 +24,7 @@ export type InvoiceState = {
     vatAmount?: number;
 
     commissionName?: string;
+    commissionRemark?:string;
     commissionAmount?: number;
 
 
@@ -40,8 +43,10 @@ export type InvoiceState = {
     setDiscountAmount: (amount: number) => void;
     setVatPercentage: (percentage: number) => void;
     setVatAmount: (amount: number) => void;
+    setTotalPrice: (price: number) => void;
 
     setCommissionName: (name?: string) => void;
+    setCommissionRemark: (remark?: string) => void;
     setCommissionAmount: (amount?: number) => void;
 
     getRequestData: () => any;
