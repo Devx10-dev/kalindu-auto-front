@@ -59,13 +59,23 @@ export default function DummyItemForm({
 
   const resetForm = () => {
     form.setValue("remark", undefined);
-    form.setValue("item", { label: undefined, value: undefined });
+    form.setValue("item", {
+      label: undefined,
+      value: {
+        id: 0,
+        chassisNo: "",
+        code: "",
+        description: "",
+        partName: "",
+        quantity: 0,
+      },
+    });
     form.reset();
   };
 
   const sparePartsOptions =
     spareParts?.map((sparePart) => ({
-      value: sparePart.id.toString(),
+      value: sparePart,
       label: sparePart.partName,
     })) || [];
 
@@ -77,7 +87,7 @@ export default function DummyItemForm({
   const handleSubmit = async (values: DummyItemValues) => {
     setItems([
       {
-        id: parseInt(values.item.value),
+        sparePartId: values.item.value.id,
         code: values.code,
         description: values.remark,
         discount: values.discount,
@@ -93,7 +103,7 @@ export default function DummyItemForm({
     if (values.outsourced !== undefined && values.outsourced) {
       setOutsourcedItems([
         {
-          index: parseInt(values.item.value),
+          index: values.item.value.id,
           buyingPrice: undefined,
           companyName: undefined,
           itemCode: values.code,
@@ -127,7 +137,7 @@ export default function DummyItemForm({
                       className="select-place-holder"
                       placeholder={"Search and Select Spare Part Item"}
                       options={sparePartsOptions}
-                      value={field.value || ""}
+                      value={field.value}
                       onChange={field.onChange}
                       onInputChange={handleInputChange}
                     />
@@ -169,11 +179,10 @@ export default function DummyItemForm({
                       min={0}
                       onChange={(e) =>
                         field.onChange(
-                          e.target.value === ""
-                            ? ""
-                            : parseFloat(e.target.value)
+                          e.target.value === "" ? "" : parseInt(e.target.value)
                         )
                       }
+                      max={form.getValues("item.value.quantity") ?? 1000}
                     />
                   </FormControl>
                   <FormMessage />
@@ -212,7 +221,7 @@ export default function DummyItemForm({
               name="dummyPrice"
               render={({ field }) => (
                 <FormItem className="w-full col-span-1 row-span-1">
-                  <RequiredLabel label="Dummy Price" />
+                  <OptionalLabel label="Dummy Price" />
                   <FormControl>
                     <Input
                       {...field}
@@ -239,7 +248,7 @@ export default function DummyItemForm({
               name="discount"
               render={({ field }) => (
                 <FormItem className="w-full col-span-1 row-span-1">
-                  <RequiredLabel label="Discount" />
+                  <OptionalLabel label="Discount" />
                   <FormControl>
                     <Input
                       {...field}
@@ -305,7 +314,9 @@ export default function DummyItemForm({
             </Button>
             <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
             <div>
-              <Button className="mr-2" type="submit">Save</Button>
+              <Button className="mr-2" type="submit">
+                Save
+              </Button>
               <Button type="reset" variant={"outline"} onClick={resetForm}>
                 Reset
               </Button>

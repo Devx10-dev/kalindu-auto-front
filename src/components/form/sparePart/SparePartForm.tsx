@@ -25,7 +25,7 @@ import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import CreatableSelect from "react-select/creatable";
+import Select from "react-select";
 import { z } from "zod";
 
 type SparePartValues = z.infer<typeof spaerPartSchema>;
@@ -66,9 +66,8 @@ export default function SparePartForm({
         ? {
             value: sparePart.chassisNo,
             label: sparePart.chassisNo,
-            __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false }
+        : { label: undefined, value: undefined }
     );
     form.setValue("partName", sparePart ? sparePart.partName : "");
     form.setValue(
@@ -84,9 +83,8 @@ export default function SparePartForm({
 
   const chassisNoOptions =
     chassisNos?.map((chassisNo) => ({
-      value: chassisNo,
+      value: chassisNo.chassisNo,
       label: chassisNo.chassisNo,
-      __isNew__: false,
     })) || [];
 
   const createSparePartMutation = useMutation({
@@ -168,7 +166,6 @@ export default function SparePartForm({
       form.setValue("chassisNo", {
         value: sparePart.chassisNo,
         label: sparePart.chassisNo,
-        __isNew__: false,
       });
       form.setValue("partName", sparePart.partName);
       form.setValue("code", sparePart.code ?? "");
@@ -228,11 +225,10 @@ export default function SparePartForm({
                   <Input
                     type="number"
                     min={0}
-                    defaultValue={0}
                     {...field}
                     className="w-full"
                     placeholder="Please enter quantity"
-                    value={field.value || 0}
+                    value={field.value}
                   />
                 </FormControl>
                 <FormMessage />
@@ -246,13 +242,12 @@ export default function SparePartForm({
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Chassis No" />
                 <FormControl>
-                  <CreatableSelect
+                  <Select
                     className="select-place-holder"
-                    placeholder={"Select or add new chassis no"}
-                    {...field}
-                    isClearable
+                    placeholder={"Select Chassis No"}
                     options={chassisNoOptions}
-                    value={field.value}
+                    value={field.value || ""}
+                    onChange={field.onChange}
                   />
                 </FormControl>
 

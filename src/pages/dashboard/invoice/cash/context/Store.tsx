@@ -7,6 +7,7 @@ export interface InvoiceItem {
   description: string;
   discount: number;
   code: string;
+  sparePartId?: number;
 }
 
 export interface InvoiceState {
