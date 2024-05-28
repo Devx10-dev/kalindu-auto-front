@@ -131,11 +131,11 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
                 totalPrice: state.totalPrice,
                 totalDiscount: state.discountAmount,   //TODO :: what is this
                 invoiceItems: state.invoiceItemDTOList,
-                commission: {
+                commission: [{
                     name: state.commissionName,
                     amount: state.commissionAmount,
                     remark: state.commissionRemark
-                }
+                },]
 
             }
         }
