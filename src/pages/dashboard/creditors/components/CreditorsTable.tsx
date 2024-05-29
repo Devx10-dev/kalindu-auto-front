@@ -17,7 +17,7 @@ import TablePagination from "../../../../components/TablePagination";
 import { Link } from "react-router-dom";
 import { Creditor } from "@/types/creditor/creditorTypes";
 
-const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
+const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
   return (
     <>
       <div className="flex flex-col justify-end">
@@ -40,11 +40,15 @@ const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
           <TableBody>
             {props.creditorData?.map((creditor) => (
               <TableRow key={creditor.creditorID}>
-                <TableCell className="font-medium">{creditor.shopName}</TableCell>
+                <TableCell className="font-medium">
+                  {creditor.shopName}
+                </TableCell>
                 <TableCell>{creditor.primaryContact}</TableCell>
                 <TableCell>{creditor.secondaryContact}</TableCell>
                 <TableCell className="text-right">
-                  <Link to={`/dashboard/creditors/manage/${creditor.creditorID}`}>
+                  <Link
+                    to={`/dashboard/creditors/manage/${creditor.creditorID}`}
+                  >
                     <Button className="mr-5 bg-slate-200 text-black hover:bg-slate-600 hover:text-white">
                       <View className="mr-2 h-4 w-4" />
                       View Transactions
@@ -57,7 +61,6 @@ const CreditorsTable = (props:{creditorData?:Creditor[]}) => {
           </TableBody>
         </Table>
       </div>
-
     </>
   );
 };

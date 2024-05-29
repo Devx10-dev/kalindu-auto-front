@@ -18,7 +18,6 @@ import { useParams } from "react-router-dom";
 import CreditorAPI from "./api/CreditorAPI";
 import { AddNewTransaction } from "./components/AddNewTransaction";
 
-
 const ViewCreditor = () => {
   const axiosPrivate = useAxiosPrivate();
   const creditorAPI = new CreditorAPI(axiosPrivate);
@@ -32,13 +31,13 @@ const ViewCreditor = () => {
   });
 
   const creditorDetails = useQuery({
-    queryKey: ['creditor', id],
+    queryKey: ["creditor", id],
     queryFn: () => creditorAPI.fetchSingleCreditor(id),
   });
 
   const onPageChange = (pageNo: number) => {
     setPageNo(pageNo);
-    queryClient.invalidateQueries({ queryKey: ['creditorTransactions'] });
+    queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
   };
 
   console.log(creditorTransactions.data);
@@ -80,19 +79,19 @@ const ViewCreditor = () => {
                         <TableCell>{transaction.paymentDate}</TableCell>
                         <TableCell>
                           {/* <ViewTransaction /> */}
-                          {transaction.type === 'Invoice' ? (
+                          {transaction.type === "Invoice" ? (
                             <Button variant={"outline"} className="w-48">
                               View Invoice
                             </Button>
                           ) : null}
-                          {transaction.type === 'Transaction'  ? (
+                          {transaction.type === "Transaction" ? (
                             <Button variant={"outline"} className="w-48">
                               View Transaction Details
                             </Button>
                           ) : null}
                         </TableCell>
                       </TableRow>
-                    )
+                    ),
                   )}
                 </TableBody>
               </Table>

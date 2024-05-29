@@ -69,7 +69,7 @@ export function RegisterForm() {
   });
 
   function onSubmit(data: CreditorFormValues) {
-    createCreditorMutation.mutate(data)
+    createCreditorMutation.mutate(data);
     if (createCreditorMutation.isSuccess) form.reset();
   }
 

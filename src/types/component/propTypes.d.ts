@@ -36,7 +36,7 @@ export type FormModalProps = {
   title: string;
   titleDescription?: string;
   component: JSX.Element;
-  service?: Service
+  service?: Service;
 };
 
 export interface ToastFunction {

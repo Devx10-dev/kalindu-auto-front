@@ -13,7 +13,7 @@ const AuthContext = createContext<AuthContextPropsType>({});
  * You can use this in any file by using useAuth hook as below
  * ts
  * const {accessToken, setAccessToken} = useAuth()
- * 
+ *
  */
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {

@@ -18,11 +18,11 @@ class VehicleService extends Service {
 
   async fetchVehicleModels(
     pageNo: number,
-    pageSize: number
+    pageSize: number,
   ): Promise<VehicleModelResponseData> {
     try {
       const response = await this.api.get<VehicleModelResponseData>(
-        `${VEHICLE_MODEL_URL}/${pageNo}/${pageSize}`
+        `${VEHICLE_MODEL_URL}/${pageNo}/${pageSize}`,
       );
       return response.data;
     } catch (error) {
@@ -42,7 +42,7 @@ class VehicleService extends Service {
   async fetchVehicleBrands(): Promise<VehicleBrand[]> {
     try {
       const response = await this.api.get<VehicleBrand[]>(
-        `${VEHICLE_BRAND_URL}`
+        `${VEHICLE_BRAND_URL}`,
       );
       return response.data;
     } catch (error) {

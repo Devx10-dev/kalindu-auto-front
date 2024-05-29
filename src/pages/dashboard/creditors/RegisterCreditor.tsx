@@ -11,7 +11,7 @@ export default function RegisterCreditor() {
         </p>
       </div>
       <Separator />
-      <RegisterForm/>
+      <RegisterForm />
     </div>
   );
 }

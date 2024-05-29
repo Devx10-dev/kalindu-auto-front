@@ -36,7 +36,7 @@ const AddItem: React.FC = () => {
       quantity: "",
       code: "",
       description: "",
-      discount: "", 
+      discount: "",
     },
   });
 

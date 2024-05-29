@@ -87,7 +87,6 @@ const NavLinks: NavLink[] = [
       {
         label: "Register User",
         href: "/dashboard/users/register",
-       
       },
     ],
   },

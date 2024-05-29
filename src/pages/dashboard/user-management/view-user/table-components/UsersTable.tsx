@@ -15,9 +15,9 @@ import { Button } from "@/components/ui/button";
 import { Search, View } from "lucide-react";
 // import TablePagination from "../../../../components/TablePagination";
 import { Link } from "react-router-dom";
-import { User } from "@/types/user/userTypes"
+import { User } from "@/types/user/userTypes";
 
-const UsersTable = (props:{userData?:User[]}) => {
+const UsersTable = (props: { userData?: User[] }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e: {
@@ -74,7 +74,6 @@ const UsersTable = (props:{userData?:User[]}) => {
           </TableBody>
         </Table>
       </div>
-
     </>
   );
 };

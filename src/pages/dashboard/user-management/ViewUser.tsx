@@ -60,7 +60,7 @@ export default function userManagementPage() {
           </p>
         </div>
         <div className="w-full">
-          <UsersTable userData={data}/>
+          <UsersTable userData={data} />
         </div>
       </div>
     </>

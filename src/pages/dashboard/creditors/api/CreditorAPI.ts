@@ -1,5 +1,9 @@
 import { ResponseData } from "@/types/component/commonTypes";
-import { Creditor, CreditorResponseData, CreditorTransaction } from "@/types/creditor/creditorTypes";
+import {
+  Creditor,
+  CreditorResponseData,
+  CreditorTransaction,
+} from "@/types/creditor/creditorTypes";
 import { AxiosInstance } from "axios";
 import { CreditorEndpoints } from "./CreditorEndpoints";
 
@@ -14,7 +18,7 @@ class CreditorAPI {
 
   async fetchCreditors(
     pageNo: number = 0,
-    pageSize: number = 10
+    pageSize: number = 10,
   ): Promise<CreditorResponseData> {
     if (pageNo >= 1) pageNo = pageNo - 1;
     const pagedURL = `${CreditorEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
@@ -25,7 +29,7 @@ class CreditorAPI {
   async fetchSingleCreditor(creditorID?: string) {
     if (creditorID) {
       const response = await this.api.get(
-        CreditorEndpoints.GET_ONE_CREDITOR_URL + "/" + creditorID
+        CreditorEndpoints.GET_ONE_CREDITOR_URL + "/" + creditorID,
       );
 
       return response.data;
@@ -35,23 +39,24 @@ class CreditorAPI {
   async createCreditor(creditor: Creditor): Promise<Creditor> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_URL,
-      creditor
+      creditor,
     );
     return response.data;
   }
 
   async getCreditorTransactions(creditorID?: string) {
     const response = await this.api.get(
-      CreditorEndpoints.GET_CREDITOR_TRANSACTIONS_URL + "/" + creditorID
+      CreditorEndpoints.GET_CREDITOR_TRANSACTIONS_URL + "/" + creditorID,
     );
     return response.data;
   }
 
-  async createCreditorTransaction(creditorTransaction : any): Promise<CreditorTransaction>{
-    
+  async createCreditorTransaction(
+    creditorTransaction: any,
+  ): Promise<CreditorTransaction> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_TRANSACTIONS_URL,
-      creditorTransaction
+      creditorTransaction,
     );
     return response.data;
   }

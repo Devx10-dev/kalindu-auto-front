@@ -1,4 +1,10 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import useInvoiceStore from "../context/Store";
@@ -7,7 +13,9 @@ interface InvoiceTableProps {
   handleToggleOutsourced: (index: number) => void;
 }
 
-const InvoiceTable: React.FC<InvoiceTableProps> = ({ handleToggleOutsourced }) => {
+const InvoiceTable: React.FC<InvoiceTableProps> = ({
+  handleToggleOutsourced,
+}) => {
   const { items, removeItem, outsourcedItemIndices } = useInvoiceStore();
 
   const handleRemoveItem = (index: number) => {
@@ -33,9 +41,18 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ handleToggleOutsourced }) =
               <TableCell>{item.quantity}</TableCell>
               <TableCell>LKR {item.price.toFixed(2)}</TableCell>
               <TableCell>LKR {item.discount}</TableCell>
-              <TableCell>LKR {((item.quantity * item.price) - (item.quantity * item.discount)).toFixed(2)}</TableCell>
               <TableCell>
-                <Switch checked={outsourcedItemIndices.includes(index)} onCheckedChange={() => handleToggleOutsourced(index)} />
+                LKR{" "}
+                {(
+                  item.quantity * item.price -
+                  item.quantity * item.discount
+                ).toFixed(2)}
+              </TableCell>
+              <TableCell>
+                <Switch
+                  checked={outsourcedItemIndices.includes(index)}
+                  onCheckedChange={() => handleToggleOutsourced(index)}
+                />
               </TableCell>
               <TableCell>
                 <Button onClick={() => handleRemoveItem(index)}>Remove</Button>

@@ -14,7 +14,7 @@ class CreditorInvoiceAPI {
 
   async fetchCreditors(
     pageNo: number = 0,
-    pageSize: number = 10
+    pageSize: number = 10,
   ): Promise<CreditorResponseData> {
     if (pageNo >= 1) pageNo = pageNo - 1;
     const pagedURL = `${CreditorInvoiceEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
@@ -22,15 +22,14 @@ class CreditorInvoiceAPI {
     return response.data;
   }
 
-  async saveInvoice(invoiceState : InvoiceState){
+  async saveInvoice(invoiceState: InvoiceState) {
     // TODO : create other data items
     const backendRequest = {
-      creditorID : invoiceState.creditorID
-    }
+      creditorID: invoiceState.creditorID,
+    };
 
     // TODO send API call
     console.log(backendRequest);
-    
   }
 }
 

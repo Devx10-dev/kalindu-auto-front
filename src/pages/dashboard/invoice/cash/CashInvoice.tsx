@@ -6,7 +6,6 @@ import useInvoiceStore from "./context/Store";
 import { useState } from "react";
 import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
 
-
 interface OutsourcedItem {
   index: number;
   itemName: string;
@@ -18,13 +17,18 @@ interface OutsourcedItem {
 
 const CashInvoice: React.FC = () => {
   const { items } = useInvoiceStore();
-  const total = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
+  const total = items.reduce(
+    (acc, item) => acc + item.quantity * item.price,
+    0,
+  );
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
 
   const handleToggleOutsourced = (index: number) => {
     const outsourcedItem = outsourcedItems.find((item) => item.index === index);
     if (outsourcedItem) {
-      setOutsourcedItems(outsourcedItems.filter((item) => item.index !== index));
+      setOutsourcedItems(
+        outsourcedItems.filter((item) => item.index !== index),
+      );
     } else {
       setOutsourcedItems([
         ...outsourcedItems,
@@ -33,7 +37,7 @@ const CashInvoice: React.FC = () => {
           itemName: items[index].name,
           itemCode: items[index].code,
           quantity: items[index].quantity,
-          companyName: '',
+          companyName: "",
           buyingPrice: 0,
         },
       ]);
@@ -43,16 +47,16 @@ const CashInvoice: React.FC = () => {
   const handleCompanyNameChange = (index: number, value: string) => {
     setOutsourcedItems(
       outsourcedItems.map((item) =>
-        item.index === index ? { ...item, companyName: value } : item
-      )
+        item.index === index ? { ...item, companyName: value } : item,
+      ),
     );
   };
 
   const handleBuyingPriceChange = (index: number, value: number) => {
     setOutsourcedItems(
       outsourcedItems.map((item) =>
-        item.index === index ? { ...item, buyingPrice: value } : item
-      )
+        item.index === index ? { ...item, buyingPrice: value } : item,
+      ),
     );
   };
 
@@ -67,7 +71,6 @@ const CashInvoice: React.FC = () => {
         onCompanyNameChange={handleCompanyNameChange}
         onBuyingPriceChange={handleBuyingPriceChange}
       />
-      
     </div>
   );
 };

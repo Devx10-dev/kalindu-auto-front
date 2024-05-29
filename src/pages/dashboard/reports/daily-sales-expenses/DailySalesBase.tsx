@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,7 +29,7 @@ import {
   Plus,
   ReceiptEuro,
   Save,
-  Verified
+  Verified,
 } from "lucide-react";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
@@ -55,7 +55,7 @@ interface RefinedData {
 
 const DailySalesBase = () => {
   const { control, handleSubmit, register } = useForm();
-  const { fields, append, remove,  } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "fields",
   });
@@ -186,38 +186,43 @@ const DailySalesBase = () => {
     }
   }
 
-  const { register: registerNewField, handleSubmit: handleNewFieldSubmit } = useForm();
-  const onNewFieldSubmit = (data:any) => {
+  const { register: registerNewField, handleSubmit: handleNewFieldSubmit } =
+    useForm();
+  const onNewFieldSubmit = (data: any) => {
     const { name, category } = data;
     append({ name, category, amount: undefined });
   };
 
   return (
     <>
-    <h1 className="text-2xl font-bold mb-5">Daily Sales and Expenses Report</h1>
+      <h1 className="text-2xl font-bold mb-5">
+        Daily Sales and Expenses Report
+      </h1>
 
-    <Separator className="mb-5"/>
+      <Separator className="mb-5" />
 
-    <div className="mb-5">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className={cn(
-              "w-[280px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, "PPP") : <span>Pick a date</span>}
-          </Button>
-        </PopoverTrigger>
-        {!date && <Label className="ml-5 text-red-400">Please select a date</Label> }
+      <div className="mb-5">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-[280px] justify-start text-left font-normal",
+                !date && "text-muted-foreground",
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          {!date && (
+            <Label className="ml-5 text-red-400">Please select a date</Label>
+          )}
 
-        <PopoverContent className="w-full">
-          <DayPicker mode="single" selected={date} onSelect={setDate} />
-        </PopoverContent>
-      </Popover>
+          <PopoverContent className="w-full">
+            <DayPicker mode="single" selected={date} onSelect={setDate} />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <Dialog>
@@ -238,7 +243,11 @@ const DailySalesBase = () => {
                 <Label htmlFor="name" className="text-right">
                   Name
                 </Label>
-                <Input id="name" {...registerNewField("name")} className="col-span-3" />
+                <Input
+                  id="name"
+                  {...registerNewField("name")}
+                  className="col-span-3"
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="category" className="text-right">
@@ -269,7 +278,7 @@ const DailySalesBase = () => {
           <div key={category.name} className="mt-10">
             <h1 className="mb-2 text-xl uppercase">{category.name}</h1>
             <Separator className="mb-5 w-3/4" />
-            
+
             {category.fields.map((field: any, fieldIndex) => (
               <div
                 key={`${categoryIndex}-${fieldIndex}`}
@@ -286,7 +295,7 @@ const DailySalesBase = () => {
                     {
                       valueAsNumber: false,
                       value: field.fieldName,
-                    }
+                    },
                   )}
                 />
                 <Input
@@ -296,7 +305,7 @@ const DailySalesBase = () => {
                     {
                       valueAsNumber: false,
                       value: category.name,
-                    }
+                    },
                   )}
                 />
 
@@ -309,7 +318,7 @@ const DailySalesBase = () => {
                     `fields.${categoryIndex}.fields.${fieldIndex}.amount`,
                     {
                       valueAsNumber: true,
-                    }
+                    },
                   )}
                   className="border-b-2 w-1/4 text-end"
                 />
@@ -318,10 +327,18 @@ const DailySalesBase = () => {
           </div>
         ))}
         <div className="flex gap-3 pb-20 pt-5 justify-end pr-20 ">
-        <Button className="bg-slate-300 text-black w-36 hover:text-white"><DeleteIcon  className="mr-2"/> Clear All</Button>
-        <Button type="submit" className="bg-slate-300 text-black w-36 hover:text-white"><Save className="mr-2" /> Save Draft</Button>
-        <Button className="w-36 bg-blue-600"><Verified className="mr-2" /> Verify</Button>
-        
+          <Button className="bg-slate-300 text-black w-36 hover:text-white">
+            <DeleteIcon className="mr-2" /> Clear All
+          </Button>
+          <Button
+            type="submit"
+            className="bg-slate-300 text-black w-36 hover:text-white"
+          >
+            <Save className="mr-2" /> Save Draft
+          </Button>
+          <Button className="w-36 bg-blue-600">
+            <Verified className="mr-2" /> Verify
+          </Button>
         </div>
       </form>
     </>

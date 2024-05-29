@@ -40,7 +40,7 @@ function App() {
           {/* Creditor Routes */}
           <Route path="creditors">
             <Route path="register" element={<RegisterCreditor />} />
-            <Route path="manage" element={<CreditorManagement />}/>
+            <Route path="manage" element={<CreditorManagement />} />
             <Route path="manage/:id" element={<ViewCreditor />} />
           </Route>
 

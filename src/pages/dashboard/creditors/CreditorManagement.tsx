@@ -13,13 +13,13 @@ export default function CreditorManagement() {
   const [pageNo, setPageNo] = useState(0);
 
   const { isLoading, data } = useQuery({
-    queryKey: ['creditors', pageNo],
+    queryKey: ["creditors", pageNo],
     queryFn: () => creditorAPI.fetchCreditors(pageNo),
   });
 
   const onPageChange = (pageNo: number) => {
     setPageNo(pageNo);
-    queryClient.invalidateQueries({ queryKey: ['creditors'] });
+    queryClient.invalidateQueries({ queryKey: ["creditors"] });
   };
 
   if (isLoading) {
@@ -28,8 +28,12 @@ export default function CreditorManagement() {
   return (
     <>
       <h2 className="mb-4 text-2xl font-bold">Creditor Management</h2>
-      <CreditorsTable creditorData={data?.creditors}/>
-      <TablePagination pageNo={data?.page} totalPages={data?.totalPages} onPageChange={onPageChange}/>
+      <CreditorsTable creditorData={data?.creditors} />
+      <TablePagination
+        pageNo={data?.page}
+        totalPages={data?.totalPages}
+        onPageChange={onPageChange}
+      />
     </>
   );
 }

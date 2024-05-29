@@ -22,12 +22,11 @@ const BillSummary = (props: summaryProps) => {
     vatAmount,
     setVatAmount,
     setTotalPrice,
-    
   } = useInvoiceStore();
 
   const subtotal = invoiceItemDTOList.reduce(
     (acc: any, item: any) => acc + item.quantity * item.price - item.discount,
-    0
+    0,
   );
 
   const discountedTotal = subtotal - (discountAmount || 0);
@@ -35,7 +34,7 @@ const BillSummary = (props: summaryProps) => {
   // setTotalPrice(totalWithVat)
 
   const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const percentage = parseFloat(e.target.value);
     setDiscountPercentage(percentage);
@@ -43,7 +42,7 @@ const BillSummary = (props: summaryProps) => {
   };
 
   const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const amount = parseFloat(e.target.value);
     setDiscountAmount(amount);
@@ -51,7 +50,7 @@ const BillSummary = (props: summaryProps) => {
   };
 
   const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const percentage = parseFloat(e.target.value);
     setVatPercentage(percentage);
@@ -112,7 +111,7 @@ const BillSummary = (props: summaryProps) => {
             className="mt-4 mb-5"
             onClick={() => props.printAndSaveInvoice()}
           >
-          <Printer className={"mr-2"} /> Print Invoice
+            <Printer className={"mr-2"} /> Print Invoice
           </Button>
           <Button className="mt-4 mb-5 bg-red-400 ml-2 text-black">
             <Delete className={"mr-2"} /> Cancel

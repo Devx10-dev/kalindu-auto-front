@@ -15,13 +15,13 @@ const BillSummary: React.FC = () => {
 
   const subtotal = items.reduce(
     (acc, item) => acc + item.quantity * item.price,
-    0
+    0,
   );
   const discountedTotal = subtotal - discountAmount;
   const totalWithVat = discountedTotal + vatAmount;
 
   const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const percentage = parseFloat(e.target.value);
     setDiscountPercentage(percentage);
@@ -29,7 +29,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const amount = parseFloat(e.target.value);
     setDiscountAmount(amount);
@@ -37,7 +37,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const percentage = parseFloat(e.target.value);
     setVatPercentage(percentage);

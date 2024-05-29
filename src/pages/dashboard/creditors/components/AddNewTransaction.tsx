@@ -206,7 +206,7 @@ export function AddNewTransaction() {
                           }
                         }}
                         defaultValue={transactionTypeData.find(
-                          (c) => c.value == "INVOICE"
+                          (c) => c.value == "INVOICE",
                         )}
                       />
                     </FormControl>

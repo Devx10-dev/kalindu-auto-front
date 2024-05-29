@@ -13,7 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
-import { VehicleModel, vehicleModelSchema } from "@/validation/schema/SparePart/vehicleModelSchema";
+import {
+  VehicleModel,
+  vehicleModelSchema,
+} from "@/validation/schema/SparePart/vehicleModelSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

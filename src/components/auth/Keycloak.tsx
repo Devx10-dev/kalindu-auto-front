@@ -45,7 +45,7 @@ function LoadKeycloak() {
     const checkServerStatus = async () => {
       try {
         const response = await fetch(
-          `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`
+          `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`,
         );
         if (response.ok) {
           setIsKeycloakUp(true);
@@ -105,7 +105,6 @@ function LoadKeycloak() {
  * This is for refresh the access token via keycloak
  * @returns new access token
  */
-// eslint-disable-next-line react-refresh/only-export-components
 export const refreshToken = async () => {
   // This will refresh the token if it has already expired or will expire in the next five seconds
   // This function call only when access token expired, so argument never will matter

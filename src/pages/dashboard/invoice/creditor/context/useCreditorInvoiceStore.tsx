@@ -25,7 +25,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.filter(
-        (item) => item !== itemToRemove
+        (item) => item !== itemToRemove,
       ),
     })),
 
@@ -40,35 +40,35 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, outsourcedStatus: status } : item
+        item === itemOutsourced ? { ...item, outsourcedStatus: status } : item,
       ),
     })),
 
   setOutsourcedCompanyName: (
     itemOutsourced: InvoiceItem,
-    companyName: string
+    companyName: string,
   ) =>
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, companyName: companyName } : item
+        item === itemOutsourced ? { ...item, companyName: companyName } : item,
       ),
     })),
   setOutsourcedBuyingPrice: (
     itemOutsourced: InvoiceItem,
-    buyingPrice: number
+    buyingPrice: number,
   ) =>
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, buyingPrice: buyingPrice } : item
+        item === itemOutsourced ? { ...item, buyingPrice: buyingPrice } : item,
       ),
     })),
 
   getOutsourcedItems: () => {
     const state = get();
     return state.invoiceItemDTOList.filter(
-      (item) => item.outsourcedStatus === true
+      (item) => item.outsourcedStatus === true,
     );
   },
   setDiscountPercentage: (percentage: number) =>
@@ -86,17 +86,16 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     const state = get();
 
     return {
-      invoiceID : "RANDOM ID", //TODO RANDOM ID GENERATIONS
-      creditorID : state.creditorID,
-      creditorName : state.creditorName,
-      totalPrice : state.totalPrice,
-      discount : state.discountAmount,
-      vat : state.vatAmount,
+      invoiceID: "RANDOM ID", //TODO RANDOM ID GENERATIONS
+      creditorID: state.creditorID,
+      creditorName: state.creditorName,
+      totalPrice: state.totalPrice,
+      discount: state.discountAmount,
+      vat: state.vatAmount,
 
-      invoiceItemsDTOList : state.invoiceItemDTOList,
-      
-    }
-  }
+      invoiceItemsDTOList: state.invoiceItemDTOList,
+    };
+  },
 }));
 
 export default useCreditorInvoiceStore;
