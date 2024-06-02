@@ -131,14 +131,33 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
                 commissionRemark: commissionRemark,
             })),
 
+
+
         getRequestData: () => {
             const state = get();
 
-            return {
+            const generateInvoiceId = () => {
+                const now = new Date();
+                const year = now.getFullYear().toString().slice(2); // Last two digits of the year
+                const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month (0-indexed, so +1)
+                const day = now.getDate().toString().padStart(2, '0'); // Day of the month
+
+                // Generate a unique 4-digit number based on time
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const uniqueNumber = (parseInt(hours + minutes, 10) % 10000).toString().padStart(4, '0');
+
+                return `INV-CS-${year}${month}${day}${uniqueNumber}`;
+            }
+
+            const invoiceId = generateInvoiceId();
+            console.log(invoiceId);
+
+            const requestData = {
                 vat: state.vatAmount,
                 discount: state.discountAmount,
-                invoiceId: "RANDOM ID", //TODO RANDOM ID GENERATIONS
                 customerName: state.customerName,
+                invoiceId: invoiceId,
                 vehicleNo: state.vehicleNumber,
                 totalPrice: state.totalPrice,
                 totalDiscount: state.discountAmount,   //TODO :: what is this
@@ -150,6 +169,9 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
                 },]
 
             }
+
+
+            return requestData;
         }
     }));
 
