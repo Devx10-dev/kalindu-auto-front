@@ -10,7 +10,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "npx prettier --write . --list-different",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check-types": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
