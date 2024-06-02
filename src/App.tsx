@@ -33,8 +33,8 @@ function App() {
           </Route>
 
           <Route path="vehicle">
-            <Route path="model" element={<VehicleModel />} />
-            <Route path="part" element={<SpareParts />} />
+              <Route path="model" element={<VehicleModel />} />
+              <Route path="part" element={<SpareParts />} />
           </Route>
 
           {/* Creditor Routes */}
@@ -51,7 +51,7 @@ function App() {
             path="/dashboard/creditors/manage"
             element={<CreditorManagement />}
           /> */}
-          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
+                    {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
 
           <Route path="users">
             {/* Routes for user management */}
