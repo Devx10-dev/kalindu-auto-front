@@ -13,12 +13,6 @@ const CashInvoiceBase: React.FC = () => {
     } = useCashInvoiceStore();
     const hasOutsourcedItems = getOutsourcedItems().length > 0;
 
-
-
-    //TODO :: complete this function with the API
-    //TODO :: add printing logic here
-
-
     return (
 
         <div className="mb-20">

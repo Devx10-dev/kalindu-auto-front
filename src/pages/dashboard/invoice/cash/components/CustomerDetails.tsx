@@ -8,7 +8,7 @@ const CustomerDetails: React.FC = () => {
   const {setCustomer, setVehicleNumber, customerName, vehicleNumber} = useCashInvoiceStore();
 
   return (
-    <Card className='mb-3'>
+    <Card className="mb-3">
       <CardContent className="p-3 shadow-sm">
         <div className="flex flex-col gap-5">
           <div className='flex justify-between gap-5'>

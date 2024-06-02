@@ -4,10 +4,10 @@ import { FormModal } from "@/components/modal/FormModal";
 import DataTable from "@/components/table/DataTable";
 import { Button } from "@/components/ui/button";
 import {
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";

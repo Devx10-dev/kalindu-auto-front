@@ -6,10 +6,7 @@ import PlusIcon from "@/components/icon/PlusIcon";
 import { FormModal } from "@/components/modal/FormModal";
 import DataTable from "@/components/table/DataTable";
 import { Button } from "@/components/ui/button";
-import {
-  CardContent,
-  CardHeader
-} from "@/components/ui/card";
+import { CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";

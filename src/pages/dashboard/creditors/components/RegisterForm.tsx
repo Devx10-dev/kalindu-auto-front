@@ -20,24 +20,61 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
+import CreditorAPI from "../api/CreditorAPI";
+import { ToastAction } from "@/components/ui/toast";
+import Loading from "@/components/Loading";
 
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 // This can come from your database or API.
 const defaultValues: Partial<CreditorFormValues> = {};
 
-export function RegisterForm(props: {
-  createCreditor;
-}) {
+export function RegisterForm() {
+  const axiosPrivate = useAxiosPrivate();
+  const creditorService = new CreditorAPI(axiosPrivate);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const createCreditorMutation = useMutation({
+    mutationFn: (data: CreditorFormValues) =>
+      creditorService.createCreditor(data),
+    onSuccess: () => {
+      // Handle onSuccess logic here
+      queryClient.invalidateQueries({ queryKey: ["creditors"] });
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "Successfully created creditor.",
+        action: (
+          <ToastAction altText="View Creditors">View Creditors</ToastAction>
+        ),
+      });
+    },
+    onError: (data) => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong : " + data.name,
+        description: data.message,
+        duration: 5000,
+      });
+    },
+  });
+
   const form = useForm<CreditorFormValues>({
     resolver: zodResolver(creditorFormSchema),
     defaultValues,
   });
 
   function onSubmit(data: CreditorFormValues) {
-    props.createCreditor(data);
-    if(props.createCreditor.isSuccess) form.reset();
+    createCreditorMutation.mutate(data);
+    if (createCreditorMutation.isSuccess) form.reset();
+  }
+
+  if (createCreditorMutation.isPending) {
+    return <Loading />;
   }
 
   return (
@@ -64,10 +101,7 @@ export function RegisterForm(props: {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Contact Person Name</FormLabel>
                 <FormControl>
-                  <Input
-                    className="w-full"
-                    {...field}
-                  />
+                  <Input className="w-full" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -81,12 +115,7 @@ export function RegisterForm(props: {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
-                  <Input
-      
-                    className="w-full"
-                    type="email"
-                    {...field}
-                  />
+                  <Input className="w-full" type="email" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -100,12 +129,7 @@ export function RegisterForm(props: {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Primary Contact No </FormLabel>
                 <FormControl>
-                  <Input
-          
-                    className="w-full"
-                    type="tel"
-                    {...field}
-                  />
+                  <Input className="w-full" type="tel" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -119,12 +143,7 @@ export function RegisterForm(props: {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Secondary Contact No </FormLabel>
                 <FormControl>
-                  <Input
-          
-                    className="w-full"
-                    type="number"
-                    {...field}
-                  />
+                  <Input className="w-full" type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -137,12 +156,7 @@ export function RegisterForm(props: {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Credit Limit </FormLabel>
                 <FormControl>
-                  <Input
-  
-                    className="w-full"
-                    type="number"
-                    {...field}
-                  />
+                  <Input className="w-full" type="number" {...field} />
                 </FormControl>
                 <FormDescription>
                   Enter the maximum amount this creditor is eligible to borrow
@@ -167,7 +181,7 @@ export function RegisterForm(props: {
                         value={field.value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Max credit due period"/>
+                          <SelectValue placeholder="Max credit due period" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="30">30 days</SelectItem>

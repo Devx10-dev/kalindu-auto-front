@@ -1,95 +1,147 @@
-// components/AddItem.tsx
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { PlusCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import useInvoiceStore from "../context/store";
+"use client";
 
-const creditorNames = [
-  "John Doe",
-  "Jane Smith",
-  "Bob Johnson",
-  "Alice Williams",
-];
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PlusCircle, XCircle } from "lucide-react";
+import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
+
+const formSchema = z.object({
+  itemName: z.string().min(1, "Item name is required"),
+  price: z.any().refine((val) => val !== "", "Price is required"), // TODO : add number and make validation work
+  quantity: z.any().refine((val) => val !== "", "Quantity is required"), // TODO : add number and make validation work
+  code: z.string().optional(),
+  description: z.string().optional(),
+  discount: z.any().optional(),
+});
 
 const AddItem: React.FC = () => {
-  const {
-    newItem,
-    newQuantity,
-    newPrice,
-    newCreditorName,
-    setNewItem,
-    setNewQuantity,
-    setNewPrice,
-    setNewCreditorName,
-    addItem,
-  } = useInvoiceStore();
+  const { addInvoiceItem } = useCreditorInvoiceStore();
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      itemName: "",
+      price: "",
+      quantity: "",
+      code: "",
+      description: "",
+      discount: "",
+    },
+  });
 
-  const handleAddItem = () => {
-    if (newItem && newQuantity > 0 && newPrice >= 0) {
-      addItem({
-        name: newItem,
-        quantity: newQuantity,
-        price: newPrice,
-        creditorName: newCreditorName,
-      });
-      setNewItem("");
-      setNewQuantity(1);
-      setNewPrice(0);
-    }
+  const onSubmit = (data: any) => {
+    addInvoiceItem(data);
+  };
+
+  const resetForm = () => {
+    form.reset();
   };
 
   return (
     <Card>
-      <CardContent className="flex gap-4 mb-4 items-end justify-start p-3 shadow-sm bg-slate-200 h-full">
-        <div className="flex flex-col gap-5 w-1/4">
-          <Label className="ml-2 text-lg">Creditor Name</Label>
-          <select
-            value={newCreditorName}
-            onChange={(e) => setNewCreditorName(e.target.value)}
-            className="h-10"
-          >
-            <option value="">Select Creditor</option>
-            {creditorNames.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-5 w-1/4 border-b-2">
-          <Label className="ml-2 text-lg">Item Name</Label>
-          <Input
-            type="text"
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            placeholder="Item name"
-          />
-        </div>
-        <div className="flex flex-col gap-5 w-1/4">
-          <Label className="ml-2 text-lg">Quantity</Label>
-          <Input
-            type="number"
-            value={newQuantity}
-            onChange={(e) => setNewQuantity(parseInt(e.target.value))}
-            placeholder="Quantity"
-          />
-        </div>
-        <div className="flex flex-col gap-5 w-1/4">
-          <Label className="ml-2 text-lg">Price</Label>
-          <Input
-            type="number"
-            value={newPrice}
-            onChange={(e) => setNewPrice(parseFloat(e.target.value))}
-            placeholder="Price"
-          />
-        </div>
-
-        <Button className="" onClick={handleAddItem}>
-          <PlusCircle className={"mr-2"} />
-          Add Item
-        </Button>
+      <CardContent className="p-3 shadow-sm bg-slate-300">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <div className="grid grid-cols-4 gap-4">
+              <FormField
+                control={form.control}
+                name="itemName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Item Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Item name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="Price" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quantity</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="Quantity" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Code</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Code" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Description" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="discount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Discount</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="Discount" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-end gap-4">
+              <Button type="submit" className="">
+                <PlusCircle className="mr-2" /> Add Item
+              </Button>
+              <Button onClick={resetForm} className="bg-slate-500">
+                <XCircle className="mr-2" /> Clear
+              </Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

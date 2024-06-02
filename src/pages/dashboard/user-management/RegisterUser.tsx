@@ -25,7 +25,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -180,7 +180,6 @@ function ProfileForm() {
                       placeholder="Enter the same password here"
                       {...field}
                     />
-                    
                   </FormControl>
                   {/* <FormDescription>
                     Enter the same password as above
