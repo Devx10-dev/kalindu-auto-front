@@ -1,5 +1,4 @@
 export type InvoiceItem = {
-    invoiceID?: string;
     itemName?: string;
     code?: string;
     price?: number;
@@ -7,8 +6,10 @@ export type InvoiceItem = {
     discount?: number;
     description?: string;
     outsourcedStatus?: boolean;
-    companyName?: string;
-    buyingPrice?: number;
+    outsourceItem?: {
+        companyName?: string;
+        buyingPrice?: number;
+    };
 };
 
 export type InvoiceState = {

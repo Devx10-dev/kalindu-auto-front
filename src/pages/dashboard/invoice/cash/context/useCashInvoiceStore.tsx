@@ -62,7 +62,13 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
             set((state) => ({
                 ...state,
                 invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-                    item === itemOutsourced ? {...item, companyName: companyName} : item
+                    item === itemOutsourced ? {
+                    ...item,
+                    outsourceItem:{
+                        ...item.outsourceItem,
+                        companyName: companyName
+                    }
+                } : item
                 ),
             })),
 
@@ -73,7 +79,13 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
             set((state) => ({
                 ...state,
                 invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-                    item === itemOutsourced ? {...item, buyingPrice: buyingPrice} : item
+                    item === itemOutsourced ? {
+                    ...item,
+                    outsourceItem:{
+                        ...item.outsourceItem,
+                        buyingPrice: buyingPrice
+                    }
+                } : item
                 ),
             })),
 
@@ -131,7 +143,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) =>
                 totalPrice: state.totalPrice,
                 totalDiscount: state.discountAmount,   //TODO :: what is this
                 invoiceItems: state.invoiceItemDTOList,
-                commission: [{
+                commissions: [{
                     name: state.commissionName,
                     amount: state.commissionAmount,
                     remark: state.commissionRemark
