@@ -8,6 +8,17 @@ import { useQuery } from "@tanstack/react-query";
 import Select from "react-select";
 import useCreditorInvoiceStore from "./context/useCreditorInvoiceStore";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button";
 
 const CreditorInvoiceBase: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -23,14 +34,15 @@ const CreditorInvoiceBase: React.FC = () => {
   const noCreditorSelected = !creditorID;
   const hasOutsourcedItems = getOutsourcedItems().length > 0;
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const { data } = useQuery({
     queryKey: ["creditors"],
     queryFn: () => creditorService.fetchCreditors(),
   });
 
-  const creditorData = data?.creditors.map(({ id, shopName }) => ({
-    value: id,
+  const creditorData = data?.creditors.map(({ creditorID, shopName }) => ({
+    value: parseInt(creditorID),
     label: shopName,
   }));
 
@@ -49,8 +61,10 @@ const CreditorInvoiceBase: React.FC = () => {
         description: "",
         variant: "destructive",
       });
-
+      console.log(data);
+      
     console.log(getRequestData());
+    navigate("print");
   }
 
   return (
@@ -78,8 +92,21 @@ const CreditorInvoiceBase: React.FC = () => {
         )}
       </section>
 
-      <AddItem />
-
+      <Dialog>
+      <DialogTrigger asChild>
+        <Button className="w-32">Add Item</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[900px]">
+        <DialogHeader>
+          <DialogTitle>Add Invoice Items</DialogTitle>
+          <DialogDescription>
+            You can use TAB to change the input and Press ENTER to add the item
+          </DialogDescription>
+        </DialogHeader>
+        <AddItem />
+      </DialogContent>
+    </Dialog>
+     
       <InvoiceTable />
 
       {hasOutsourcedItems && (

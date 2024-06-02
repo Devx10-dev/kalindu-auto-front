@@ -14,6 +14,7 @@ import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
 import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
+import PrintCreditor from "./pages/dashboard/invoice/creditor/Print";
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
           {/* Invoice Routes */}
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
-            <Route path="creditor" element={<CreditorInvoiceBase />} />
+            <Route path="creditor" element={<CreditorInvoiceBase />}/>
+            <Route path="creditor/print" element={<PrintCreditor />} />
           </Route>
 
           <Route path="vehicle">
