@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 import { SparePartService } from "@/service/sparePartInventory/sparePartService";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
@@ -22,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { z } from "zod";
 
 type DummyItemValues = z.infer<typeof dummyItemSchema>;
@@ -41,8 +42,8 @@ export default function DummyItemForm({
   onClose: () => void;
   setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
   items: DummyInvoiceItem[];
-  outsourcedItems: OutsourcedItem[];
   setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
+  outsourcedItems: OutsourcedItem[];
 }) {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -84,14 +85,38 @@ export default function DummyItemForm({
     onClose();
   };
 
+  console.log(items);
+
   const handleSubmit = async (values: DummyItemValues) => {
+    let validationError: string | null = null;
+
+    if (values.price === undefined) {
+      validationError = "The price field is required. Please enter a value.";
+    }
+    if (values.quantity === undefined) {
+      validationError = "Quantity field is required. Please enter a value.";
+    }
+
+    if (validationError !== null) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: validationError,
+      });
+      return;
+    }
+
+    const isNew = typeof values.item.value === "string";
+    const newSparePartId = Math.floor(Math.random() * 100);
+
     setItems([
       {
-        sparePartId: values.item.value.id,
-        code: values.code,
-        description: values.remark,
-        discount: values.discount,
-        dummyPrice: values.dummyPrice,
+        sparePartId: isNew ? newSparePartId : values.item.value.id,
+        new: isNew ? true : false,
+        code: values.code === undefined ? "" : values.code,
+        description: values.remark === undefined ? "" : values.remark,
+        discount: values.discount === undefined ? 0 : values.discount,
+        dummyPrice: values.dummyPrice === undefined ? 0 : values.dummyPrice,
         name: values.item.label,
         price: values.price,
         quantity: values.quantity,
@@ -103,16 +128,17 @@ export default function DummyItemForm({
     if (values.outsourced !== undefined && values.outsourced) {
       setOutsourcedItems([
         {
-          index: values.item.value.id,
+          index: isNew ? newSparePartId : values.item.value.id,
           buyingPrice: undefined,
           companyName: undefined,
-          itemCode: values.code,
+          itemCode: values.code === undefined ? "" : values.code,
           itemName: values.item.label,
           quantity: values.quantity,
         },
         ...outsourcedItems,
       ]);
     }
+
     form.reset();
     onClose();
   };
@@ -133,16 +159,17 @@ export default function DummyItemForm({
                 <FormItem className="w-full col-span-1 row-span-1">
                   <RequiredLabel label="Spare Part Item" />
                   <FormControl>
-                    <Select
+                    <CreatableSelect
                       className="select-place-holder"
-                      placeholder={"Search and Select Spare Part Item"}
+                      placeholder={"Search and Select or Add new spare part..."}
+                      {...field}
+                      isClearable
                       options={sparePartsOptions}
                       value={field.value}
                       onChange={field.onChange}
                       onInputChange={handleInputChange}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -177,18 +204,26 @@ export default function DummyItemForm({
                       placeholder="Please enter quantity ..."
                       type="number"
                       min={0}
+                      value={field.value ?? ""}
                       onChange={(e) =>
                         field.onChange(
-                          e.target.value === "" ? "" : parseInt(e.target.value)
+                          e.target.value === ""
+                            ? ""
+                            : parseFloat(e.target.value)
                         )
                       }
-                      max={form.getValues("item.value.quantity") ?? 1000}
+                      max={
+                        typeof form.getValues("item.value") === "string"
+                          ? 1000
+                          : form.getValues("item.value.quantity")
+                      }
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="price"
@@ -203,6 +238,7 @@ export default function DummyItemForm({
                       type="number"
                       min={0}
                       step="0.01"
+                      value={field.value ?? ""}
                       onChange={(e) =>
                         field.onChange(
                           e.target.value === ""
@@ -216,6 +252,7 @@ export default function DummyItemForm({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="dummyPrice"
@@ -314,7 +351,10 @@ export default function DummyItemForm({
             </Button>
             <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
             <div>
-              <Button className="mr-2" type="submit">
+              <Button
+                className="mr-2"
+                onClick={() => handleSubmit(form.getValues())}
+              >
                 Save
               </Button>
               <Button type="reset" variant={"outline"} onClick={resetForm}>

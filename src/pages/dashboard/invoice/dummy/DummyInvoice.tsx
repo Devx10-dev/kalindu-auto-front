@@ -52,6 +52,9 @@ function DummyInvoice() {
     calculateTotalPrice();
   }, [items]);
 
+  console.log(items);
+  console.log(outsourcedItems);
+
   return (
     <Fragment>
       <div className="ml-2">
@@ -112,8 +115,11 @@ function DummyInvoice() {
                       <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">
                         Outsourced Item Details
                       </h3>
-                      <div>
-                        <div className="grid grid-cols-5 gap-4">
+                      <div key={Math.random()}>
+                        <div
+                          className="grid grid-cols-5 gap-4"
+                          key={Math.random()}
+                        >
                           <OptionalLabel label="Item Name" />
                           <OptionalLabel label="Item Code" />
                           <OptionalLabel label="Quantity" />
@@ -124,6 +130,7 @@ function DummyInvoice() {
                           <OutSourceItemForm
                             item={item}
                             items={outsourcedItems}
+                            key={Math.random()}
                           />
                         ))}
                       </div>

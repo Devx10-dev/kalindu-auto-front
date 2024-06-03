@@ -16,7 +16,6 @@ export const dummyItemSchema = z.object({
         })
         .optional(),
     })
-    .nullable()
     .optional(),
   price: z.number({ required_error: "Actual price is required" }),
   dummyPrice: z.number().optional(),

@@ -16,9 +16,6 @@ function BillSummaryCard({ total }: { total: number }) {
     setFinalPrice(total - discount + vat);
   };
 
-  console.log(finalPrice);
-  console.log(total);
-
   const calculateDiscount = (percentage: number) => {
     setDiscountPercentage(percentage);
     setDiscount((total * percentage) / 100);

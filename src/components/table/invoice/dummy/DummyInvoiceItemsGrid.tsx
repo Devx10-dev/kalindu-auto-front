@@ -23,16 +23,17 @@ function DummyInvoiceItemsGrid({
   setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
   setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
 }) {
+
   const onChangeCheckHandle = (item: DummyInvoiceItem) => {
     if (item.outsourced) {
       setOutsourcedItems(
         outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.id
+          (outsourcedItem) => outsourcedItem.index !== item.sparePartId
         )
       );
       setItems(
         items.map((dummyItem) =>
-          dummyItem.id === item.id
+          dummyItem.sparePartId === item.sparePartId
             ? { ...dummyItem, outsourced: false }
             : dummyItem
         )
@@ -40,14 +41,14 @@ function DummyInvoiceItemsGrid({
     } else {
       setItems(
         items.map((dummyItem) =>
-          dummyItem.id === item.id
+          dummyItem.sparePartId === item.sparePartId
             ? { ...dummyItem, outsourced: true }
             : dummyItem
         )
       );
       setOutsourcedItems([
         {
-          index: item.id,
+          index: item.sparePartId,
           buyingPrice: undefined,
           companyName: undefined,
           itemCode: item.code,
@@ -63,11 +64,11 @@ function DummyInvoiceItemsGrid({
     if (item.outsourced) {
       setOutsourcedItems(
         outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.id
+          (outsourcedItem) => outsourcedItem.index !== item.sparePartId
         )
       );
     }
-    setItems(items.filter((dummyItem) => dummyItem.id !== item.id));
+    setItems(items.filter((dummyItem) => dummyItem.sparePartId !== item.sparePartId));
   };
 
   return (
