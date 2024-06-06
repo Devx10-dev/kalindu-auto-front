@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,15 +21,12 @@ import { format } from "date-fns/format";
 import {
   ArrowDown,
   ArrowUp,
-  BrickWall,
   CalendarIcon,
   Circle,
   DeleteIcon,
-  DraftingCompass,
   Plus,
-  ReceiptEuro,
   Save,
-  Verified
+  Verified,
 } from "lucide-react";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
@@ -54,13 +51,13 @@ interface RefinedData {
 }
 
 const DailySalesBase = () => {
-  const { control, handleSubmit, register } = useForm();
-  const { fields, append, remove,  } = useFieldArray({
+  const { control, handleSubmit, register, reset } = useForm();
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "fields",
   });
   console.log(fields);
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date>(new Date()); // TODO : add the date came from the backend when viewing the record
 
   // Define the form fields and their categories
   const dailySalesCategory = [
@@ -146,7 +143,6 @@ const DailySalesBase = () => {
 
   const onSubmit = (data: any) => {
     console.log(data);
-
     console.log(refineData(data));
   };
 
@@ -186,41 +182,37 @@ const DailySalesBase = () => {
     }
   }
 
-  const { register: registerNewField, handleSubmit: handleNewFieldSubmit } = useForm();
-  const onNewFieldSubmit = (data:any) => {
+  const { register: registerNewField, handleSubmit: handleNewFieldSubmit } =
+    useForm();
+  const onNewFieldSubmit = (data: any) => {
     const { name, category } = data;
     append({ name, category, amount: undefined });
   };
 
   return (
     <>
-    <h1 className="text-2xl font-bold mb-5">Daily Sales and Expenses Report</h1>
+      <h1 className="text-2xl font-bold mb-5">
+        Daily Sales and Expenses Report
+      </h1>
 
-    <Separator className="mb-5"/>
+      <Separator className="mb-5" />
 
-    <div className="mb-5">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className={cn(
-              "w-[280px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, "PPP") : <span>Pick a date</span>}
-          </Button>
-        </PopoverTrigger>
-        {!date && <Label className="ml-5 text-red-400">Please select a date</Label> }
-
-        <PopoverContent className="w-full">
-          <DayPicker mode="single" selected={date} onSelect={setDate} />
-        </PopoverContent>
-      </Popover>
+      <div className="mb-5">
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-[280px] justify-start text-left font-normal",
+            !date && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
+        </Button>
       </div>
 
-      <Dialog>
+      {/* TODO :  Uncomment and integrate with the backend after implementing the create new field functionality */}
+
+      {/* <Dialog>
         <DialogTrigger asChild>
           <Button variant="default" className="ml-auto">
             {" "}
@@ -262,14 +254,14 @@ const DailySalesBase = () => {
             </DialogFooter>
           </form>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {dailySalesCategory.map((category, categoryIndex) => (
           <div key={category.name} className="mt-10">
             <h1 className="mb-2 text-xl uppercase">{category.name}</h1>
             <Separator className="mb-5 w-3/4" />
-            
+
             {category.fields.map((field: any, fieldIndex) => (
               <div
                 key={`${categoryIndex}-${fieldIndex}`}
@@ -318,10 +310,19 @@ const DailySalesBase = () => {
           </div>
         ))}
         <div className="flex gap-3 pb-20 pt-5 justify-end pr-20 ">
-        <Button className="bg-slate-300 text-black w-36 hover:text-white"><DeleteIcon  className="mr-2"/> Clear All</Button>
-        <Button type="submit" className="bg-slate-300 text-black w-36 hover:text-white"><Save className="mr-2" /> Save Draft</Button>
-        <Button className="w-36 bg-blue-600"><Verified className="mr-2" /> Verify</Button>
-        
+          <Button className="bg-slate-300 text-black w-36 hover:text-white" onClick={()=>reset()}>
+            <DeleteIcon className="mr-2" /> Clear All
+          </Button>
+          <Button
+            type="submit"
+            className="bg-slate-300 text-black w-36 hover:text-white"
+          >
+            <Save className="mr-2" /> Save Draft
+          </Button>
+          {/* TODO : THIS BUTTON SHOULD ONLY VISIBLE TO THE ADMIN USER */}
+          <Button className="w-36 bg-blue-600" disabled>
+            <Verified className="mr-2" /> Verify
+          </Button>
         </div>
       </form>
     </>
