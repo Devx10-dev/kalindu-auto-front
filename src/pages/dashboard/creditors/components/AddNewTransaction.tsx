@@ -49,12 +49,12 @@ const INVOICE_NO_CONST = {
 
 const transactionTypeData = [
   {
-    value: "INVOICE",
-    label: "Invoice",
+    value: "CASH",
+    label: "Cash",
   },
   {
-    value: "TRANSACTION",
-    label: "Transaction",
+    value: "CHEQUE",
+    label: "Cheque",
   },
 ];
 
@@ -96,9 +96,11 @@ export function AddNewTransaction() {
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["creditor",id] });
       toast({
         variant: "default",
         title: "Success",
+        className : " bg-green-200",
         description: "Successfully created Transaction.",
       });
     },
@@ -116,8 +118,8 @@ export function AddNewTransaction() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       invoiceNo: "",
-      totalPrice: "",
-      transactionType: "INVOICE",
+      totalPrice: null,
+      transactionType: "CASH",
       isPartial: "NO",
       description: "",
       chequeNo: "",
@@ -125,7 +127,10 @@ export function AddNewTransaction() {
   });
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    data = {
+      creditorID : id,
+      ...data
+    }
     createCreditorMutation.mutate(data, {
       onSuccess: () => {
         setIsOpen(false);

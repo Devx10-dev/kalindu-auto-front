@@ -3,5 +3,5 @@ export const CreditorEndpoints = {
   GET_ONE_CREDITOR_URL: "/creditor",
   CREATE_CREDITOR_URL: "/creditor/create",
   GET_CREDITOR_TRANSACTIONS_URL: "/creditor/transactions",
-  CREATE_CREDITOR_TRANSACTIONS_URL: "/creditor/transactions",
+  CREATE_CREDITOR_TRANSACTIONS_URL: "/creditor/transactions/add",
 };

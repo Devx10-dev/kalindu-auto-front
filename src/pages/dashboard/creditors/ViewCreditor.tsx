@@ -25,8 +25,8 @@ const ViewCreditor = () => {
   const [pageNo, setPageNo] = useState(0);
   const { id } = useParams();
 
-  const creditorTransactions = useQuery({
-    queryKey: ["creditorTransactions", id, pageNo],
+  const transactionResponse = useQuery({
+    queryKey: ["creditorTransactions"],
     queryFn: () => creditorAPI.getCreditorTransactions(id),
   });
 
@@ -40,11 +40,10 @@ const ViewCreditor = () => {
     queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
   };
 
-  console.log(creditorTransactions.data);
+const hasData = transactionResponse.data?.creditorTransactions.length != 0;
+console.log(hasData);
 
-  console.log(creditorDetails.data);
-
-  if (creditorDetails.isLoading || creditorTransactions.isLoading) {
+  if (creditorDetails.isLoading || transactionResponse.isLoading) {
     return <Loading />;
   } else
     return (
@@ -62,21 +61,18 @@ const ViewCreditor = () => {
               <Table className="border">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Amount</TableHead>
+                    <TableHead>Total Price</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Invoice No</TableHead>
-                    <TableHead>Payment Date</TableHead>
-                    <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {creditorTransactions.data.map(
+                  { hasData && transactionResponse.data.creditorTransactions.map(
                     (transaction: any, index: Key | null | undefined) => (
                       <TableRow key={index}>
-                        <TableCell>{transaction.amount}</TableCell>
-                        <TableCell>{transaction.type}</TableCell>
-                        <TableCell>{transaction.invoiceNo}</TableCell>
-                        <TableCell>{transaction.paymentDate}</TableCell>
+                        <TableCell> Rs. {transaction.totalPrice}</TableCell>
+                        <TableCell>{transaction.transactionType}</TableCell>
+                        <TableCell>{transaction.invoiceNo}</TableCell> 
                         <TableCell>
                           {/* <ViewTransaction /> */}
                           {transaction.type === "Invoice" ? (

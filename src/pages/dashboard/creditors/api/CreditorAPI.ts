@@ -31,7 +31,6 @@ class CreditorAPI {
       const response = await this.api.get(
         CreditorEndpoints.GET_ONE_CREDITOR_URL + "/" + creditorID,
       );
-
       return response.data;
     }
   }
