@@ -6,14 +6,14 @@ import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
-// import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
 import RegiserUser from "./pages/dashboard/user-management/RegisterUser";
 import ViewUser from "./pages/dashboard/user-management/ViewUser";
 import Error500 from "./pages/error/500";
-import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
 import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
+import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import SpareParts from "./pages/sparePart/SpareParts";
 
 function App() {
   return (
@@ -22,7 +22,6 @@ function App() {
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
-      {/* <Route path="/" > */}
       <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
@@ -30,11 +29,12 @@ function App() {
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />
+            <Route path="dummy" element={<DummyInvoice />} />
           </Route>
 
           <Route path="vehicle">
-              <Route path="model" element={<VehicleModel />} />
-              <Route path="part" element={<SpareParts />} />
+            <Route path="model" element={<VehicleModel />} />
+            <Route path="part" element={<SpareParts />} />
           </Route>
 
           {/* Creditor Routes */}
@@ -51,7 +51,7 @@ function App() {
             path="/dashboard/creditors/manage"
             element={<CreditorManagement />}
           /> */}
-                    {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
+          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
 
           <Route path="users">
             {/* Routes for user management */}

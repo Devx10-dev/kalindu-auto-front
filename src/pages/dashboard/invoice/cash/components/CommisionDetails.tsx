@@ -26,30 +26,30 @@ const CommissionDetails: React.FC = () => {
   const handlePersonNameChange = (index: number, value: string) => {
     setCommissionDetails(
       commissionDetails.map((detail, i) =>
-        i === index ? { ...detail, personName: value } : detail
-      )
+        i === index ? { ...detail, personName: value } : detail,
+      ),
     );
   };
 
   const handleRemarkChange = (index: number, value: string) => {
     setCommissionDetails(
       commissionDetails.map((detail, i) =>
-        i === index ? { ...detail, remark: value } : detail
-      )
+        i === index ? { ...detail, remark: value } : detail,
+      ),
     );
   };
 
   const handleAmountChange = (index: number, value: number) => {
     setCommissionDetails(
       commissionDetails.map((detail, i) =>
-        i === index ? { ...detail, amount: value } : detail
-      )
+        i === index ? { ...detail, amount: value } : detail,
+      ),
     );
   };
 
   return (
     <div className="mb-10">
-      <Card >
+      <Card>
         <CardContent className="p-3 shadow-sm">
           <h2 className="text-xl font-bold mb-4">Commission Details</h2>
           {commissionDetails.map((detail, index) => (

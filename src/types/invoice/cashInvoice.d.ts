@@ -1,54 +1,52 @@
 export type InvoiceItem = {
-    itemName?: string;
-    code?: string;
-    price?: number;
-    quantity?: number;
-    discount?: number;
-    description?: string;
-    outsourcedStatus?: boolean;
-    outsourceItem?: {
-        companyName?: string;
-        buyingPrice?: number;
-    };
+  itemName?: string;
+  code?: string;
+  price?: number;
+  quantity?: number;
+  discount?: number;
+  description?: string;
+  outsourcedStatus?: boolean;
+  outsourceItem?: {
+    companyName?: string;
+    buyingPrice?: number;
+  };
 };
 
 export type InvoiceState = {
+  customerName?: string;
+  vehicleNumber?: string;
+  totalPrice?: number;
+  invoiceItemDTOList: InvoiceItem[];
 
-    customerName?: string;
-    vehicleNumber?: string;
-    totalPrice?: number;
-    invoiceItemDTOList: InvoiceItem[];
+  discountPercentage?: number;
+  discountAmount?: number;
+  vatPercentage?: number;
+  vatAmount?: number;
 
-    discountPercentage?: number;
-    discountAmount?: number;
-    vatPercentage?: number;
-    vatAmount?: number;
+  commissionName?: string;
+  commissionRemark?: string;
+  commissionAmount?: number;
 
-    commissionName?: string;
-    commissionRemark?:string;
-    commissionAmount?: number;
+  setCustomer: (name?: string) => void;
+  setVehicleNumber: (number?: string) => void;
 
+  addInvoiceItem: (item: InvoiceItem) => void;
+  removeInvoiceItem: (item: InvoiceItem) => void;
 
-    setCustomer: (name?: string) => void;
-    setVehicleNumber: (number?: string) => void;
+  setOutsourcedStatus: (item: InvoiceItem, status: boolean) => void;
+  getOutsourcedItems: () => InvoiceItem[];
+  setOutsourcedCompanyName: (item: InvoiceItem, companyName: string) => void;
+  setOutsourcedBuyingPrice: (item: InvoiceItem, buyingPrice: number) => void;
 
-    addInvoiceItem: (item: InvoiceItem) => void;
-    removeInvoiceItem: (item: InvoiceItem) => void;
+  setDiscountPercentage: (percentage: number) => void;
+  setDiscountAmount: (amount: number) => void;
+  setVatPercentage: (percentage: number) => void;
+  setVatAmount: (amount: number) => void;
+  setTotalPrice: (price: number) => void;
 
-    setOutsourcedStatus: (item: InvoiceItem, status: boolean) => void;
-    getOutsourcedItems: () => InvoiceItem[];
-    setOutsourcedCompanyName: (item: InvoiceItem, companyName: string) => void;
-    setOutsourcedBuyingPrice: (item: InvoiceItem, buyingPrice: number) => void;
+  setCommissionName: (name?: string) => void;
+  setCommissionRemark: (remark?: string) => void;
+  setCommissionAmount: (amount?: number) => void;
 
-    setDiscountPercentage: (percentage: number) => void;
-    setDiscountAmount: (amount: number) => void;
-    setVatPercentage: (percentage: number) => void;
-    setVatAmount: (amount: number) => void;
-    setTotalPrice: (price: number) => void;
-
-    setCommissionName: (name?: string) => void;
-    setCommissionRemark: (remark?: string) => void;
-    setCommissionAmount: (amount?: number) => void;
-
-    getRequestData: () => any;
+  getRequestData: () => any;
 };

@@ -1,7 +1,9 @@
-import VehicleForm from "@/components/form/sparePart/VehicleForm";
+import PageHeader from "@/components/card/PageHeader";
+import SparePartForm from "@/components/form/sparePart/SparePartForm";
+import PlusIcon from "@/components/icon/PlusIcon";
 import SparePartIcon from "@/components/icon/SparePartIcon";
 import { FormModal } from "@/components/modal/FormModal";
-import DataTable from "@/components/table/DataTable";
+import SparePartGrid from "@/components/table/sparePartInventory/SparePartGrid";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -9,42 +11,61 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PlusIcon } from "lucide-react";
-import { useState } from "react";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { SparePartService } from "@/service/sparePartInventory/sparePartService";
+import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+import { SparePartItem } from "@/types/sparePartInventory/sparePartTypes";
+import { Fragment, useState } from "react";
 
-function SpareParts() {
+export default function VehicleSparePart() {
+  const axiosPrivate = useAxiosPrivate();
+
   const [show, setShow] = useState(false);
+  const [sparePart, setSparePart] = useState<SparePartItem | null>(null);
+
+  const sparePartService = new SparePartService(axiosPrivate);
+  const vehicleService = new VehicleService(axiosPrivate);
 
   return (
-    <div className="mr-5 ml-2">
-      <CardHeader>
-        <CardTitle
-          className="text-color"
-          icon={<SparePartIcon height="30" width="28" color="#162a3b" />}
-        >
-          Spare Parts
-        </CardTitle>
-        <CardDescription>Manage all spare parts.</CardDescription>
-      </CardHeader>
-      <CardContent style={{ width: "98%" }}>
-        <div className="mb-3">
-          <Button className="gap-1" onClick={() => setShow(true)}>
-            <PlusIcon height="24" width="24" color="#fff" />
-            Spare Part
-          </Button>
-        </div>
-        <DataTable />
-      </CardContent>
-      <FormModal
-        title="Add new vehicle"
-        titleDescription="Add new vehicle details to the system"
-        onSubmit={() => console.log("submit")}
-        show={show}
-        onClose={() => setShow(false)}
-        component={<VehicleForm />}
-      />
-    </div>
+    <Fragment>
+      <div className="mr-2 ml-2">
+        <CardHeader>
+          <PageHeader
+            title="Spare Parts"
+            description="Manage all spare part details."
+            icon={<SparePartIcon height="30" width="28" color="#162a3b" />}
+          />
+        </CardHeader>
+        <CardContent style={{ width: "98%" }}>
+          <div className="mb-3">
+            <Button className="gap-1" onClick={() => setShow(true)}>
+              <PlusIcon height="24" width="24" color="#fff" />
+              Spare Part
+            </Button>
+          </div>
+          <SparePartGrid
+            setShow={setShow}
+            setSparePart={setSparePart}
+            sparePartService={sparePartService}
+            vehicleService={vehicleService}
+          />
+        </CardContent>
+        <FormModal
+          title="Add new Spare Part"
+          titleDescription="Add new spare part details to the system"
+          show={show}
+          onClose={() => setShow(false)}
+          component={
+            <SparePartForm
+              onClose={() => setShow(false)}
+              setSparePart={setSparePart}
+              sparePart={sparePart}
+              sparePartservice={sparePartService}
+              vehicleService={vehicleService}
+            />
+          }
+        />
+      </div>
+    </Fragment>
   );
 }
-
-export default SpareParts;

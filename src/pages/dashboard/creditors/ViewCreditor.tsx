@@ -40,8 +40,8 @@ const ViewCreditor = () => {
     queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
   };
 
-const hasData = transactionResponse.data?.creditorTransactions.length != 0;
-console.log(hasData);
+  const hasData = transactionResponse.data?.creditorTransactions.length != 0;
+  console.log(hasData);
 
   if (creditorDetails.isLoading || transactionResponse.isLoading) {
     return <Loading />;
@@ -67,28 +67,29 @@ console.log(hasData);
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  { hasData && transactionResponse.data.creditorTransactions.map(
-                    (transaction: any, index: Key | null | undefined) => (
-                      <TableRow key={index}>
-                        <TableCell> Rs. {transaction.totalPrice}</TableCell>
-                        <TableCell>{transaction.transactionType}</TableCell>
-                        <TableCell>{transaction.invoiceNo}</TableCell> 
-                        <TableCell>
-                          {/* <ViewTransaction /> */}
-                          {transaction.type === "Invoice" ? (
-                            <Button variant={"outline"} className="w-48">
-                              View Invoice
-                            </Button>
-                          ) : null}
-                          {transaction.type === "Transaction" ? (
-                            <Button variant={"outline"} className="w-48">
-                              View Transaction Details
-                            </Button>
-                          ) : null}
-                        </TableCell>
-                      </TableRow>
-                    ),
-                  )}
+                  {hasData &&
+                    transactionResponse.data.creditorTransactions.map(
+                      (transaction: any, index: Key | null | undefined) => (
+                        <TableRow key={index}>
+                          <TableCell> Rs. {transaction.totalPrice}</TableCell>
+                          <TableCell>{transaction.transactionType}</TableCell>
+                          <TableCell>{transaction.invoiceNo}</TableCell>
+                          <TableCell>
+                            {/* <ViewTransaction /> */}
+                            {transaction.type === "Invoice" ? (
+                              <Button variant={"outline"} className="w-48">
+                                View Invoice
+                              </Button>
+                            ) : null}
+                            {transaction.type === "Transaction" ? (
+                              <Button variant={"outline"} className="w-48">
+                                View Transaction Details
+                              </Button>
+                            ) : null}
+                          </TableCell>
+                        </TableRow>
+                      ),
+                    )}
                 </TableBody>
               </Table>
             </CardContent>

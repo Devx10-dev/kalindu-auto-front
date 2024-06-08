@@ -88,7 +88,7 @@ export function RegisterForm() {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input {...field} className="w-full"/>
+                  <Input {...field} className="w-full" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

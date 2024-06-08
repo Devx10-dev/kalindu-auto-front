@@ -2,6 +2,7 @@ import capitalize from "@/utils/capitalize";
 
 type LabelProps = {
   label: string;
+  style?: React.CSSProperties;
 };
 
 function RequiredLabel({ label }: LabelProps) {
@@ -13,8 +14,8 @@ function RequiredLabel({ label }: LabelProps) {
   );
 }
 
-function OptionalLabel({ label }: LabelProps) {
-  return <p>{capitalize(label)}</p>;
+function OptionalLabel({ label, style }: LabelProps) {
+  return <p style={style}>{capitalize(label)}</p>;
 }
 
 export { OptionalLabel, RequiredLabel };

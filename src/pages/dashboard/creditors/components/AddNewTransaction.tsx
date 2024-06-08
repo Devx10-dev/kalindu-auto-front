@@ -96,11 +96,11 @@ export function AddNewTransaction() {
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
-      queryClient.invalidateQueries({ queryKey: ["creditor",id] });
+      queryClient.invalidateQueries({ queryKey: ["creditor", id] });
       toast({
         variant: "default",
         title: "Success",
-        className : " bg-green-200",
+        className: " bg-green-200",
         description: "Successfully created Transaction.",
       });
     },
@@ -128,9 +128,9 @@ export function AddNewTransaction() {
 
   const onSubmit = (data: any) => {
     data = {
-      creditorID : id,
-      ...data
-    }
+      creditorID: id,
+      ...data,
+    };
     createCreditorMutation.mutate(data, {
       onSuccess: () => {
         setIsOpen(false);

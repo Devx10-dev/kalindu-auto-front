@@ -1,21 +1,19 @@
-import { ViewEditCreditor } from "./ViewEditCreditor";
-import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, View } from "lucide-react";
-import TablePagination from "../../../../components/TablePagination";
-import { Link } from "react-router-dom";
 import { Creditor } from "@/types/creditor/creditorTypes";
+import { Search, View } from "lucide-react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { ViewEditCreditor } from "./ViewEditCreditor";
 
 const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
   return (
