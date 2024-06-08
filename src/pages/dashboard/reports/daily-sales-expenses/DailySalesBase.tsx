@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +29,7 @@ import {
   Save,
   Verified,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { useFieldArray, useForm } from "react-hook-form";
 
@@ -85,7 +86,7 @@ const DailySalesBase = () => {
         { type: "EXPENSE", fieldName: "Kumaran Uncle Salary/Things" },
         { type: "EXPENSE", fieldName: "Mangala Aiya Salary" },
         { type: "EXPENSE", fieldName: "Pradeep Ayya Salary" },
-        { type: "EXPENSE", fieldName: "Prema Aunty Salary" },
+        { type: "EXPENSE", fieldName: "  Aunty Salary" },
       ],
     },
     {
@@ -182,12 +183,11 @@ const DailySalesBase = () => {
     }
   }
 
-  const { register: registerNewField, handleSubmit: handleNewFieldSubmit } =
-    useForm();
-  const onNewFieldSubmit = (data: any) => {
-    const { name, category } = data;
-    append({ name, category, amount: undefined });
-  };
+ useEffect(()=>{
+  // TODO 
+  console.log('fetching from backend');
+  
+ },[date])
 
   return (
     <>
@@ -198,6 +198,8 @@ const DailySalesBase = () => {
       <Separator className="mb-5" />
 
       <div className="mb-5">
+      <Popover>
+      <PopoverTrigger asChild>
         <Button
           variant={"outline"}
           className={cn(
@@ -208,6 +210,17 @@ const DailySalesBase = () => {
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          initialFocus
+          
+        />
+      </PopoverContent>
+    </Popover>
       </div>
 
       {/* TODO :  Uncomment and integrate with the backend after implementing the create new field functionality */}
