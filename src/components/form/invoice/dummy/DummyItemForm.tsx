@@ -85,8 +85,6 @@ export default function DummyItemForm({
     onClose();
   };
 
-  console.log(items);
-
   const handleSubmit = async (values: DummyItemValues) => {
     let validationError: string | null = null;
 

@@ -1,15 +1,25 @@
-import { RequiredLabel } from "@/components/formElements/FormLabel";
+import {
+  OptionalLabel,
+  RequiredLabel,
+} from "@/components/formElements/FormLabel";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
-function CustomerDetailsForm() {
-  const [customerName, setCustomerName] = useState("");
-  const [vehicleNo, setVehicleNo] = useState("");
-  
+function CustomerDetailsForm({
+  vehicleNo,
+  customerName,
+  setVehicleNo,
+  setCustomerName,
+}: {
+  vehicleNo: string;
+  customerName: string;
+  setVehicleNo: React.Dispatch<React.SetStateAction<string>>;
+  setCustomerName: React.Dispatch<React.SetStateAction<string>>;
+}) {
   return (
     <div className="flex justify-between gap-5">
       <div className="flex flex-col gap-2 flex-grow">
-        <RequiredLabel label="Customer Name"  />
+        <RequiredLabel label="Customer Name" />
         <Input
           type="text"
           value={customerName}
@@ -18,7 +28,7 @@ function CustomerDetailsForm() {
         />
       </div>
       <div className="flex flex-col gap-2 flex-grow">
-        <RequiredLabel label="Vehicle No" />
+        <OptionalLabel label="Vehicle No" />
         <Input
           type="text"
           value={vehicleNo}

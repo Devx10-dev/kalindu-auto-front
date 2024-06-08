@@ -2,14 +2,46 @@ import { OptionalLabel } from "@/components/formElements/FormLabel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
+import {
+  DummyInvoice,
+  DummyInvoiceItem,
+} from "@/types/invoice/dummy/dummyInvoiceTypes";
+import { UseMutationResult } from "@tanstack/react-query";
 import { Delete, Printer } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-function BillSummaryCard({ total }: { total: number }) {
+function BillSummaryCard({
+  total,
+  vatPercentage,
+  discountPercentage,
+  setVatPrecentage,
+  setDiscountPrecentage,
+  setCustomerName,
+  setVehicleNo,
+  setItems,
+  setOutsourcedItems,
+  createDummyInvoiceMutation,
+}: {
+  total: number;
+  vatPercentage: number;
+  discountPercentage: number;
+  setVatPrecentage: React.Dispatch<React.SetStateAction<number>>;
+  setDiscountPrecentage: React.Dispatch<React.SetStateAction<number>>;
+  setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
+  setCustomerName: React.Dispatch<React.SetStateAction<string>>;
+  setVehicleNo: React.Dispatch<React.SetStateAction<string>>;
+  setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
+  createDummyInvoiceMutation: UseMutationResult<
+    DummyInvoice,
+    Error,
+    void,
+    unknown
+  >;
+}) {
   const [vat, setVat] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const [vatPrecentage, setVatPrecentage] = useState(0);
-  const [discountPercentage, setDiscountPercentage] = useState(0);
+
   const [finalPrice, setFinalPrice] = useState(total);
 
   const calculateFinalPrice = () => {
@@ -17,18 +49,18 @@ function BillSummaryCard({ total }: { total: number }) {
   };
 
   const calculateDiscount = (percentage: number) => {
-    setDiscountPercentage(percentage);
+    setDiscountPrecentage(percentage);
     setDiscount((total * percentage) / 100);
   };
 
   const calculateDiscountPercentage = (amount: number) => {
     setDiscount(amount);
-    setDiscountPercentage(parseFloat(((amount / total) * 100).toFixed(2)));
+    setDiscountPrecentage(parseFloat(((amount / total) * 100).toFixed(2)));
   };
 
-  const calculateVat = (vatPrecentage: number) => {
-    setVatPrecentage(vatPrecentage);
-    setVat(total * (vatPrecentage / 100));
+  const calculateVat = (vatPercentage: number) => {
+    setVatPrecentage(vatPercentage);
+    setVat(total * (vatPercentage / 100));
   };
 
   const calculateVatPercentage = (vatAmount: number) => {
@@ -38,7 +70,14 @@ function BillSummaryCard({ total }: { total: number }) {
 
   useEffect(() => {
     calculateFinalPrice();
-  }, [discount, discountPercentage, vat, vatPrecentage, total]);
+  }, [discount, discountPercentage, vat, vatPercentage, total]);
+
+  const cancelInvoice = () => {
+    setItems([]);
+    setOutsourcedItems([]);
+    setCustomerName("");
+    setVehicleNo("");
+  };
 
   return (
     <Card>
@@ -88,7 +127,7 @@ function BillSummaryCard({ total }: { total: number }) {
             <OptionalLabel style={{ fontSize: 14 }} label="VAT (%)" />
             <Input
               type="number"
-              value={vatPrecentage}
+              value={vatPercentage}
               placeholder="VAT"
               style={{
                 maxWidth: "100px",
@@ -129,10 +168,16 @@ function BillSummaryCard({ total }: { total: number }) {
               }`}
             </p>
             <div className="d-flex">
-              <Button className="mt-4 mb-3">
+              <Button
+                className="mt-4 mb-3"
+                onClick={() => createDummyInvoiceMutation.mutate()}
+              >
                 <Printer className={"mr-2"} /> Print Invoice
               </Button>
-              <Button className="mt-4 mb-3 bg-red-500 ml-2">
+              <Button
+                className="mt-4 mb-3 bg-red-500 ml-2"
+                onClick={cancelInvoice}
+              >
                 <Delete className={"mr-2"} /> Cancel
               </Button>
             </div>

@@ -223,8 +223,6 @@ export default function VehicleForm({
     }
   }, [vehicleModel, form]);
 
-  console.log(form.getValues());
-
   return (
     <Form {...form}>
       <form className="space-y-8">
