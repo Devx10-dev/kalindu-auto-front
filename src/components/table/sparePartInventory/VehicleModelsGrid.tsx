@@ -6,8 +6,6 @@ import {
   VehicleModelResponseData,
   VehicleType,
 } from "@/types/sparePartInventory/vehicleTypes";
-import capitalize from "@/utils/capitalize";
-import truncate from "@/utils/truncate";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
@@ -38,6 +36,7 @@ import { toast } from "../../ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
 const SPARE_PART_PAGE = "/dashboard/vehicle/part";
+import capitalize, { truncate } from "@/utils/string";
 
 export default function VehicleModelsGrid({
   setShow,

@@ -6,14 +6,15 @@ import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
+import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
+import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
 import RegiserUser from "./pages/dashboard/user-management/RegisterUser";
 import ViewUser from "./pages/dashboard/user-management/ViewUser";
 import Error500 from "./pages/error/500";
-import VehicleModel from "./pages/sparePart/VehicleModel";
-import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
-import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
-import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import ActivityLog from "./pages/log/ActivityLog";
 import SpareParts from "./pages/sparePart/SpareParts";
+import VehicleModel from "./pages/sparePart/VehicleModel";
 
 function App() {
   return (
@@ -47,16 +48,15 @@ function App() {
           <Route path="reports">
             <Route path="daily-sales" element={<DailySalesBase />} />
           </Route>
-          {/* <Route`
-            path="/dashboard/creditors/manage"
-            element={<CreditorManagement />}
-          /> */}
-          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
 
           <Route path="users">
             {/* Routes for user management */}
             <Route path="user-list" element={<ViewUser />} />
             <Route path="register" element={<RegiserUser />} />
+          </Route>
+
+          <Route path="log">
+            <Route path="activity" element={<ActivityLog />} />
           </Route>
         </Route>
       </Route>

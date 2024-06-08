@@ -63,9 +63,11 @@ export const vehicleModelSchema = z.object({
           id: z.number(),
         })
         .or(
-          z.string().min(2, {
-            message: "Vechicle brand must be atleast 2 characters.",
-          }),
+          z
+            .string()
+            .min(2, {
+              message: "Vechicle brand must be atleast 2 characters.",
+            }),
         ),
       __isNew__: z.boolean(),
     })

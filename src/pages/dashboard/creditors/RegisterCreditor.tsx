@@ -11,6 +11,40 @@ import { creditorFormSchema } from "./components/formScheme";
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export default function RegisterCreditor() {
+  const axiosPrivate = useAxiosPrivate();
+  const creditorService = new CreditorService(axiosPrivate);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const createCreditorMutation = useMutation({
+    mutationFn: (data: CreditorFormValues) =>
+      creditorService.createCreditor(data),
+    onSuccess: () => {
+      // Handle onSuccess logic here
+      queryClient.invalidateQueries({ queryKey: ["creditors"] });
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "Successfully created creditor.",
+        action: (
+          <ToastAction altText="View Creditors">View Creditors</ToastAction>
+        ),
+      });
+    },
+    onError: (data) => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong : " + data.name,
+        description: data.message,
+        duration: 5000,
+      });
+    },
+  });
+
+  if (createCreditorMutation.isPending) {
+    return <Loading />;
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -20,7 +54,7 @@ export default function RegisterCreditor() {
         </p>
       </div>
       <Separator />
-      <RegisterForm />
+      <RegisterForm createCreditor={createCreditorMutation} />
     </div>
   );
 }
