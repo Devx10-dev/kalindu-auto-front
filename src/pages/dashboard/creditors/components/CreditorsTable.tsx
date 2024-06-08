@@ -40,13 +40,6 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
     <>
       <div className="flex flex-col justify-end">
         <div className="mb-4 flex gap-10">
-          <Input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearch}
-            placeholder="Search creditors..."
-            className="w-1/4"
-          />
           <Button variant={"secondary"}>
             <Search className="mr-2 h-4 w-4" />
             Search
@@ -71,7 +64,9 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
                 <TableCell>{creditor.primaryContact}</TableCell>
                 <TableCell>{creditor.secondaryContact}</TableCell>
                 <TableCell className="text-right">
-                  <Link to={"/dashboard/creditors/manage/1"}>
+                  <Link
+                    to={`/dashboard/creditors/manage/${creditor.creditorID}`}
+                  >
                     <Button className="mr-5 bg-slate-200 text-black hover:bg-slate-600 hover:text-white">
                       <View className="mr-2 h-4 w-4" />
                       View Transactions

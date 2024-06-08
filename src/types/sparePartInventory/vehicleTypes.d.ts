@@ -34,5 +34,5 @@ export type VehicleModelResponseData = {
 export interface VehicleModelGridProps {
   vehicleService: VehicleService;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  setVehicle: React.Dispatch<React.SetStateAction<VehicleModelType | null>>
+  setVehicle: React.Dispatch<React.SetStateAction<VehicleModelType | null>>;
 }

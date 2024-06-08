@@ -20,10 +20,18 @@ export function convertArrayToISOFormat(doneAt: number[]): string {
   const [year, month, day, hours, minutes, seconds, milliseconds] = doneAt;
 
   // Create a new Date object
-  const date = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+  const date = new Date(
+    year,
+    month - 1,
+    day,
+    hours,
+    minutes,
+    seconds,
+    milliseconds,
+  );
 
   // Format the date to a readable string
   // For example: "YYYY-MM-DD HH:MM:SS"
-  const formattedDate = date.toISOString().replace('T', ' ').split('.')[0];
+  const formattedDate = date.toISOString().replace("T", " ").split(".")[0];
   return formattedDate;
 }

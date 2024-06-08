@@ -103,12 +103,12 @@ function ActivityLogGrid({
         selectedFeature ?? "All",
         selectedDBAction ?? "All",
         selectedFromDate,
-        selectedToDate
+        selectedToDate,
       ),
   });
 
   const [viewActivityLogs, setViewActivityLogs] = useState<ActivityLog[]>(
-    activityLogs?.activityLogs ?? []
+    activityLogs?.activityLogs ?? [],
   );
 
   useEffect(() => {
@@ -255,7 +255,7 @@ function ActivityLogGrid({
                       variant={"outline"}
                       className={cn(
                         "w-[200px] justify-start text-left font-normal",
-                        !date && "text-muted-foreground"
+                        !date && "text-muted-foreground",
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />

@@ -40,7 +40,7 @@ export default function TablePagination(props: {
             >
               {i}
             </PaginationLink>
-          </PaginationItem>
+          </PaginationItem>,
         );
       } else if (
         (i === currentPage - 3 && currentPage > 4) ||
@@ -49,7 +49,7 @@ export default function TablePagination(props: {
         pages.push(
           <PaginationItem key={i}>
             <PaginationEllipsis />
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
     }

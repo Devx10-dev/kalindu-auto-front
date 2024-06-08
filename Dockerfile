@@ -1,24 +1,26 @@
-FROM quay.io/keycloak/keycloak:latest as builder
+FROM node:18-alpine as BUILD
+WORKDIR /app/kalinduautofe
 
-# Enable health and metrics support
-ENV KC_HEALTH_ENABLED=true
-ENV KC_METRICS_ENABLED=true
+COPY package.json .
 
-# Configure a database vendor
-ENV KC_DB=postgres
+RUN npm install
 
-WORKDIR /opt/keycloak
-# for demonstration purposes only, please make sure to use proper certificates in production instead
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
-RUN /opt/keycloak/bin/kc.sh build
+COPY . .
 
-FROM quay.io/keycloak/keycloak:latest
-COPY --from=builder /opt/keycloak/ /opt/keycloak/
+RUN npm run build
 
-# change these values to point to a running postgres instance
-ENV KC_DB=kalindu-auto-dev
-ENV KC_DB_URL=jdbc:postgresql://ep-plain-pine-a1pg99xg.ap-southeast-1.aws.neon.tech/kalindu-auto-dev?user=dev-x10&password=6TPmDdoGuQ9c&sslmode=require
-ENV KC_DB_USERNAME=dev-x10
-ENV KC_DB_PASSWORD=6TPmDdoGuQ9c
-ENV KC_HOSTNAME=localhost
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+FROM node:18-alpine as PROD 
+
+WORKDIR /app/kalinduautofe
+
+COPY --from=BUILD /app/kalinduautofe/dist/ /app/kalinduautofe/dist/
+
+EXPOSE 8080
+
+COPY package.json .
+COPY vite.config.ts .
+
+RUN npm install typescript 
+
+EXPOSE 8080
+# CMD ["npm", "run", "preview"]

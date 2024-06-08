@@ -74,7 +74,7 @@ export default function VehicleForm({
             label: vehicleModel.vehicleBrand,
             __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false }
+        : { label: "", value: "", __isNew__: false },
     );
     form.setValue(
       "type",
@@ -84,7 +84,7 @@ export default function VehicleForm({
             label: vehicleModel.vehicleType,
             __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false }
+        : { label: "", value: "", __isNew__: false },
     );
     form.setValue(
       "chassisNo",
@@ -94,12 +94,12 @@ export default function VehicleForm({
             label: vehicleModel.chassisNo,
             __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false }
+        : { label: "", value: "", __isNew__: false },
     );
     form.setValue("model", vehicleModel ? vehicleModel.model : "");
     form.setValue(
       "description",
-      vehicleModel ? vehicleModel.description || "" : undefined
+      vehicleModel ? vehicleModel.description || "" : undefined,
     );
   };
 

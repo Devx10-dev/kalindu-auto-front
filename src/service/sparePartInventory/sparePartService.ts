@@ -1,6 +1,4 @@
-import {
-  SparePartsResponseData
-} from "@/types/sparePartInventory/sparePartTypes";
+import { SparePartsResponseData } from "@/types/sparePartInventory/sparePartTypes";
 import { SparePart } from "@/validation/schema/SparePart/sparePartSchema";
 import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
@@ -15,13 +13,13 @@ class SparePartService extends Service {
   async fetchFilteredSpaerParts(
     pageNo: number,
     pageSize: number,
-    chassisNo: string | null
+    chassisNo: string | null,
   ): Promise<SparePartsResponseData> {
     try {
       const response = await this.api.get<SparePartsResponseData>(
         `${SPARE_PART_URL}/${
           chassisNo === "All" ? null : chassisNo
-        }/${pageNo}/${pageSize}`
+        }/${pageNo}/${pageSize}`,
       );
       return response.data;
     } catch (error) {

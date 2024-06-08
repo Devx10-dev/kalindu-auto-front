@@ -20,11 +20,11 @@ class VehicleService extends Service {
 
   async fetchVehicleModels(
     pageNo: number,
-    pageSize: number
+    pageSize: number,
   ): Promise<VehicleModelResponseData> {
     try {
       const response = await this.api.get<VehicleModelResponseData>(
-        `${VEHICLE_MODEL_URL}/${pageNo}/${pageSize}`
+        `${VEHICLE_MODEL_URL}/${pageNo}/${pageSize}`,
       );
       return response.data;
     } catch (error) {
@@ -37,13 +37,32 @@ class VehicleService extends Service {
     pageSize: number,
     type: string | null,
     brand: string | null,
-    chassisNo: string | null
+    chassisNo: string | null,
   ): Promise<VehicleModelResponseData> {
     try {
       const response = await this.api.get<VehicleModelResponseData>(
         `${VEHICLE_MODEL_URL}/${type === "All" ? null : type}/${
           brand === "All" ? null : brand
-        }/${chassisNo === "All" ? null : chassisNo}/${pageNo}/${pageSize}`
+        }/${chassisNo === "All" ? null : chassisNo}/${pageNo}/${pageSize}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch vehicle models");
+    }
+  }
+
+  async fetchFilteredVehicleModels(
+    pageNo: number,
+    pageSize: number,
+    type: string | null,
+    brand: string | null,
+    chassisNo: string | null,
+  ): Promise<VehicleModelResponseData> {
+    try {
+      const response = await this.api.get<VehicleModelResponseData>(
+        `${VEHICLE_MODEL_URL}/${type === "All" ? null : type}/${
+          brand === "All" ? null : brand
+        }/${chassisNo === "All" ? null : chassisNo}/${pageNo}/${pageSize}`,
       );
       return response.data;
     } catch (error) {
@@ -63,7 +82,7 @@ class VehicleService extends Service {
   async fetchVehicleBrands(): Promise<VehicleBrand[]> {
     try {
       const response = await this.api.get<VehicleBrand[]>(
-        `${VEHICLE_BRAND_URL}`
+        `${VEHICLE_BRAND_URL}`,
       );
       return response.data;
     } catch (error) {
@@ -74,7 +93,7 @@ class VehicleService extends Service {
   async fetchVehicleChassisNos(): Promise<ChassisNo[]> {
     try {
       const response = await this.api.get<ChassisNo[]>(
-        `${VEHICLE_CHASSIS_NO_URL}`
+        `${VEHICLE_CHASSIS_NO_URL}`,
       );
       return response.data;
     } catch (error) {
@@ -125,4 +144,3 @@ class VehicleService extends Service {
 }
 
 export { VehicleService };
-

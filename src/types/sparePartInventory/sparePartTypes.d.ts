@@ -11,10 +11,10 @@ export type SparePartItem = {
 };
 
 export interface SparePartGridProps {
-  vehicleService: VehicleService
+  vehicleService: VehicleService;
   sparePartService: SparePartService;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  setSparePart: React.Dispatch<React.SetStateAction<SparePartItem | null>>
+  setSparePart: React.Dispatch<React.SetStateAction<SparePartItem | null>>;
 }
 
 export type SparePartsResponseData = {

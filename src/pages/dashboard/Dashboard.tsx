@@ -21,7 +21,10 @@ function Dashboard() {
             maxWidth: "300px",
           }}
         >
-          <Sidebar showDrawer={showDrawer} toggleDrawer={() => setShowDrawer(!showDrawer)}/>
+          <Sidebar
+            showDrawer={showDrawer}
+            toggleDrawer={() => setShowDrawer(!showDrawer)}
+          />
         </div>
         {/* border: "1px solid black" */}
         <div

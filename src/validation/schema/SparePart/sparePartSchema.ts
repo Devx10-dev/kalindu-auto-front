@@ -34,7 +34,7 @@ export const spaerPartSchema = z.object({
         .or(
           z
             .string()
-            .min(2, { message: "Chassis No must be atleast 2 characters." })
+            .min(2, { message: "Chassis No must be atleast 2 characters." }),
         ),
       __isNew__: z.boolean(),
     })

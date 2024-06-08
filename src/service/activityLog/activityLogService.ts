@@ -16,7 +16,7 @@ class ActivityLogService extends Service {
     feature: string,
     action: string,
     fromDate: string | null,
-    toDate: string | null
+    toDate: string | null,
   ): Promise<ActivityLogsResponseData> {
     try {
       const url = `${ACTIVITY_LOG_URL}/${
@@ -36,7 +36,7 @@ class ActivityLogService extends Service {
   async fetchUserIds(): Promise<string[]> {
     try {
       const response = await this.api.get<string[]>(
-        `${ACTIVITY_LOG_URL}/user-ids`
+        `${ACTIVITY_LOG_URL}/user-ids`,
       );
       return response.data;
     } catch (error) {
@@ -47,7 +47,7 @@ class ActivityLogService extends Service {
   async fetchFeatures(): Promise<string[]> {
     try {
       const response = await this.api.get<string[]>(
-        `${ACTIVITY_LOG_URL}/features`
+        `${ACTIVITY_LOG_URL}/features`,
       );
       return response.data;
     } catch (error) {
@@ -58,7 +58,7 @@ class ActivityLogService extends Service {
   async fetchActions(): Promise<string[]> {
     try {
       const response = await this.api.get<string[]>(
-        `${ACTIVITY_LOG_URL}/actions`
+        `${ACTIVITY_LOG_URL}/actions`,
       );
       return response.data;
     } catch (error) {

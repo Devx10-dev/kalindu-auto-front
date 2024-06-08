@@ -2,13 +2,13 @@ export type User = {
   id: number;
   username: string;
   firstName: string;
-//   lastName: string;
-//   email?: string;
-//   address?: string;
+  //   lastName: string;
+  //   email?: string;
+  //   address?: string;
   mobileNo: string;
-//   homeNo?: string;
+  //   homeNo?: string;
   designation: Designation;
-//   modifiedBy: string;
+  //   modifiedBy: string;
 };
 
-export type Designation = 'Manager' | 'Cashier' | 'Owner';
+export type Designation = "Manager" | "Cashier" | "Owner";

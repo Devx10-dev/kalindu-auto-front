@@ -6,13 +6,12 @@ import RegiserUser from "./pages/dashboard/user-management/RegisterUser";
 import ViewUser from "./pages/dashboard/user-management/ViewUser";
 import Error500 from "./pages/error/500";
 import VehicleModel from "./pages/sparePart/VehicleModel";
-// import SpareParts from "./pages/sparePart/SpareParts";
 import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
-import { default as CashInvoice, default as CreditorInvoice } from "./pages/dashboard/invoice/creditor/CreditorInvoice";
 import ActivityLog from "./pages/log/ActivityLog";
 import SpareParts from "./pages/sparePart/SpareParts";
+import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
 
 function App() {
   return (
@@ -24,23 +23,25 @@ function App() {
       <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
-          {/* Invoice Routes */}
-          <Route path="invoice">
-            <Route path="cash" element={<CashInvoice />} />
-            <Route path="creditor" element={<CreditorInvoice />} />
-          </Route>
-
           <Route path="vehicle">
             <Route path="model" element={<VehicleModel />} />
             <Route path="part" element={<SpareParts />} />
           </Route>
 
+          <Route path="vehicle">
+            <Route path="model" element={<VehicleModel />} />
+            {/* <Route path="part" element={<SpareParts />} /> */}
+          </Route>
+
           {/* Creditor Routes */}
           <Route path="creditors">
             <Route path="register" element={<RegisterCreditor />} />
-            <Route path="manage" element={<CreditorManagement />}>
-              <Route path=":id" element={<ViewCreditor />} />
-            </Route>
+            <Route path="manage" element={<CreditorManagement />} />
+            <Route path="manage/:id" element={<ViewCreditor />} />
+          </Route>
+
+          <Route path="reports">
+            <Route path="daily-sales" element={<DailySalesBase />} />
           </Route>
           {/* <Route`
             path="/dashboard/creditors/manage"

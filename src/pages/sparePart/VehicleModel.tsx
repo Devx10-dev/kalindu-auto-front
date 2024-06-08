@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
-import {
-  VehicleModel as VehicleModelType
-} from "@/types/sparePartInventory/vehicleTypes";
+import { VehicleModel as VehicleModelType } from "@/types/sparePartInventory/vehicleTypes";
 import { Fragment, useState } from "react";
 
 export default function VehicleModel() {

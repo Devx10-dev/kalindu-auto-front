@@ -1,0 +1,17 @@
+# docker compose for rectapp with env variables
+services:
+  rectapp:
+    image: gcr.io/kubernetes-416811/kalindu-auto-front-dev:test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run dev
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - KEY_CLOAK_CLIENT_ID="kalindu-auto-fe"
+      - KEYCLOAK_REALM="KalinduAuto"
+      - KEYCLOAK_URL="http:/keycloak.devx10.live"
+      - BE_URL="http:/localhost:8090"
+    ports:
+      - "8080:8080"
