@@ -21,24 +21,16 @@ export const spaerPartSchema = z.object({
   quantity: z.string({ required_error: "Quantity is required" }),
   chassisNo: z
     .object({
-      label: z
-        .string()
-        .min(2, { message: "Chassis No must be atleast 2 characters." }),
+      label: z.string().optional(),
       value: z
         .object({
-          chassisNo: z
-            .string()
-            .min(2, { message: "Chassis No must be atleast 2 characters." }),
-          id: z.number(),
+          chassisNo: z.string().optional(),
+          id: z.number().optional(),
         })
-        .or(
-          z
-            .string()
-            .min(2, { message: "Chassis No must be atleast 2 characters." }),
-        ),
-      __isNew__: z.boolean(),
+        .or(z.string().optional()),
+      __isNew__: z.boolean().optional(),
     })
-    .required(),
+    .optional(),
   description: z.string().optional(),
 });
 

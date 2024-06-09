@@ -45,7 +45,7 @@ function ActivityLogGrid({
   activityLogService: ActivityLogService;
 }) {
   const [pageNo, setPageNo] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(100);
   const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
   const [selectedDBAction, setSelectedDBAction] = useState<string | null>(null);

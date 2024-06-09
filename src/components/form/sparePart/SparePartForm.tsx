@@ -240,7 +240,7 @@ export default function SparePartForm({
             name="chassisNo"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <RequiredLabel label="Chassis No" />
+                <OptionalLabel label="Chassis No" />
                 <FormControl>
                   <Select
                     className="select-place-holder"

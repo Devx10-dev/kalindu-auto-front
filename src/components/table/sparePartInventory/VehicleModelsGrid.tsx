@@ -74,19 +74,19 @@ export default function VehicleModelsGrid({
   }, []); // Only run this effect once on component mount
 
   const { data: vehicleTypes } = useQuery<VehicleType[]>({
-    queryKey: ["vehicleTypes"],
+    queryKey: ["vehicleTypes", "vehicleModels"],
     queryFn: () => vehicleService.fetchVehicleTypes(),
     retry: 2,
   });
 
   const { data: vehicleBrands } = useQuery<VehicleBrand[]>({
-    queryKey: ["vehicleBrands"],
+    queryKey: ["vehicleBrands", "vehicleModels"],
     queryFn: () => vehicleService.fetchVehicleBrands(),
     retry: 2,
   });
 
   const { data: vehicleChassisNos } = useQuery<ChassisNo[]>({
-    queryKey: ["vehicleChassisNos"],
+    queryKey: ["vehicleChassisNos", "vehicleModels"],
     queryFn: () => vehicleService.fetchVehicleChassisNos(),
     retry: 2,
   });
