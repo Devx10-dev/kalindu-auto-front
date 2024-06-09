@@ -1,65 +1,63 @@
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
-import { X } from "lucide-react";
+import { useEffect } from "react";
 
 const InvoiceTable: React.FC = () => {
-  const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
-    useCreditorInvoiceStore();
+    const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
+        useCreditorInvoiceStore();
+    useEffect(() => {
+        console.log(invoiceItemDTOList);
+    }, [invoiceItemDTOList]);
 
-  return (
-    <div>
-      <Table className="border rounded-md text-md mb-5 mt-10">
-        <TableBody>
-          <TableRow>
-            <TableHead>Item</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Discount</TableHead>
-            <TableHead>Total</TableHead>
-            <TableHead>Outsource</TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-          {invoiceItemDTOList.map((item: any, index: any) => (
-            <TableRow key={index}>
-              <TableCell>{item.itemName}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>LKR {item.price}</TableCell>
-              <TableCell>LKR {item.discount}</TableCell>
-              <TableCell>
-                LKR{" "}
-                {(
-                  item.quantity * item.price -
-                  item.quantity * item.discount
-                ).toFixed(2)}
-              </TableCell>
-              <TableCell>
-                <Switch
-                  checked={item.outsourcedStatus}
-                  onCheckedChange={(state) => setOutsourcedStatus(item, state)}
-                />
-              </TableCell>
-              <TableCell>
-                <Button
-                  onClick={() => removeInvoiceItem(item)}
-                  variant={"secondary"}
-                >
-                  <X className="mr-2" /> Remove
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
+    return (
+        <div>
+            <Table className="border rounded-md text-md mb-5 mt-10">
+                <TableBody>
+                    <TableRow>
+                        <TableHead>Item</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>Discount</TableHead>
+                        <TableHead>Total</TableHead>
+                        <TableHead>Outsource</TableHead>
+                        <TableHead>Action</TableHead>
+                    </TableRow>
+                    {invoiceItemDTOList.map((item: any, index: any) => (
+                        <TableRow key={index}>
+                            <TableCell>{item.itemName}</TableCell>
+                            <TableCell>{item.quantity}</TableCell>
+                            <TableCell>LKR {item.price}</TableCell>
+                            <TableCell>LKR {item.discount}</TableCell>
+                            <TableCell>
+                                LKR{" "}
+                                {(
+                                    item.quantity * item.price -
+                                    item.quantity * item.discount
+                                ).toFixed(2)}
+                            </TableCell>
+                            <TableCell>
+                                <Switch
+                                    checked={item.outsourcedStatus}
+                                    onCheckedChange={(state) => setOutsourcedStatus(item, state)}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <Button onClick={() => removeInvoiceItem(item)}>Remove</Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
+    );
 };
 
 export default InvoiceTable;

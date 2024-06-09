@@ -3,21 +3,22 @@ import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [react()],
+    plugins: [
+        react(),
+    ],
 
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+        },
     },
-  },
-
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:8090",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8090',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, ''),
+            },
+        },
     },
-  },
 });
