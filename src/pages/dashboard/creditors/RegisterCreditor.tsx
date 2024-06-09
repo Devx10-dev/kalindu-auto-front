@@ -6,7 +6,6 @@ import { creditorFormSchema } from "./components/formScheme";
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export default function RegisterCreditor() {
-
   return (
     <div className="space-y-6">
       <div>
@@ -16,7 +15,7 @@ export default function RegisterCreditor() {
         </p>
       </div>
       <Separator />
-      <RegisterForm/>
+      <RegisterForm />
     </div>
   );
 }
