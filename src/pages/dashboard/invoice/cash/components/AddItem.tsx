@@ -16,14 +16,24 @@ import {
 import {Input} from "@/components/ui/input";
 import {PlusCircle, XCircle} from "lucide-react";
 import useCashInvoiceStore from "../context/useCashInvoiceStore.tsx";
+import {Textarea} from "@/components/ui/textarea.tsx";
+import {RequiredLabel} from "@/components/formElements/FormLabel.tsx";
 
 const formSchema = z.object({
-    itemName: z.string(),
-    price: z.any(), // TODO : add number and make validation work
-    quantity: z.any(), // TODO : add number and make validation work
+    itemName: z.string().min(1, "Item name is required"),
+    price: z
+        .number({invalid_type_error: "Price must be a number"})
+        .positive("Price cannot be negative"),
+    quantity: z
+        .number({invalid_type_error: "Quantity must be a number"})
+        .positive("Quantity cannot be negative")
+        .int("Quantity must be an integer"),
     code: z.string().optional(),
     description: z.string().optional(),
-    discount: z.any().optional(),
+    discount: z
+        .number({invalid_type_error: "Discount must be a number"})
+        .optional()
+        .refine((val) => val >= 0, "Discount cannot be negative"),
 });
 
 const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
@@ -51,20 +61,26 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
         onClose();
     };
 
+    const onReset = () => {
+        form.reset();
+    }
     return (
-        <Card>
-            <CardContent className="p-3 shadow-sm bg-slate-300">
+        <Card className="p-4">
+            <CardContent className="p-3 shadow-sm">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 gap-5">
                             <FormField
                                 control={form.control}
                                 name="itemName"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Item Name</FormLabel>
+                                        <RequiredLabel label="Item name"/>
                                         <FormControl>
-                                            <Input type="text" placeholder="Item name" {...field} />
+                                            <Input
+                                                type="text"
+                                                placeholder="Item name"
+                                                {...field} />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -75,9 +91,14 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
                                 name="price"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Price</FormLabel>
+                                        <RequiredLabel label="Price"/>
                                         <FormControl>
-                                            <Input type="number" placeholder="Price" {...field} />
+                                            <Input
+                                                type="number"
+                                                placeholder="Price"
+                                                min={0}
+                                                step="0.01"
+                                                {...field} />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -88,9 +109,15 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
                                 name="quantity"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Quantity</FormLabel>
+                                        <RequiredLabel label="Quantity"/>
                                         <FormControl>
-                                            <Input type="number" placeholder="Quantity" {...field} />
+                                            <Input
+                                                type="number"
+                                                placeholder="Quantity"
+                                                {...field}
+                                                min={0}
+                                                step="1"
+                                            />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -103,7 +130,11 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
                                     <FormItem>
                                         <FormLabel>Code</FormLabel>
                                         <FormControl>
-                                            <Input type="text" placeholder="Code" {...field} />
+                                            <Input
+                                                type="text"
+                                                placeholder="Code"
+                                                {...field}
+                                            />
                                         </FormControl>
                                     </FormItem>
                                 )}
@@ -117,7 +148,7 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
                                     <FormItem>
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
-                                            <Input type="text" placeholder="Description" {...field} />
+                                            <Textarea placeholder="Description" {...field} />
                                         </FormControl>
                                     </FormItem>
                                 )}
@@ -129,13 +160,19 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
                                     <FormItem>
                                         <FormLabel>Discount</FormLabel>
                                         <FormControl>
-                                            <Input type="number" placeholder="Discount" {...field} />
+                                            <Input
+                                                type="number"
+                                                placeholder="Discount"
+                                                min={0}
+                                                step="0.01"
+                                                {...field}
+                                            />
                                         </FormControl>
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="flex justify-end gap-4">
+                        <div className="flex justify-end gap-4 mt-12">
                             <Button onClick={handleCancel} variant={"outline"}>
                                 Cancel
                             </Button>
@@ -143,7 +180,11 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
                             <Button type="submit" className="">
                                 <PlusCircle className="mr-2"/> Add Item
                             </Button>
-                            <Button type="reset" className="bg-slate-500">
+                            <Button
+                                type="reset"
+                                onClick={onReset}
+                                className="bg-slate-500"
+                            >
                                 <XCircle className="mr-2"/> Clear
                             </Button>
                         </div>
