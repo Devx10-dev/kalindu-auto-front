@@ -15,7 +15,6 @@ import { NavLink } from "@/types/sidebar";
 export function SidebarItem(props: { link: NavLink }) {
   const [isOpen, setIsOpen] = React.useState(true);
   const location = useLocation();
-  console.log(location.pathname);
 
   return (
     <Collapsible

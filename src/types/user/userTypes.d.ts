@@ -1,14 +1,14 @@
 export type User = {
-  id: number;
+  id: string;
   username: string;
-  firstName: string;
-  //   lastName: string;
-  //   email?: string;
-  //   address?: string;
+  fullName: string;
+  email?: string;
+  address?: string;
   mobileNo: string;
-  //   homeNo?: string;
+  homeNo?: string;
+  roles: string[];
+  active: boolean;
   designation: Designation;
-  //   modifiedBy: string;
 };
 
-export type Designation = "Manager" | "Cashier" | "Owner";
+export type Designation = "Manager" | "Cashier" | "Owner" | "User";

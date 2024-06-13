@@ -53,7 +53,7 @@ function DummyInvoice() {
           dummy: true,
           tax: vatPrecentage,
           invoiceItems: items,
-          invoiceId: "10000",
+          invoiceId: "100000000",
           vehicleNo: vehicleNo,
         });
       }
