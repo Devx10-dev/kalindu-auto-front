@@ -51,4 +51,3 @@ class UserService extends Service {
 }
 
 export { UserService };
-

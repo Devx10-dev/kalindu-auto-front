@@ -60,7 +60,7 @@ function RegisterUser() {
   const userService = new UserService(axiosPrivate);
 
   // Submit handler
-  const onSubmit = async(values: z.infer<typeof userSchema>) => {
+  const onSubmit = async (values: z.infer<typeof userSchema>) => {
     try {
       if (form.getValues()) {
         await createUserMutation.mutateAsync(form.getValues());
@@ -70,7 +70,7 @@ function RegisterUser() {
     }
 
     console.log(values);
-  }
+  };
 
   const { data: roles } = useQuery({
     queryKey: ["roles"],
@@ -183,11 +183,11 @@ function RegisterUser() {
                         options={roleOptions}
                         onChange={(selectedOptions) =>
                           field.onChange(
-                            selectedOptions.map((option) => option.value)
+                            selectedOptions.map((option) => option.value),
                           )
                         }
                         value={roleOptions.filter((option) =>
-                          field.value.includes(option.value)
+                          field.value.includes(option.value),
                         )}
                         placeholder={"Select or add new roles"}
                         className="basic-multi-select select-place-holder"

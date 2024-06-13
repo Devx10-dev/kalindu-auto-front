@@ -8,9 +8,7 @@ export const userSchema = z.object({
   mobileNo: z
     .string()
     .regex(/^0\d{9}$/, { message: "Invalid contact number." }),
-  homeNo: z
-    .string()
-    .optional(),
+  homeNo: z.string().optional(),
   designation: z.enum(["Manager", "Cashier", "Owner", "User"], {
     errorMap: () => ({ message: "Please select a valid designation." }),
   }),

@@ -1,14 +1,12 @@
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import {
-    COnfirmationModalProps
-} from "@/types/component/propTypes";
+import { COnfirmationModalProps } from "@/types/component/propTypes";
 import { Button } from "../ui/button";
 
 export function ConfirmationModal({
