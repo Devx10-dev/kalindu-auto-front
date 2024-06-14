@@ -3,7 +3,6 @@ import {
   OptionalLabel,
   RequiredLabel,
 } from "@/components/formElements/FormLabel";
-import AddUserIcon from "@/components/icon/AddUserIcon";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -27,17 +26,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { UserService } from "@/service/user/userService";
+import { User as UserType } from "@/types/user/userTypes";
 import { User, userSchema } from "@/validation/schema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { UserIcon } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
 import { z } from "zod";
 
-function RegisterUser() {
+const USERS_VIEW_PAGE = "/dashboard/users/list";
+
+function EditUser() {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const [searchParamData] = useSearchParams();
 
   // defining the form
   const form = useForm<z.infer<typeof userSchema>>({
@@ -59,11 +67,38 @@ function RegisterUser() {
 
   const userService = new UserService(axiosPrivate);
 
+  const updateFormData = (user: UserType) => {
+    form.setValue("id", user.id);
+    form.setValue("username", user.username);
+    form.setValue("fullName", user.fullName);
+    form.setValue("email", user.email);
+    form.setValue("mobileNo", user.mobileNo);
+    form.setValue("homeNo", user.homeNo);
+    form.setValue("active", user.active);
+    form.setValue("designation", user.designation);
+    form.setValue("roles", user.roles);
+    form.setValue("address", user.address);
+    form.setValue("password", "");
+  };
+
+  const getUserDataFromURLPrams = () => {
+    searchParamData.forEach((value, key) => {
+      if (key === "data") {
+        const userData = JSON.parse(value) as UserType;
+        updateFormData(userData);
+      }
+    });
+  };
+
+  useEffect(() => {
+    getUserDataFromURLPrams();
+  }, []);
+
   // Submit handler
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
     try {
       if (form.getValues()) {
-        await createUserMutation.mutateAsync(form.getValues());
+        await updateUserMutation.mutateAsync(form.getValues());
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -84,24 +119,26 @@ function RegisterUser() {
       label: role,
     })) || [];
 
-  const createUserMutation = useMutation({
-    mutationFn: (formData: User) => userService.createUser(formData),
+  const updateUserMutation = useMutation({
+    mutationFn: (formData: User) => userService.updateUser(formData),
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
         variant: "default",
         title: "Success",
-        description: "Successfully inserted user.",
+        description: "Successfully updated user.",
         action: <ToastAction altText="View Users">View Users</ToastAction>,
       });
+
+      navigate(USERS_VIEW_PAGE);
     },
     onError: (data) => {
       toast({
         variant: "destructive",
-        title: "User creation is failed",
+        title: "User update is failed",
         description: data.message,
-        duration: 5000,
+        duration: 3000,
       });
     },
   });
@@ -110,9 +147,9 @@ function RegisterUser() {
     <div className="space-y-6 pl-2 pr-12">
       <CardHeader>
         <PageHeader
-          title="Register User"
-          description="Register new user to the system by filling out the following details."
-          icon={<AddUserIcon height="30" width="28" color="#162a3b" />}
+          title="Edit User"
+          description="Edit user details by updating the following details."
+          icon={<UserIcon height="30" width="28" color="#162a3b" />}
         />
       </CardHeader>
       <Separator />
@@ -130,6 +167,8 @@ function RegisterUser() {
                       <Input
                         placeholder="Please enter the username"
                         {...field}
+                        value={field.value}
+                        disabled
                       />
                     </FormControl>
                     <FormMessage />
@@ -147,6 +186,7 @@ function RegisterUser() {
                       <Input
                         placeholder="Please enter user's full name"
                         {...field}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -164,6 +204,7 @@ function RegisterUser() {
                       <Input
                         placeholder="Please enter user's email address"
                         {...field}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -186,6 +227,7 @@ function RegisterUser() {
                             selectedOptions.map((option) => option.value),
                           )
                         }
+                        // defaultValue={roleOptions.filter((option) => field. option.value)}
                         value={roleOptions.filter((option) =>
                           field.value.includes(option.value),
                         )}
@@ -210,6 +252,7 @@ function RegisterUser() {
                         type="password"
                         placeholder="Please enter the password"
                         {...field}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -227,6 +270,7 @@ function RegisterUser() {
                         type="password"
                         placeholder="Please verify the password"
                         {...field}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -249,6 +293,8 @@ function RegisterUser() {
                       <SelectContent>
                         <SelectItem value="Manager">Manager</SelectItem>
                         <SelectItem value="Cashier">Cashier</SelectItem>
+                        <SelectItem value="Cashier">Owner</SelectItem>
+                        <SelectItem value="Cashier">User</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -266,6 +312,7 @@ function RegisterUser() {
                       <Input
                         placeholder="Enter the contact number"
                         {...field}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -279,7 +326,11 @@ function RegisterUser() {
                   <FormItem>
                     <OptionalLabel label="Home Number" />
                     <FormControl>
-                      <Input placeholder="Enter the home number" {...field} />
+                      <Input
+                        placeholder="Enter the home number"
+                        {...field}
+                        value={field.value}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -313,6 +364,7 @@ function RegisterUser() {
                         placeholder="Enter user's address"
                         className="resize-none h-24"
                         {...field}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -321,7 +373,7 @@ function RegisterUser() {
               />
             </div>
             <div className="flex justify-start gap-3">
-              <Button type="submit">Submit</Button>
+              <Button type="submit">Edit</Button>
               <Button type="reset" variant="destructive">
                 Reset
               </Button>
@@ -333,4 +385,4 @@ function RegisterUser() {
   );
 }
 
-export default RegisterUser;
+export default EditUser;

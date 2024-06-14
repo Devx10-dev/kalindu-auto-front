@@ -31,7 +31,6 @@ export type InvoiceItem = {
   code?: string;
   totalPrice?: string | number;
   VAT?: string | number;
-  code?: string;
   outsourcedStatus?: boolean;
   companyName?: string;
   buyingPrice?: number;

@@ -82,7 +82,7 @@ const NavLinks: NavLink[] = [
     sublinks: [
       {
         label: "Manage Users",
-        href: "/dashboard/users/user-list",
+        href: "/dashboard/users/list",
       },
       {
         label: "Register User",
@@ -104,6 +104,17 @@ const NavLinks: NavLink[] = [
         label: "Spare Parts",
         href: "/dashboard/vehicle/part",
         // icon: <FaRegListAlt />,
+      },
+    ],
+  },
+
+  {
+    label: "Logs",
+    href: "/log",
+    sublinks: [
+      {
+        label: "Activity Logs",
+        href: "/dashboard/log/activity",
       },
     ],
   },

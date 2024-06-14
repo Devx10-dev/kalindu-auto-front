@@ -21,10 +21,16 @@ export const spaerPartSchema = z.object({
   quantity: z.string({ required_error: "Quantity is required" }),
   chassisNo: z
     .object({
-      label: z.string(),
-      value: z.string(),
+      label: z.string().optional(),
+      value: z
+        .object({
+          chassisNo: z.string().optional(),
+          id: z.number().optional(),
+        })
+        .or(z.string().optional()),
+      __isNew__: z.boolean().optional(),
     })
-    .required(),
+    .optional(),
   description: z.string().optional(),
 });
 

@@ -6,14 +6,16 @@ import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
-import RegiserUser from "./pages/dashboard/user-management/RegisterUser";
-import ViewUser from "./pages/dashboard/user-management/ViewUser";
-import Error500 from "./pages/error/500";
-import VehicleModel from "./pages/sparePart/VehicleModel";
-import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
 import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
 import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
+import RegisterUser from "./pages/dashboard/user-management/RegisterUser";
+import Error500 from "./pages/error/500";
+import ActivityLog from "./pages/log/ActivityLog";
 import SpareParts from "./pages/sparePart/SpareParts";
+import VehicleModel from "./pages/sparePart/VehicleModel";
+import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
+import EditUser from "./pages/dashboard/user-management/EditUser";
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
+      {/* <Route path="/" > */}
       <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
@@ -47,16 +50,16 @@ function App() {
           <Route path="reports">
             <Route path="daily-sales" element={<DailySalesBase />} />
           </Route>
-          {/* <Route`
-            path="/dashboard/creditors/manage"
-            element={<CreditorManagement />}
-          /> */}
-          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
 
+          {/* Routes for user management */}
           <Route path="users">
-            {/* Routes for user management */}
-            <Route path="user-list" element={<ViewUser />} />
-            <Route path="register" element={<RegiserUser />} />
+            <Route path="list" element={<ViewUsers />} />
+            <Route path="register" element={<RegisterUser />} />
+            <Route path="edit" element={<EditUser />} />
+          </Route>
+
+          <Route path="log">
+            <Route path="activity" element={<ActivityLog />} />
           </Route>
         </Route>
       </Route>

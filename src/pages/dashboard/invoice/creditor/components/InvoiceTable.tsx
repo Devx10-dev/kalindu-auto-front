@@ -8,11 +8,14 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
-import { X } from "lucide-react";
+import { useEffect } from "react";
 
 const InvoiceTable: React.FC = () => {
   const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
     useCreditorInvoiceStore();
+  useEffect(() => {
+    console.log(invoiceItemDTOList);
+  }, [invoiceItemDTOList]);
 
   return (
     <div>
@@ -47,12 +50,7 @@ const InvoiceTable: React.FC = () => {
                 />
               </TableCell>
               <TableCell>
-                <Button
-                  onClick={() => removeInvoiceItem(item)}
-                  variant={"secondary"}
-                >
-                  <X className="mr-2" /> Remove
-                </Button>
+                <Button onClick={() => removeInvoiceItem(item)}>Remove</Button>
               </TableCell>
             </TableRow>
           ))}

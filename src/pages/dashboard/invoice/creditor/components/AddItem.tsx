@@ -18,9 +18,9 @@ import { PlusCircle, XCircle } from "lucide-react";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 
 const formSchema = z.object({
-  itemName: z.string().min(1, "Item name is required"),
-  price: z.any().refine((val) => val !== "", "Price is required"), // TODO : add number and make validation work
-  quantity: z.any().refine((val) => val !== "", "Quantity is required"), // TODO : add number and make validation work
+  itemName: z.string(),
+  price: z.any(), // TODO : add number and make validation work
+  quantity: z.any(), // TODO : add number and make validation work
   code: z.string().optional(),
   description: z.string().optional(),
   discount: z.any().optional(),
@@ -32,20 +32,16 @@ const AddItem: React.FC = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       itemName: "",
-      price: "",
-      quantity: "",
+      price: 1,
+      quantity: 1,
       code: "",
       description: "",
-      discount: "",
+      discount: 0,
     },
   });
 
   const onSubmit = (data: any) => {
     addInvoiceItem(data);
-  };
-
-  const resetForm = () => {
-    form.reset();
   };
 
   return (
@@ -136,7 +132,7 @@ const AddItem: React.FC = () => {
               <Button type="submit" className="">
                 <PlusCircle className="mr-2" /> Add Item
               </Button>
-              <Button onClick={resetForm} className="bg-slate-500">
+              <Button type="reset" className="bg-slate-500">
                 <XCircle className="mr-2" /> Clear
               </Button>
             </div>

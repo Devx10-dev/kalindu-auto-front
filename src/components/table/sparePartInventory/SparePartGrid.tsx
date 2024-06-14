@@ -4,8 +4,6 @@ import {
   SparePartsResponseData,
 } from "@/types/sparePartInventory/sparePartTypes";
 import { ChassisNo } from "@/types/sparePartInventory/vehicleTypes";
-import capitalize from "@/utils/capitalize";
-import truncate from "@/utils/truncate";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
@@ -32,6 +30,7 @@ import {
 } from "../../ui/table";
 import { toast } from "../../ui/use-toast";
 import { useLocation } from "react-router-dom";
+import capitalize, { truncate } from "@/utils/string";
 
 export default function SparePartGrid({
   setShow,

@@ -6,32 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Delete, Printer } from "lucide-react";
 import useInvoiceStore from "../context/useCreditorInvoiceStore";
 
-type summaryProps = {
-  printAndSaveInvoice: () => void;
-};
+const BillSummary: React.FC = () => {
+  const items = [{}];
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [vatPercentage, setVatPercentage] = useState(0);
+  const [vatAmount, setVatAmount] = useState(0);
 
-const BillSummary = (props: summaryProps) => {
-  const {
-    invoiceItemDTOList,
-    discountPercentage,
-    setDiscountPercentage,
-    discountAmount,
-    setDiscountAmount,
-    vatPercentage,
-    setVatPercentage,
-    vatAmount,
-    setVatAmount,
-    setTotalPrice,
-  } = useInvoiceStore();
-
-  const subtotal = invoiceItemDTOList.reduce(
-    (acc: any, item: any) => acc + item.quantity * item.price - item.discount,
+  const subtotal = items.reduce(
+    (acc: any, item: any) => acc + item.quantity * item.price,
     0,
   );
-
-  const discountedTotal = subtotal - (discountAmount || 0);
-  const totalWithVat = discountedTotal + (vatAmount || 0);
-  // setTotalPrice(totalWithVat)
+  const discountedTotal = subtotal - discountAmount;
+  const totalWithVat = discountedTotal + vatAmount;
 
   const handleDiscountPercentageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -64,10 +51,12 @@ const BillSummary = (props: summaryProps) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardContent className="p-3 shadow-sm  bg-slate-200 w-full max-h-fit">
-        <h2 className="text-md font-bold mb-8">Bill Summary</h2>
-        <div className="grid grid-cols-7 gap-4">
+    <Card>
+      <CardContent className="p-3 shadow-sm">
+        <div>
+          <h2 className="text-xl font-bold mb-8">Bill Summary</h2>
+        </div>
+        <div className="grid grid-cols-4 gap-4">
           <div className="flex flex-col gap-2">
             <Label>Discount Percentage (%)</Label>
             <Input
@@ -85,6 +74,12 @@ const BillSummary = (props: summaryProps) => {
               onChange={handleDiscountAmountChange}
               placeholder="Discount Amount"
             />
+          </div>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
+          </div>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
           </div>
           <div className="flex flex-col gap-2">
             <Label>VAT Percentage (%)</Label>
@@ -104,21 +99,25 @@ const BillSummary = (props: summaryProps) => {
               placeholder="VAT Amount"
             />
           </div>
-          <span className="text-md text-slate-900 p-5 rounded-md">
-            Total : LKR {totalWithVat.toFixed(2)}
-          </span>
-          <Button
-            className="mt-4 mb-5"
-            onClick={() => props.printAndSaveInvoice()}
-          >
-            <Printer className={"mr-2"} /> Print Invoice
-          </Button>
-          <Button className="mt-4 mb-5 bg-red-400 ml-2 text-black">
-            <Delete className={"mr-2"} /> Cancel
-          </Button>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
+          </div>
+          <div>
+            {/* TODO :: Find a better way to have the white space on right */}
+          </div>
         </div>
         <div className="flex justify-start text-left mt-4">
-          <div className="text-left"></div>
+          <div className="text-left">
+            <p className="text-xl bg-slate-200 text-slate-900 p-5 rounded-md">
+              Total : LKR {totalWithVat.toFixed(2)}
+            </p>
+            <Button className="mt-4 mb-5">
+              <Printer className={"mr-2"} /> Print Invoice
+            </Button>
+            <Button className="mt-4 mb-5 bg-red-500 ml-2">
+              <Delete className={"mr-2"} /> Cancel
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
