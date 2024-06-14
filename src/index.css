@@ -37,6 +37,45 @@ td {
   min-width: 800px;
 }
 
-/* .grid-cols-2-custom {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) 2fr;
-} */
+.color-red {
+  color: red;
+}
+
+.d-flex {
+  display: flex;
+}
+
+/* Scroll bar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Corner */
+::-webkit-scrollbar-corner {
+  background: #f1f1f1;
+}
+
+.lucide-x {
+  display: none !important;
+}
+
+body > div {
+  border-top-left-radius: unset !important;
+  border-top-right-radius: unset !important;
+}

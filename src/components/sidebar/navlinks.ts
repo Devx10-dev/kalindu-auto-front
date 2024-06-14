@@ -27,7 +27,7 @@ const NavLinks: NavLink[] = [
       },
       {
         label: "Create Dummy Invoice",
-        href: "/dashboard/invoices/create/dummy-invoice",
+        href: "/dashboard/invoice/dummy",
         // icon: <MdOutlineInsertPageBreak />,
       },
       {
@@ -59,7 +59,7 @@ const NavLinks: NavLink[] = [
     sublinks: [
       {
         label: "Daily Sales and Expenses",
-        href: "/dashboard/reports/daily-sales-expenses",
+        href: "/dashboard/reports/daily-sales",
         // icon: <FaBalanceScale />,
       },
       {
@@ -82,12 +82,11 @@ const NavLinks: NavLink[] = [
     sublinks: [
       {
         label: "Manage Users",
-        href: "/dashboard/users/user-list",
+        href: "/dashboard/users/list",
       },
       {
         label: "Register User",
         href: "/dashboard/users/register",
-       
       },
     ],
   },
@@ -105,6 +104,17 @@ const NavLinks: NavLink[] = [
         label: "Spare Parts",
         href: "/dashboard/vehicle/part",
         // icon: <FaRegListAlt />,
+      },
+    ],
+  },
+
+  {
+    label: "Logs",
+    href: "/log",
+    sublinks: [
+      {
+        label: "Activity Logs",
+        href: "/dashboard/log/activity",
       },
     ],
   },
