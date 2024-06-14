@@ -94,9 +94,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
 
   getOutsourcedItems: () => {
     const state = get();
-    return state.invoiceItemDTOList.filter(
-      (item) => item.outsourced === true,
-    );
+    return state.invoiceItemDTOList.filter((item) => item.outsourced === true);
   },
 
   setDiscountPercentage: (percentage: number) =>
