@@ -1,11 +1,11 @@
 export type InvoiceItem = {
-  itemName?: string;
+  name?: string;
   code?: string;
   price?: number;
   quantity?: number;
   discount?: number;
   description?: string;
-  outsourcedStatus?: boolean;
+  outsourced?: boolean;
   sparePartId?: number;
   outsourceItem?: {
     companyName?: string;

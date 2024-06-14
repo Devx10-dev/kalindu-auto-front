@@ -30,7 +30,7 @@ const InvoiceTable: React.FC = () => {
           </TableRow>
           {invoiceItemDTOList.map((item: any, index: any) => (
             <TableRow key={index}>
-              <TableCell>{item.itemName}</TableCell>
+              <TableCell>{item.name}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>LKR {item.price}</TableCell>
               <TableCell>LKR {item.discount}</TableCell>
@@ -43,7 +43,7 @@ const InvoiceTable: React.FC = () => {
               </TableCell>
               <TableCell>
                 <Switch
-                  checked={item.outsourcedStatus}
+                  checked={item.outsourced}
                   onCheckedChange={(state) => setOutsourcedStatus(item, state)}
                 />
               </TableCell>

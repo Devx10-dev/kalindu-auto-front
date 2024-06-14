@@ -24,7 +24,7 @@ import {useState} from "react";
 import CreatableSelect from "react-select/creatable";
 
 const formSchema = z.object({
-    itemName: z.string().min(1, "Item name is required"),
+    name: z.string().min(1, "Item name is required"),
     price: z
         .number({invalid_type_error: "Price must be a number"})
         .positive("Price cannot be negative"),
@@ -51,7 +51,7 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            itemName: "",
+            name: "",
             price: 1,
             quantity: 1,
             code: "",
@@ -75,6 +75,7 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
         })) || [];
 
     const onSubmit = (data: any) => {
+        console.log("add button Pressed")
         addInvoiceItem(data);
         form.reset();
         onClose();
@@ -89,6 +90,18 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
         setSearchTerm(inputValue);
     };
 
+    const handleSelectChange = (option: any) => {
+        if (option && option.__isNew__) {
+            // If the selected option is a new custom option
+            form.setValue("name", option.label);
+            form.setValue("sparePartId", -1);
+            console.log(form)
+        } else if (option) {
+            // If the selected option is an existing spare part
+            form.setValue("name", option.value.partName);
+            form.setValue("sparePartId", option.value.id);
+        }
+    };
     const onReset = () => {
         form.reset();
     }
@@ -100,7 +113,7 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
                         <div className="grid grid-cols-2 gap-5">
                             <FormField
                                 control={form.control}
-                                name="itemName"
+                                name="name"
                                 render={({field}) => (
                                     <FormItem>
                                         <RequiredLabel label="Item name"/>
@@ -108,19 +121,8 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
                                             options={sparePartsOptions}
                                             onInputChange={handleInputChange}
                                             isClearable
-                                            onChange={(option) => {
-                                                if (option) {
-                                                    field.onChange(option.value.partName);
-                                                    form.setValue("sparePartId", option.value.id);
-                                                } else {
-                                                    field.onChange("");
-                                                    form.setValue("sparePartId", -1);
-                                                }
-                                            }}
-                                            onCreateOption={(inputValue) => {
-                                                field.onChange(inputValue);
-                                                form.setValue("sparePartId", -1);
-                                            }}
+                                            onChange={handleSelectChange}
+
                                         />
                                         <FormMessage/>
                                     </FormItem>
@@ -138,7 +140,9 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
                                                 placeholder="Price"
                                                 min={0}
                                                 step="0.01"
-                                                {...field} />
+                                                {...field}
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                            />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
@@ -157,6 +161,7 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
                                                 {...field}
                                                 min={0}
                                                 step="1"
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                             />
                                         </FormControl>
                                         <FormMessage/>
@@ -206,6 +211,7 @@ const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartServic
                                                 min={0}
                                                 step="0.01"
                                                 {...field}
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                             />
                                         </FormControl>
                                     </FormItem>
