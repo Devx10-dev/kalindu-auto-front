@@ -15,5 +15,3 @@ services:
       - BE_URL="http:/localhost:8090"
     ports:
       - "8080:8080"
-    
-  

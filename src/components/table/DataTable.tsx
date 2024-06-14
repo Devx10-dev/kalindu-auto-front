@@ -49,7 +49,7 @@ export default function DataTable({
     queryFn: () => vehicleService.fetchVehicleBrands(),
   });
 
-  console.log(vehicleBrands)
+  console.log(vehicleBrands);
 
   const resetFilter = () => {
     setSelectedBrand(null);
@@ -70,11 +70,12 @@ export default function DataTable({
             <SelectValue placeholder="Select Vehicle Type" />
           </SelectTrigger>
           <SelectContent>
-            {vehicleTypes !== undefined && vehicleTypes?.map((type) => (
-              <SelectItem key={type.id} value={type.type}>
-                {capitalize(type.type)}
-              </SelectItem>
-            ))}
+            {vehicleTypes !== undefined &&
+              vehicleTypes?.map((type) => (
+                <SelectItem key={type.id} value={type.type}>
+                  {capitalize(type.type)}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
         <Select
@@ -85,11 +86,12 @@ export default function DataTable({
             <SelectValue placeholder="Select Vehicle Brand" />
           </SelectTrigger>
           <SelectContent>
-            {vehicleBrands !== undefined && vehicleBrands?.map((brand) => (
-              <SelectItem key={brand.id} value={brand.brand}>
-                {capitalize(brand.brand)}
-              </SelectItem>
-            ))}
+            {vehicleBrands !== undefined &&
+              vehicleBrands?.map((brand) => (
+                <SelectItem key={brand.id} value={brand.brand}>
+                  {capitalize(brand.brand)}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
 

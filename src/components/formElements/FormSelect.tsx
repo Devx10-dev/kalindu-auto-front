@@ -1,17 +1,16 @@
 import { FormSelectProps } from "@/types/component/propTypes";
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
 } from "@radix-ui/react-select";
 
 function FormSelect({ options, placeholder, selectLabel }: FormSelectProps) {
   return (
-    
     <Select>
       <SelectTrigger className="w-max">
         <SelectValue placeholder={placeholder} />

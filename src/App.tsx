@@ -1,35 +1,38 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
-import Dashboard from "./pages/dashboard/Dashboard";
-import ViewUser from "./pages/dashboard/user-management/ViewUser"
-import RegiserUser from "./pages/dashboard/user-management/RegisterUser"
 import Keycloak from "./components/auth/Keycloak";
-import Error500 from "./pages/error/500";
-import VehicleModel from "./pages/sparePart/VehicleModel";
-import SpareParts from "./pages/sparePart/SpareParts";
-import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
+import Dashboard from "./pages/dashboard/Dashboard";
 import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
+import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
-import CreditorInvoice from "./pages/dashboard/invoice/creditor/CreditorInvoice";
-
+import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
+import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
+import RegisterUser from "./pages/dashboard/user-management/RegisterUser";
+import Error500 from "./pages/error/500";
+import ActivityLog from "./pages/log/ActivityLog";
+import SpareParts from "./pages/sparePart/SpareParts";
+import VehicleModel from "./pages/sparePart/VehicleModel";
+import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
+import EditUser from "./pages/dashboard/user-management/EditUser";
 
 function App() {
   return (
-  
     <Routes>
       {/* error pages */}
       <Route path="error/500" element={<Error500 />} />
 
       {/* secured routes  */}
       {/* <Route path="/" > */}
-      <Route path="/" element={<Keycloak/>}>
+      <Route path="/" element={<Keycloak />}>
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
-            <Route path="creditor" element={<CreditorInvoice />} />
+            <Route path="creditor" element={<CreditorInvoiceBase />} />
+            <Route path="dummy" element={<DummyInvoice />} />
           </Route>
 
           <Route path="vehicle">
@@ -40,26 +43,27 @@ function App() {
           {/* Creditor Routes */}
           <Route path="creditors">
             <Route path="register" element={<RegisterCreditor />} />
-            <Route path="manage" element={<CreditorManagement />}>
-              <Route path=":id" element={<ViewCreditor />} />
-            </Route>
+            <Route path="manage" element={<CreditorManagement />} />
+            <Route path="manage/:id" element={<ViewCreditor />} />
           </Route>
-          {/* <Route`
-            path="/dashboard/creditors/manage"
-            element={<CreditorManagement />}
-          /> */}
-          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
 
+          <Route path="reports">
+            <Route path="daily-sales" element={<DailySalesBase />} />
+          </Route>
+
+          {/* Routes for user management */}
           <Route path="users">
+            <Route path="list" element={<ViewUsers />} />
+            <Route path="register" element={<RegisterUser />} />
+            <Route path="edit" element={<EditUser />} />
+          </Route>
 
-            {/* Routes for user management */}
-            <Route path="user-list" element={<ViewUser/>} />
-            <Route path="register" element={<RegiserUser/>} />
+          <Route path="log">
+            <Route path="activity" element={<ActivityLog />} />
           </Route>
         </Route>
       </Route>
     </Routes>
-
   );
 }
 

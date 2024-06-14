@@ -24,7 +24,7 @@ const useAxiosPrivate = () => {
         return request;
       },
       //   pass the error to next block
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     // catch and handle every response
@@ -65,7 +65,7 @@ const useAxiosPrivate = () => {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
 
     // remove previously caught up response and request
