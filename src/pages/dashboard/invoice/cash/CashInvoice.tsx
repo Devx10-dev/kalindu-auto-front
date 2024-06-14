@@ -13,12 +13,17 @@ import ReceiptIcon from "@/components/icon/ReceiptIcon";
 import {FormModal} from "@/components/modal/FormModal.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import PlusIcon from "@/components/icon/PlusIcon.tsx";
+import {SparePartService} from "@/service/sparePartInventory/sparePartService.ts";
+import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
 
 const CashInvoiceBase: React.FC = () => {
     // const axiosPrivate = useAxiosPrivate();
     const {getOutsourcedItems} = useCashInvoiceStore();
     const hasOutsourcedItems = getOutsourcedItems().length > 0;
     const [show, setShow] = useState(false);
+    const axiosPrivate = useAxiosPrivate();
+    const sparePartyService = new SparePartService(axiosPrivate);
+
 
     return (
         <div className="mb-20">
@@ -42,7 +47,8 @@ const CashInvoiceBase: React.FC = () => {
                 >
                     <CustomerDetails/>
                     {/*<AddItem/>*/}
-                    <div className="d-flex justify-start m-2 mt-4 mb-4">
+                    <div className="d-flex justify-end m-2 mt-4  gap-10">
+                        <p className="text-l">Add new item to the invoice</p>
                         <Button
                             className="gap-1"
                             style={{maxHeight: "35px"}}
@@ -75,7 +81,10 @@ const CashInvoiceBase: React.FC = () => {
                 show={show}
                 onClose={() => setShow(false)}
                 component={
-                    <AddItem onClose={()=> setShow(false)}/>
+                    <AddItem
+                        onClose={()=> setShow(false)}
+                        sparePartService={sparePartyService}
+                    />
                 }
             />
         </div>

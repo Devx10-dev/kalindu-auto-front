@@ -6,6 +6,7 @@ export type InvoiceItem = {
   discount?: number;
   description?: string;
   outsourcedStatus?: boolean;
+  sparePartId?: number;
   outsourceItem?: {
     companyName?: string;
     buyingPrice?: number;

@@ -18,6 +18,10 @@ import {PlusCircle, XCircle} from "lucide-react";
 import useCashInvoiceStore from "../context/useCashInvoiceStore.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {RequiredLabel} from "@/components/formElements/FormLabel.tsx";
+import {SparePartService} from "@/service/sparePartInventory/sparePartService.ts";
+import {useQuery} from "@tanstack/react-query";
+import {useState} from "react";
+import CreatableSelect from "react-select/creatable";
 
 const formSchema = z.object({
     itemName: z.string().min(1, "Item name is required"),
@@ -34,9 +38,15 @@ const formSchema = z.object({
         .number({invalid_type_error: "Discount must be a number"})
         .optional()
         .refine((val) => val >= 0, "Discount cannot be negative"),
+    sparePartId: z.number().optional(),
 });
 
-const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
+
+
+const AddItem: React.FC<{ onClose: () => void; sparePartService: SparePartService } > = ({
+        onClose,
+        sparePartService,
+    }) => {
     const {addInvoiceItem} = useCashInvoiceStore();
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -47,8 +57,22 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
             code: "",
             description: "",
             discount: 0,
+            sparePartId: -1,
         },
     });
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const { data: spareParts } = useQuery({
+        queryKey: ["spareParts", searchTerm],
+        queryFn: () => sparePartService.fetchSpaerPartsByNameOrCode(searchTerm),
+        retry: 2,
+    });
+
+    const sparePartsOptions =
+        spareParts?.map((sparePart) => ({
+            value: sparePart,
+            label: sparePart.partName,
+        })) || [];
 
     const onSubmit = (data: any) => {
         addInvoiceItem(data);
@@ -59,6 +83,10 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
     const handleCancel = (event: { preventDefault: () => void }) => {
         event.preventDefault();
         onClose();
+    };
+
+    const handleInputChange = (inputValue: string) => {
+        setSearchTerm(inputValue);
     };
 
     const onReset = () => {
@@ -76,12 +104,24 @@ const AddItem: React.FC<{ onClose: () => void }> = ({onClose}) => {
                                 render={({field}) => (
                                     <FormItem>
                                         <RequiredLabel label="Item name"/>
-                                        <FormControl>
-                                            <Input
-                                                type="text"
-                                                placeholder="Item name"
-                                                {...field} />
-                                        </FormControl>
+                                        <CreatableSelect
+                                            options={sparePartsOptions}
+                                            onInputChange={handleInputChange}
+                                            isClearable
+                                            onChange={(option) => {
+                                                if (option) {
+                                                    field.onChange(option.value.partName);
+                                                    form.setValue("sparePartId", option.value.id);
+                                                } else {
+                                                    field.onChange("");
+                                                    form.setValue("sparePartId", -1);
+                                                }
+                                            }}
+                                            onCreateOption={(inputValue) => {
+                                                field.onChange(inputValue);
+                                                form.setValue("sparePartId", -1);
+                                            }}
+                                        />
                                         <FormMessage/>
                                     </FormItem>
                                 )}

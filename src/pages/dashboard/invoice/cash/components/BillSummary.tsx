@@ -108,9 +108,19 @@ const BillSummary = () => {
         await cashInvoiceService.createCashInvoice(requestData);
       console.log("Cash invoice created:", createdInvoice);
       // Handle success response, such as printing the invoice or displaying a success message
+      toast({
+        title: "Invoice created successfully",
+        description: "The cash invoice has been created and printed.",
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error creating cash invoice:", error);
       // Handle error
+      toast({
+        title: "Error creating invoice",
+        description: "Failed to create the cash invoice. Please try again.",
+        variant: "destructive",
+      });
     }
   }
 
