@@ -1,7 +1,5 @@
 import { Option } from "@/types/component/propTypes";
 import { VehicleModel } from "@/types/sparePartInventory/vehicleTypes";
-import capitalize from "@/utils/capitalize";
-import truncate from "@/utils/truncate";
 import { Fragment } from "react/jsx-runtime";
 import IconButton from "@/components/button/IconButton";
 import FormSelect from "@/components/formElements/FormSelect";
@@ -29,134 +27,67 @@ import { DateRangePicker } from "./DateRangePicker";
 import { Invoice } from "@/types/Invoices/invoiceTypes";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Badge } from "@/components/ui/badge";
+import TablePagination from "@/components/TablePagination";
+import { InvoiceList, InvoiceState } from "@/types/invoice/cashInvoice";
+import { useEffect } from "react";
+import addLeadingZero from "@/utils/addLeadingZero";
+import { Link, useNavigate } from "react-router-dom";
 // import { useState } from "react";
 // import { useQuery } from "@tanstack/react-query";
 // import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
 
 export default function InvoiceTable({
   invoices,
+  type,
 }: {
-  invoices: Invoice[] | undefined;
-//   vehicleService: VehicleService;
+  invoices: InvoiceList| undefined;
+  type: string;
 }) {
-//   const [selectedType, setSelectedType] = useState<string | null>(null);
-//   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
-//   const { data: vehicleTypes } = useQuery({
-//     queryKey: ["vehicleTypes"],
-//     queryFn: () => vehicleService.fetchVehicleTypes(),
-//   });
+  useEffect(() => {
+    console.log(invoices);
+  }, [invoices]);
 
-//   const { data: vehicleBrands } = useQuery({
-//     queryKey: ["vehicleBrands"],
-//     queryFn: () => vehicleService.fetchVehicleBrands(),
-//   });
+  const nav = useNavigate();
 
-
-//   const resetFilter = () => {
-//     setSelectedBrand(null);
-//     setSelectedType(null);
-//   };
-
-//   console.log(selectedType, selectedBrand);
-
-// export type Invoice = {
-//     id?: number;
-//     invoiceNo?: string;
-//     customerName?: string;
-//     customerId?: number;
-//     invoiceDate?: string;
-//     dueDate?: string;
-//     totalAmount?: number;
-//     status?: string;
-// };
-
+  const handleViewInvoice = (invoiceId: string) => {
+    nav(`/dashboard/invoice/view/${type}/${invoiceId}`);
+  };
 
   return (
     <Fragment>
-      <div className="d-flex gap-3 mb-4">
-        <Input type="text" placeholder="Search for Invoices" />
-        <DateRangePicker />
-        {/* <Select
-          onValueChange={(value) => setSelectedType(value)}
-          value={selectedType ?? undefined}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select Vehicle Type" />
-          </SelectTrigger>
-          <SelectContent>
-            {vehicleTypes !== undefined && vehicleTypes?.map((type) => (
-              <SelectItem key={type.id} value={type.type}>
-                {capitalize(type.type)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          onValueChange={(value) => setSelectedBrand(value)}
-          value={selectedBrand ?? undefined}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select Vehicle Brand" />
-          </SelectTrigger>
-          <SelectContent>
-            {vehicleBrands !== undefined && vehicleBrands?.map((brand) => (
-              <SelectItem key={brand.id} value={brand.brand}>
-                {capitalize(brand.brand)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select> */}
-
-        <Button variant={"outline"} >
-          Reset
-        </Button>
-        <Button variant={"default"}>Filter</Button>
-      </div>
       <Table className="border rounded-md text-md mb-5 table-responsive">
-        <TableCaption>Invoices</TableCaption>
+        <TableCaption>
+          <TablePagination pageNo={invoices.currentPage} totalPages={invoices.totalPages}/>
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Invoice No</TableHead>
             <TableHead>Customer Name</TableHead>
             <TableHead>Invoice Date</TableHead>
-            {/* <TableHead>Due Date</TableHead> */}
             <TableHead>Total Amount</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices &&
-            invoices.map((invoice) => (
-            //   <TableRow key={vehicle.id}>
-            //     <TableCell className="font-medium">
-            //       {capitalize(vehicle.model)}
-            //     </TableCell>
-            //     <TableCell>{capitalize(vehicle.vehicleType)}</TableCell>
-            //     <TableCell>{capitalize(vehicle.vehicleBrand)}</TableCell>
-            //     <TableCell>
-            //       {truncate(vehicle.description ?? "", 50) ?? "-"}
-            //     </TableCell>
+          {invoices.invoices &&
+            invoices.invoices.map((invoice) => (
             <TableRow key={invoice.id}>
-                <TableCell>{invoice.invoiceNo}</TableCell>
+                <TableCell>{invoice.invoiceId}</TableCell>
                 <TableCell>{invoice.customerName}</TableCell>
-                <TableCell>{invoice.invoiceDate}</TableCell>
-                {/* <TableCell>{invoice.dueDate}</TableCell> */}
-                <TableCell>Rs. {invoice.totalAmount}</TableCell>
+                <TableCell>{invoice.issuedTime[0] + "-" + invoice.issuedTime[1] + "-" + invoice.issuedTime[2]} @ {addLeadingZero(invoice.issuedTime[3])}:{addLeadingZero(invoice.issuedTime[4])}:{addLeadingZero(invoice.issuedTime[5])}</TableCell>
+                <TableCell>Rs. {invoice.totalPrice}</TableCell>
                 <TableCell>
-                    {
-                        invoice.status === "paid" ? 
-                    // First letter capitalized
-                        <Badge variant="secondary" >{invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}</Badge> :
-                        <Badge variant="destructive">{invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}</Badge>
-                    }
+                    <Badge variant="secondary">COMPLETED</Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-center">
-                    <Button variant="outline" className="mr-2">
-                      <OpenInNewWindowIcon className="h-5 w-5" /> View
-                    </Button>
+                    <Link to={`/dashboard/invoice/${type}/${invoice.invoiceId}`}>
+                      <Button variant="outline" className="mr-2">
+                        <OpenInNewWindowIcon className="h-5 w-5" /> View
+                      </Button>
+                    </Link>
                   </div>
                 </TableCell>
               </TableRow>

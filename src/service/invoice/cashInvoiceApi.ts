@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { InvoiceState } from "@/types/invoice/cashInvoice";
+import { InvoiceList, InvoiceState } from "@/types/invoice/cashInvoice";
 import { Service } from "../apiService";
 
 const CASH_INVOICE_URL = "invoice";
@@ -22,6 +22,35 @@ class CashInvoiceService extends Service {
       throw new Error("Failed to create cash invoice");
     }
   }
+
+  async fetchCashInvoices(
+    fromDate?: string | null,
+    toDate?: string | null,
+    pageNo?: number,
+    pageSize?: number,
+  ): Promise<InvoiceList> {
+    try {
+      const response = await this.api.get<InvoiceList>(
+        `${CASH_INVOICE_URL}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
+      );
+      console.log("HEREE",response.data);
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch cash invoices");
+    }
+  }
+
+  async fetchCashInvoiceById(invoiceId: string): Promise<InvoiceState> {
+    try {
+      const response = await this.api.get<InvoiceState>(
+        `${CASH_INVOICE_URL}/${invoiceId}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch cash invoice");
+    }
+  }
+  
 }
 
 export { CashInvoiceService };

@@ -16,6 +16,7 @@ import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
 import EditUser from "./pages/dashboard/user-management/EditUser";import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
+import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 
 
 function App() {
@@ -34,7 +35,9 @@ function App() {
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />
             <Route path="dummy" element={<DummyInvoice />} />
-            <Route path="view-invoices" element={<ViewAllInvoices />} />
+            <Route path="all" element={<ViewAllInvoices />} />
+            {/* single invoice using id */}
+            <Route path="cash/:id" element={<SingleInvoice />} />
           </Route>
 
           <Route path="vehicle">

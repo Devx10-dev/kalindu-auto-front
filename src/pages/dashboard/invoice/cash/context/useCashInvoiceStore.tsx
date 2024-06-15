@@ -157,8 +157,8 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     console.log(invoiceId);
 
     const requestData = {
-      vat: state.vatAmount,
-      discount: state.discountAmount,
+      vat: state.vatPercentage,
+      discount: state.discountPercentage,
       customerName: state.customerName,
       invoiceId: invoiceId,
       vehicleNo: state.vehicleNumber,

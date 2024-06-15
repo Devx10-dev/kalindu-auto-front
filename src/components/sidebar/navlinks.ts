@@ -32,7 +32,7 @@ const NavLinks: NavLink[] = [
       },
       {
         label: "View Invoices",
-        href: "/dashboard/invoice/view-invoices",
+        href: "/dashboard/invoice/all",
         // icon: <FaRegListAlt />,
       }
     ],
@@ -62,16 +62,16 @@ const NavLinks: NavLink[] = [
         href: "/dashboard/reports/daily-sales",
         // icon: <FaBalanceScale />,
       },
-      {
-        label: "Credit Sales",
-        href: "/dashboard/reports/credit-sales",
-        // icon: <MdOutlineCreditScore />,
-      },
-      {
-        label: "Engine Stock",
-        href: "/dashboard/reports/engine-stock",
-        // icon: <PiEngineBold />,
-      },
+      // {
+      //   label: "Credit Sales",
+      //   href: "/dashboard/reports/credit-sales",
+      //   // icon: <MdOutlineCreditScore />,
+      // },
+      // {
+      //   label: "Engine Stock",
+      //   href: "/dashboard/reports/engine-stock",
+      //   // icon: <PiEngineBold />,
+      // },
     ],
   },
 
