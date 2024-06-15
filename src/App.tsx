@@ -15,9 +15,9 @@ import ActivityLog from "./pages/log/ActivityLog";
 import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
-import EditUser from "./pages/dashboard/user-management/EditUser";import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
+import EditUser from "./pages/dashboard/user-management/EditUser";
+import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
-
 
 function App() {
   return (

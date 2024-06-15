@@ -33,7 +33,7 @@ class CashInvoiceService extends Service {
       const response = await this.api.get<InvoiceList>(
         `${CASH_INVOICE_URL}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
       );
-      console.log("HEREE",response.data);
+      console.log("HEREE", response.data);
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch cash invoices");
@@ -50,7 +50,6 @@ class CashInvoiceService extends Service {
       throw new Error("Failed to fetch cash invoice");
     }
   }
-  
 }
 
 export { CashInvoiceService };

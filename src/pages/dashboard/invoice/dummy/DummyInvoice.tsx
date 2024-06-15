@@ -58,7 +58,6 @@ function DummyInvoice() {
     return `INV-CS-${year}${month}${day}${uniqueNumber}`;
   };
 
-
   const createDummyInvoiceMutation = useMutation({
     mutationFn: () => {
       const isValid = validateAndRefactoringData();

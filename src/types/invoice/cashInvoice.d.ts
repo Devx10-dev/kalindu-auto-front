@@ -60,7 +60,6 @@ export type InvoiceState = {
 // responseData.put("totalItems", invoicePage.getTotalElements());
 // responseData.put("totalPages", invoicePage.getTotalPages());
 
-
 export type InvoiceList = {
   invoices: InvoiceState[];
   currentPage: number;

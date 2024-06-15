@@ -72,7 +72,7 @@ function OutsourceItemsGrid({
     );
   };
 
-  return(
+  return (
     <Table className="border rounded-md text-md mb-5 table-responsive">
       <TableBody>
         <TableRow style={{ height: "36px" }}>
@@ -89,9 +89,7 @@ function OutsourceItemsGrid({
           <TableHead style={{ height: "36px" }} align="right">
             Company Name
           </TableHead>
-          <TableHead style={{ height: "36px" }}>
-            Buying Price
-          </TableHead>
+          <TableHead style={{ height: "36px" }}>Buying Price</TableHead>
         </TableRow>
         {items.map((item, index) => (
           <TableRow key={index}>

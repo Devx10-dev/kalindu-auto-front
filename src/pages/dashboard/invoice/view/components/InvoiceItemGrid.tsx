@@ -72,7 +72,7 @@ function InvoiceItemsGrid({
     );
   };
 
-  return(
+  return (
     <Table className="border rounded-md text-md mb-5 table-responsive">
       <TableBody>
         <TableRow style={{ height: "36px" }}>
