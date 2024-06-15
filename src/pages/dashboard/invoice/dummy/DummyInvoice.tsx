@@ -20,6 +20,7 @@ import { SparePartService } from "@/service/sparePartInventory/sparePartService"
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { randomUUID } from "crypto";
 import { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
 
@@ -41,6 +42,22 @@ function DummyInvoice() {
   const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
   const sparePartyService = new SparePartService(axiosPrivate);
 
+  const generateInvoiceId = () => {
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(2); // Last two digits of the year
+    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Month (0-indexed, so +1)
+    const day = now.getDate().toString().padStart(2, "0"); // Day of the month
+
+    // Generate a unique 4-digit number based on time
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const uniqueNumber = (parseInt(hours + minutes, 10) % 10000)
+      .toString()
+      .padStart(4, "0");
+
+    return `INV-CS-${year}${month}${day}${uniqueNumber}`;
+  };
+
   const createDummyInvoiceMutation = useMutation({
     mutationFn: () => {
       const isValid = validateAndRefactoringData();
@@ -53,7 +70,7 @@ function DummyInvoice() {
           dummy: true,
           tax: vatPrecentage,
           invoiceItems: items,
-          invoiceId: "100000000",
+          invoiceId: generateInvoiceId(),
           vehicleNo: vehicleNo,
         });
       }

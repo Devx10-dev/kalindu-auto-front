@@ -14,6 +14,9 @@ export type InvoiceItem = {
 };
 
 export type InvoiceState = {
+  id?: number;
+  invoiceId?: string;
+  issuedTime?: Date;
   customerName?: string;
   vehicleNumber?: string;
   totalPrice?: number;
@@ -50,4 +53,17 @@ export type InvoiceState = {
   setCommissionAmount: (amount?: number) => void;
 
   getRequestData: () => any;
+};
+
+// Map<String, Object> responseData = new HashMap<>();
+// responseData.put("invoices", invoiceDTOS);
+// responseData.put("currentPage", invoicePage.getNumber());
+// responseData.put("totalItems", invoicePage.getTotalElements());
+// responseData.put("totalPages", invoicePage.getTotalPages());
+
+export type InvoiceList = {
+  invoices: InvoiceState[];
+  currentPage: number;
+  totalItems: number;
+  totalPages: number;
 };
