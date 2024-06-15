@@ -50,7 +50,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, outsourcedStatus: status } : item,
+        item === itemOutsourced ? { ...item, outsourced: status } : item,
       ),
     })),
 
@@ -94,9 +94,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
 
   getOutsourcedItems: () => {
     const state = get();
-    return state.invoiceItemDTOList.filter(
-      (item) => item.outsourcedStatus === true,
-    );
+    return state.invoiceItemDTOList.filter((item) => item.outsourced === true);
   },
 
   setDiscountPercentage: (percentage: number) =>
@@ -157,8 +155,8 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     console.log(invoiceId);
 
     const requestData = {
-      vat: state.vatAmount,
-      discount: state.discountAmount,
+      vat: state.vatPercentage,
+      discount: state.discountPercentage,
       customerName: state.customerName,
       invoiceId: invoiceId,
       vehicleNo: state.vehicleNumber,
@@ -167,7 +165,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       invoiceItems: state.invoiceItemDTOList,
       commissions: [
         {
-          name: state.commissionName,
+          personName: state.commissionName,
           amount: state.commissionAmount,
           remark: state.commissionRemark,
         },
