@@ -30,7 +30,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.filter(
-        (item) => item !== itemToRemove,
+        (item) => item !== itemToRemove
       ),
     })),
 
@@ -50,13 +50,13 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, outsourced: status } : item,
+        item === itemOutsourced ? { ...item, outsourced: status } : item
       ),
     })),
 
   setOutsourcedCompanyName: (
     itemOutsourced: InvoiceItem,
-    companyName: string,
+    companyName: string
   ) =>
     set((state) => ({
       ...state,
@@ -69,13 +69,13 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
                 companyName: companyName,
               },
             }
-          : item,
+          : item
       ),
     })),
 
   setOutsourcedBuyingPrice: (
     itemOutsourced: InvoiceItem,
-    buyingPrice: number,
+    buyingPrice: number
   ) =>
     set((state) => ({
       ...state,
@@ -88,7 +88,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
                 buyingPrice: buyingPrice,
               },
             }
-          : item,
+          : item
       ),
     })),
 
@@ -163,13 +163,17 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       totalPrice: state.totalPrice,
       totalDiscount: state.discountAmount, //TODO :: what is this
       invoiceItems: state.invoiceItemDTOList,
-      commissions: [
-        {
-          personName: state.commissionName,
-          amount: state.commissionAmount,
-          remark: state.commissionRemark,
-        },
-      ],
+
+      commissions:
+        state.commissionName && state.commissionAmount
+          ? [
+              {
+                personName: state.commissionName,
+                amount: state.commissionAmount,
+                remark: state.commissionRemark,
+              },
+            ]
+          : [],
     };
 
     return requestData;
