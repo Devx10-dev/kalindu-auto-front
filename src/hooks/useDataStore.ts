@@ -24,7 +24,6 @@ const useDataStore = create<DataStoreState>(() => ({
   //     set({ error: error.message, loading: false });
   //   }
   // },
-
 }));
 
 export default useDataStore;

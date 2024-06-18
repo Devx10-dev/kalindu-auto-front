@@ -1,22 +1,23 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import useInvoiceStore from "../context/Store";
+import useCashInvoiceStore from "../context/useCashInvoiceStore";
+import { X } from "lucide-react";
 
-interface InvoiceTableProps {
-  handleToggleOutsourced: (index: number) => void;
-}
-
-const InvoiceTable: React.FC<InvoiceTableProps> = ({ handleToggleOutsourced }) => {
-  const { items, removeItem, outsourcedItemIndices } = useInvoiceStore();
-
-  const handleRemoveItem = (index: number) => {
-    removeItem(index);
-  };
+const InvoiceTable: React.FC = () => {
+  const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
+    useCashInvoiceStore();
 
   return (
     <div>
-      <Table className="border rounded-md text-md mb-5 mt-10">
+      <Table className="border rounded-md text-md mb-5 mt-5">
+        <h2 className="text-xl font-bold mt-2 ml-3">Item List</h2>
         <TableBody>
           <TableRow>
             <TableHead>Item</TableHead>
@@ -27,18 +28,32 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ handleToggleOutsourced }) =
             <TableHead>Outsource</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
-          {items.map((item, index) => (
+          {invoiceItemDTOList.map((item: any, index: any) => (
             <TableRow key={index}>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.quantity}</TableCell>
-              <TableCell>LKR {item.price.toFixed(2)}</TableCell>
+              <TableCell>LKR {item.price}</TableCell>
               <TableCell>LKR {item.discount}</TableCell>
-              <TableCell>LKR {((item.quantity * item.price) - (item.quantity * item.discount)).toFixed(2)}</TableCell>
               <TableCell>
-                <Switch checked={outsourcedItemIndices.includes(index)} onCheckedChange={() => handleToggleOutsourced(index)} />
+                LKR{" "}
+                {(
+                  item.quantity * item.price -
+                  item.quantity * item.discount
+                ).toFixed(2)}
               </TableCell>
               <TableCell>
-                <Button onClick={() => handleRemoveItem(index)}>Remove</Button>
+                <Switch
+                  checked={item.outsourced}
+                  onCheckedChange={(state) => setOutsourcedStatus(item, state)}
+                />
+              </TableCell>
+              <TableCell>
+                <Button
+                  onClick={() => removeInvoiceItem(item)}
+                  variant={"secondary"}
+                >
+                  <X className="mr-2" /> Remove
+                </Button>
               </TableCell>
             </TableRow>
           ))}

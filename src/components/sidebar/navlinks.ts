@@ -27,12 +27,12 @@ const NavLinks: NavLink[] = [
       },
       {
         label: "Create Dummy Invoice",
-        href: "/dashboard/invoices/create/dummy-invoice",
+        href: "/dashboard/invoice/dummy",
         // icon: <MdOutlineInsertPageBreak />,
       },
       {
         label: "View Invoices",
-        href: "/dashboard/invoices/view-invoices",
+        href: "/dashboard/invoice/all",
         // icon: <FaRegListAlt />,
       },
     ],
@@ -62,16 +62,16 @@ const NavLinks: NavLink[] = [
         href: "/dashboard/reports/daily-sales",
         // icon: <FaBalanceScale />,
       },
-      {
-        label: "Credit Sales",
-        href: "/dashboard/reports/credit-sales",
-        // icon: <MdOutlineCreditScore />,
-      },
-      {
-        label: "Engine Stock",
-        href: "/dashboard/reports/engine-stock",
-        // icon: <PiEngineBold />,
-      },
+      // {
+      //   label: "Credit Sales",
+      //   href: "/dashboard/reports/credit-sales",
+      //   // icon: <MdOutlineCreditScore />,
+      // },
+      // {
+      //   label: "Engine Stock",
+      //   href: "/dashboard/reports/engine-stock",
+      //   // icon: <PiEngineBold />,
+      // },
     ],
   },
 
@@ -82,12 +82,11 @@ const NavLinks: NavLink[] = [
     sublinks: [
       {
         label: "Manage Users",
-        href: "/dashboard/users/user-list",
+        href: "/dashboard/users/list",
       },
       {
         label: "Register User",
         href: "/dashboard/users/register",
-       
       },
     ],
   },
@@ -105,6 +104,17 @@ const NavLinks: NavLink[] = [
         label: "Spare Parts",
         href: "/dashboard/vehicle/part",
         // icon: <FaRegListAlt />,
+      },
+    ],
+  },
+
+  {
+    label: "Logs",
+    href: "/log",
+    sublinks: [
+      {
+        label: "Activity Logs",
+        href: "/dashboard/log/activity",
       },
     ],
   },

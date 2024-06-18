@@ -36,7 +36,7 @@ export type FormModalProps = {
   title: string;
   titleDescription?: string;
   component: JSX.Element;
-  service?: Service
+  service?: Service;
 };
 
 export interface ToastFunction {
@@ -46,3 +46,11 @@ export interface ToastFunction {
     update: (props: ToasterToast) => void;
   };
 }
+
+export type COnfirmationModalProps = {
+  show: boolean;
+  onClose: () => void;
+  title: string;
+  titleDescription?: string;
+  onConfirm: () => void;
+};

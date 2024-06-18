@@ -1,0 +1,22 @@
+
+npm run format ||
+(
+    echo 'Code formatting completed now lets try to build the project';
+    true;
+)
+
+npm run check-types ||
+(
+    echo '🤡❌🤡 Failed Type Check. 🤡❌🤡 Are you seriously trying to write that? Make the changes required above.'
+    false;
+)
+
+npm run build ||
+(
+    echo '❌👷🔨❌ Your build failed ❌👷🔨❌
+            Next build failed: View the errors above to see why. 
+    '
+    false;
+)
+
+echo '✅✅ You win this time... I am committing this now. ✅✅'

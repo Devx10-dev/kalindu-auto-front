@@ -1,15 +1,16 @@
 import { create } from "zustand";
 
-interface InvoiceItem {
+export interface InvoiceItem {
   name: string;
   quantity: number;
   price: number;
   description: string;
   discount: number;
   code: string;
+  sparePartId?: number;
 }
 
-interface InvoiceState {
+export interface InvoiceState {
   items: InvoiceItem[];
   outsourcedItemIndices: number[];
   newItem: string;

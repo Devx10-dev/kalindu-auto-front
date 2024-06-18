@@ -1,75 +1,93 @@
 import InvoiceTable from "./components/InvoiceTable";
 import AddItem from "./components/AddItem";
-import CustomerDetails from "./components/CustomerDetails";
 import BillSummary from "./components/BillSummary";
-import useInvoiceStore from "./context/Store";
-import { useState } from "react";
 import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
+import useCashInvoiceStore from "./context/useCashInvoiceStore";
+import CustomerDetails from "@/pages/dashboard/invoice/cash/components/CustomerDetails.tsx";
+import Commissions from "@/pages/dashboard/invoice/cash/components/Commisions.tsx";
+import { CardContent, CardHeader } from "@/components/ui/card.tsx";
+import PageHeader from "@/components/card/PageHeader.tsx";
+import React, { useState } from "react";
 
+import ReceiptIcon from "@/components/icon/ReceiptIcon";
+import { FormModal } from "@/components/modal/FormModal.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import PlusIcon from "@/components/icon/PlusIcon.tsx";
+import { SparePartService } from "@/service/sparePartInventory/sparePartService.ts";
+import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
 
-interface OutsourcedItem {
-  index: number;
-  itemName: string;
-  itemCode: string;
-  quantity: number;
-  companyName: string;
-  buyingPrice: number;
-}
-
-const CashInvoice: React.FC = () => {
-  const { items } = useInvoiceStore();
-  const total = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
-  const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
-
-  const handleToggleOutsourced = (index: number) => {
-    const outsourcedItem = outsourcedItems.find((item) => item.index === index);
-    if (outsourcedItem) {
-      setOutsourcedItems(outsourcedItems.filter((item) => item.index !== index));
-    } else {
-      setOutsourcedItems([
-        ...outsourcedItems,
-        {
-          index,
-          itemName: items[index].name,
-          itemCode: items[index].code,
-          quantity: items[index].quantity,
-          companyName: '',
-          buyingPrice: 0,
-        },
-      ]);
-    }
-  };
-
-  const handleCompanyNameChange = (index: number, value: string) => {
-    setOutsourcedItems(
-      outsourcedItems.map((item) =>
-        item.index === index ? { ...item, companyName: value } : item
-      )
-    );
-  };
-
-  const handleBuyingPriceChange = (index: number, value: number) => {
-    setOutsourcedItems(
-      outsourcedItems.map((item) =>
-        item.index === index ? { ...item, buyingPrice: value } : item
-      )
-    );
-  };
+const CashInvoiceBase: React.FC = () => {
+  // const axiosPrivate = useAxiosPrivate();
+  const { getOutsourcedItems } = useCashInvoiceStore();
+  const hasOutsourcedItems = getOutsourcedItems().length > 0;
+  const [show, setShow] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
+  const sparePartyService = new SparePartService(axiosPrivate);
 
   return (
     <div className="mb-20">
-      <CustomerDetails />
-      <AddItem />
-      <InvoiceTable handleToggleOutsourced={handleToggleOutsourced} />
-      <BillSummary />
-      <OutsourcedItemDetails
-        outsourcedItems={outsourcedItems}
-        onCompanyNameChange={handleCompanyNameChange}
-        onBuyingPriceChange={handleBuyingPriceChange}
+      <CardHeader>
+        <PageHeader
+          title="Cash Invoice"
+          description=""
+          icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
+        />
+      </CardHeader>
+      <CardContent
+        style={{
+          display: "flex",
+          gap: "10px",
+        }}
+      >
+        <div
+          style={{
+            flex: 9,
+          }}
+        >
+          <CustomerDetails />
+          {/*<AddItem/>*/}
+          <div className="d-flex justify-end m-2 mt-4  gap-10">
+            <p className="text-l">Add new item to the invoice</p>
+            <Button
+              className="gap-1"
+              style={{ maxHeight: "35px" }}
+              onClick={() => setShow(true)}
+            >
+              <PlusIcon height="24" width="24" color="#fff" />
+              Item
+            </Button>
+          </div>
+          <InvoiceTable />
+          <Commissions />
+          {hasOutsourcedItems && (
+            <div className="pb-[350px]">
+              <OutsourcedItemDetails />
+            </div>
+          )}
+        </div>
+
+        <div
+          style={{
+            flex: 3,
+          }}
+        >
+          <BillSummary />
+        </div>
+      </CardContent>
+      <FormModal
+        title="Add New Item"
+        titleDescription="Add new spare part item to the invoice"
+        show={show}
+        onClose={() => setShow(false)}
+        component={
+          <AddItem
+            onClose={() => setShow(false)}
+            sparePartService={sparePartyService}
+          />
+        }
       />
-      
     </div>
   );
 };
 
-export default CashInvoice;
+export default CashInvoiceBase;

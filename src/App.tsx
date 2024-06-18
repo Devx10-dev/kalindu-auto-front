@@ -6,13 +6,19 @@ import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
-// import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
 import RegiserUser from "./pages/dashboard/user-management/RegisterUser";
-import ViewUser from "./pages/dashboard/user-management/ViewUser";
 import Error500 from "./pages/error/500";
 import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
+import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
+import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import RegisterUser from "./pages/dashboard/user-management/RegisterUser";
+import ActivityLog from "./pages/log/ActivityLog";
+import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
+import EditUser from "./pages/dashboard/user-management/EditUser";
+import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
+import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 
 function App() {
   return (
@@ -28,7 +34,11 @@ function App() {
           {/* Invoice Routes */}
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
-            {/* <Route path="creditor" element={<CreditorInvoice />} /> */}
+            <Route path="creditor" element={<CreditorInvoiceBase />} />
+            <Route path="dummy" element={<DummyInvoice />} />
+            <Route path="all" element={<ViewAllInvoices />} />
+            {/* single invoice using id */}
+            <Route path="cash/:id" element={<SingleInvoice />} />
           </Route>
 
           <Route path="vehicle">
@@ -39,23 +49,23 @@ function App() {
           {/* Creditor Routes */}
           <Route path="creditors">
             <Route path="register" element={<RegisterCreditor />} />
-            <Route path="manage" element={<CreditorManagement />}/>
+            <Route path="manage" element={<CreditorManagement />} />
             <Route path="manage/:id" element={<ViewCreditor />} />
           </Route>
 
           <Route path="reports">
             <Route path="daily-sales" element={<DailySalesBase />} />
           </Route>
-          {/* <Route`
-            path="/dashboard/creditors/manage"
-            element={<CreditorManagement />}
-          /> */}
-          {/* <Route path="/dashboard/creditors/:id" element={<ViewCreditor />} /> */}
 
+          {/* Routes for user management */}
           <Route path="users">
-            {/* Routes for user management */}
-            <Route path="user-list" element={<ViewUser />} />
-            <Route path="register" element={<RegiserUser />} />
+            <Route path="list" element={<ViewUsers />} />
+            <Route path="register" element={<RegisterUser />} />
+            <Route path="edit" element={<EditUser />} />
+          </Route>
+
+          <Route path="log">
+            <Route path="activity" element={<ActivityLog />} />
           </Route>
         </Route>
       </Route>
