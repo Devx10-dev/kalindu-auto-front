@@ -10,6 +10,7 @@ export type Creditor = {
   maxDuePeriod?: string;
   creditLimit?: string;
   status?: string;
+  
 };
 
 export type CreditorResponseData = {
@@ -56,4 +57,43 @@ export enum TransactionType {
 export enum YesNo {
   YES = "YES",
   NO = "NO",
+}
+
+export type CreditorTransaction = {
+  creditorTransactionID?: number;
+  transactionType?: TransactionType;
+  chequeNo?: string;
+  invoiceNo?: string;
+  totalPrice?: string;
+  isPartial?: YesNo;
+  status?: Status;
+  createdBy?: number;
+  createdDate?: Date;
+  modifiedBy?: number;
+  modifiedDate?: Date;
+};
+
+export enum TransactionType {
+  INVOICE = 'INVOICE',
+  TRANSACTION = 'TRANSACTION',
+}
+
+export enum YesNo {
+  YES = 'YES',
+  NO = 'NO',
+}
+
+export enum Status {
+  ACT = 'ACT',
+  INA = 'INA',
+}
+
+export enum TransactionType {
+  INVOICE = 'INVOICE',
+  TRANSACTION = 'TRANSACTION',
+}
+
+export enum YesNo {
+  YES = 'YES',
+  NO = 'NO',
 }

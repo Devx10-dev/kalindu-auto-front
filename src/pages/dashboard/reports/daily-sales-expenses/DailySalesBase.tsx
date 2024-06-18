@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -21,17 +22,14 @@ import { format } from "date-fns/format";
 import {
   ArrowDown,
   ArrowUp,
-  BrickWall,
   CalendarIcon,
   Circle,
   DeleteIcon,
-  DraftingCompass,
   Plus,
-  ReceiptEuro,
   Save,
   Verified,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { useFieldArray, useForm } from "react-hook-form";
 
@@ -60,7 +58,7 @@ const DailySalesBase = () => {
     name: "fields",
   });
   console.log(fields);
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date>(new Date()); // TODO : add the date came from the backend when viewing the record
 
   // Define the form fields and their categories
   const dailySalesCategory = [
@@ -88,7 +86,7 @@ const DailySalesBase = () => {
         { type: "EXPENSE", fieldName: "Kumaran Uncle Salary/Things" },
         { type: "EXPENSE", fieldName: "Mangala Aiya Salary" },
         { type: "EXPENSE", fieldName: "Pradeep Ayya Salary" },
-        { type: "EXPENSE", fieldName: "Prema Aunty Salary" },
+        { type: "EXPENSE", fieldName: "  Aunty Salary" },
       ],
     },
     {
@@ -146,7 +144,6 @@ const DailySalesBase = () => {
 
   const onSubmit = (data: any) => {
     console.log(data);
-
     console.log(refineData(data));
   };
 
@@ -225,7 +222,9 @@ const DailySalesBase = () => {
         </Popover>
       </div>
 
-      <Dialog>
+      {/* TODO :  Uncomment and integrate with the backend after implementing the create new field functionality */}
+
+      {/* <Dialog>
         <DialogTrigger asChild>
           <Button variant="default" className="ml-auto">
             {" "}
@@ -271,7 +270,7 @@ const DailySalesBase = () => {
             </DialogFooter>
           </form>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {dailySalesCategory.map((category, categoryIndex) => (
