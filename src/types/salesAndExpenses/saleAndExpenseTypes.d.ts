@@ -13,7 +13,8 @@ export interface SaleOrExpense {
   id?: number;
   amount: number;
   reason: string;
-  dateTime?: string;
+  dateTime?: number[];
+  date: string;
   field: Field;
   expense: boolean;
 }

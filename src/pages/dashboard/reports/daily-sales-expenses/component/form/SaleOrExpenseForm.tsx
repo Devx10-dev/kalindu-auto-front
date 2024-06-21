@@ -1,24 +1,24 @@
 import {
-    OptionalLabel,
-    RequiredLabel,
+  OptionalLabel,
+  RequiredLabel,
 } from "@/components/formElements/FormLabel";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
 import {
-    SaleOrExpense,
-    saleOrExpenseSchema,
+  SaleOrExpense,
+  saleOrExpenseSchema,
 } from "@/validation/schema/salesAndExpenses/saleOrExpenseSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -29,7 +29,9 @@ import { z } from "zod";
 function SaleOrExpenseForm({
   onClose,
   salesAndExpenseService,
+  date,
 }: {
+  date: string;
   onClose: () => void;
   salesAndExpenseService: SaleAndExpenseService;
 }) {
@@ -70,12 +72,14 @@ function SaleOrExpenseForm({
   const createSaleOrExpenseMutation = useMutation({
     mutationFn: (formData: SaleOrExpense) =>
       salesAndExpenseService.createSaleOrExpense({
+        date: date,
         amount: formData.amount,
         expense: formData.isExpense,
         reason: formData.reason,
         field: { id: formData.field.value.id, name: formData.field.value.name },
       }),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dailySummery"] });
       toast({
         variant: "default",
         title: "Success",

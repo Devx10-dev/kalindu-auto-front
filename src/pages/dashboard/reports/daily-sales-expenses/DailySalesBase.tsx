@@ -25,12 +25,15 @@ import FieldForm from "./component/form/FieldForm";
 import SaleOrExpenseForm from "./component/form/SaleOrExpenseForm";
 import SalesAndExpensesGrid from "./component/grid/SalesAndExpensesGrid";
 import { toast } from "@/components/ui/use-toast";
+import Loading from "@/components/Loading";
+import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
 
 const DailySalesBase = () => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
 
   const [show, setShow] = useState(false);
+  const [confirmationModalShow, setconfirmationModalShow] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [formComponent, setFormComponent] = useState<JSX.Element>();
@@ -67,6 +70,7 @@ const DailySalesBase = () => {
     setDescription("Add new sale or expense details to the system");
     setFormComponent(
       <SaleOrExpenseForm
+        date={formattedDate()}
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
       />
@@ -95,6 +99,7 @@ const DailySalesBase = () => {
         title: "Success",
         description: "Successfully verified sales and expensess",
       });
+      setconfirmationModalShow(false);
     },
     onError: (data) => {
       toast({
@@ -107,7 +112,7 @@ const DailySalesBase = () => {
   });
 
   const salesAndExpenses: SaleOrExpenseType[] = [];
-  if (summery) {
+  if (summery !== undefined) {
     summery.sales.forEach((s) =>
       salesAndExpenses.push({
         ...s,
@@ -120,10 +125,6 @@ const DailySalesBase = () => {
         expense: true,
       })
     );
-  }
-
-  if (isLoading) {
-    return <div>Loading...</div>;
   }
 
   return (
@@ -177,13 +178,17 @@ const DailySalesBase = () => {
               </PopoverContent>
             </Popover>
           </div>
-          <SalesAndExpensesGrid salesOrExpenses={salesAndExpenses} />
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <SalesAndExpensesGrid salesOrExpenses={salesAndExpenses} />
+          )}
         </CardContent>
 
         <Card className="m-8 pl-4 p-4 pt-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 mb-4 mt-0 pt-0">
             <CardTitle className="text-xl font-bold">Daily Summery</CardTitle>
-            {summery.verified ? (
+            {summery !== undefined && summery.verified ? (
               <div
                 className="d-flex gap-2 pl-4 pr-4 pt-1 pb-1"
                 style={{
@@ -196,7 +201,7 @@ const DailySalesBase = () => {
                 <VerifyIcon height="20" width="20" color="#fff" />
               </div>
             ) : (
-              <Button onClick={() => createVerifyMutation.mutate()}>
+              <Button onClick={() => setconfirmationModalShow(true)}>
                 <div className="gap-2 d-flex">
                   <VerifyIcon height="20" width="20" color="#fff" />
                   Verify Daily Summary
@@ -216,7 +221,9 @@ const DailySalesBase = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {summery.salesAmount - summery.expensesAmount + " LKR"}
+                  {summery !== undefined
+                    ? summery.salesAmount - summery.expensesAmount + " LKR"
+                    : "0 LKR"}
                 </div>
               </CardContent>
             </Card>
@@ -229,10 +236,12 @@ const DailySalesBase = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {summery.salesAmount + " LKR"}
+                  {summery !== undefined
+                    ? summery.salesAmount + " LKR"
+                    : "0 LKR"}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {`Sales count : ${summery.sales.length}`}
+                  {`Sales count : ${summery !== undefined ? summery.sales.length : 0}`}
                 </p>
               </CardContent>
             </Card>
@@ -245,10 +254,12 @@ const DailySalesBase = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {summery.expensesAmount + " LKR"}
+                  {summery !== undefined
+                    ? summery.expensesAmount + " LKR"
+                    : "0 LKR"}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {`Expenses count : ${summery.expenses.length}`}
+                  {`Expenses count : ${summery !== undefined ? summery.expenses.length : 0}`}
                 </p>
               </CardContent>
             </Card>
@@ -260,6 +271,15 @@ const DailySalesBase = () => {
           show={show}
           onClose={() => setShow(false)}
           component={formComponent}
+        />
+        <ConfirmationModal
+          onClose={() => setconfirmationModalShow(false)}
+          onConfirm={() => createVerifyMutation.mutate()}
+          show={confirmationModalShow}
+          title={"Verify sales and expenses on " + formattedDate()}
+          titleDescription={
+            "Do you want to verify sales and expenses on " + formattedDate()
+          }
         />
       </div>
     </Fragment>

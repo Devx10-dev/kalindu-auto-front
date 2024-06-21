@@ -76,29 +76,33 @@ export default function SalesAndExpensesGrid({
                   </TableCell>
                 </TableRow>
                 {expandedCategories.includes(categoryName) &&
-                  groupedExpenses[categoryName].map((expense) => (
-                    <TableRow key={expense.id}>
-                      <TableCell>{expense.field.name}</TableCell>
-                      <TableCell>
-                        <p
-                          className="pl-2 pr-2"
-                          style={{
-                            background: expense.expense ? "#dc3545" : "#198754",
-                            color: "#fff",
-                            borderRadius: 5,
-                            maxWidth: "max-content",
-                            fontSize: 12,
-                            fontWeight: 400,
-                          }}
-                        >
-                          {expense.expense ? "Expense" : "Sale"}
-                        </p>
-                      </TableCell>
-                      <TableCell>{expense.amount}</TableCell>
-                      <TableCell>{expense.dateTime}</TableCell>
-                      <TableCell>{expense.reason}</TableCell>
-                    </TableRow>
-                  ))}
+                  groupedExpenses[categoryName].map(
+                    (expense: SaleOrExpense) => (
+                      <TableRow key={expense.id}>
+                        <TableCell>{expense.field.name}</TableCell>
+                        <TableCell>
+                          <p
+                            className="pl-2 pr-2"
+                            style={{
+                              background: expense.expense
+                                ? "#dc3545"
+                                : "#198754",
+                              color: "#fff",
+                              borderRadius: 5,
+                              maxWidth: "max-content",
+                              fontSize: 12,
+                              fontWeight: 400,
+                            }}
+                          >
+                            {expense.expense ? "Expense" : "Sale"}
+                          </p>
+                        </TableCell>
+                        <TableCell>{expense.amount}</TableCell>
+                        <TableCell>{`${expense.dateTime[0]}-${expense.dateTime[1]}-${expense.dateTime[2]} ${expense.dateTime[3]}:${expense.dateTime[4]}:${expense.dateTime[5]}`}</TableCell>
+                        <TableCell>{expense.reason}</TableCell>
+                      </TableRow>
+                    )
+                  )}
               </Fragment>
             ))}
           </TableBody>
