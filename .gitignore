@@ -26,3 +26,4 @@ dev-dist
 
 #.env
 .env
+package-lock.json
