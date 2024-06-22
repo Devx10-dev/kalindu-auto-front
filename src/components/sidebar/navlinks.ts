@@ -1,13 +1,3 @@
-// import { BsCashCoin } from "react-icons/bs";
-// import { AiOutlineCreditCard } from "react-icons/ai";
-// import { MdOutlineInsertPageBreak } from "react-icons/md";
-// import { FaRegListAlt } from "react-icons/fa";
-// import { GiArchiveRegister } from "react-icons/gi";
-// import { FaBalanceScale } from "react-icons/fa";
-// import { MdOutlineCreditScore } from "react-icons/md";
-// import { PiEngineBold } from "react-icons/pi";
-// import { IconType } from "react-icons/lib";
-
 import { NavLink } from "@/types/sidebar";
 
 const NavLinks: NavLink[] = [
@@ -18,22 +8,18 @@ const NavLinks: NavLink[] = [
       {
         label: "Create Cash Invoice",
         href: "/dashboard/invoice/cash",
-        // icon: <BsCashCoin />,
       },
       {
         label: "Create Creditor Invoice",
         href: "/dashboard/invoice/creditor",
-        // icon: <AiOutlineCreditCard />,
       },
       {
         label: "Create Dummy Invoice",
         href: "/dashboard/invoice/dummy",
-        // icon: <MdOutlineInsertPageBreak />,
       },
       {
         label: "View Invoices",
         href: "/dashboard/invoice/all",
-        // icon: <FaRegListAlt />,
       },
     ],
   },
@@ -44,34 +30,21 @@ const NavLinks: NavLink[] = [
       {
         label: "Register Creditor",
         href: "/dashboard/creditors/register",
-        // icon: <GiArchiveRegister />,
       },
       {
         label: "Creditor Management",
         href: "/dashboard/creditors/manage",
-        // icon: <FaRegListAlt />,
       },
     ],
   },
   {
-    label: "Reports",
+    label: "Summary",
     href: "/reports",
     sublinks: [
       {
         label: "Daily Sales and Expenses",
         href: "/dashboard/reports/daily-sales",
-        // icon: <FaBalanceScale />,
       },
-      // {
-      //   label: "Credit Sales",
-      //   href: "/dashboard/reports/credit-sales",
-      //   // icon: <MdOutlineCreditScore />,
-      // },
-      // {
-      //   label: "Engine Stock",
-      //   href: "/dashboard/reports/engine-stock",
-      //   // icon: <PiEngineBold />,
-      // },
     ],
   },
 
@@ -98,12 +71,10 @@ const NavLinks: NavLink[] = [
       {
         label: "Vehicles",
         href: "/dashboard/vehicle/model",
-        // icon: <GiArchiveRegister />,
       },
       {
         label: "Spare Parts",
         href: "/dashboard/vehicle/part",
-        // icon: <FaRegListAlt />,
       },
     ],
   },
