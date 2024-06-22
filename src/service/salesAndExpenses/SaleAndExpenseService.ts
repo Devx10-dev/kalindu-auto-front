@@ -41,7 +41,7 @@ class SaleAndExpenseService extends Service {
   async fetchDailySummery(date: string): Promise<DailySummery> {
     try {
       const response = await this.api.get<DailySummery>(
-        `${DAILY_SUMMERY_URL}/${date.trim()}`
+        `${DAILY_SUMMERY_URL}/${date.trim()}`,
       );
       return response.data;
     } catch (error) {
@@ -60,11 +60,11 @@ class SaleAndExpenseService extends Service {
   }
 
   async createSaleOrExpense(
-    saleOrExpense: SaleOrExpense
+    saleOrExpense: SaleOrExpense,
   ): Promise<SaleOrExpense> {
     const response = await this.api.post(
       `${saleOrExpense.expense ? EXPENSE_URL : SALE_URL}`,
-      saleOrExpense
+      saleOrExpense,
     );
     return response.data;
   }
@@ -72,7 +72,7 @@ class SaleAndExpenseService extends Service {
   async verifyDailySalesAndExpenses(date: string): Promise<DailySummery> {
     const response = await this.api.put(
       `${DAILY_SALES_AND_EXPENSES_VERIFY_URL}/${date}`,
-      null
+      null,
     );
     return response.data;
   }

@@ -15,12 +15,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ViewExpiredInvoices } from "./ViewExpiredInvoices";
 
-const CreditorsTable = (props: { creditorData?: Creditor[]}) => {
-  
+const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
   return (
     <>
       <div className="flex flex-col justify-end mt-10">
-
         <Table className="border rounded-md text-md mb-5">
           <TableCaption>Creditor Details</TableCaption>
           <TableHeader>
@@ -35,15 +33,22 @@ const CreditorsTable = (props: { creditorData?: Creditor[]}) => {
           </TableHeader>
           <TableBody>
             {props.creditorData?.map((creditor) => (
-              <TableRow key={creditor.creditorID} className={`${creditor.isExpired ? "bg-orange-100": null}`}>
+              <TableRow
+                key={creditor.creditorID}
+                className={`${creditor.isExpired ? "bg-orange-100" : null}`}
+              >
                 <TableCell className="font-medium">
                   {creditor.shopName}
                 </TableCell>
                 <TableCell>{creditor.primaryContact}</TableCell>
-                <TableCell>{creditor.totalDue ? creditor.totalDue : 0}</TableCell>
-                <TableCell>{creditor.creditLimit ? creditor.creditLimit : '-'}</TableCell>
-                
-                <TableCell>{creditor.isExpired ? 'YES' : 'NO'}</TableCell>
+                <TableCell>
+                  {creditor.totalDue ? creditor.totalDue : 0}
+                </TableCell>
+                <TableCell>
+                  {creditor.creditLimit ? creditor.creditLimit : "-"}
+                </TableCell>
+
+                <TableCell>{creditor.isExpired ? "YES" : "NO"}</TableCell>
                 <TableCell className="text-right flex">
                   <Link
                     to={`/dashboard/creditors/manage/${creditor.creditorID}`}
@@ -52,7 +57,11 @@ const CreditorsTable = (props: { creditorData?: Creditor[]}) => {
                       View Transactions
                     </Button>
                   </Link>
-                  {creditor.isExpired && <ViewExpiredInvoices invoiceList={creditor.expiredInvoiceList}/> }
+                  {creditor.isExpired && (
+                    <ViewExpiredInvoices
+                      invoiceList={creditor.expiredInvoiceList}
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ))}

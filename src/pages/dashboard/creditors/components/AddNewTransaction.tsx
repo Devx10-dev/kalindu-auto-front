@@ -96,10 +96,11 @@ export function AddNewTransaction() {
   });
 
   console.log(data);
-  const invoiceOptions = data?.invoiceIdList.map(invoiceId => ({
-    value: invoiceId,
-    label: invoiceId
-  })) || [];
+  const invoiceOptions =
+    data?.invoiceIdList.map((invoiceId) => ({
+      value: invoiceId,
+      label: invoiceId,
+    })) || [];
 
   const createCreditorMutation = useMutation({
     mutationFn: (data: CreditorTransactionFormValues) =>
@@ -184,18 +185,16 @@ export function AddNewTransaction() {
                   <FormItem>
                     <FormLabel>Invoice No</FormLabel>
                     <FormControl>
-
                       <Select
                         options={invoiceOptions}
                         placeholder="Select"
-                        className=" border-b-2 rounded-md" 
-                        onChange={(option:any) => {
+                        className=" border-b-2 rounded-md"
+                        onChange={(option: any) => {
                           if (option) {
                             form.setValue("invoiceNo", option?.value);
                           }
                         }}
                         isSearchable
-                                    
                       />
                     </FormControl>
                     <FormMessage />

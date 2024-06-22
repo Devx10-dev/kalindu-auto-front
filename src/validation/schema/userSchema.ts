@@ -15,7 +15,9 @@ export const userSchema = z.object({
   username: z
     .string()
     .min(2, { message: "Username must be at least 2 characters." })
-    .regex(/^[a-z]+$/, { message: "Username must contain only lowercase letters" }),
+    .regex(/^[a-z]+$/, {
+      message: "Username must contain only lowercase letters",
+    }),
   password: z.string().optional(),
   confirmPassword: z.string().optional(),
   active: z.boolean(),

@@ -91,7 +91,7 @@ const ViewCreditor = () => {
                             ) : null}
                           </TableCell>
                         </TableRow>
-                      )
+                      ),
                     )}
                   {!hasData && (
                     <TableRow className=" flex p-5 ">
@@ -166,7 +166,7 @@ const ViewCreditor = () => {
                   className="rounded-md p-2 text-sm mb-5"
                   variant={"secondary"}
                 >
-                  {creditorDetails.data.maxDuePeriod + ' Weeks' || "-"}
+                  {creditorDetails.data.maxDuePeriod + " Weeks" || "-"}
                 </Badge>
                 <Label>Credit Limit : </Label>
                 <Badge

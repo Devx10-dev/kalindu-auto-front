@@ -19,10 +19,10 @@ export const fieldSchema = z.object({
           id: z.number().optional(),
           name: z.string(),
         },
-        { required_error: "Category is required" }
+        { required_error: "Category is required" },
       ),
     },
-    { required_error: "Category is required" }
+    { required_error: "Category is required" },
   ),
 });
 

@@ -1,18 +1,18 @@
 import { RequiredLabel } from "@/components/formElements/FormLabel";
 import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
 import {
-    Category,
-    categorySchema,
+  Category,
+  categorySchema,
 } from "@/validation/schema/salesAndExpenses/categorySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";

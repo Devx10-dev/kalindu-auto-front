@@ -37,7 +37,6 @@ class CreditorAPI {
     }
   }
 
-
   async fetchCreditorInvoiceIDs(creditorID?: string) {
     if (creditorID) {
       const response = await this.api.get(

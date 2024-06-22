@@ -10,10 +10,9 @@ export type Creditor = {
   totalDue?: string;
   creditLimit?: string;
   status?: string;
-  dueDate?:string;
-  isExpired?:string;
-  expiredInvoiceList?:any
-  
+  dueDate?: string;
+  isExpired?: string;
+  expiredInvoiceList?: any;
 };
 
 export type CreditorResponseData = {
@@ -77,26 +76,26 @@ export type CreditorTransaction = {
 };
 
 export enum TransactionType {
-  INVOICE = 'INVOICE',
-  TRANSACTION = 'TRANSACTION',
+  INVOICE = "INVOICE",
+  TRANSACTION = "TRANSACTION",
 }
 
 export enum YesNo {
-  YES = 'YES',
-  NO = 'NO',
+  YES = "YES",
+  NO = "NO",
 }
 
 export enum Status {
-  ACT = 'ACT',
-  INA = 'INA',
+  ACT = "ACT",
+  INA = "INA",
 }
 
 export enum TransactionType {
-  INVOICE = 'INVOICE',
-  TRANSACTION = 'TRANSACTION',
+  INVOICE = "INVOICE",
+  TRANSACTION = "TRANSACTION",
 }
 
 export enum YesNo {
-  YES = 'YES',
-  NO = 'NO',
+  YES = "YES",
+  NO = "NO",
 }

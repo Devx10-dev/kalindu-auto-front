@@ -69,7 +69,7 @@ export default function CreditorManagement() {
         description="View and manage all the creditor data and transactions"
         icon={<Settings2 height="30" width="28" color="#162a3b" />}
       />
-      
+
       {/* search creditor */}
       <div className="mb-4 flex gap-5 w-1/2">
         <Input

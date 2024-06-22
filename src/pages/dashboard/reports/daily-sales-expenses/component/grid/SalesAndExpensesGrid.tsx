@@ -26,7 +26,7 @@ export default function SalesAndExpensesGrid({
     setExpandedCategories((prevExpandedCategories) =>
       prevExpandedCategories.includes(categoryName)
         ? prevExpandedCategories.filter((name) => name !== categoryName)
-        : [...prevExpandedCategories, categoryName]
+        : [...prevExpandedCategories, categoryName],
     );
   };
 
@@ -101,7 +101,7 @@ export default function SalesAndExpensesGrid({
                         <TableCell>{`${expense.dateTime[0]}-${expense.dateTime[1]}-${expense.dateTime[2]} ${expense.dateTime[3]}:${expense.dateTime[4]}:${expense.dateTime[5]}`}</TableCell>
                         <TableCell>{expense.reason}</TableCell>
                       </TableRow>
-                    )
+                    ),
                   )}
               </Fragment>
             ))}

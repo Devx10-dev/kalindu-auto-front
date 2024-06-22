@@ -48,7 +48,7 @@ export function RegisterForm() {
         variant: "default",
         title: "Success",
         description: "Successfully created creditor.",
-        className:'bg-green-200',
+        className: "bg-green-200",
         action: (
           <ToastAction altText="View Creditors">View Creditors</ToastAction>
         ),
@@ -80,7 +80,7 @@ export function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} >
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 grid-rows-3 w-1/2 gap-x-7 grid-flow-row mb-10 w-full">
           <FormField
             control={form.control}
@@ -116,7 +116,12 @@ export function RegisterForm() {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
-                  <Input className="w-full" type="email" {...field} placeholder="Type" />
+                  <Input
+                    className="w-full"
+                    type="email"
+                    {...field}
+                    placeholder="Type"
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -130,7 +135,13 @@ export function RegisterForm() {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Primary Contact No </FormLabel>
                 <FormControl>
-                  <Input className="w-full" type="tel" {...field} placeholder="Type" minLength={10} />
+                  <Input
+                    className="w-full"
+                    type="tel"
+                    {...field}
+                    placeholder="Type"
+                    minLength={10}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -143,7 +154,13 @@ export function RegisterForm() {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Secondary Contact No </FormLabel>
                 <FormControl>
-                  <Input className="w-full" type="number" {...field} placeholder="Type" minLength={10} />
+                  <Input
+                    className="w-full"
+                    type="number"
+                    {...field}
+                    placeholder="Type"
+                    minLength={10}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -156,10 +173,17 @@ export function RegisterForm() {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Credit Limit </FormLabel>
                 <FormControl>
-                  <Input className="w-full" type="number" {...field} placeholder="Type" minLength={4} />
+                  <Input
+                    className="w-full"
+                    type="number"
+                    {...field}
+                    placeholder="Type"
+                    minLength={4}
+                  />
                 </FormControl>
                 <FormDescription>
-                  Enter the maximum amount this creditor is eligible to borrow in LKR
+                  Enter the maximum amount this creditor is eligible to borrow
+                  in LKR
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -185,7 +209,7 @@ export function RegisterForm() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="1">1 week</SelectItem>
-                          <SelectItem value="2">2 weeks</SelectItem>                          
+                          <SelectItem value="2">2 weeks</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -204,7 +228,11 @@ export function RegisterForm() {
         <Button type="submit" className="mr-5 w-40">
           Register Creditor
         </Button>
-        <Button onClick={()=>form.reset(defaultValues)} variant={"outline"} className="w-40">
+        <Button
+          onClick={() => form.reset(defaultValues)}
+          variant={"outline"}
+          className="w-40"
+        >
           Reset
         </Button>
       </form>
