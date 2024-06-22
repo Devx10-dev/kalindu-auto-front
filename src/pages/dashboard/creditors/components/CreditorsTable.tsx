@@ -13,18 +13,14 @@ import { Creditor } from "@/types/creditor/creditorTypes";
 import { Search, View } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ViewEditCreditor } from "./ViewEditCreditor";
+import { ViewExpiredInvoices } from "./ViewExpiredInvoices";
 
-const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
+const CreditorsTable = (props: { creditorData?: Creditor[]}) => {
+  
   return (
     <>
-      <div className="flex flex-col justify-end">
-        <div className="mb-4 flex gap-10">
-          <Button variant={"secondary"}>
-            <Search className="mr-2 h-4 w-4" />
-            Search
-          </Button>
-        </div>
+      <div className="flex flex-col justify-end mt-10">
+
         <Table className="border rounded-md text-md mb-5">
           <TableCaption>Creditor Details</TableCaption>
           <TableHeader>
@@ -32,27 +28,31 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
               <TableHead>Creditor Name</TableHead>
               <TableHead> Primary Contact</TableHead>
               <TableHead>Balance</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>Credit Limit (LKR)</TableHead>
+              <TableHead>Expired Due Date</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {props.creditorData?.map((creditor) => (
-              <TableRow key={creditor.creditorID}>
+              <TableRow key={creditor.creditorID} className={`${creditor.isExpired ? "bg-orange-100": null}`}>
                 <TableCell className="font-medium">
                   {creditor.shopName}
                 </TableCell>
                 <TableCell>{creditor.primaryContact}</TableCell>
-                <TableCell>{creditor.secondaryContact}</TableCell>
-                <TableCell className="text-right">
+                <TableCell>{creditor.totalDue ? creditor.totalDue : 0}</TableCell>
+                <TableCell>{creditor.creditLimit ? creditor.creditLimit : '-'}</TableCell>
+                
+                <TableCell>{creditor.isExpired ? 'YES' : 'NO'}</TableCell>
+                <TableCell className="text-right flex">
                   <Link
                     to={`/dashboard/creditors/manage/${creditor.creditorID}`}
                   >
-                    <Button className="mr-5 bg-slate-200 text-black hover:bg-slate-600 hover:text-white">
-                      <View className="mr-2 h-4 w-4" />
+                    <Button className="mr-5 bg-white" variant="outline">
                       View Transactions
                     </Button>
                   </Link>
-                  <ViewEditCreditor />
+                  {creditor.isExpired && <ViewExpiredInvoices invoiceList={creditor.expiredInvoiceList}/> }
                 </TableCell>
               </TableRow>
             ))}
