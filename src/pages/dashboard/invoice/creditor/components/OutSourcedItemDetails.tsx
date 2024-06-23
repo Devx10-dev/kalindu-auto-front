@@ -18,7 +18,7 @@ const OutsourcedItemDetails: React.FC = () => {
   const outsourcedItems = getOutsourcedItems();
   return (
     <div>
-      <Card className="mt-5 mb-5">
+      <Card className="mt-5 mb-5 shadow-sm">
         <CardContent className="p-3 shadow-sm">
           <div>
             <h2 className="text-xl font-bold mb-8">Outsourced Item Details</h2>

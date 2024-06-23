@@ -19,7 +19,7 @@ const InvoiceTable: React.FC = () => {
 
   return (
     <div>
-      <Table className="border rounded-md text-md mb-5 mt-10">
+      <Table className="border rounded-md text-md mb-5 mt-10 shadow-sm">
         <TableBody>
           <TableRow>
             <TableHead>Item</TableHead>
@@ -50,7 +50,7 @@ const InvoiceTable: React.FC = () => {
                 />
               </TableCell>
               <TableCell>
-                <Button onClick={() => removeInvoiceItem(item)}>Remove</Button>
+                <Button variant="outline" onClick={() => removeInvoiceItem(item)}>Remove</Button>
               </TableCell>
             </TableRow>
           ))}

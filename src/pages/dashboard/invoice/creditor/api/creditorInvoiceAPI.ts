@@ -13,10 +13,11 @@ class CreditorInvoiceAPI {
 
   async fetchCreditors(
     pageNo: number = 0,
+    searchQuery: string = "",
     pageSize: number = 10,
   ): Promise<CreditorResponseData> {
     if (pageNo >= 1) pageNo = pageNo - 1;
-    const pagedURL = `${CreditorInvoiceEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
+    const pagedURL = `${CreditorInvoiceEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}&query=${searchQuery}`;
     const response = await this.api.get<CreditorResponseData>(pagedURL);
     return response.data;
   }

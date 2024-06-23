@@ -46,7 +46,7 @@ const AddItem: React.FC = () => {
 
   return (
     <Card>
-      <CardContent className="p-3 shadow-sm bg-slate-300">
+      <CardContent className="p-3 shadow-sm">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
             <div className="grid grid-cols-4 gap-4">

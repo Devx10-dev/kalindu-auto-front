@@ -4,20 +4,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Delete, Printer } from "lucide-react";
 import React, { useState } from "react";
+import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 
 const BillSummary: React.FC = () => {
   const items = [{}];
+  const {
+    setCreditor,
+    creditorID,
+    creditorName,
+    getOutsourcedItems,
+    invoiceItemDTOList,
+  } = useCreditorInvoiceStore();
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [vatPercentage, setVatPercentage] = useState(0);
   const [vatAmount, setVatAmount] = useState(0);
 
-  const subtotal = items.reduce(
-    (acc: any, item: any) => acc + item.quantity * item.price,
+  const subtotal = invoiceItemDTOList.reduce(
+    (acc: any, item: any) => acc + item.quantity * item.price - item.discount,
     0,
   );
+  let totalWithVat = 0
   const discountedTotal = subtotal - discountAmount;
-  const totalWithVat = discountedTotal + vatAmount;
+  totalWithVat = discountedTotal + vatAmount;
 
   const handleDiscountPercentageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -51,18 +60,19 @@ const BillSummary: React.FC = () => {
 
   return (
     <Card>
-      <CardContent className="p-3 shadow-sm">
+      <CardContent className="p-3 shadow-sm w-72">
         <div>
           <h2 className="text-xl font-bold mb-8">Bill Summary</h2>
         </div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label>Discount Percentage (%)</Label>
+            <Label>Discount (%)</Label>
             <Input
               type="number"
               value={discountPercentage}
               onChange={handleDiscountPercentageChange}
               placeholder="Discount Percentage"
+              className="bg-slate-100"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -72,21 +82,18 @@ const BillSummary: React.FC = () => {
               value={discountAmount}
               onChange={handleDiscountAmountChange}
               placeholder="Discount Amount"
+              className="bg-slate-100"
             />
           </div>
-          <div>
-            {/* TODO :: Find a better way to have the white space on right */}
-          </div>
-          <div>
-            {/* TODO :: Find a better way to have the white space on right */}
-          </div>
+        
           <div className="flex flex-col gap-2">
-            <Label>VAT Percentage (%)</Label>
+            <Label>VAT (%)</Label>
             <Input
               type="number"
               value={vatPercentage}
               onChange={handleVatPercentageChange}
               placeholder="VAT Percentage"
+              className="bg-slate-100"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -96,6 +103,8 @@ const BillSummary: React.FC = () => {
               value={vatAmount}
               onChange={handleVatAmountChange}
               placeholder="VAT Amount"
+              className="bg-slate-100"
+              
             />
           </div>
           <div>
@@ -107,7 +116,7 @@ const BillSummary: React.FC = () => {
         </div>
         <div className="flex justify-start text-left mt-4">
           <div className="text-left">
-            <p className="text-xl bg-slate-200 text-slate-900 p-5 rounded-md">
+            <p className="text-xl bg-slate-200 text-slate-900 p-5 rounded-md font-bold">
               Total : LKR {totalWithVat.toFixed(2)}
             </p>
             <Button className="mt-4 mb-5">
