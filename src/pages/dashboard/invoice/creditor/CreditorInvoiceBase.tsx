@@ -101,7 +101,9 @@ const CreditorInvoiceBase: React.FC = () => {
         {invoiceItemDTOList.length > 0 ? (
           <InvoiceTable />
         ) : (
-          <Label className="ml-5 text-gray-500">Please add items to the invoice</Label>
+          <Label className="ml-5 text-gray-500">
+            Please add items to the invoice
+          </Label>
         )}
 
         {hasOutsourcedItems && <OutsourcedItemDetails />}

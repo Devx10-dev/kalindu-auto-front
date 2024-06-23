@@ -50,7 +50,12 @@ const InvoiceTable: React.FC = () => {
                 />
               </TableCell>
               <TableCell>
-                <Button variant="outline" onClick={() => removeInvoiceItem(item)}>Remove</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => removeInvoiceItem(item)}
+                >
+                  Remove
+                </Button>
               </TableCell>
             </TableRow>
           ))}

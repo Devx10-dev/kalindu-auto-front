@@ -24,7 +24,7 @@ const BillSummary: React.FC = () => {
     (acc: any, item: any) => acc + item.quantity * item.price - item.discount,
     0,
   );
-  let totalWithVat = 0
+  let totalWithVat = 0;
   const discountedTotal = subtotal - discountAmount;
   totalWithVat = discountedTotal + vatAmount;
 
@@ -85,7 +85,7 @@ const BillSummary: React.FC = () => {
               className="bg-slate-100"
             />
           </div>
-        
+
           <div className="flex flex-col gap-2">
             <Label>VAT (%)</Label>
             <Input
@@ -104,7 +104,6 @@ const BillSummary: React.FC = () => {
               onChange={handleVatAmountChange}
               placeholder="VAT Amount"
               className="bg-slate-100"
-              
             />
           </div>
           <div>
