@@ -29,6 +29,7 @@ import SkeletonGrid from "@/components/loader/SkeletonGrid";
 import GridModal from "@/components/modal/GridModal";
 import CreditInvoiceGrid from "./CreditInvoiceGrid";
 import ListCheckIcon from "@/components/icon/ListCheckIcon";
+import VerifyIcon from "@/components/icon/VerifyIcon";
 
 function ChequesGrid({
   creditors,
@@ -197,7 +198,7 @@ function ChequesGrid({
                 <TableHead>Amount</TableHead>
                 <TableHead>Date & Time</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead align="right">Action</TableHead>
+                <TableHead align="center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -207,29 +208,37 @@ function ChequesGrid({
                     <TableCell className="font-medium">
                       {cheque.chequeNo}
                     </TableCell>
-                    <TableCell>
-                      {cheque?.creditor?.contactPersonName ?? "-"}
-                    </TableCell>
+                    <TableCell>{cheque?.creditorName ?? "-"}</TableCell>
                     <TableCell>{cheque.amount}</TableCell>
                     <TableCell>{`${cheque.dateTime[0]}-${cheque.dateTime[1]}-${cheque.dateTime[2]} ${cheque.dateTime[3]}:${cheque.dateTime[4]}:${cheque.dateTime[5]}`}</TableCell>
                     <TableCell>{cheque.status}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       {
-                        <div className="d-flex">
-                          <IconButton
-                            handleOnClick={() => handleActionBtnClick(cheque)}
-                            tooltipMsg="Settle Cheque"
-                            variant="ghost"
-                            icon={<PatchVerifyIcon height="30" width="30" />}
+                        <div className="d-flex gap-2">
+                          <Button
+                            onClick={() => handleActionBtnClick(cheque)}
                             disabled={cheque.status !== "PENDING"}
-                          />
-                          <IconButton
-                            handleOnClick={() => handleViewBtnClick(cheque)}
-                            tooltipMsg="View credit invoices"
-                            variant="ghost"
-                            icon={<ListCheckIcon height="30" width="30" />}
+                          >
+                            <div className="gap-2 d-flex">
+                              <VerifyIcon height="20" width="20" color="#fff" />
+                              Settle Cheque
+                            </div>
+                          </Button>
+
+                          <Button
+                            variant="outline"
+                            onClick={() => handleViewBtnClick(cheque)}
                             disabled={cheque.status !== "SETTLED"}
-                          />
+                          >
+                            <div className="gap-2 d-flex">
+                              <ListCheckIcon
+                                height="20"
+                                width="20"
+                                color="#000"
+                              />
+                              View Credit Invoices
+                            </div>
+                          </Button>
                         </div>
                       }
                     </TableCell>

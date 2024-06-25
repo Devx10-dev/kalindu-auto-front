@@ -45,8 +45,8 @@ function ChequeManagement() {
           <ChequesGrid chequeService={chequeService} creditors={creditors} />
         </CardContent>
         <FormModal
-          title="Add new Spare Part"
-          titleDescription="Add new spare part details to the system"
+          title="Add new cheque"
+          titleDescription="Add new cheque to the system"
           show={show}
           onClose={() => setShow(false)}
           component={

@@ -7,6 +7,7 @@ export interface Cheque {
   dateTime?: number[];
   creditor?: Creditor;
   status?: string;
+  creditorName?: string;
 }
 
 export type ChequeResponseData = {

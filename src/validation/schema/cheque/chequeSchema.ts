@@ -12,6 +12,7 @@ export const chequeSchema = z.object({
       label: z.string(),
       value: z.object({
         id: z.number(),
+        contactPersonName: z.string(),
       }),
     },
     { required_error: "Creditor is required" }

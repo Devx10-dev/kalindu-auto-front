@@ -14,7 +14,7 @@ import { ChequeService } from "@/service/cheque/ChequeService";
 import { Creditor } from "@/types/creditor/creditorTypes";
 import { Cheque, chequeSchema } from "@/validation/schema/cheque/chequeSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { z } from "zod";
@@ -47,10 +47,12 @@ function ChequeForm({
     form.setValue("creditor", undefined);
   };
 
-  console.log(form.getValues());
   const creditorOptions =
     creditors?.map((creditor) => ({
-      value: { id: parseInt(creditor.creditorID) },
+      value: {
+        id: parseInt(creditor.creditorID),
+        contactPersonName: creditor.contactPersonName,
+      },
       label: creditor.contactPersonName,
     })) || [];
 
@@ -59,7 +61,10 @@ function ChequeForm({
       chequeService.createCheque({
         chequeNo: formData.chequeNo,
         amount: formData.amount,
-        creditor: { creditorID: formData.creditor.value.id.toString() },
+        creditor: {
+          creditorID: formData.creditor.value.id.toString(),
+          contactPersonName: formData.creditor.value.contactPersonName,
+        },
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cheques"] });
@@ -124,11 +129,11 @@ function ChequeForm({
             name="creditor"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <RequiredLabel label="Field" />
+                <RequiredLabel label="Creditor" />
                 <FormControl>
                   <Select
                     className="select-place-holder"
-                    placeholder={"Select field"}
+                    placeholder={"Select Creditor"}
                     options={creditorOptions}
                     value={field.value || ""}
                     onChange={field.onChange}
