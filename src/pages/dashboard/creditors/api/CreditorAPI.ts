@@ -19,7 +19,7 @@ class CreditorAPI {
   async fetchCreditors(
     pageNo: number = 0,
     searchQuery: string,
-    pageSize: number = 10,
+    pageSize: number = 10
   ): Promise<CreditorResponseData> {
     if (pageNo >= 1) pageNo = pageNo - 1;
     const pagedURL = `${CreditorEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}&query=${searchQuery}`;
@@ -27,10 +27,18 @@ class CreditorAPI {
     return response.data;
   }
 
+  async fetchAllCreditors(): Promise<Creditor[]> {
+    const response = await this.api.get<Creditor[]>(
+      `${CreditorEndpoints.GET_ALL_CREDITORS_URL}/all`
+    );
+
+    return response.data;
+  }
+
   async fetchSingleCreditor(creditorID?: string) {
     if (creditorID) {
       const response = await this.api.get(
-        CreditorEndpoints.GET_ONE_CREDITOR_URL + "/" + creditorID,
+        CreditorEndpoints.GET_ONE_CREDITOR_URL + "/" + creditorID
       );
 
       return response.data;
@@ -40,7 +48,7 @@ class CreditorAPI {
   async fetchCreditorInvoiceIDs(creditorID?: string) {
     if (creditorID) {
       const response = await this.api.get(
-        CreditorEndpoints.GET_CREDITOR_INVOICE_IDS_URL + "/" + creditorID,
+        CreditorEndpoints.GET_CREDITOR_INVOICE_IDS_URL + "/" + creditorID
       );
 
       return response.data;
@@ -50,24 +58,24 @@ class CreditorAPI {
   async createCreditor(creditor: Creditor): Promise<Creditor> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_URL,
-      creditor,
+      creditor
     );
     return response.data;
   }
 
   async getCreditorTransactions(creditorID?: string) {
     const response = await this.api.get(
-      CreditorEndpoints.GET_CREDITOR_TRANSACTIONS_URL + "/" + creditorID,
+      CreditorEndpoints.GET_CREDITOR_TRANSACTIONS_URL + "/" + creditorID
     );
     return response.data;
   }
 
   async createCreditorTransaction(
-    creditorTransaction: any,
+    creditorTransaction: any
   ): Promise<CreditorTransaction> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_TRANSACTIONS_URL,
-      creditorTransaction,
+      creditorTransaction
     );
     return response.data;
   }

@@ -19,6 +19,7 @@ import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
 import EditUser from "./pages/dashboard/user-management/EditUser";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
+import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
 
 function App() {
   return (
@@ -63,6 +64,8 @@ function App() {
             <Route path="register" element={<RegisterUser />} />
             <Route path="edit" element={<EditUser />} />
           </Route>
+
+          <Route path="cheque" element={<ChequeManagement />} />
 
           <Route path="log">
             <Route path="activity" element={<ActivityLog />} />

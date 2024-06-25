@@ -17,6 +17,7 @@ export type IconButtonProps = {
     | "ghost"
     | "link"
     | "secondary";
+  disabled?: boolean;
 };
 
 export type Option = {
@@ -53,4 +54,12 @@ export type COnfirmationModalProps = {
   title: string;
   titleDescription?: string;
   onConfirm: () => void;
+};
+
+export type ChequeSettleModalProps = {
+  show: boolean;
+  onClose: () => void;
+  title: string;
+  onSettle: () => void;
+  onReject: () => void;
 };

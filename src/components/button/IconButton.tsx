@@ -12,6 +12,7 @@ function IconButton({
   tooltipMsg,
   handleOnClick,
   variant,
+  disabled,
 }: IconButtonProps) {
   return (
     <TooltipProvider>
@@ -21,6 +22,7 @@ function IconButton({
             className="table-cell-btn"
             variant={variant ?? "ghost"}
             onClick={handleOnClick}
+            disabled={disabled}
           >
             {icon}
           </Button>

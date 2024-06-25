@@ -35,6 +35,10 @@ const NavLinks: NavLink[] = [
         label: "Creditor Management",
         href: "/dashboard/creditors/manage",
       },
+      {
+        label: "Cheque Handling",
+        href: "/dashboard/cheque",
+      },
     ],
   },
   {

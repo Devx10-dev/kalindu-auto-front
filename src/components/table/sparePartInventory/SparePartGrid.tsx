@@ -4,10 +4,11 @@ import {
   SparePartsResponseData,
 } from "@/types/sparePartInventory/sparePartTypes";
 import { ChassisNo } from "@/types/sparePartInventory/vehicleTypes";
+import capitalize, { truncate } from "@/utils/string";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
-import Loading from "../../Loading";
 import IconButton from "../../button/IconButton";
 import EditIcon from "../../icon/EditIcon";
 import { Button } from "../../ui/button";
@@ -29,8 +30,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import { toast } from "../../ui/use-toast";
-import { useLocation } from "react-router-dom";
-import capitalize, { truncate } from "@/utils/string";
+import SkeletonGrid from "@/components/loader/SkeletonGrid";
 
 export default function SparePartGrid({
   setShow,
@@ -42,7 +42,7 @@ export default function SparePartGrid({
   const [pageNo, setPageNo] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
-    null,
+    null
   );
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -63,7 +63,7 @@ export default function SparePartGrid({
       sparePartService.fetchFilteredSpaerParts(
         pageNo,
         pageSize,
-        selectedChassisNo,
+        selectedChassisNo
       ),
     retry: 2,
   });
@@ -73,7 +73,7 @@ export default function SparePartGrid({
   }, [state]);
 
   const [viewSpareParts, setViewSpareParts] = useState<SparePartItem[]>(
-    spareParts?.spareParts ?? [],
+    spareParts?.spareParts ?? []
   );
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function SparePartGrid({
           if (
             Object.prototype.hasOwnProperty.call(
               row,
-              key as keyof SparePartItem,
+              key as keyof SparePartItem
             )
           ) {
             const value = row[key as keyof SparePartItem];
@@ -135,57 +135,58 @@ export default function SparePartGrid({
 
   return (
     <Fragment>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <>
-          <div
-            className="d-flex gap-3 mb-4 p-4"
-            style={{
-              borderRadius: "5px",
-              boxShadow:
-                "rgba(255, 255, 255, 0.1) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.20) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
-            }}
-          >
-            <Input
-              style={{ flex: 4 }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              type="text"
-              placeholder="Search ..."
-            />
-            <div className="gap-2">
-              <div style={{ flex: 2 }}>
-                <Select
-                  onValueChange={(value) => setSelectedChassisNo(value)}
-                  value={selectedChassisNo ?? undefined}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Chassis No" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {vehicleChassisNos !== undefined &&
-                      [{ id: -1, chassisNo: "All" }, ...vehicleChassisNos]?.map(
-                        (chassisNo) => (
-                          <SelectItem
-                            key={Math.random()}
-                            value={chassisNo.chassisNo}
-                          >
-                            {chassisNo.chassisNo}
-                          </SelectItem>
-                        ),
-                      )}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="gap-2 flex-2">
-              <Button variant={"default"} onClick={refetchModels}>
-                Filter
-              </Button>
+      <>
+        <div
+          className="d-flex gap-3 mb-4 p-4"
+          style={{
+            borderRadius: "5px",
+            boxShadow:
+              "rgba(255, 255, 255, 0.1) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.20) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
+          }}
+        >
+          <Input
+            style={{ flex: 4 }}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            type="text"
+            placeholder="Search ..."
+          />
+          <div className="gap-2">
+            <div style={{ flex: 2 }}>
+              <Select
+                onValueChange={(value) => setSelectedChassisNo(value)}
+                value={selectedChassisNo ?? undefined}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Chassis No" />
+                </SelectTrigger>
+                <SelectContent>
+                  {vehicleChassisNos !== undefined &&
+                    [{ id: -1, chassisNo: "All" }, ...vehicleChassisNos]?.map(
+                      (chassisNo) => (
+                        <SelectItem
+                          key={Math.random()}
+                          value={chassisNo.chassisNo}
+                        >
+                          {chassisNo.chassisNo}
+                        </SelectItem>
+                      )
+                    )}
+                </SelectContent>
+              </Select>
             </div>
           </div>
+
+          <div className="gap-2 flex-2">
+            <Button variant={"default"} onClick={refetchModels}>
+              Filter
+            </Button>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <SkeletonGrid noOfColumns={6} noOfItems={10} />
+        ) : (
           <Table className="border rounded-md text-md mb-5 table-responsive">
             <TableCaption>Spare Part Details</TableCaption>
             <TableHeader>
@@ -198,6 +199,7 @@ export default function SparePartGrid({
                 <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {viewSpareParts &&
                 viewSpareParts.map((sparePart) => (
@@ -224,8 +226,8 @@ export default function SparePartGrid({
                 ))}
             </TableBody>
           </Table>
-        </>
-      )}
+        )}
+      </>
     </Fragment>
   );
 }

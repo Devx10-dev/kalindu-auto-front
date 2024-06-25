@@ -27,6 +27,8 @@ import SalesAndExpensesGrid from "./component/grid/SalesAndExpensesGrid";
 import { toast } from "@/components/ui/use-toast";
 import Loading from "@/components/Loading";
 import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
+import SkeletonGrid from "@/components/loader/SkeletonGrid";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DailySalesBase = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -48,7 +50,7 @@ const DailySalesBase = () => {
       <FieldForm
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />,
+      />
     );
     setShow(true);
   };
@@ -60,7 +62,7 @@ const DailySalesBase = () => {
       <CategoryForm
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />,
+      />
     );
     setShow(true);
   };
@@ -73,7 +75,7 @@ const DailySalesBase = () => {
         date={formattedDate()}
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />,
+      />
     );
     setShow(true);
   };
@@ -117,13 +119,13 @@ const DailySalesBase = () => {
       salesAndExpenses.push({
         ...s,
         expense: false,
-      }),
+      })
     );
     summery.expenses.forEach((s) =>
       salesAndExpenses.push({
         ...s,
         expense: true,
-      }),
+      })
     );
   }
 
@@ -161,7 +163,7 @@ const DailySalesBase = () => {
                   variant={"outline"}
                   className={cn(
                     "w-[240px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground",
+                    !date && "text-muted-foreground"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -182,7 +184,7 @@ const DailySalesBase = () => {
             </Popover>
           </div>
           {isLoading ? (
-            <Loading />
+            <SkeletonGrid noOfColumns={5} noOfItems={2} />
           ) : (
             <SalesAndExpensesGrid salesOrExpenses={salesAndExpenses} />
           )}
@@ -190,7 +192,7 @@ const DailySalesBase = () => {
 
         <Card className="m-8 pl-4 p-4 pt-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 mb-4 mt-0 pt-0">
-            <CardTitle className="text-xl font-bold">Daily Summery</CardTitle>
+            <CardTitle className="text-xl font-bold">Daily Summary</CardTitle>
             {summery !== undefined && summery.verified ? (
               <div
                 className="d-flex gap-2 pl-4 pr-4 pt-1 pb-1"
@@ -213,61 +215,81 @@ const DailySalesBase = () => {
             )}
           </CardHeader>
           <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-            <Card
-              x-chunk="dashboard-01-chunk-0"
-              style={{ background: "rgb(229 231 235)" }}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-md font-medium">
-                  Total Revenue
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {summery !== undefined
-                    ? summery.salesAmount - summery.expensesAmount + " LKR"
-                    : "0 LKR"}
-                </div>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-1"
-              style={{ background: "rgb(229 231 235)" }}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-md font-medium">Sales</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {summery !== undefined
-                    ? summery.salesAmount + " LKR"
-                    : "0 LKR"}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {`Sales count : ${summery !== undefined ? summery.sales.length : 0}`}
-                </p>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-2"
-              style={{ background: "rgb(229 231 235)" }}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-md font-medium">Expenses</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {summery !== undefined
-                    ? summery.expensesAmount + " LKR"
-                    : "0 LKR"}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {`Expenses count : ${summery !== undefined ? summery.expenses.length : 0}`}
-                </p>
-              </CardContent>
-            </Card>
+            {isLoading ? (
+              <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            ) : (
+              <Card
+                className="h-[125px] w-[250px] rounded-xl"
+                x-chunk="dashboard-01-chunk-0"
+                style={{ background: "rgb(229 231 235)" }}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-md font-medium">
+                    Total Revenue
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {summery !== undefined
+                      ? summery.salesAmount - summery.expensesAmount + " LKR"
+                      : "0 LKR"}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {isLoading ? (
+              <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            ) : (
+              <Card
+                className="h-[125px] w-[250px] rounded-xl"
+                x-chunk="dashboard-01-chunk-1"
+                style={{ background: "rgb(229 231 235)" }}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-md font-medium">Sales</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {summery !== undefined
+                      ? summery.salesAmount + " LKR"
+                      : "0 LKR"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {`Sales count : ${summery !== undefined ? summery.sales.length : 0}`}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {isLoading ? (
+              <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            ) : (
+              <Card
+                className="h-[125px] w-[250px] rounded-xl"
+                x-chunk="dashboard-01-chunk-2"
+                style={{ background: "rgb(229 231 235)" }}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-md font-medium">
+                    Expenses
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {summery !== undefined
+                      ? summery.expensesAmount + " LKR"
+                      : "0 LKR"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {`Expenses count : ${summery !== undefined ? summery.expenses.length : 0}`}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </Card>
+
         <FormModal
           title={title}
           titleDescription={description}
