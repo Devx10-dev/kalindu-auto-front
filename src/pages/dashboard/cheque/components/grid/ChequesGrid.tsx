@@ -211,7 +211,28 @@ function ChequesGrid({
                     <TableCell>{cheque?.creditorName ?? "-"}</TableCell>
                     <TableCell>{cheque.amount}</TableCell>
                     <TableCell>{`${cheque.dateTime[0]}-${cheque.dateTime[1]}-${cheque.dateTime[2]} ${cheque.dateTime[3]}:${cheque.dateTime[4]}:${cheque.dateTime[5]}`}</TableCell>
-                    <TableCell>{cheque.status}</TableCell>
+                    <TableCell>
+                      {
+                        <p
+                          className="pl-2 pr-2"
+                          style={{
+                            background:
+                              cheque.status === "REJECTED"
+                                ? "#dc3545"
+                                : cheque.status === "SETTLED"
+                                  ? "#198754"
+                                  : "#ffc107",
+                            color: "#fff",
+                            borderRadius: 5,
+                            maxWidth: "max-content",
+                            fontSize: 12,
+                            fontWeight: 400,
+                          }}
+                        >
+                          {cheque.status}
+                        </p>
+                      }
+                    </TableCell>
                     <TableCell align="center">
                       {
                         <div className="d-flex gap-2">
