@@ -36,11 +36,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TableBodySkeleton } from "./TableSkeleton";
 import ErrorIcon from "@/components/icon/ErrorIcon";
 import ErrorPageIcon from "@/components/icon/ErrorPageIcon";
+import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
+import dateArrayToString from "@/utils/dateArrayToString";
 // import { useState } from "react";
 // import { useQuery } from "@tanstack/react-query";
 // import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
 
-export default function InvoiceTable({
+export default function CreditInvoiceTable({
   invoices,
   type,
   pageNo,
@@ -49,7 +51,7 @@ export default function InvoiceTable({
   isLoading,
   err,
 }: {
-  invoices: InvoiceList | undefined;
+  invoices: CreditorInvoiceList | undefined;
   type: string;
   pageNo: number;
   setPageNo: React.Dispatch<React.SetStateAction<number>>;
@@ -65,6 +67,67 @@ export default function InvoiceTable({
 
   const handleViewInvoice = (invoiceId: string) => {
     nav(`/dashboard/invoice/view/${type}/${invoiceId}`);
+  };
+
+  const calculateDueDate = (issuedTime: number[], maxDueWeeks: number) => {
+    const issuedDate = new Date(issuedTime[0], issuedTime[1], issuedTime[2]);
+    const dueDate = new Date(issuedDate);
+    dueDate.setDate(dueDate.getDate() + maxDueWeeks * 7);
+    // turninto array
+    const dateArray = [
+      dueDate.getFullYear(),
+      dueDate.getMonth(),
+      dueDate.getDate(),
+      issuedTime[3],
+      issuedTime[4],
+      issuedTime[5],
+    ];
+    return dateArray;
+  };
+
+  const getDueStatus = (issuedTime: number[], maxDueWeeks: number) => {
+    const issuedDate = new Date(
+      issuedTime[0],
+      issuedTime[1],
+      issuedTime[2],
+      issuedTime[3],
+      issuedTime[4],
+      issuedTime[5],
+    );
+    const currentDate = new Date();
+    console.log(issuedDate.getTime());
+    console.log(currentDate.getTime());
+    console.log(currentDate.getDate() - issuedDate.getDate());
+    console.log(maxDueWeeks * 7);
+    const diff = currentDate.getTime() - issuedDate.getTime();
+    if (diff > maxDueWeeks * 7) {
+      return "DUE";
+    } else {
+      return "OVERDUE";
+    }
+  };
+
+  const generateStatusBadge = (issuedTime: number[], maxDueWeeks: number) => {
+    const status = getDueStatus(issuedTime, maxDueWeeks);
+    if (status === "DUE") {
+      return (
+        <Badge
+          variant="secondary"
+          className="text-white bg-yellow-400 rounded-sm p-1"
+        >
+          DUE
+        </Badge>
+      );
+    } else {
+      return (
+        <Badge
+          variant="secondary"
+          className="text-white bg-red-400 rounded-sm p-1"
+        >
+          OVERDUE
+        </Badge>
+      );
+    }
   };
 
   return (
@@ -87,9 +150,10 @@ export default function InvoiceTable({
         <TableHeader>
           <TableRow>
             <TableHead>Invoice No</TableHead>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Vehicle No</TableHead>
+            <TableHead>Company</TableHead>
+            <TableHead>Contact Person</TableHead>
             <TableHead>Invoice Date</TableHead>
+            <TableHead>Due Date</TableHead>
             <TableHead>Total Amount</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
@@ -114,35 +178,30 @@ export default function InvoiceTable({
             {invoices?.invoices &&
               err === null &&
               invoices.invoices.map((invoice) => (
-                <TableRow key={invoice.id}>
+                <TableRow key={invoice.invoiceId}>
                   <TableCell>{invoice.invoiceId}</TableCell>
                   <TableCell className="w-40 turncate">
-                    {invoice.customerName}
+                    {invoice.creditor.shopName}
                   </TableCell>
-                  <TableCell>
-                    {invoice.vehicleNo
-                      ? invoice.vehicleNo.toUpperCase()
-                      : "N/A"}
+                  <TableCell className="w-40 turncate">
+                    {invoice.creditor.contactPersonName}
                   </TableCell>
+                  <TableCell>{dateArrayToString(invoice.issuedTime)}</TableCell>
                   <TableCell>
-                    {invoice.issuedTime[0] +
-                      "-" +
-                      invoice.issuedTime[1] +
-                      "-" +
-                      invoice.issuedTime[2]}{" "}
-                    {addLeadingZero(invoice.issuedTime[3])}:
-                    {addLeadingZero(invoice.issuedTime[4])}:
-                    {addLeadingZero(invoice.issuedTime[5])}
+                    {dateArrayToString(
+                      calculateDueDate(
+                        invoice.issuedTime,
+                        invoice.creditor.maxDuePeriod,
+                      ),
+                    )}
                   </TableCell>
                   <TableCell>Rs. {invoice.totalPrice}</TableCell>
                   <TableCell>
                     {/* make background greem intag */}
-                    <Badge
-                      variant="secondary"
-                      className="text-white bg-green-400 rounded-sm p-1"
-                    >
-                      COMPLETED
-                    </Badge>
+                    {generateStatusBadge(
+                      invoice.issuedTime,
+                      invoice.creditor.maxDuePeriod,
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-center">

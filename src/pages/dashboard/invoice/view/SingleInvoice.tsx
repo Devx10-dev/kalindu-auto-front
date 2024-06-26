@@ -100,7 +100,7 @@ function SingleInvoice() {
         <div className="flex justify-between items-center">
           <CardHeader>
             <PageHeader
-              title={`Invoice No: ${invoiceData?.invoiceId}`}
+              title={`Invoice No: ${invoiceDetails?.invoiceId}`}
               description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
               icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
               badge={

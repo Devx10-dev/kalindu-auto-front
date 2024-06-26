@@ -1,8 +1,22 @@
+import { Creditor } from "../creditor/creditorTypes";
+import { Commission } from "./cashInvoice";
+
 export type InvoiceState = {
   creditorName?: string;
   creditorID?: number;
   totalPrice?: number;
   invoiceItemDTOList: InvoiceItem[];
+
+  // Reals
+  creditor?: Creditor;
+  commissions?: Commission[];
+  invoiceId?: number;
+  invoiceItems?: InvoiceItem[];
+  issuedBy?: string;
+  issuedTime?: number[];
+  totalDiscount?: number;
+  totalPrice?: number;
+  vat?: number;
 
   discountPercentage?: number;
   discountAmount?: number;
@@ -34,4 +48,18 @@ export type InvoiceItem = {
   outsourcedStatus?: boolean;
   companyName?: string;
   buyingPrice?: number;
+};
+
+export type CreditorInvoiceList = {
+  invoices: InvoiceState[];
+  currentPage: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export type CreditInvoices = {
+  creditInvoicesStore: InvoiceState[];
+  setCreditInvoicesStore: (invoices: InvoiceState[]) => void;
+  addCreditInvoiceToStore: (invoice: InvoiceState) => void;
+  getCreditInvoiceById: (invoiceId: string) => InvoiceState;
 };

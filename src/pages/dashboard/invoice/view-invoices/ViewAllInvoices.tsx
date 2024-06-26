@@ -17,8 +17,14 @@ import { DateRange } from "react-day-picker";
 import dateToString from "@/utils/dateToString";
 import { useToast } from "@/components/ui/use-toast";
 import { TableSkeleton } from "./components/TableSkeleton";
-import { useInvoiceListStore } from "./context/InvoiceListState";
+import {
+  useCreditInvoiceListStore,
+  useInvoiceListStore,
+} from "./context/InvoiceListState";
 import { ErrorPage } from "./components/ErrorPage";
+import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
+import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService";
+import CreditInvoiceTable from "./components/CreditInvoiceTable";
 
 export function ViewAllInvoices() {
   // active tab state
@@ -34,6 +40,8 @@ export function ViewAllInvoices() {
   const [pageNo, setPageNo] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
   const { cashInvoicesStore, setCashInvoicesStore } = useInvoiceListStore();
+  const { creditInvoicesStore, setCreditInvoicesStore } =
+    useCreditInvoiceListStore();
 
   const handleFilterClick = () => {
     // set form date and to date
@@ -63,7 +71,6 @@ export function ViewAllInvoices() {
   const {
     data: cashInvoiceData,
     isLoading: cashInvoiceLoading,
-    status: cashInvoiceStatus,
     error: cashInvoiceError,
   } = useQuery<InvoiceList>({
     queryKey: [
@@ -82,12 +89,48 @@ export function ViewAllInvoices() {
         pageNo,
         pageSize,
       ),
+    enabled: activeTab === "cash",
+  });
+
+  const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
+
+  const {
+    data: creditInvoiceData,
+    isLoading: creditInvoiceLoading,
+    error: creditInvoiceError,
+  } = useQuery<CreditorInvoiceList>({
+    queryKey: [
+      "creditInvoices",
+      debouncedSearch,
+      fromDate,
+      toDate,
+      pageNo,
+      pageSize,
+    ],
+    queryFn: () =>
+      creditInvoiceService.fetchCreditInvoices(
+        debouncedSearch,
+        fromDate ? dateToString(fromDate) : undefined,
+        toDate ? dateToString(toDate) : undefined,
+        pageNo,
+        pageSize,
+      ),
+    enabled: activeTab === "creditor",
   });
 
   const { toast } = useToast();
 
   useEffect(() => {
     if (cashInvoiceError) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "Failed to fetch invoices",
+        duration: 5000,
+      });
+    }
+
+    if (creditInvoiceError) {
       toast({
         variant: "destructive",
         title: "Something went wrong",
@@ -107,11 +150,23 @@ export function ViewAllInvoices() {
     }
   }, [cashInvoiceData, cashInvoicesStore, setCashInvoicesStore]);
 
+  useEffect(() => {
+    if (creditInvoiceData?.invoices?.length > 0) {
+      setCreditInvoicesStore(creditInvoiceData.invoices);
+    }
+  }, [creditInvoiceData, creditInvoicesStore, setCreditInvoicesStore]);
+
   // on tab change
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     console.log(tab);
   };
+
+  useEffect(() => {
+    if (creditInvoiceData) {
+      console.log("CREDITTTTTTTT", creditInvoiceData);
+    }
+  }, [creditInvoiceData]);
 
   return (
     <Fragment>
@@ -183,8 +238,22 @@ export function ViewAllInvoices() {
           )}
         </TabsContent>
         <TabsContent value="creditor">
-          <TableSkeleton rows={10} cols={6} />
-          {/* <InvoiceTable invoices={invoices2} type="creditor" /> */}
+          {creditInvoiceError ? (
+            <ErrorPage
+              errorHeading="Uh oh! Something went wrong"
+              errorSubHeading="There was an unexpected error. Please try again or contact support."
+            />
+          ) : (
+            <CreditInvoiceTable
+              invoices={creditInvoiceData}
+              setPageNo={setPageNo}
+              type="creditor"
+              pageNo={pageNo}
+              pageSize={pageSize}
+              isLoading={creditInvoiceLoading}
+              err={creditInvoiceError}
+            />
+          )}
         </TabsContent>
         <TabsContent value="dummy">
           {/* <InvoiceTable invoices={invoices} type="dummy" /> */}
