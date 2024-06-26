@@ -15,7 +15,7 @@ export const chequeSchema = z.object({
         contactPersonName: z.string(),
       }),
     },
-    { required_error: "Creditor is required" }
+    { required_error: "Creditor is required" },
   ),
 });
 

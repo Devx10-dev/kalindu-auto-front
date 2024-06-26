@@ -7,79 +7,37 @@ import {
   TableCaption,
   TableCell,
   TableHead,
+  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
+import { InvoiceItem, InvoiceState } from "@/types/invoice/cashInvoice";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
+import { useEffect, useState } from "react";
+import { TableBodySkeleton } from "../../view-invoices/components/TableSkeleton";
 
 function OutsourceItemsGrid({
-  items,
-  setItems,
-  outsourcedItems,
-  setOutsourcedItems,
+  invoiceDetails,
+  invoiceLoading,
 }: {
-  items: DummyInvoiceItem[];
-  outsourcedItems: OutsourcedItem[];
-  setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
-  setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
+  invoiceDetails: InvoiceState | null;
+  invoiceLoading: boolean;
 }) {
-  const onChangeCheckHandle = (item: DummyInvoiceItem) => {
-    if (item.outsourced) {
-      setOutsourcedItems(
-        outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.sparePartId,
-        ),
-      );
-      setItems(
-        items.map((dummyItem) =>
-          dummyItem.sparePartId === item.sparePartId
-            ? { ...dummyItem, outsourced: false }
-            : dummyItem,
-        ),
-      );
-    } else {
-      setItems(
-        items.map((dummyItem) =>
-          dummyItem.sparePartId === item.sparePartId
-            ? { ...dummyItem, outsourced: true }
-            : dummyItem,
-        ),
-      );
-      setOutsourcedItems([
-        {
-          index: item.sparePartId,
-          buyingPrice: undefined,
-          companyName: undefined,
-          itemCode: item.code,
-          itemName: item.name,
-          quantity: item.quantity,
-        },
-        ...outsourcedItems,
-      ]);
-    }
-  };
+  const [outsourcedItems, setOutsourcedItems] = useState<InvoiceItem[]>([]);
 
-  const removeItem = (item: DummyInvoiceItem) => {
-    if (item.outsourced) {
+  useEffect(() => {
+    if (invoiceDetails) {
       setOutsourcedItems(
-        outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.sparePartId,
-        ),
+        invoiceDetails.invoiceItems.filter((item) => item.outsourced),
       );
     }
-    setItems(
-      items.filter((dummyItem) => dummyItem.sparePartId !== item.sparePartId),
-    );
-  };
+  }, [invoiceDetails]);
 
   return (
     <Table className="border rounded-md text-md mb-5 table-responsive">
-      <TableBody>
+      <TableHeader>
         <TableRow style={{ height: "36px" }}>
           <TableHead style={{ height: "36px" }}>Item</TableHead>
-          <TableHead style={{ height: "36px" }} align="right">
-            Item Name
-          </TableHead>
           <TableHead style={{ height: "36px" }} align="right">
             Item Code
           </TableHead>
@@ -91,33 +49,27 @@ function OutsourceItemsGrid({
           </TableHead>
           <TableHead style={{ height: "36px" }}>Buying Price</TableHead>
         </TableRow>
-        {items.map((item, index) => (
-          <TableRow key={index}>
-            <TableCell className="p-0">{item.name}</TableCell>
-            <TableCell className="p-0" align="right">
-              {item.quantity}
-            </TableCell>
-            <TableCell className="p-0" align="right">
-              {item.price}
-            </TableCell>
-            <TableCell className="p-0" align="right">
-              {item.discount}
-            </TableCell>
-            <TableCell className="p-0" align="right">
-              {item.discount !== undefined
-                ? (item.price * item.quantity - item.discount).toFixed(2)
-                : (item.price * item.quantity).toFixed(2)}
-            </TableCell>
-            <TableCell className="p-0" align="center">
-              <Checkbox
-                defaultChecked={false}
-                checked={item.outsourced}
-                onCheckedChange={() => onChangeCheckHandle(item)}
-              />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
+      </TableHeader>
+
+      {invoiceLoading ? (
+        <TableBodySkeleton noHeader={true} cols={5} rows={5} />
+      ) : (
+        <TableBody>
+          {outsourcedItems.map((item, index) => (
+            <TableRow key={index}>
+              <TableCell className="text-xl">{item.name}</TableCell>
+              <TableCell className="text-xl">{item.code}</TableCell>
+              <TableCell className="text-xl">{item.quantity}</TableCell>
+              <TableCell className="text-xl">
+                {item.outsourceItem.companyName}
+              </TableCell>
+              <TableCell className="text-xl">
+                Rs. {item.outsourceItem.buyingPrice}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      )}
     </Table>
   );
 }

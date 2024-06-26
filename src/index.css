@@ -108,8 +108,8 @@ body > div {
   .skeleton-table td {
     display: none;
   }
-  .skeleton-table th:nth-child(-n+2),
-  .skeleton-table td:nth-child(-n+2) {
+  .skeleton-table th:nth-child(-n + 2),
+  .skeleton-table td:nth-child(-n + 2) {
     display: table-cell;
   }
 }

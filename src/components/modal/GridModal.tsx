@@ -1,10 +1,10 @@
 import { FormModalProps } from "@/types/component/propTypes";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "../ui/dialog";
 
 function GridModal({

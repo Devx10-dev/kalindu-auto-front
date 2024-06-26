@@ -1,0 +1,46 @@
+import { AxiosInstance } from "axios";
+import { Service } from "../apiService";
+import { useInvoiceListStore } from "@/pages/dashboard/invoice/view-invoices/context/InvoiceListState";
+import {
+  CreditorInvoiceList,
+  InvoiceState,
+} from "@/types/invoice/creditorInvoice";
+
+const CREDIT_INVOICE_URL = "invoice/credit";
+
+class CreditInvoiceService extends Service {
+  constructor(api: AxiosInstance) {
+    super(api);
+  }
+
+  async fetchCreditInvoices(
+    search: string | null,
+    fromDate?: string | null,
+    toDate?: string | null,
+    pageNo?: number,
+    pageSize?: number,
+  ): Promise<CreditorInvoiceList> {
+    try {
+      const response = await this.api.get<CreditorInvoiceList>(
+        `${CREDIT_INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
+      );
+      console.log("HEREE", response.data);
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch cash invoices");
+    }
+  }
+
+  async fetchCreditInvoiceById(invoiceId: string): Promise<InvoiceState> {
+    try {
+      const response = await this.api.get<InvoiceState>(
+        `${CREDIT_INVOICE_URL}/${invoiceId}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch cash invoice");
+    }
+  }
+}
+
+export { CreditInvoiceService };
