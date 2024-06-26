@@ -1,7 +1,5 @@
 import { Option } from "@/types/component/propTypes";
 import { VehicleModel } from "@/types/sparePartInventory/vehicleTypes";
-import capitalize from "@/utils/capitalize";
-import truncate from "@/utils/truncate";
 import { Fragment } from "react/jsx-runtime";
 import IconButton from "../button/IconButton";
 import FormSelect from "../formElements/FormSelect";
@@ -28,6 +26,7 @@ import {
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+import capitalize, { truncate } from "@/utils/string";
 
 export default function DataTable({
   vehicleModels,

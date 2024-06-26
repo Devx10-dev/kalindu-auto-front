@@ -1,7 +1,10 @@
 import { OptionalLabel } from "@/components/formElements/FormLabel";
+import IconCash from "@/components/icon/IconCash";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import {
   DummyInvoice,
@@ -14,16 +17,41 @@ import React, { useEffect, useState } from "react";
 function BillSummaryViewCard({
   total,
   vatPercentage,
-  vatAmount,
   discountPercentage,
   discountAmount,
 }: {
   total: number;
   vatPercentage: number;
-  vatAmount: number;
   discountPercentage: number;
   discountAmount: number;
 }) {
+  const [netTotal, setNetTotal] = useState<number>(0);
+
+  const calculateNetTotal = (
+    total: number,
+    vatPercentage: number,
+    discountPercentage: number,
+    discountAmount: number,
+  ) => {
+    setNetTotal(total - discountAmount + total * (vatPercentage / 100));
+  };
+
+  useEffect(() => {
+    if (
+      total != undefined &&
+      vatPercentage != undefined &&
+      discountPercentage != undefined &&
+      discountAmount != undefined
+    ) {
+      calculateNetTotal(
+        total,
+        vatPercentage,
+        discountPercentage,
+        discountAmount,
+      );
+    }
+  }, [total, vatPercentage, discountPercentage, discountAmount]);
+
   return (
     <Card>
       <CardContent className="p-5 shadow-sm pt-0">
@@ -49,19 +77,29 @@ function BillSummaryViewCard({
           </div>
           <div className="d-flex justify-between mb-2">
             <OptionalLabel style={{ fontSize: 14 }} label="VAT Amount" />
-            <p className="text-right text-md font-regular">LKR {vatAmount}</p>
+            <p className="text-right text-md font-regular">
+              LKR {total * (vatPercentage / 100)}
+            </p>
           </div>
         </div>
-        <div className="flex space-between text-left mt-16 w-full center">
-          <div className="text-center">
-            <p className="text-xl font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-              {`Total : LKR ${total}`}
-            </p>
-            <div className="flex-space-between w-full">
-              <Button className="mt-4 mb-3 w-full">
-                <Printer className={"mr-2"} /> Print Invoice
-              </Button>
+        <Separator className="mt-8 mb-4" />
+        <div className="">
+          <div className="text-right flex-col gap-10 bg-slate-100 rounded-md p-4">
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <IconCash className="" color="gray" />
+              </div>
+              <Label className="text-xl text-left ">Total</Label>
             </div>
+            <div className="flex justify-between">
+              <p className="text-3xl font-thin align-bottom">Rs.</p>
+              <p className="text-4xl font-semibold">{netTotal}</p>
+            </div>
+          </div>
+          <div className="flex-space-between w-full">
+            <Button className="mt-4 mb-3 w-full">
+              <Printer className={"mr-2"} /> Print Invoice
+            </Button>
           </div>
         </div>
       </CardContent>
