@@ -1,4 +1,5 @@
 import Loading from "@/components/Loading";
+import PageHeader from "@/components/card/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import {
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { Label } from "@radix-ui/react-label";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { CreditCard, SquareGanttChart } from "lucide-react";
 import { Key, useState } from "react";
 import { useParams } from "react-router-dom";
 import CreditorAPI from "./api/CreditorAPI";
@@ -47,10 +49,12 @@ const ViewCreditor = () => {
     return <Loading />;
   } else
     return (
-      <div className="w-full h-full">
-        <h2 className="mb-4 text-lg font-bold">
-          Creditor Management {">"} View Creditor
-        </h2>
+      <div className="w-full h-full p-10">
+        <PageHeader
+          title="View Creditor Data"
+          description="View full creditor data and the transactions. You can add new transactions here."
+          icon={<CreditCard height="30" width="28" color="#162a3b" />}
+        />
         <AddNewTransaction />
         <div className="grid gap-10 grid-cols-4">
           <Card className="shadow-md bg-slate-50 h-full col-span-3 ">
@@ -58,7 +62,7 @@ const ViewCreditor = () => {
               <h3 className="text-lg font-bold">Transaction History</h3>
             </CardHeader>
             <CardContent>
-              <Table className="border">
+              <Table className="border bg-white">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Total Price</TableHead>
@@ -75,7 +79,6 @@ const ViewCreditor = () => {
                           <TableCell>{transaction.transactionType}</TableCell>
                           <TableCell>{transaction.invoiceNo}</TableCell>
                           <TableCell>
-                            {/* <ViewTransaction /> */}
                             {transaction.type === "Invoice" ? (
                               <Button variant={"outline"} className="w-48">
                                 View Invoice
@@ -90,50 +93,88 @@ const ViewCreditor = () => {
                         </TableRow>
                       ),
                     )}
+                  {!hasData && (
+                    <TableRow className=" flex p-5 ">
+                      <Label className="font-bold">
+                        Empty Transaction history
+                      </Label>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
           <div className="h-full flex flex-col gap-5">
             <Card className="shadow-md bg-white h-full">
-              <CardHeader className="border mb-10">
+              <CardHeader className="border mb-10 flex flex-row gap-2 items-center">
+                <SquareGanttChart className="h-4" />
                 <h3 className="text-lg font-bold">Selected Creditor</h3>
               </CardHeader>
 
-              <CardContent className="flex flex-col gap-2">
-                <Label>Name : </Label>
+              <CardContent className="flex flex-col gap-1">
+                <Label className="text-sm">Creditor/Shop Name : </Label>
                 <Badge
-                  className="rounded-md p-2 text-lg mb-5"
+                  className="rounded-md p-2 text-sm mb-5"
                   variant={"secondary"}
                 >
-                  <p>{creditorDetails.data.shopName}</p>{" "}
+                  {creditorDetails.data.shopName || "-"}
                 </Badge>
                 <Label>Total Due : </Label>
                 <Badge
-                  className="rounded-md p-2 text-lg mb-5"
+                  className="rounded-md p-2 text-sm mb-5"
                   variant={"secondary"}
                 >
-                  {creditorDetails.data.totalDue}
+                  {creditorDetails.data.totalDue || "-"}
                 </Badge>
-                <Label>Emergency Contact : </Label>
+                <Label>Primary Contact : </Label>
                 <Badge
-                  className="rounded-md p-2 text-lg mb-5"
+                  className="rounded-md p-2 text-sm mb-5"
                   variant={"secondary"}
                 >
-                  {creditorDetails.data.primaryContact}
+                  {creditorDetails.data.primaryContact || "-"}
+                </Badge>
+                <Label>Secondary Contact : </Label>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
+                  {creditorDetails.data.secondaryContact || "-"}
+                </Badge>
+                <Label>Contact Person Name : </Label>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
+                  {creditorDetails.data.contactPersonName || "-"}
+                </Badge>
+                <Label>Email: </Label>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
+                  {creditorDetails.data.email || "-"}
+                </Badge>
+                <Label>Address : </Label>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
+                  {creditorDetails.data.address || "-"}
                 </Badge>
                 <Label>Due Period : </Label>
                 <Badge
-                  className="rounded-md p-2 text-lg mb-5"
+                  className="rounded-md p-2 text-sm mb-5"
                   variant={"secondary"}
                 >
-                  {creditorDetails.data.maxDuePeriod}
+                  {creditorDetails.data.maxDuePeriod + " Weeks" || "-"}
                 </Badge>
-
-                <div className="mt-4 flex justify-end gap-2">
-                  <Button variant="destructive">Deactivate</Button>
-                  <Button>Update</Button>
-                </div>
+                <Label>Credit Limit : </Label>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
+                  {creditorDetails.data.creditLimit || "-"}
+                </Badge>
               </CardContent>
             </Card>
           </div>

@@ -37,6 +37,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
 import { MOBILE_SCREEN_WIDTH } from "@/components/sidebar/Sidebar";
+import SkeletonGrid from "@/components/loader/SkeletonGrid";
 
 // TODO: Add pagination to the grid
 function ActivityLogGrid({
@@ -170,129 +171,129 @@ function ActivityLogGrid({
 
   return (
     <Fragment>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <>
+      <>
+        <div
+          className="d-flex gap-3 mb-4 p-4"
+          style={{
+            borderRadius: "5px",
+            boxShadow:
+              "rgba(255, 255, 255, 0.1) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.20) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
+          }}
+        >
+          <Input
+            style={{ flex: 2 }}
+            value={searchQuery ?? undefined}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            type="text"
+            placeholder="Search ..."
+          />
           <div
-            className="d-flex gap-3 mb-4 p-4"
-            style={{
-              borderRadius: "5px",
-              boxShadow:
-                "rgba(255, 255, 255, 0.1) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.20) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
-            }}
+            style={{ display: `${isMobileView ? "none" : "flex"}` }}
+            className="gap-2"
           >
-            <Input
-              style={{ flex: 2 }}
-              value={searchQuery ?? undefined}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              type="text"
-              placeholder="Search ..."
-            />
-            <div
-              style={{ display: `${isMobileView ? "none" : "flex"}` }}
-              className="gap-2"
-            >
-              <div style={{ flex: 2 }}>
-                <Select
-                  onValueChange={(value) => setSelectedUsername(value)}
-                  value={selectedUsername ?? undefined}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select user ID" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {userIDs !== undefined &&
-                      ["All", ...userIDs]?.map((userID) => (
-                        <SelectItem key={Math.random()} value={userID}>
-                          {userID}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div style={{ flex: 2 }}>
-                <Select
-                  onValueChange={(value) => setSelectedFeature(value)}
-                  value={selectedFeature ?? undefined}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select feature" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {features !== undefined &&
-                      ["All", ...features]?.map((feature) => (
-                        <SelectItem key={Math.random()} value={feature}>
-                          {toNormalCase(feature)}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div style={{ flex: 2 }}>
-                <Select
-                  onValueChange={(value) => setSelectedDBAction(value)}
-                  value={selectedDBAction ?? undefined}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select action" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {actions !== undefined &&
-                      ["All", ...actions]?.map((action) => (
-                        <SelectItem key={Math.random()} value={action}>
-                          {action}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className={cn("grid gap-2")}>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      id="date"
-                      variant={"outline"}
-                      className={cn(
-                        "w-[200px] justify-start text-left font-normal",
-                        !date && "text-muted-foreground",
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date?.from ? (
-                        date.to ? (
-                          <>
-                            {format(date.from, "LLL dd, y")} -{" "}
-                            {format(date.to, "LLL dd, y")}
-                          </>
-                        ) : (
-                          format(date.from, "LLL dd, y")
-                        )
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="end">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={date?.from}
-                      selected={date}
-                      onSelect={setDate}
-                      numberOfMonths={2}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+            <div style={{ flex: 2 }}>
+              <Select
+                onValueChange={(value) => setSelectedUsername(value)}
+                value={selectedUsername ?? undefined}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select user ID" />
+                </SelectTrigger>
+                <SelectContent>
+                  {userIDs !== undefined &&
+                    ["All", ...userIDs]?.map((userID) => (
+                      <SelectItem key={Math.random()} value={userID}>
+                        {userID}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
-
-            <div className="gap-2 flex-2">
-              <Button variant={"default"} onClick={refetchActivityLogs}>
-                Filter
-              </Button>
+            <div style={{ flex: 2 }}>
+              <Select
+                onValueChange={(value) => setSelectedFeature(value)}
+                value={selectedFeature ?? undefined}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select feature" />
+                </SelectTrigger>
+                <SelectContent>
+                  {features !== undefined &&
+                    ["All", ...features]?.map((feature) => (
+                      <SelectItem key={Math.random()} value={feature}>
+                        {toNormalCase(feature)}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div style={{ flex: 2 }}>
+              <Select
+                onValueChange={(value) => setSelectedDBAction(value)}
+                value={selectedDBAction ?? undefined}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select action" />
+                </SelectTrigger>
+                <SelectContent>
+                  {actions !== undefined &&
+                    ["All", ...actions]?.map((action) => (
+                      <SelectItem key={Math.random()} value={action}>
+                        {action}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className={cn("grid gap-2")}>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="date"
+                    variant={"outline"}
+                    className={cn(
+                      "w-[200px] justify-start text-left font-normal",
+                      !date && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date?.from ? (
+                      date.to ? (
+                        <>
+                          {format(date.from, "LLL dd, y")} -{" "}
+                          {format(date.to, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(date.from, "LLL dd, y")
+                      )
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={date?.from}
+                    selected={date}
+                    onSelect={setDate}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
+
+          <div className="gap-2 flex-2">
+            <Button variant={"default"} onClick={refetchActivityLogs}>
+              Filter
+            </Button>
+          </div>
+        </div>
+        {isLoading ? (
+          <SkeletonGrid noOfColumns={6} noOfItems={10} />
+        ) : (
           <Table className="border rounded-md text-md mb-5 table-responsive">
             <TableCaption>Activity Logs</TableCaption>
             <TableHeader>
@@ -321,8 +322,8 @@ function ActivityLogGrid({
                 ))}
             </TableBody>
           </Table>
-        </>
-      )}
+        )}
+      </>
     </Fragment>
   );
 }

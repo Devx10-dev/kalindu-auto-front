@@ -17,6 +17,7 @@ import IconButton from "@/components/button/IconButton";
 import EditIcon from "@/components/icon/EditIcon";
 import LockIcon from "@/components/icon/LockIcon";
 import UnlockIcon from "@/components/icon/UnlockIcon";
+import SkeletonGrid from "@/components/loader/SkeletonGrid";
 import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
@@ -30,9 +31,11 @@ const USER_EDIT_PAGE = "/dashboard/users/edit";
 const UsersTable = ({
   users,
   userService,
+  isLoading,
 }: {
   users: User[];
   userService: UserService;
+  isLoading: boolean;
 }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -109,64 +112,70 @@ const UsersTable = ({
             Search
           </Button>
         </div>
-        <Table className="border rounded-md text-md mb-5">
-          <TableCaption>User Details</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Username</TableHead>
-              <TableHead>Full Name</TableHead>
-              <TableHead>Designation</TableHead>
-              <TableHead>Mobile No</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Active</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users &&
-              users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.username}</TableCell>
-                  <TableCell>{user.fullName}</TableCell>
-                  <TableCell>{user.designation}</TableCell>
-                  <TableCell>{user.mobileNo}</TableCell>
-                  <TableCell>{user.address ?? "-"}</TableCell>
-                  <TableCell>
-                    {user.active ? (
-                      <Badge variant="outline">Active</Badge>
-                    ) : (
-                      <Badge variant="outline">Inactive</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="d-flex">
-                      <IconButton
-                        handleOnClick={() => handleEdit(user)}
-                        icon={<EditIcon height="20" width="20" />}
-                        tooltipMsg="Edit User"
-                        variant="ghost"
-                      />
+        {isLoading ? (
+          <SkeletonGrid noOfColumns={7} noOfItems={10} />
+        ) : (
+          <Table className="border rounded-md text-md mb-5">
+            <TableCaption>User Details</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Username</TableHead>
+                <TableHead>Full Name</TableHead>
+                <TableHead>Designation</TableHead>
+                <TableHead>Mobile No</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Active</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users &&
+                users.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">
+                      {user.username}
+                    </TableCell>
+                    <TableCell>{user.fullName}</TableCell>
+                    <TableCell>{user.designation}</TableCell>
+                    <TableCell>{user.mobileNo}</TableCell>
+                    <TableCell>{user.address ?? "-"}</TableCell>
+                    <TableCell>
                       {user.active ? (
-                        <IconButton
-                          handleOnClick={() => handleActiveOrInactive(user)}
-                          icon={<LockIcon height="20" width="20" />}
-                          tooltipMsg="Deactivate User"
-                          variant="ghost"
-                        />
+                        <Badge variant="outline">Active</Badge>
                       ) : (
+                        <Badge variant="outline">Inactive</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="d-flex">
                         <IconButton
-                          handleOnClick={() => handleActiveOrInactive(user)}
-                          icon={<UnlockIcon height="20" width="20" />}
-                          tooltipMsg="Activate User"
+                          handleOnClick={() => handleEdit(user)}
+                          icon={<EditIcon height="20" width="20" />}
+                          tooltipMsg="Edit User"
                           variant="ghost"
                         />
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+                        {user.active ? (
+                          <IconButton
+                            handleOnClick={() => handleActiveOrInactive(user)}
+                            icon={<LockIcon height="20" width="20" />}
+                            tooltipMsg="Deactivate User"
+                            variant="ghost"
+                          />
+                        ) : (
+                          <IconButton
+                            handleOnClick={() => handleActiveOrInactive(user)}
+                            icon={<UnlockIcon height="20" width="20" />}
+                            tooltipMsg="Activate User"
+                            variant="ghost"
+                          />
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        )}
         <ConfirmationModal
           onClose={() => setShow(false)}
           onConfirm={activeOrInactiveUser}

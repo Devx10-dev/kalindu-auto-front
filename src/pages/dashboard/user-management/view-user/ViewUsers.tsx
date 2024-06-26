@@ -13,7 +13,7 @@ function ViewUsers() {
   const axiosPrivate = useAxiosPrivate();
   const userService = new UserService(axiosPrivate);
 
-  const { data: users } = useQuery<User[]>({
+  const { isLoading, data: users } = useQuery<User[]>({
     queryKey: ["users"],
     queryFn: () => userService.fetchUsers(),
     retry: 2,
@@ -35,7 +35,11 @@ function ViewUsers() {
             User
           </Button>
         </div>
-        <UsersTable users={users} userService={userService} />
+        <UsersTable
+          users={users}
+          userService={userService}
+          isLoading={isLoading}
+        />
       </CardContent>
     </div>
   );

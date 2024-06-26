@@ -163,13 +163,17 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       totalPrice: state.totalPrice,
       totalDiscount: state.discountAmount, //TODO :: what is this
       invoiceItems: state.invoiceItemDTOList,
-      commissions: [
-        {
-          personName: state.commissionName,
-          amount: state.commissionAmount,
-          remark: state.commissionRemark,
-        },
-      ],
+
+      commissions:
+        state.commissionName && state.commissionAmount
+          ? [
+              {
+                personName: state.commissionName,
+                amount: state.commissionAmount,
+                remark: state.commissionRemark,
+              },
+            ]
+          : [],
     };
 
     return requestData;

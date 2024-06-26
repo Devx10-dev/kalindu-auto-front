@@ -1,347 +1,313 @@
-import { Badge } from "@/components/ui/badge";
+import PageHeader from "@/components/card/PageHeader";
+import ListCheckIcon from "@/components/icon/ListCheckIcon";
+import PlusIcon from "@/components/icon/PlusIcon";
+import VerifyIcon from "@/components/icon/VerifyIcon";
+import { FormModal } from "@/components/modal/FormModal";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns/format";
-import {
-  ArrowDown,
-  ArrowUp,
-  BrickWall,
-  CalendarIcon,
-  Circle,
-  DeleteIcon,
-  DraftingCompass,
-  Plus,
-  ReceiptEuro,
-  Save,
-  Verified,
-} from "lucide-react";
+import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
+import { SaleOrExpense as SaleOrExpenseType } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
-import { DayPicker } from "react-day-picker";
-import { useFieldArray, useForm } from "react-hook-form";
-
-interface FieldData {
-  name?: string;
-  category: string;
-  amount: number | null;
-}
-
-interface CategoryData {
-  fields: FieldData[];
-}
-
-interface InputData {
-  fields: CategoryData[];
-}
-
-interface RefinedData {
-  [category: string]: { name: string | undefined; amount: number | null }[];
-}
+import { Fragment } from "react/jsx-runtime";
+import CategoryForm from "./component/form/CategoryForm";
+import FieldForm from "./component/form/FieldForm";
+import SaleOrExpenseForm from "./component/form/SaleOrExpenseForm";
+import SalesAndExpensesGrid from "./component/grid/SalesAndExpensesGrid";
+import { toast } from "@/components/ui/use-toast";
+import Loading from "@/components/Loading";
+import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
+import SkeletonGrid from "@/components/loader/SkeletonGrid";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DailySalesBase = () => {
-  const { control, handleSubmit, register } = useForm();
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "fields",
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+
+  const [show, setShow] = useState(false);
+  const [confirmationModalShow, setconfirmationModalShow] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [formComponent, setFormComponent] = useState<JSX.Element>();
+
+  const [date, setDate] = useState<Date>(new Date());
+  const salesAndExpenseService = new SaleAndExpenseService(axiosPrivate);
+
+  const handleAddFieldBtnClick = () => {
+    setTitle("Add new Field");
+    setDescription("Add new field details to the system");
+    setFormComponent(
+      <FieldForm
+        onClose={() => setShow(false)}
+        salesAndExpenseService={salesAndExpenseService}
+      />,
+    );
+    setShow(true);
+  };
+
+  const handleAddCategoryBtnClick = () => {
+    setTitle("Add new Category");
+    setDescription("Add new category details to the system");
+    setFormComponent(
+      <CategoryForm
+        onClose={() => setShow(false)}
+        salesAndExpenseService={salesAndExpenseService}
+      />,
+    );
+    setShow(true);
+  };
+
+  const handleAddSaleOrExpenseBtnClick = () => {
+    setTitle("Add new Sale or Expense");
+    setDescription("Add new sale or expense details to the system");
+    setFormComponent(
+      <SaleOrExpenseForm
+        date={formattedDate()}
+        onClose={() => setShow(false)}
+        salesAndExpenseService={salesAndExpenseService}
+      />,
+    );
+    setShow(true);
+  };
+
+  const formattedDate = () => {
+    return `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${date.getDate().toString().length === 1 ? `0${date.getDate()}` : date.getDate()}`;
+  };
+
+  const { data: summery, isLoading } = useQuery({
+    queryKey: ["dailySummery", date],
+    queryFn: () => salesAndExpenseService.fetchDailySummery(formattedDate()),
+    retry: 2,
   });
-  console.log(fields);
-  const [date, setDate] = useState<Date>();
 
-  // Define the form fields and their categories
-  const dailySalesCategory = [
-    {
-      name: "Main",
-      fields: [
-        { type: "INCOME", fieldName: "Daily Sales" },
-        { type: "INCOME", fieldName: "Opening Cash" },
-        { type: "INCOME", fieldName: "Other Income" },
-        { type: "RECORD", fieldName: "Gross Total" },
-      ],
-    },
-    {
-      name: "Bank Deposits",
-      fields: [
-        { type: "DEPOSIT", fieldName: "Sampath Deposited" },
-        { type: "DEPOSIT", fieldName: "HNB Deposited" },
-      ],
-    },
-    {
-      name: "Salary",
-      fields: [
-        { type: "EXPENSE", fieldName: "Shantha Aiya Salary" },
-        { type: "EXPENSE", fieldName: "Salary Advance" },
-        { type: "EXPENSE", fieldName: "Kumaran Uncle Salary/Things" },
-        { type: "EXPENSE", fieldName: "Mangala Aiya Salary" },
-        { type: "EXPENSE", fieldName: "Pradeep Ayya Salary" },
-        { type: "EXPENSE", fieldName: "Prema Aunty Salary" },
-      ],
-    },
-    {
-      name: "Other Expenses",
-      fields: [
-        { type: "EXPENSE", fieldName: "Old Bills" },
-        { type: "EXPENSE", fieldName: "Tea Expenses" },
-        { type: "EXPENSE", fieldName: "Return Bill" },
-        { type: "EXPENSE", fieldName: "Donation" },
-        { type: "EXPENSE", fieldName: "Transport" },
-        { type: "EXPENSE", fieldName: "Fuel Expenses" },
-        { type: "EXPENSE", fieldName: "Home Expenses" },
-        { type: "EXPENSE", fieldName: "Commission" },
-        { type: "EXPENSE", fieldName: "Bill Payment" },
-        { type: "EXPENSE", fieldName: "Laminating & Print Out" },
-        { type: "EXPENSE", fieldName: "Pest Control Bills" },
-        { type: "EXPENSE", fieldName: "Outside Vehicle Parts" },
-        { type: "EXPENSE", fieldName: "Material Goods" },
-        { type: "EXPENSE", fieldName: "Shipment Food/Vehicle Cost" },
-        { type: "EXPENSE", fieldName: "Courier Payment" },
-        { type: "EXPENSE", fieldName: "Other Expenses" },
-        { type: "RECORD", fieldName: "Total Deduction" },
-        { type: "RECORD", fieldName: "Sales After Expenses" },
-        { type: "RECORD", fieldName: "Percentage" },
-      ],
-    },
-    {
-      name: "Summary",
-      fields: [
-        { type: "RECORD", fieldName: "Daily Cash Sale" },
-        { type: "RECORD", fieldName: "Daily Credit Sale" },
-        { type: "RECORD", fieldName: "Daily Cheque Deposited" },
-        { type: "RECORD", fieldName: "Daily Cheque Received" },
-        { type: "RECORD", fieldName: "Daily Deposit Sale" },
-        { type: "RECORD", fieldName: "Total Sale" },
-      ],
-    },
-  ];
-
-  const refineData = (data: InputData) => {
-    const refinedData: RefinedData = {};
-
-    data.fields.forEach((categoryData) => {
-      categoryData.fields.forEach((fieldData) => {
-        const { category, name, amount } = fieldData;
-        if (!refinedData[category]) {
-          refinedData[category] = [];
-        }
-        refinedData[category].push({ name, amount: amount });
+  const createVerifyMutation = useMutation({
+    mutationFn: () =>
+      salesAndExpenseService.verifyDailySalesAndExpenses(formattedDate()),
+    onSuccess: () => {
+      // Handle onSuccess logic here
+      queryClient.invalidateQueries({ queryKey: ["dailySummery"] });
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "Successfully verified sales and expensess",
       });
-    });
+      setconfirmationModalShow(false);
+    },
+    onError: (data) => {
+      toast({
+        variant: "destructive",
+        title: "Verification is failed",
+        description: data.message,
+        duration: 5000,
+      });
+    },
+  });
 
-    return refinedData;
-  };
-
-  const onSubmit = (data: any) => {
-    console.log(data);
-
-    console.log(refineData(data));
-  };
-
-  function getFieldBadge(fieldType: string) {
-    switch (fieldType) {
-      case "INCOME":
-        return (
-          <Badge className="rounded-md bg-green-100" variant={"outline"}>
-            INCOME <ArrowDown className="h-4" />
-          </Badge>
-        );
-      case "EXPENSE":
-        return (
-          <Badge className="rounded-md bg-orange-100" variant={"outline"}>
-            EXPENSE <ArrowUp className="h-4" />
-          </Badge>
-        );
-      case "RECORD":
-        return (
-          <Badge className="rounded-md bg-purple-100" variant={"outline"}>
-            RECORD <Circle className="h-2" />
-          </Badge>
-        );
-      case "DEPOSIT":
-        return (
-          <Badge className="rounded-md bg-blue-100" variant={"outline"}>
-            DEPOSIT <ArrowDown className="h-4" />
-          </Badge>
-        );
-
-      default:
-        return (
-          <Badge className="rounded-md bg-gray-100" variant={"outline"}>
-            {fieldType} <ArrowDown className="h-4" />
-          </Badge>
-        );
-    }
+  const salesAndExpenses: SaleOrExpenseType[] = [];
+  if (summery !== undefined) {
+    summery.sales.forEach((s) =>
+      salesAndExpenses.push({
+        ...s,
+        expense: false,
+      }),
+    );
+    summery.expenses.forEach((s) =>
+      salesAndExpenses.push({
+        ...s,
+        expense: true,
+      }),
+    );
   }
 
-  const { register: registerNewField, handleSubmit: handleNewFieldSubmit } =
-    useForm();
-  const onNewFieldSubmit = (data: any) => {
-    const { name, category } = data;
-    append({ name, category, amount: undefined });
-  };
-
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-5">
-        Daily Sales and Expenses Report
-      </h1>
-
-      <Separator className="mb-5" />
-
-      <div className="mb-5">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[280px] justify-start text-left font-normal",
-                !date && "text-muted-foreground",
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Pick a date</span>}
+    <Fragment>
+      <div className="mr-2 ml-2 mb-4">
+        <CardHeader>
+          <PageHeader
+            title="Daily Sales and Expenses"
+            description="Manage all details related to daily sales and expenses."
+            icon={<ListCheckIcon height="30" width="28" color="#162a3b" />}
+          />
+        </CardHeader>
+        <CardContent style={{ width: "98%" }}>
+          <div className="mb-1 d-flex justify-between">
+            <Button className="gap-1" onClick={handleAddSaleOrExpenseBtnClick}>
+              <PlusIcon height="24" width="24" color="#fff" />
+              Sale or Expense
             </Button>
-          </PopoverTrigger>
-          {!date && (
-            <Label className="ml-5 text-red-400">Please select a date</Label>
-          )}
-
-          <PopoverContent className="w-full">
-            <DayPicker mode="single" selected={date} onSelect={setDate} />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="default" className="ml-auto">
-            {" "}
-            <Plus className="mr-2" /> Add New Field
-          </Button>
-        </DialogTrigger>
-
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Field</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleNewFieldSubmit(onNewFieldSubmit)}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  {...registerNewField("name")}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="category" className="text-right">
-                  Category
-                </Label>
-                <Input
-                  id="category"
-                  {...registerNewField("category")}
-                  className="col-span-3"
-                  list="categories"
-                />
-                <datalist id="categories">
-                  {dailySalesCategory.map((category) => (
-                    <option key={category.name} value={category.name} />
-                  ))}
-                </datalist>
-              </div>
+            <div className="mb-3 d-flex gap-4">
+              <Button className="gap-1" onClick={handleAddFieldBtnClick}>
+                <PlusIcon height="24" width="24" color="#fff" />
+                Field
+              </Button>
+              <Button className="gap-1" onClick={handleAddCategoryBtnClick}>
+                <PlusIcon height="24" width="24" color="#fff" />
+                Category
+              </Button>
             </div>
-            <DialogFooter>
-              <Button type="submit">Add Field</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {dailySalesCategory.map((category, categoryIndex) => (
-          <div key={category.name} className="mt-10">
-            <h1 className="mb-2 text-xl uppercase">{category.name}</h1>
-            <Separator className="mb-5 w-3/4" />
-
-            {category.fields.map((field: any, fieldIndex) => (
-              <div
-                key={`${categoryIndex}-${fieldIndex}`}
-                className="flex gap-3  mb-5"
-              >
-                {/* <Label>{field.type}</Label> */}
-                <Input
-                  type="text"
-                  value={field.fieldName}
-                  disabled
-                  className="border-b-2 w-2/4 font-semibold text-lg"
-                  {...register(
-                    `fields.${categoryIndex}.fields.${fieldIndex}.name`,
-                    {
-                      valueAsNumber: false,
-                      value: field.fieldName,
-                    },
-                  )}
-                />
-                <Input
-                  type="hidden"
-                  {...register(
-                    `fields.${categoryIndex}.fields.${fieldIndex}.category`,
-                    {
-                      valueAsNumber: false,
-                      value: category.name,
-                    },
-                  )}
-                />
-
-                {/* Dynamically render the field badges according the the field type */}
-                {getFieldBadge(field.type)}
-
-                <Input
-                  type="number"
-                  {...register(
-                    `fields.${categoryIndex}.fields.${fieldIndex}.amount`,
-                    {
-                      valueAsNumber: true,
-                    },
-                  )}
-                  className="border-b-2 w-1/4 text-end"
-                />
-              </div>
-            ))}
           </div>
-        ))}
-        <div className="flex gap-3 pb-20 pt-5 justify-end pr-20 ">
-          <Button className="bg-slate-300 text-black w-36 hover:text-white">
-            <DeleteIcon className="mr-2" /> Clear All
-          </Button>
-          <Button
-            type="submit"
-            className="bg-slate-300 text-black w-36 hover:text-white"
-          >
-            <Save className="mr-2" /> Save Draft
-          </Button>
-          <Button className="w-36 bg-blue-600">
-            <Verified className="mr-2" /> Verify
-          </Button>
-        </div>
-      </form>
-    </>
+          <div className="d-flex justify-end mb-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[240px] justify-start text-left font-normal",
+                    !date && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          {isLoading ? (
+            <SkeletonGrid noOfColumns={5} noOfItems={2} />
+          ) : (
+            <SalesAndExpensesGrid salesOrExpenses={salesAndExpenses} />
+          )}
+        </CardContent>
+
+        <Card className="m-8 pl-4 p-4 pt-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 mb-4 mt-0 pt-0">
+            <CardTitle className="text-xl font-bold">Daily Summary</CardTitle>
+            {summery !== undefined && summery.verified ? (
+              <div
+                className="d-flex gap-2 pl-4 pr-4 pt-1 pb-1"
+                style={{
+                  background: "#9ec16c",
+                  alignItems: "center",
+                  borderRadius: 5,
+                }}
+              >
+                <p style={{ color: "#fff" }}>Verified</p>{" "}
+                <VerifyIcon height="20" width="20" color="#fff" />
+              </div>
+            ) : (
+              <Button onClick={() => setconfirmationModalShow(true)}>
+                <div className="gap-2 d-flex">
+                  <VerifyIcon height="20" width="20" color="#fff" />
+                  Verify Daily Summary
+                </div>
+              </Button>
+            )}
+          </CardHeader>
+          <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+            {isLoading ? (
+              <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            ) : (
+              <Card
+                className="h-[125px] w-[250px] rounded-xl"
+                x-chunk="dashboard-01-chunk-0"
+                style={{ background: "rgb(229 231 235)" }}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-md font-medium">
+                    Total Revenue
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {summery !== undefined
+                      ? summery.salesAmount - summery.expensesAmount + " LKR"
+                      : "0 LKR"}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {isLoading ? (
+              <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            ) : (
+              <Card
+                className="h-[125px] w-[250px] rounded-xl"
+                x-chunk="dashboard-01-chunk-1"
+                style={{ background: "rgb(229 231 235)" }}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-md font-medium">Sales</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {summery !== undefined
+                      ? summery.salesAmount + " LKR"
+                      : "0 LKR"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {`Sales count : ${summery !== undefined ? summery.sales.length : 0}`}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {isLoading ? (
+              <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            ) : (
+              <Card
+                className="h-[125px] w-[250px] rounded-xl"
+                x-chunk="dashboard-01-chunk-2"
+                style={{ background: "rgb(229 231 235)" }}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-md font-medium">
+                    Expenses
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {summery !== undefined
+                      ? summery.expensesAmount + " LKR"
+                      : "0 LKR"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {`Expenses count : ${summery !== undefined ? summery.expenses.length : 0}`}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </Card>
+
+        <FormModal
+          title={title}
+          titleDescription={description}
+          show={show}
+          onClose={() => setShow(false)}
+          component={formComponent}
+        />
+        <ConfirmationModal
+          onClose={() => setconfirmationModalShow(false)}
+          onConfirm={() => createVerifyMutation.mutate()}
+          show={confirmationModalShow}
+          title={"Verify sales and expenses on " + formattedDate()}
+          titleDescription={
+            "Do you want to verify sales and expenses on " + formattedDate()
+          }
+        />
+      </div>
+    </Fragment>
   );
 };
 

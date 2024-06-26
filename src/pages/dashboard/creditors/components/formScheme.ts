@@ -17,10 +17,10 @@ export const creditorFormSchema = z.object({
     .max(30, {
       message: "Name must not be longer than 30 characters.",
     }),
-  emailAddress: z.string({ required_error: "Email is Required" }).email({
+  email: z.string({ required_error: "Email is Required" }).email({
     message: "Please enter a valid email",
   }),
-  primaryContactNo: z
+  primaryContact: z
     .string({
       required_error: "Primary Contact is Required",
       invalid_type_error: "Primary Contact must be a number",
@@ -31,7 +31,7 @@ export const creditorFormSchema = z.object({
     .refine((val) => val.toString().length === 10, {
       message: "Phone number must be 10 digits",
     }),
-  secondaryContactNo: z
+  secondaryContact: z
     .string({
       required_error: "Phone is Required",
       invalid_type_error: "Secondary Contact must be a number",
@@ -41,5 +41,5 @@ export const creditorFormSchema = z.object({
     })
     .max(9999999999, { message: "Phone number must be 10 digits" }),
   creditLimit: z.string(),
-  maxCreditDuePeriod: z.string({ required_error: "Due Period is Required" }),
+  maxDuePeriod: z.string({ required_error: "Due Period is Required" }),
 });

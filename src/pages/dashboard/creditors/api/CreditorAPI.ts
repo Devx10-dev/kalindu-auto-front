@@ -18,11 +18,20 @@ class CreditorAPI {
 
   async fetchCreditors(
     pageNo: number = 0,
+    searchQuery: string,
     pageSize: number = 10,
   ): Promise<CreditorResponseData> {
     if (pageNo >= 1) pageNo = pageNo - 1;
-    const pagedURL = `${CreditorEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}`;
+    const pagedURL = `${CreditorEndpoints.GET_ALL_CREDITORS_URL}?pageNo=${pageNo}&pageSize=${pageSize}&query=${searchQuery}`;
     const response = await this.api.get<CreditorResponseData>(pagedURL);
+    return response.data;
+  }
+
+  async fetchAllCreditors(): Promise<Creditor[]> {
+    const response = await this.api.get<Creditor[]>(
+      `${CreditorEndpoints.GET_ALL_CREDITORS_URL}/all`,
+    );
+
     return response.data;
   }
 
@@ -30,6 +39,16 @@ class CreditorAPI {
     if (creditorID) {
       const response = await this.api.get(
         CreditorEndpoints.GET_ONE_CREDITOR_URL + "/" + creditorID,
+      );
+
+      return response.data;
+    }
+  }
+
+  async fetchCreditorInvoiceIDs(creditorID?: string) {
+    if (creditorID) {
+      const response = await this.api.get(
+        CreditorEndpoints.GET_CREDITOR_INVOICE_IDS_URL + "/" + creditorID,
       );
 
       return response.data;

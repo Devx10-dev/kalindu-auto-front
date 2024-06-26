@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -90,6 +90,18 @@ export function AddNewTransaction() {
     queryClient.invalidateQueries({ queryKey: ["creditors"] });
   };
 
+  const { isLoading, data } = useQuery({
+    queryKey: ["creditorInvoiceIDS", id],
+    queryFn: () => creditorAPI.fetchCreditorInvoiceIDs(id),
+  });
+
+  console.log(data);
+  const invoiceOptions =
+    data?.invoiceIdList.map((invoiceId) => ({
+      value: invoiceId,
+      label: invoiceId,
+    })) || [];
+
   const createCreditorMutation = useMutation({
     mutationFn: (data: CreditorTransactionFormValues) =>
       creditorAPI.createCreditorTransaction(data),
@@ -146,7 +158,7 @@ export function AddNewTransaction() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="mt-4 mb-5">
+        <Button className="mt-10 mb-10">
           <PlusCircle className={"mr-2"} />
           Add New Transaction
         </Button>
@@ -173,7 +185,17 @@ export function AddNewTransaction() {
                   <FormItem>
                     <FormLabel>Invoice No</FormLabel>
                     <FormControl>
-                      <Input {...field} className=" border-b-2" />
+                      <Select
+                        options={invoiceOptions}
+                        placeholder="Select"
+                        className=" border-b-2 rounded-md"
+                        onChange={(option: any) => {
+                          if (option) {
+                            form.setValue("invoiceNo", option?.value);
+                          }
+                        }}
+                        isSearchable
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
