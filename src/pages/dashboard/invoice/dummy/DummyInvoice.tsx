@@ -55,7 +55,7 @@ function DummyInvoice() {
       .toString()
       .padStart(4, "0");
 
-    return `INV-CS-${year}${month}${day}${uniqueNumber}`;
+    return `INV-DUMMY-${year}${month}${day}${uniqueNumber}`;
   };
 
   const createDummyInvoiceMutation = useMutation({

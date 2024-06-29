@@ -148,7 +148,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
         .toString()
         .padStart(4, "0");
 
-      return `INV-CS-${year}${month}${day}${uniqueNumber}`;
+      return `INV-CASH-${year}${month}${day}${uniqueNumber}`;
     };
 
     const invoiceId = generateInvoiceId();
