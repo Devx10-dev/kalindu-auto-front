@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 import { InvoiceList, InvoiceState } from "@/types/invoice/cashInvoice";
 import { Service } from "../apiService";
+import { useInvoiceListStore } from "@/pages/dashboard/invoice/view-invoices/context/InvoiceListState";
 
 const CASH_INVOICE_URL = "invoice";
 
@@ -24,6 +25,7 @@ class CashInvoiceService extends Service {
   }
 
   async fetchCashInvoices(
+    search: string | null,
     fromDate?: string | null,
     toDate?: string | null,
     pageNo?: number,
@@ -31,7 +33,7 @@ class CashInvoiceService extends Service {
   ): Promise<InvoiceList> {
     try {
       const response = await this.api.get<InvoiceList>(
-        `${CASH_INVOICE_URL}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
+        `${CASH_INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
       );
       console.log("HEREE", response.data);
       return response.data;

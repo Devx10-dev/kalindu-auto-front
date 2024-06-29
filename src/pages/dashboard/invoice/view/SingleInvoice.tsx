@@ -1,26 +1,17 @@
 import PageHeader from "@/components/card/PageHeader";
-import BillSummaryCard from "@/components/card/invoice/dummy/BillSummaryCard";
-import CustomerDetailsForm from "@/components/form/invoice/dummy/CustomerDetailsForm";
-import DummyItemForm from "@/components/form/invoice/dummy/DummyItemForm";
-import OutSourceItemForm from "@/components/form/invoice/dummy/OutSourceItemForm";
-import {
-  OptionalLabel,
-  RequiredLabel,
-} from "@/components/formElements/FormLabel";
-import PlusIcon from "@/components/icon/PlusIcon";
 import ReceiptIcon from "@/components/icon/ReceiptIcon";
-import { FormModal } from "@/components/modal/FormModal";
-import DummyInvoiceItemsGrid from "@/components/table/invoice/dummy/DummyInvoiceItemsGrid";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import { DummyInvoiceService } from "@/service/invoice/dummy/DummyInvoiceService";
-import { SparePartService } from "@/service/sparePartInventory/sparePartService";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
-import { Label } from "@radix-ui/react-label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Fragment } from "react/jsx-runtime";
@@ -30,22 +21,43 @@ import OutsourceItemsGrid from "./components/OutSourceItemGrid";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
 import { useParams } from "react-router-dom";
+import { useInvoiceListStore } from "../view-invoices/context/InvoiceListState";
+import StatusCard from "./components/StatusCard";
+import CancelIcon from "@/components/icon/CancelIcon";
+import { CheckCircle } from "lucide-react";
+import CommissionDetailsGrid from "./components/CommissionDetailsGrid";
+import TimeLine from "./components/TransactionTimeline";
+import { TransactionDrawer } from "./components/TransactionDrawer";
 
 function SingleInvoice() {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
-
-  const [show, setShow] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [items, setItems] = useState<DummyInvoiceItem[]>([]);
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
-
-  const [vatPrecentage, setVatPrecentage] = useState(0);
-  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
+    null,
+  );
+  const [isAvailableInStore, setIsAvailableInStore] = useState<boolean>(true);
 
   const invoiceService = new CashInvoiceService(axiosPrivate);
 
   const { id } = useParams();
+
+  const { cashInvoicesStore, getCashInvoiceById, addCashInvoiceToStore } =
+    useInvoiceListStore();
+
+  useEffect(() => {
+    if (id) {
+      const invoice = getCashInvoiceById(id);
+      if (invoice) {
+        console.log("INVOICE IN STORE", invoice);
+        setInvoiceDetails(invoice);
+        setIsAvailableInStore(true);
+      } else {
+        console.log("INVOICE NOT IN STORE");
+        setIsAvailableInStore(false);
+      }
+    }
+  }, [cashInvoicesStore, id]);
 
   const {
     data: invoiceData,
@@ -55,7 +67,21 @@ function SingleInvoice() {
     queryKey: ["invoice"],
     queryFn: () => invoiceService.fetchCashInvoiceById(id),
     retry: 1,
+    enabled: !!id && !isAvailableInStore,
   });
+
+  useEffect(() => {
+    if (!isAvailableInStore && !invoiceLoading && invoiceData) {
+      if (invoiceData) {
+        setInvoiceDetails(invoiceData);
+        addCashInvoiceToStore(invoiceData);
+      }
+    }
+  }, [invoiceData, isAvailableInStore, invoiceLoading]);
+
+  useEffect(() => {
+    console.log("STOREE", cashInvoicesStore);
+  }, [cashInvoicesStore]);
 
   useEffect(() => {
     if (invoiceLoading) {
@@ -64,35 +90,9 @@ function SingleInvoice() {
       console.log("loaded");
     }
     if (!invoiceLoading) {
-      console.log("IIINVOICE", invoiceData);
+      console.log("IIINVOICE", invoiceDetails);
     }
-  }, [invoiceData]);
-
-  //   commissions: null
-  // ​
-  // customerName: "Sanath"
-  // ​
-  // discount: 0
-  // ​
-  // dummy: true
-  // ​
-  // id: 1
-  // ​
-  // invoiceId: "1"
-  // ​
-  // invoiceItems: null
-  // ​
-  // issuedBy: "b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
-  // ​
-  // issuedTime: Array(7) [ 2024, 6, 14, … ]
-  // ​
-  // totalDiscount: 0
-  // ​
-  // totalPrice: 1000
-  // ​
-  // vat: 0
-  // ​
-  // vehicleNo: "BIJ - 8011"
+  }, [invoiceDetails]);
 
   return (
     <Fragment>
@@ -100,18 +100,24 @@ function SingleInvoice() {
         <div className="flex justify-between items-center">
           <CardHeader>
             <PageHeader
-              title={`Invoice No: ${invoiceData?.invoiceId}`}
+              title={`Invoice No: ${invoiceDetails?.invoiceId}`}
               description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
               icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
+              badge={
+                <Badge className="bg-green-200 text-black rounded-md">
+                  Cash Invoice
+                </Badge>
+              }
             />
           </CardHeader>
           <div className="text-left pr-6 rounded-md color-slate-900">
-            <Badge
-              variant="secondary"
-              className="h-full w-100 p-5 border-slate-200 rounded-lg"
-            >
-              CASH
-            </Badge>
+            <StatusCard
+              icon={<CheckCircle size={30} color="green" />}
+              status="Completed"
+              statusColor="red"
+              statusText="This invoice has been completed"
+              type={"Cash"}
+            />
           </div>
         </div>
         <CardContent
@@ -131,42 +137,61 @@ function SingleInvoice() {
             >
               <div className="flex justify-between gap-5 mb-10">
                 <div className="flex flex-col gap-2 flex-grow">
-                  <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                  <h4 className="scroll-m-20 text-l font-semibold tracking-tight">
                     Customer Name:
                   </h4>
-                  <p className="text-xl font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-                    {invoiceData?.customerName}
+                  <p className="text-xl font-semibold text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md border border-slate-200">
+                    {invoiceDetails?.customerName}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 flex-grow">
-                  <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                  <h4 className="scroll-m-20 text-l font-semibold tracking-tight">
                     Vehicle No:
                   </h4>
-                  <p className="text-xl font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-                    {invoiceData?.vehicleNo}
+                  <p className="text-xl font-semibold text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md border border-slate-200">
+                    {invoiceDetails?.vehicleNo
+                      ? invoiceDetails?.vehicleNo.toUpperCase()
+                      : "N/A"}
                   </p>
                 </div>
               </div>
 
               <InvoiceItemsGrid
-                items={items}
-                outsourcedItems={outsourcedItems}
-                setItems={setItems}
-                setOutsourcedItems={setOutsourcedItems}
+                invoiceDetails={invoiceDetails}
+                invoiceLoading={invoiceLoading}
               />
             </div>
             <div>
-              <Card className="mt-4 bg-slate-200">
-                <CardContent className="pl-6 pr-2 pt-4 shadow-sm">
+              <Card className="mt-4 ">
+                <CardHeader className="pb-0">
+                  <CardTitle>Outsourced Items</CardTitle>
+                  <CardDescription>
+                    This section contains all the outsourced items
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pl-6 pr-6 pt-6 pb-6 shadow-sm">
                   <div>
-                    <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">
-                      Outsourced Item Details
-                    </h3>
                     <OutsourceItemsGrid
-                      items={items}
-                      outsourcedItems={outsourcedItems}
-                      setItems={setItems}
-                      setOutsourcedItems={setOutsourcedItems}
+                      invoiceDetails={invoiceDetails}
+                      invoiceLoading={invoiceLoading}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            <div>
+              <Card className="mt-4 ">
+                <CardHeader className="pb-0">
+                  <CardTitle>CommissionDetails</CardTitle>
+                  <CardDescription>
+                    This section contains all the commission details
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pl-6 pr-6 pt-6 pb-6 shadow-sm">
+                  <div>
+                    <CommissionDetailsGrid
+                      invoiceDetails={invoiceDetails}
+                      invoiceLoading={invoiceLoading}
                     />
                   </div>
                 </CardContent>
@@ -175,11 +200,14 @@ function SingleInvoice() {
           </div>
           <div style={{ flex: 3 }}>
             <BillSummaryViewCard
-              total={invoiceData?.totalPrice}
-              vatPercentage={invoiceData?.vat}
-              vatAmount={0}
-              discountPercentage={invoiceData?.discount}
-              discountAmount={invoiceData?.totalDiscount}
+              total={invoiceDetails?.totalPrice}
+              vatPercentage={invoiceDetails?.vat}
+              discountPercentage={invoiceDetails?.discount}
+              discountAmount={invoiceDetails?.totalDiscount}
+            />
+            <TransactionDrawer
+              invoiceDetails={invoiceDetails}
+              invoiceLoading={invoiceLoading}
             />
           </div>
         </CardContent>

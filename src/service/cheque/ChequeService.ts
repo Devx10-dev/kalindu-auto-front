@@ -13,11 +13,11 @@ class ChequeService extends Service {
   async fetchCheques(
     pageNo: number,
     pageSize: number,
-    creditorId: number
+    creditorId: number,
   ): Promise<ChequeResponseData> {
     try {
       const response = await this.api.get<ChequeResponseData>(
-        `${CHEQUE_URL}/${pageNo}/${pageSize}/${creditorId}`
+        `${CHEQUE_URL}/${pageNo}/${pageSize}/${creditorId}`,
       );
       return response.data;
     } catch (error) {
@@ -26,11 +26,11 @@ class ChequeService extends Service {
   }
 
   async fetchCreditInvoicesOfCheque(
-    chequeId: number
+    chequeId: number,
   ): Promise<CreditInvoice[]> {
     try {
       const response = await this.api.get<CreditInvoice[]>(
-        `${CHEQUE_URL}/invoice/${chequeId}`
+        `${CHEQUE_URL}/invoice/${chequeId}`,
       );
       return response.data;
     } catch (error) {

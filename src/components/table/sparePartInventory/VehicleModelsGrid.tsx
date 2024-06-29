@@ -50,7 +50,7 @@ export default function VehicleModelsGrid({
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
-    null
+    null,
   );
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -104,13 +104,13 @@ export default function VehicleModelsGrid({
         pageSize,
         selectedType,
         selectedBrand,
-        selectedChassisNo
+        selectedChassisNo,
       ),
     retry: 2,
   });
 
   const [viewVehicleModels, setViewVehicleModels] = useState<VehicleModel[]>(
-    vehicleModels?.vehicleModels ?? []
+    vehicleModels?.vehicleModels ?? [],
   );
 
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function VehicleModelsGrid({
                         <SelectItem key={brand.id} value={brand.brand}>
                           {capitalize(brand.brand)}
                         </SelectItem>
-                      )
+                      ),
                     )}
                 </SelectContent>
               </Select>
@@ -249,7 +249,7 @@ export default function VehicleModelsGrid({
                         >
                           {chassisNo.chassisNo}
                         </SelectItem>
-                      )
+                      ),
                     )}
                 </SelectContent>
               </Select>

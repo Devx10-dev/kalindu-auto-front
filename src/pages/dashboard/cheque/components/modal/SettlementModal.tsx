@@ -28,9 +28,7 @@ export function SettlementModal({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <div
-            className="d-flex justify-between w-full"
-          >
+          <div className="d-flex justify-between w-full">
             <Button onClick={onReject} variant="destructive">
               Rejected
             </Button>

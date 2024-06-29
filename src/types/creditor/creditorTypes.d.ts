@@ -1,3 +1,58 @@
+// address
+// :
+// null
+// contactPersonName
+// :
+// "Harsha"
+// createdBy
+// :
+// null
+// createdDate
+// :
+// null
+// creditLimit
+// :
+// 10000
+// creditorID
+// :
+// 52
+// dueDate
+// :
+// null
+// email
+// :
+// "harsha@gmail.com"
+// expiredInvoiceList
+// :
+// null
+// isExpired
+// :
+// null
+// maxDuePeriod
+// :
+// 1
+// modifiedBy
+// :
+// null
+// modifiedDate
+// :
+// null
+// primaryContact
+// :
+// "0776650827"
+// secondaryContact
+// :
+// "0348759490"
+// shopName
+// :
+// "Chathuramga"
+// status
+// :
+// null
+// totalDue
+// :
+// 0
+
 export type Creditor = {
   creditorID?: string;
   id?: number;
@@ -13,6 +68,11 @@ export type Creditor = {
   dueDate?: string;
   isExpired?: string;
   expiredInvoiceList?: any;
+  maxDuePeriod?: number;
+  createdBy?: string;
+  createdDate?: string;
+  modifiedBy?: string;
+  modifiedDate?: string;
 };
 
 export type CreditorResponseData = {

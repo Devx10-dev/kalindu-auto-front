@@ -187,46 +187,46 @@ function DummyInvoice() {
           }}
         >
           <div style={{ flex: 9 }}>
-            <div
+            {/* <div
               style={{
                 boxShadow:
                   "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
                 borderRadius: 5,
               }}
               className="p-6 pt-0"
+            > */}
+            <div
+              style={{
+                padding: 15,
+                borderRadius: 5,
+                boxShadow:
+                  "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px",
+              }}
             >
-              <div
-                style={{
-                  padding: 15,
-                  borderRadius: 5,
-                  boxShadow:
-                    "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px",
-                }}
-              >
-                <CustomerDetailsForm
-                  customerName={customerName}
-                  setCustomerName={setCustomerName}
-                  setVehicleNo={setVehicleNo}
-                  vehicleNo={vehicleNo}
-                />
-              </div>
-              <div className="d-flex justify-start m-2 mt-4 mb-4">
-                <Button
-                  className="gap-1"
-                  style={{ maxHeight: "35px" }}
-                  onClick={() => setShow(true)}
-                >
-                  <PlusIcon height="24" width="24" color="#fff" />
-                  Item
-                </Button>
-              </div>
-              <DummyInvoiceItemsGrid
-                items={items}
-                outsourcedItems={outsourcedItems}
-                setItems={setItems}
-                setOutsourcedItems={setOutsourcedItems}
+              <CustomerDetailsForm
+                customerName={customerName}
+                setCustomerName={setCustomerName}
+                setVehicleNo={setVehicleNo}
+                vehicleNo={vehicleNo}
               />
             </div>
+            <div className="d-flex justify-start m-2 mt-4 mb-4">
+              <Button
+                className="gap-1"
+                style={{ maxHeight: "35px" }}
+                onClick={() => setShow(true)}
+              >
+                <PlusIcon height="24" width="24" color="#fff" />
+                Item
+              </Button>
+            </div>
+            <DummyInvoiceItemsGrid
+              items={items}
+              outsourcedItems={outsourcedItems}
+              setItems={setItems}
+              setOutsourcedItems={setOutsourcedItems}
+            />
+            {/* </div> */}
             <div>
               {outsourcedItems.length > 0 && (
                 <Card className="mt-4 bg-slate-200">
