@@ -21,6 +21,10 @@ const NavLinks: NavLink[] = [
         label: "View Invoices",
         href: "/dashboard/invoice/all",
       },
+      {
+        label: "Return Handling",
+        href: "/dashboard/return",
+      },
     ],
   },
   {
