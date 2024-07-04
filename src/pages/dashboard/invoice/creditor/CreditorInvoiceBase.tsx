@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 const CreditorInvoiceBase: React.FC = () => {
@@ -61,8 +61,8 @@ const CreditorInvoiceBase: React.FC = () => {
         description: "",
         variant: "destructive",
       });
-      console.log(data);
-      
+    console.log(data);
+
     console.log(getRequestData());
     navigate("print");
   }
@@ -93,20 +93,21 @@ const CreditorInvoiceBase: React.FC = () => {
       </section>
 
       <Dialog>
-      <DialogTrigger asChild>
-        <Button className="w-32">Add Item</Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[900px]">
-        <DialogHeader>
-          <DialogTitle>Add Invoice Items</DialogTitle>
-          <DialogDescription>
-            You can use TAB to change the input and Press ENTER to add the item
-          </DialogDescription>
-        </DialogHeader>
-        <AddItem />
-      </DialogContent>
-    </Dialog>
-     
+        <DialogTrigger asChild>
+          <Button className="w-32">Add Item</Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[900px]">
+          <DialogHeader>
+            <DialogTitle>Add Invoice Items</DialogTitle>
+            <DialogDescription>
+              You can use TAB to change the input and Press ENTER to add the
+              item
+            </DialogDescription>
+          </DialogHeader>
+          <AddItem />
+        </DialogContent>
+      </Dialog>
+
       <InvoiceTable />
 
       {hasOutsourcedItems && (
