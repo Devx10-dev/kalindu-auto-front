@@ -47,7 +47,7 @@ class CreditorAPI {
 
   async fetchCreditorInvoiceIDs(creditorID?: string) {
     if (creditorID) {
-      const response = await this.api.get(
+      const response = await this.api.post(
         CreditorEndpoints.GET_CREDITOR_INVOICE_IDS_URL + "/" + creditorID,
       );
 
