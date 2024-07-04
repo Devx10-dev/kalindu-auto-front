@@ -2,6 +2,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import HamburgerIcon from "./icon/HamburgerIcon";
 import { MOBILE_SCREEN_WIDTH } from "./sidebar/Sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import useAuth from "@/hooks/useAuth";
+import { UserService } from "@/service/user/userService";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { useQuery } from "@tanstack/react-query";
+import { User } from "@/types/user/userTypes";
+import { getUsername, logout } from "./auth/Keycloak";
 
 function Navbar({
   showDrawer,
@@ -10,9 +25,36 @@ function Navbar({
   showDrawer: boolean;
   toggleDrawer: () => void;
 }) {
-  const [isMobileView, setIsMobileView] = useState(false);
+  const { roles } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
 
-  console.log(showDrawer);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [username, setUsername] = useState<string>();
+
+  const userService = new UserService(axiosPrivate);
+
+  useEffect(() => {
+    async function getUserProfile() {
+      await getUsername(setUsername);
+    }
+
+    getUserProfile();
+  }, []);
+
+  console.log(username);
+
+  const { data: user } = useQuery<User>({
+    queryKey: ["user", username],
+    queryFn: () => userService.fetchUserProfileDetails(username),
+    retry: 2,
+  });
+
+  console.log(user);
+
+  const handleLogout = () => {
+    logout();
+  };
+
   useEffect(() => {
     function checkScreenWidth() {
       setIsMobileView(window.innerWidth < MOBILE_SCREEN_WIDTH);
@@ -31,7 +73,7 @@ function Navbar({
   }, []); // Only run this effect once on component mount
 
   return (
-    <nav className="flex items-center justify-between">
+    <nav className="flex items-center justify-between mr-4">
       <div className="flex items-center justify-between">
         <div
           style={{ display: `${isMobileView ? "flex" : "none"}` }}
@@ -41,12 +83,35 @@ function Navbar({
         </div>
         <span className="font-bold ml-4 text-blue-50">KALINDU AUTO</span>
       </div>
-      <div className="flex gap-5 items-center">
-        <Avatar className="mr-5">
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            {user && user.gender === "Female" ? (
+              <Avatar>
+                <AvatarImage src="/public/profile/girl.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            ) : (
+              <Avatar>
+                <AvatarImage src="/public/profile/boy.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{`Hi ${username}`}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </nav>
   );
 }

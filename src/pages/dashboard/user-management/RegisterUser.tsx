@@ -53,6 +53,7 @@ function RegisterUser() {
       password: "",
       active: true,
       roles: [],
+      gender: "Male",
     },
     mode: "onChange",
   });
@@ -105,6 +106,8 @@ function RegisterUser() {
       });
     },
   });
+
+  console.log(form.getValues());
 
   return (
     <div className="space-y-6 pl-2 pr-12">
@@ -183,11 +186,11 @@ function RegisterUser() {
                         options={roleOptions}
                         onChange={(selectedOptions) =>
                           field.onChange(
-                            selectedOptions.map((option) => option.value),
+                            selectedOptions.map((option) => option.value)
                           )
                         }
                         value={roleOptions.filter((option) =>
-                          field.value.includes(option.value),
+                          field.value.includes(option.value)
                         )}
                         placeholder={"Select or add new roles"}
                         className="basic-multi-select select-place-holder"
@@ -247,8 +250,12 @@ function RegisterUser() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Manager">Manager</SelectItem>
-                        <SelectItem value="Cashier">Cashier</SelectItem>
+                        <SelectItem key={Math.random()} value="Manager">
+                          Manager
+                        </SelectItem>
+                        <SelectItem key={Math.random()} value="Cashier">
+                          Cashier
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -285,23 +292,36 @@ function RegisterUser() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="active"
+                name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="space-y-0.5 d-flex gap-4">
-                      <OptionalLabel label="Active" />
+                    <RequiredLabel label="Gender" />
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select the Designation" />
+                        </SelectTrigger>
                       </FormControl>
-                    </div>
+                      <SelectContent>
+                        <SelectItem key={Math.random()} value="Male">
+                          Male
+                        </SelectItem>
+                        <SelectItem key={Math.random()} value="Female">
+                          Female
+                        </SelectItem>
+                        <SelectItem key={Math.random()} value="Non Binary">
+                          Non Binary
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="address"
@@ -316,6 +336,23 @@ function RegisterUser() {
                       />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="space-y-0.5 d-flex gap-4">
+                      <OptionalLabel label="Active" />
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />

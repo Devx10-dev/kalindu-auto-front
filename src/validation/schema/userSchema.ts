@@ -21,6 +21,9 @@ export const userSchema = z.object({
   password: z.string().optional(),
   confirmPassword: z.string().optional(),
   active: z.boolean(),
+  gender: z.enum(["Male", "Female", "Non Binary"], {
+    errorMap: () => ({ message: "Please select a valid designation." }),
+  }),
   roles: z.array(z.string()),
 });
 

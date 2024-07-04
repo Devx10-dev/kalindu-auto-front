@@ -22,7 +22,12 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, setAccessToken, roles, setRoles }}
+      value={{
+        accessToken,
+        setAccessToken,
+        roles,
+        setRoles,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -51,7 +51,7 @@ const UsersTable = ({
   }) => {
     setSearchQuery(e.target.value);
   };
-
+  console.log(users);
   const handleEdit = (user: User) => {
     const encodedData = encodeURIComponent(JSON.stringify(user));
     navigate(USER_EDIT_PAGE + `?data=${encodedData}`);
@@ -61,7 +61,7 @@ const UsersTable = ({
     setShow(true);
     setTitle(`${user.active ? "Deactivate" : "Activate"} User! `);
     setDescription(
-      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`,
+      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`
     );
 
     setUser(user);

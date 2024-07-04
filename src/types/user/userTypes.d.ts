@@ -8,7 +8,9 @@ export type User = {
   homeNo?: string;
   roles: string[];
   active: boolean;
+  gender: Gender;
   designation: Designation;
 };
 
+export type Gender = "Male" | "Female" | "Non Binary";
 export type Designation = "Manager" | "Cashier" | "Owner" | "User";

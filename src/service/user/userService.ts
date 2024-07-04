@@ -4,6 +4,7 @@ import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
 
 const USER_ROLES_URL = "/user/roles";
+const USER_PROFILE_URL = "/user/profile";
 const USER_URL = "/user";
 const USER_ACTIVE_OR_INACTIVE_URL = "/user/active";
 
@@ -47,6 +48,18 @@ class UserService extends Service {
       active: !user.active,
     });
     return response.data;
+  }
+
+  async fetchUserProfileDetails(username: string): Promise<UserType> {
+    try {
+      if (username === undefined) return;
+      const response = await this.api.get<UserType>(
+        `${USER_PROFILE_URL}/${username}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch user roles");
+    }
   }
 }
 

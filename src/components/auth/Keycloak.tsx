@@ -45,7 +45,7 @@ function LoadKeycloak() {
     const checkServerStatus = async () => {
       try {
         const response = await fetch(
-          `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`,
+          `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`
         );
         if (response.ok) {
           setIsKeycloakUp(true);
@@ -89,6 +89,12 @@ function LoadKeycloak() {
         .catch(() => {
           navigate(ERROR_500_PAGE);
         });
+
+      return () => {
+        if (keycloak) {
+          keycloak.logout();
+        }
+      };
     }
   }, [isKeycloakUp]);
 
@@ -101,6 +107,14 @@ function LoadKeycloak() {
   }
 }
 
+export const getUsername = async (
+  setUsername: React.Dispatch<React.SetStateAction<string>>
+) => {
+  await keycloak.loadUserProfile();
+
+  const username = keycloak.profile.username;
+  setUsername(username);
+};
 /**
  * This is for refresh the access token via keycloak
  * @returns new access token
@@ -110,6 +124,10 @@ export const refreshToken = async () => {
   // This function call only when access token expired, so argument never will matter
   await keycloak?.updateToken(5);
   return keycloak?.token;
+};
+
+export const logout = () => {
+  keycloak.logout();
 };
 
 export default LoadKeycloak;
