@@ -54,7 +54,7 @@ class UserService extends Service {
     try {
       if (username === undefined) return;
       const response = await this.api.get<UserType>(
-        `${USER_PROFILE_URL}/${username}`
+        `${USER_PROFILE_URL}/${username}`,
       );
       return response.data;
     } catch (error) {

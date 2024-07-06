@@ -68,7 +68,7 @@ export type Creditor = {
   dueDate?: string;
   isExpired?: string;
   expiredInvoiceList?: any;
-  maxDuePeriod?: number;
+  maxDuePeriod?: string;
   createdBy?: string;
   createdDate?: string;
   modifiedBy?: string;

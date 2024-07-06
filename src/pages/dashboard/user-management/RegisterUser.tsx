@@ -186,11 +186,11 @@ function RegisterUser() {
                         options={roleOptions}
                         onChange={(selectedOptions) =>
                           field.onChange(
-                            selectedOptions.map((option) => option.value)
+                            selectedOptions.map((option) => option.value),
                           )
                         }
                         value={roleOptions.filter((option) =>
-                          field.value.includes(option.value)
+                          field.value.includes(option.value),
                         )}
                         placeholder={"Select or add new roles"}
                         className="basic-multi-select select-place-holder"
