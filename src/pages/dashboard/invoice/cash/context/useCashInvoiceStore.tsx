@@ -34,6 +34,14 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       ),
     })),
 
+  updateInvoiceItem: (updateItem: InvoiceItem) =>
+    set((state) => ({
+      ...state,
+      invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
+        item.name === updateItem.name ? updateItem : item,
+      ),
+    })),
+
   setCustomer: (customerName?: string) =>
     set((state) => ({
       ...state,

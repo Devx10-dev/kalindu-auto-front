@@ -45,7 +45,7 @@ function LoadKeycloak() {
     const checkServerStatus = async () => {
       try {
         const response = await fetch(
-          `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`
+          `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`,
         );
         if (response.ok) {
           setIsKeycloakUp(true);
@@ -108,7 +108,7 @@ function LoadKeycloak() {
 }
 
 export const getUsername = async (
-  setUsername: React.Dispatch<React.SetStateAction<string>>
+  setUsername: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   await keycloak.loadUserProfile();
 
