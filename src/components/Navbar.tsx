@@ -41,15 +41,11 @@ function Navbar({
     getUserProfile();
   }, []);
 
-  console.log(username);
-
   const { data: user } = useQuery<User>({
     queryKey: ["user", username],
     queryFn: () => userService.fetchUserProfileDetails(username),
     retry: 2,
   });
-
-  console.log(user);
 
   const handleLogout = () => {
     logout();
@@ -81,7 +77,8 @@ function Navbar({
         >
           <HamburgerIcon />
         </div>
-        <span className="font-bold ml-4 text-blue-50">KALINDU AUTO</span>
+        <span className="font-bold ml-4 text-blue-50"> </span>
+        <img src="/kalindu-logo.png" className="w-24" />
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
