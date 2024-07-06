@@ -26,6 +26,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import CreditorAPI from "../api/CreditorAPI";
 import { creditorFormSchema } from "./formScheme";
+import { Link } from "react-router-dom";
 
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
@@ -44,13 +45,16 @@ export function RegisterForm() {
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["creditors"] });
+      form.reset();
       toast({
         variant: "default",
         title: "Success",
         description: "Successfully created creditor.",
         className: "bg-green-200",
         action: (
-          <ToastAction altText="View Creditors">View Creditors</ToastAction>
+          <ToastAction altText="View Creditors">
+            <Link to={"creditors/manage"}>View Creditors</Link>{" "}
+          </ToastAction>
         ),
       });
     },
@@ -89,7 +93,11 @@ export function RegisterForm() {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input {...field} className="w-full" placeholder="Type" />
+                  <Input
+                    {...field}
+                    className="w-full"
+                    placeholder="Type name"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,7 +110,11 @@ export function RegisterForm() {
               <FormItem className="w-full col-span-1 row-span-1">
                 <FormLabel>Contact Person Name</FormLabel>
                 <FormControl>
-                  <Input className="w-full" {...field} placeholder="Type" />
+                  <Input
+                    className="w-full"
+                    {...field}
+                    placeholder="Type name"
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -120,7 +132,7 @@ export function RegisterForm() {
                     className="w-full"
                     type="email"
                     {...field}
-                    placeholder="Type"
+                    placeholder="Type email"
                   />
                 </FormControl>
 
@@ -139,7 +151,7 @@ export function RegisterForm() {
                     className="w-full"
                     type="tel"
                     {...field}
-                    placeholder="Type"
+                    placeholder="Type contact no"
                     minLength={10}
                   />
                 </FormControl>
@@ -158,7 +170,7 @@ export function RegisterForm() {
                     className="w-full"
                     type="number"
                     {...field}
-                    placeholder="Type"
+                    placeholder="Type contact no"
                     minLength={10}
                   />
                 </FormControl>
@@ -177,7 +189,7 @@ export function RegisterForm() {
                     className="w-full"
                     type="number"
                     {...field}
-                    placeholder="Type"
+                    placeholder="Type credit limit"
                     minLength={4}
                   />
                 </FormControl>
