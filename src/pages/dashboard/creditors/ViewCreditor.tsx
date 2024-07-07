@@ -43,7 +43,6 @@ const ViewCreditor = () => {
   };
 
   const hasData = transactionResponse.data?.creditorTransactions.length != 0;
-  console.log(hasData);
 
   if (creditorDetails.isLoading || transactionResponse.isLoading) {
     return <Loading />;

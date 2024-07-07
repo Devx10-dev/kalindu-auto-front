@@ -1,4 +1,3 @@
-import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,27 +16,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { Creditor } from "@/types/creditor/creditorTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 import CreditorAPI from "../api/CreditorAPI";
 import { creditorFormSchema } from "./formScheme";
-import { Link } from "react-router-dom";
 
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<CreditorFormValues> = {};
-
-export function RegisterForm() {
+export function RegisterForm(props: {
+  isEditMode?: boolean;
+  creditor?: Creditor;
+}) {
   const axiosPrivate = useAxiosPrivate();
   const creditorService = new CreditorAPI(axiosPrivate);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const defaultValues: Partial<CreditorFormValues> = props.isEditMode
+    ? {
+        shopName: props.creditor.shopName,
+        contactPersonName: props.creditor.contactPersonName,
+        email: props.creditor.email,
+        primaryContact: props.creditor.primaryContact,
+        secondaryContact: props.creditor.secondaryContact,
+        creditLimit: props.creditor.creditLimit.toString(),
+        maxDuePeriod: props.creditor.maxDuePeriod.toString(),
+      }
+    : {};
+
+  const form = useForm<CreditorFormValues>({
+    resolver: zodResolver(creditorFormSchema),
+    defaultValues,
+  });
 
   const createCreditorMutation = useMutation({
     mutationFn: (data: CreditorFormValues) =>
@@ -68,24 +86,53 @@ export function RegisterForm() {
     },
   });
 
-  const form = useForm<CreditorFormValues>({
-    resolver: zodResolver(creditorFormSchema),
-    defaultValues,
+  const updateCreditorMutation = useMutation({
+    mutationFn: (data: CreditorFormValues) =>
+      creditorService.updateCreditor(data, props.creditor.creditorID),
+    onSuccess: (updatedCreditor) => {
+      // Handle onSuccess logic here
+      queryClient.invalidateQueries({ queryKey: ["creditors"] });
+      // Convert creditLimit and maxDuePeriod to strings
+      const formattedCreditor = {
+        ...updatedCreditor,
+        creditLimit: updatedCreditor.creditLimit.toString(),
+        maxDuePeriod: updatedCreditor.maxDuePeriod.toString(),
+      };
+      form.reset(formattedCreditor);
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "Successfully Updated creditor.",
+        className: "bg-green-200",
+      });
+    },
+    onError: (data) => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong : " + data.name,
+        description: data.message,
+        duration: 5000,
+      });
+    },
   });
 
   function onSubmit(data: CreditorFormValues) {
-    createCreditorMutation.mutate(data);
-    if (createCreditorMutation.isSuccess) form.reset();
+    if (props.isEditMode === true) {
+      updateCreditorMutation.mutate(data);
+    } else createCreditorMutation.mutate(data);
+
+    if (createCreditorMutation.isSuccess || updateCreditorMutation.isSuccess)
+      form.reset();
   }
 
-  if (createCreditorMutation.isPending) {
-    return <Loading />;
+  if (createCreditorMutation.isPending || updateCreditorMutation.isPending) {
+    return <FormSkeleton />;
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-3 grid-rows-3 w-1/2 gap-x-7 grid-flow-row mb-10 w-full">
+        <div className="grid grid-cols-3 grid-rows-3 gap-x-7 grid-flow-row mb-10 w-full">
           <FormField
             control={form.control}
             name="shopName"
@@ -237,17 +284,48 @@ export function RegisterForm() {
           />
         </div>
 
-        <Button type="submit" className="mr-5 w-40">
-          Register Creditor
-        </Button>
-        <Button
-          onClick={() => form.reset(defaultValues)}
-          variant={"outline"}
-          className="w-40"
-        >
-          Reset
-        </Button>
+        {props.isEditMode != true && (
+          <>
+            <Button type="submit" className="mr-5 w-40">
+              Register Creditor
+            </Button>
+            <Button
+              onClick={() => form.reset(defaultValues)}
+              variant={"outline"}
+              className="w-40"
+            >
+              Reset
+            </Button>
+          </>
+        )}
+
+        {props.isEditMode === true && (
+          <Button
+            type="submit"
+            className="mr-5 w-40"
+            disabled={!form.formState.isDirty}
+          >
+            Update Creditor
+          </Button>
+        )}
       </form>
     </Form>
   );
 }
+
+const FormSkeleton = () => (
+  <div className="space-y-6">
+    <div className="grid grid-cols-3 grid-rows-3 gap-x-7 grid-flow-row mb-10 w-full">
+      {[...Array(7)].map((_, index) => (
+        <div key={index} className="space-y-5">
+          <Skeleton className="h-4 w-[100px] mb-2" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ))}
+    </div>
+    <div className="flex space-x-4">
+      <Skeleton className="h-10 w-40" />
+      <Skeleton className="h-10 w-40" />
+    </div>
+  </div>
+);
