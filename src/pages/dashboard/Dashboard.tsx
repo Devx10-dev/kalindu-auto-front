@@ -9,7 +9,7 @@ function Dashboard() {
 
   return (
     <div className="flex flex-col justify-center w-full h-dvh">
-      <div className="w-full h-16 p-2 bg-slate-700 border-b-4 border-orange-200">
+      <div className="w-full h-16 p-2 bg-slate-600">
         <Navbar showDrawer toggleDrawer={() => setShowDrawer(!showDrawer)} />
       </div>
       <div className="flex w-full" style={{ height: "calc(100vh - 4rem)" }}>
