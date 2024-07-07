@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import useDebounce from "@/hooks/useDebounce";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { ResetIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { Search, Settings2 } from "lucide-react";
 import { useState } from "react";
 import CreditorAPI from "./api/CreditorAPI";
 import CreditorsTable from "./components/CreditorsTable";
-import { ResetIcon } from "@radix-ui/react-icons";
 
 export default function CreditorManagement() {
   const axiosPrivate = useAxiosPrivate();
