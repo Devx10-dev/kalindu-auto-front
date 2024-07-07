@@ -43,6 +43,7 @@ export type InvoiceState = {
 
   addInvoiceItem: (item: InvoiceItem) => void;
   removeInvoiceItem: (item: InvoiceItem) => void;
+  updateInvoiceItem: (updateItem: InvoiceItem) => void;
 
   setOutsourcedStatus: (item: InvoiceItem, status: boolean) => void;
   getOutsourcedItems: () => InvoiceItem[];
