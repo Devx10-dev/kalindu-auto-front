@@ -19,7 +19,8 @@ const InvoiceTable: React.FC = () => {
 
   return (
     <div>
-      <Table className="border rounded-md text-md mb-5 mt-10 shadow-sm">
+      <Table className="border rounded-md text-md mb-5 mt-5 shadow-sm">
+        <h2 className="text-xl font-bold mt-2 ml-3">Item List</h2>
         <TableBody>
           <TableRow>
             <TableHead>Item</TableHead>
@@ -30,35 +31,45 @@ const InvoiceTable: React.FC = () => {
             <TableHead>Outsource</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
-          {invoiceItemDTOList.map((item: any, index: any) => (
-            <TableRow key={index}>
-              <TableCell>{item.itemName}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>LKR {item.price}</TableCell>
-              <TableCell>LKR {item.discount}</TableCell>
-              <TableCell>
-                LKR{" "}
-                {(
-                  item.quantity * item.price -
-                  item.quantity * item.discount
-                ).toFixed(2)}
-              </TableCell>
-              <TableCell>
-                <Switch
-                  checked={item.outsourcedStatus}
-                  onCheckedChange={(state) => setOutsourcedStatus(item, state)}
-                />
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant="outline"
-                  onClick={() => removeInvoiceItem(item)}
-                >
-                  Remove
-                </Button>
+          {invoiceItemDTOList.length > 0 ? (
+            invoiceItemDTOList.map((item: any, index: any) => (
+              <TableRow key={index}>
+                <TableCell>{item.itemName}</TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>LKR {item.price}</TableCell>
+                <TableCell>LKR {item.discount}</TableCell>
+                <TableCell>
+                  LKR{" "}
+                  {(
+                    item.quantity * item.price -
+                    item.quantity * item.discount
+                  ).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <Switch
+                    checked={item.outsourcedStatus}
+                    onCheckedChange={(state) =>
+                      setOutsourcedStatus(item, state)
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    onClick={() => removeInvoiceItem(item)}
+                  >
+                    Remove
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center py-4">
+                No items added for the invoice.
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

@@ -14,7 +14,11 @@ interface OutsourcedItem {
 }
 
 const OutsourcedItemDetails: React.FC = () => {
-  const { getOutsourcedItems } = useCreditorInvoiceStore();
+  const {
+    getOutsourcedItems,
+    setOutsourcedCompanyName,
+    setOutsourcedBuyingPrice,
+  } = useCreditorInvoiceStore();
   const outsourcedItems = getOutsourcedItems();
   return (
     <div>
@@ -39,11 +43,23 @@ const OutsourcedItemDetails: React.FC = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Company Name</Label>
-                <Input type="text" value={item.companyName} />
+                <Input
+                  type="text"
+                  value={item.companyName}
+                  onChange={(e) =>
+                    setOutsourcedCompanyName(item, e.target.value)
+                  }
+                />
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Buying Price</Label>
-                <Input type="number" value={item.buyingPrice} />
+                <Input
+                  type="number"
+                  value={item.buyingPrice}
+                  onChange={(e) => {
+                    setOutsourcedBuyingPrice(item, parseFloat(e.target.value));
+                  }}
+                />
               </div>
             </div>
           ))}

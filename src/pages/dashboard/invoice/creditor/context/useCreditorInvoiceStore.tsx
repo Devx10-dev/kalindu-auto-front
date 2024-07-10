@@ -5,13 +5,18 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
   invoiceID: undefined,
   creditorName: undefined,
   creditorID: undefined,
-  totalPrice: undefined,
 
   // final bill summary items
   discountPercentage: 0,
   discountAmount: 0,
   vatPercentage: 0,
   vatAmount: 0,
+  totalPrice: undefined,
+
+  //commissions details
+  commissionName: undefined,
+  commissionAmount: undefined,
+  commissionRemark: undefined,
 
   invoiceItemDTOList: [],
 
@@ -51,7 +56,15 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, companyName: companyName } : item,
+        item === itemOutsourced
+          ? {
+              ...item,
+              outsourceItem: {
+                ...item.outsourceItem,
+                companyName: companyName,
+              },
+            }
+          : item,
       ),
     })),
   setOutsourcedBuyingPrice: (
@@ -61,7 +74,15 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, buyingPrice: buyingPrice } : item,
+        item === itemOutsourced
+          ? {
+              ...item,
+              outsourceItem: {
+                ...item.outsourceItem,
+                buyingPrice: buyingPrice,
+              },
+            }
+          : item,
       ),
     })),
 
@@ -82,6 +103,24 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
   setTotalPrice: (amount: number) =>
     set((state) => ({ ...state, totalPrice: amount })),
 
+  setCommissionName: (commissionName?: string) =>
+    set((state) => ({
+      ...state,
+      commissionName: commissionName,
+    })),
+
+  setCommissionAmount: (CommissionAmount?: number) =>
+    set((state) => ({
+      ...state,
+      commissionAmount: CommissionAmount,
+    })),
+
+  setCommissionRemark: (commissionRemark?: string) =>
+    set((state) => ({
+      ...state,
+      commissionRemark: commissionRemark,
+    })),
+
   getRequestData: () => {
     const state = get();
 
@@ -94,6 +133,14 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
       vat: state.vatAmount,
 
       invoiceItemsDTOList: state.invoiceItemDTOList,
+
+      commissions: [
+        {
+          personName: state.commissionName,
+          amount: state.commissionAmount,
+          remark: state.commissionRemark,
+        },
+      ],
     };
   },
 }));

@@ -28,35 +28,45 @@ const InvoiceTable: React.FC = () => {
             <TableHead>Outsource</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
-          {invoiceItemDTOList.map((item: any, index: any) => (
-            <TableRow key={index}>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>LKR {item.price}</TableCell>
-              <TableCell>LKR {item.discount}</TableCell>
-              <TableCell>
-                LKR{" "}
-                {(
-                  item.quantity * item.price -
-                  item.quantity * item.discount
-                ).toFixed(2)}
-              </TableCell>
-              <TableCell>
-                <Switch
-                  checked={item.outsourced}
-                  onCheckedChange={(state) => setOutsourcedStatus(item, state)}
-                />
-              </TableCell>
-              <TableCell>
-                <Button
-                  onClick={() => removeInvoiceItem(item)}
-                  variant={"secondary"}
-                >
-                  <X className="mr-2" /> Remove
-                </Button>
+          {invoiceItemDTOList.length > 0 ? (
+            invoiceItemDTOList.map((item: any, index: any) => (
+              <TableRow key={index}>
+                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>LKR {item.price}</TableCell>
+                <TableCell>LKR {item.discount}</TableCell>
+                <TableCell>
+                  LKR{" "}
+                  {(
+                    item.quantity * item.price -
+                    item.quantity * item.discount
+                  ).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <Switch
+                    checked={item.outsourced}
+                    onCheckedChange={(state) =>
+                      setOutsourcedStatus(item, state)
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={() => removeInvoiceItem(item)}
+                    variant={"secondary"}
+                  >
+                    <X className="mr-2" /> Remove
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center py-4">
+                No items added for the invoice.
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

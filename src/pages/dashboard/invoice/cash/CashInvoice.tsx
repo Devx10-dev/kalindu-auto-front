@@ -29,7 +29,7 @@ const CashInvoiceBase: React.FC = () => {
       <CardHeader>
         <PageHeader
           title="Cash Invoice"
-          description=""
+          description="Cash invoice for customers"
           icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
         />
       </CardHeader>
@@ -46,8 +46,7 @@ const CashInvoiceBase: React.FC = () => {
         >
           <CustomerDetails />
           {/*<AddItem/>*/}
-          <div className="d-flex justify-end m-2 mt-4  gap-10">
-            <p className="text-l">Add new item to the invoice</p>
+          <div className="d-flex justify-start m-2 mt-4  gap-10">
             <Button
               className="gap-1"
               style={{ maxHeight: "35px" }}
@@ -56,14 +55,16 @@ const CashInvoiceBase: React.FC = () => {
               <PlusIcon height="24" width="24" color="#fff" />
               Item
             </Button>
+            {/*<p className="text-l">Add new item to the invoice</p>*/}
           </div>
           <InvoiceTable />
-          <Commissions />
+
           {hasOutsourcedItems && (
             <div className="pb-[350px]">
               <OutsourcedItemDetails />
             </div>
           )}
+          <Commissions />
         </div>
 
         <div
