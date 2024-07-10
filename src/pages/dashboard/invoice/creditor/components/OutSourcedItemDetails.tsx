@@ -4,14 +4,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 
-interface OutsourcedItem {
-  index: number;
-  itemName: string;
-  itemCode: string;
-  quantity: number;
-  companyName: string;
-  buyingPrice: number;
-}
 
 const OutsourcedItemDetails: React.FC = () => {
   const {
@@ -35,7 +27,7 @@ const OutsourcedItemDetails: React.FC = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Item Code</Label>
-                <Input type="text" value={item.itemCode} disabled />
+                <Input type="text" value={item.code} disabled />
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Quantity</Label>
