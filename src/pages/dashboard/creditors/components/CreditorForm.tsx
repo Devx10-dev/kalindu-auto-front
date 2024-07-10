@@ -76,11 +76,11 @@ export function RegisterForm(props: {
         ),
       });
     },
-    onError: (data) => {
+    onError: (data: any) => {
       toast({
         variant: "destructive",
-        title: "Something went wrong : " + data.name,
-        description: data.message,
+        title: data.response.data,
+        description: "Failed with status code : " + data.response.status,
         duration: 5000,
       });
     },
