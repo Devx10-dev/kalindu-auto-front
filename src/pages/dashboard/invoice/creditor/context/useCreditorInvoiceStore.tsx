@@ -86,11 +86,11 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     const state = get();
 
     return {
-      invoiceID: "RANDOM ID", //TODO RANDOM ID GENERATIONS
+      invoiceId: 1212131123, //TODO RANDOM ID GENERATIONS
       creditorID: state.creditorID,
       creditorName: state.creditorName,
       totalPrice: state.totalPrice,
-      discount: state.discountAmount,
+      discountAmount: state.discountAmount,
       vat: state.vatAmount,
 
       invoiceItemsDTOList: state.invoiceItemDTOList,

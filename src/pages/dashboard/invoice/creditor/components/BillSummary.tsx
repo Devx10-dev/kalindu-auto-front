@@ -4,10 +4,19 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Delete, Printer } from "lucide-react";
-import useInvoiceStore from "../context/useCreditorInvoiceStore";
+import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
+import { Link } from "react-router-dom";
 
 const BillSummary: React.FC = () => {
   const items = [{}];
+  const {
+    setCreditor,
+    creditorID,
+    creditorName,
+    getOutsourcedItems,
+    invoiceItemDTOList,
+    getRequestData,
+  } = useCreditorInvoiceStore();
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [vatPercentage, setVatPercentage] = useState(0);
@@ -111,9 +120,11 @@ const BillSummary: React.FC = () => {
             <p className="text-xl bg-slate-200 text-slate-900 p-5 rounded-md">
               Total : LKR {totalWithVat.toFixed(2)}
             </p>
-            <Button className="mt-4 mb-5">
-              <Printer className={"mr-2"} /> Print Invoice
-            </Button>
+            <Link to={"print"}>
+              <Button className="mt-4 mb-5">
+                <Printer className={"mr-2"} /> Print Invoice
+              </Button>
+            </Link>
             <Button className="mt-4 mb-5 bg-red-500 ml-2">
               <Delete className={"mr-2"} /> Cancel
             </Button>

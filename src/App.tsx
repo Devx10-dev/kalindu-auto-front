@@ -18,6 +18,7 @@ import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
 import EditUser from "./pages/dashboard/user-management/EditUser";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
+import PrintCreditor from "./pages/dashboard/invoice/creditor/Print";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="all" element={<ViewAllInvoices />} />
             {/* single invoice using id */}
             <Route path="cash/:id" element={<SingleInvoice />} />
+            <Route path="creditor/print" element={<PrintCreditor />} />
           </Route>
 
           <Route path="vehicle">
