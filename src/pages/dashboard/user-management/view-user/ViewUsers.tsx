@@ -8,9 +8,14 @@ import { User } from "@/types/user/userTypes";
 import { useQuery } from "@tanstack/react-query";
 import UsersTable from "./table-components/UsersTable";
 import UsersIcon from "@/components/icon/UsersIcon";
+import { useNavigate } from "react-router-dom";
+
+const REGISTER_USER_PAGE = "/dashboard/users/register";
 
 function ViewUsers() {
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
   const userService = new UserService(axiosPrivate);
 
   const { isLoading, data: users } = useQuery<User[]>({
@@ -18,6 +23,10 @@ function ViewUsers() {
     queryFn: () => userService.fetchUsers(),
     retry: 2,
   });
+
+  const handleAddUserBtn = () => {
+    navigate(REGISTER_USER_PAGE);
+  };
 
   return (
     <div className="mr-2 ml-2">
@@ -30,7 +39,7 @@ function ViewUsers() {
       </CardHeader>
       <CardContent style={{ width: "98%" }}>
         <div className="mb-3">
-          <Button className="gap-1">
+          <Button className="gap-1" onClick={handleAddUserBtn}>
             <PlusIcon height="24" width="24" color="#fff" />
             User
           </Button>
