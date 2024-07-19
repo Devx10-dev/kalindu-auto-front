@@ -40,10 +40,12 @@ const CreditorInvoiceBase: React.FC = () => {
     queryFn: () => creditorService.fetchCreditors(),
   });
 
-  const creditorData = data?.creditors.map(({ creditorID, shopName }) => ({
-    value: parseInt(creditorID),
-    label: shopName,
-  }));
+  const creditorData =
+    data.creditors !== undefined &&
+    data?.creditors.map(({ creditorID, shopName }) => ({
+      value: parseInt(creditorID),
+      label: shopName,
+    }));
 
   useEffect(() => {
     console.log(creditorID, creditorName);

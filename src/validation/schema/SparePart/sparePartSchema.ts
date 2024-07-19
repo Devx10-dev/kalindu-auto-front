@@ -19,19 +19,19 @@ export const spaerPartSchema = z.object({
       message: "Spare part code must not be longer than 255 characters.",
     }),
   quantity: z.string({ required_error: "Quantity is required" }),
-  chassisNo: z
-    .object({
-      label: z.string().optional(),
-      value: z
-        .object({
-          chassisNo: z.string().optional(),
-          id: z.number().optional(),
-        })
-        .or(z.string().optional()),
-      __isNew__: z.boolean().optional(),
+  chassisNo: z.object(
+    {
+      label: z.string(),
+      value: z.string(),
+    },
+    { required_error: "Chassis No is required" }
+  ),
+  description: z
+    .string()
+    .max(255, {
+      message: "Remark must not be longer than 255 characters.",
     })
     .optional(),
-  description: z.string().optional(),
 });
 
 export type SparePart = z.infer<typeof spaerPartSchema>;
