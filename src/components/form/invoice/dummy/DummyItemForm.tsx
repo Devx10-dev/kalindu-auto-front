@@ -207,7 +207,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? ""
-                            : parseFloat(e.target.value),
+                            : parseFloat(e.target.value)
                         )
                       }
                       max={
@@ -241,7 +241,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? ""
-                            : parseFloat(e.target.value),
+                            : parseFloat(e.target.value)
                         )
                       }
                     />
@@ -269,7 +269,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? ""
-                            : parseFloat(e.target.value),
+                            : parseFloat(e.target.value)
                         )
                       }
                     />
@@ -296,7 +296,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? ""
-                            : parseFloat(e.target.value),
+                            : parseFloat(e.target.value)
                         )
                       }
                     />
