@@ -6,6 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Delete, Printer } from "lucide-react";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 import { useToast } from "@/components/ui/use-toast.ts";
+import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService.ts";
+import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
+import {CashInvoiceService} from "@/service/invoice/cashInvoiceApi.ts";
 
 const BillSummary: React.FC = () => {
   const {
@@ -20,7 +23,11 @@ const BillSummary: React.FC = () => {
     setVatAmount,
     setTotalPrice,
     getRequestData,
+      creditorID
   } = useCreditorInvoiceStore();
+
+  const axiosPrivate = useAxiosPrivate();
+  const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
@@ -85,12 +92,20 @@ const BillSummary: React.FC = () => {
       });
     }
 
+    if (creditorID === undefined || creditorID === null ) {
+      return toast({
+        title: "No creditor selected",
+        description: "Please select a creditor and then submit",
+        variant: "destructive",
+      });
+    }
+
     try {
       const requestData = getRequestData();
       console.log(requestData);
-      // const createdInvoice =
-      //     await cashInvoiceService.createCashInvoice(requestData);
-      // console.log("Cash invoice created:", createdInvoice);
+      const createdCreditInvoice =
+          await creditInvoiceService.createCreditInvoice(requestData);
+      console.log("Cash invoice created:", createdCreditInvoice);
       // Handle success response, such as printing the invoice or displaying a success message
       toast({
         title: "Invoice created successfully",

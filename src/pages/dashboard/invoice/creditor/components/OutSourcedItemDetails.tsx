@@ -23,7 +23,7 @@ const OutsourcedItemDetails: React.FC = () => {
             <div key={item.index} className="grid grid-cols-5 gap-4 mb-4">
               <div className="flex flex-col gap-2">
                 <Label>Item Name</Label>
-                <Input type="text" value={item.itemName} disabled />
+                <Input type="text" value={item.name} disabled />
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Item Code</Label>

@@ -45,7 +45,10 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
         set((state) => ({
             ...state,
             invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-                item === itemOutsourced ? {...item, outsourcedStatus: status} : item,
+                item === itemOutsourced ? {
+                    ...item,
+                    outsourced: status
+                } : item,
             ),
         })),
 
@@ -89,7 +92,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     getOutsourcedItems: () => {
         const state = get();
         return state.invoiceItemDTOList.filter(
-            (item) => item.outsourcedStatus === true,
+            (item) => item.outsourced === true,
         );
     },
     setDiscountPercentage: (percentage: number) =>
@@ -144,20 +147,22 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
         return {
             invoiceId: invoiceId,
             creditorId: state.creditorID,
-            creditorName: state.creditorName,
             totalPrice: state.totalPrice,
             totalDiscount: state.discountAmount,
             VAT: state.vatAmount,
 
             invoiceItems: state.invoiceItemDTOList,
 
-            commissions: [
-                {
-                    personName: state.commissionName,
-                    amount: state.commissionAmount,
-                    remark: state.commissionRemark,
-                },
-            ],
+            commissions:
+                state.commissionName && state.commissionAmount
+                    ? [
+                        {
+                            personName: state.commissionName,
+                            amount: state.commissionAmount,
+                            remark: state.commissionRemark,
+                        },
+                    ]
+                    : [],
         };
     },
 }));

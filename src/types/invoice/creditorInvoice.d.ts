@@ -4,7 +4,6 @@ import { Commission } from "./cashInvoice";
 export type InvoiceState = {
   creditorName?: string;
   creditorID?: number;
-  totalPrice?: number;
   invoiceItemDTOList: InvoiceItem[];
   creditor?: Creditor;
   commissions?: Commission[];
@@ -46,13 +45,13 @@ export type InvoiceState = {
 };
 
 export type InvoiceItem = {
-  invoiceID?: string;
-  itemName?: string;
-  vehicleNo?: string;
+  name?: string;
   code?: string;
-  totalPrice?: string | number;
-  VAT?: string | number;
-  outsourcedStatus?: boolean;
+  price?: number;
+  discount?: number;
+  sparePartId?: number;
+  quantity?: number;
+  outsourced?: boolean;
   outsourceItem?: {
     companyName?: string;
     buyingPrice?: number;

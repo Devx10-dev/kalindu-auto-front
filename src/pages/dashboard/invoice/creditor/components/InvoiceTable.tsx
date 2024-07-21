@@ -34,7 +34,7 @@ const InvoiceTable: React.FC = () => {
           {invoiceItemDTOList.length > 0 ? (
             invoiceItemDTOList.map((item: any, index: any) => (
               <TableRow key={index}>
-                <TableCell>{item.itemName}</TableCell>
+                <TableCell>{item.name}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>LKR {item.price}</TableCell>
                 <TableCell>LKR {item.discount}</TableCell>
