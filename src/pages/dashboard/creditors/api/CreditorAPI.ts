@@ -1,4 +1,3 @@
-import { ResponseData } from "@/types/component/commonTypes";
 import {
   Creditor,
   CreditorResponseData,
@@ -58,6 +57,21 @@ class CreditorAPI {
   async createCreditor(creditor: Creditor): Promise<Creditor> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_URL,
+      creditor,
+    );
+    return response.data;
+  }
+
+  async updateCreditor(
+    creditor: Creditor,
+    creditorID: string,
+  ): Promise<Creditor> {
+    creditor = {
+      ...creditor,
+      creditorID,
+    };
+    const response = await this.api.put(
+      CreditorEndpoints.CREDITOR_BASE_URL,
       creditor,
     );
     return response.data;
