@@ -18,6 +18,10 @@ function CreatableSelectErrorMessage({
     __isNew__?: boolean;
   };
 }) {
+  if (error.message === undefined) {
+    return <p></p>;
+  }
+
   return (
     <p className="error-msg">
       {error.message === "Required" ||

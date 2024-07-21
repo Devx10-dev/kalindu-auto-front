@@ -1,3 +1,4 @@
+import CreatableSelectErrorMessage from "@/components/formElements/CreatableSelectErrorMessage";
 import {
   OptionalLabel,
   RequiredLabel,
@@ -21,7 +22,7 @@ import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { dummyItemSchema } from "@/validation/schema/invoice/dummy/DummyItemSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import { z } from "zod";
@@ -34,6 +35,7 @@ export default function DummyItemForm({
   sparePartService,
   onClose,
   setItems,
+  item,
   items,
   outsourcedItems,
   setOutsourcedItems,
@@ -41,6 +43,7 @@ export default function DummyItemForm({
   sparePartService: SparePartService;
   onClose: () => void;
   setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
+  item: DummyInvoiceItem | null;
   items: DummyInvoiceItem[];
   setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
   outsourcedItems: OutsourcedItem[];
@@ -59,19 +62,33 @@ export default function DummyItemForm({
   });
 
   const resetForm = () => {
-    form.setValue("remark", undefined);
-    form.setValue("item", {
-      label: undefined,
-      value: {
-        id: 0,
-        chassisNo: "",
-        code: "",
-        description: "",
-        partName: "",
-        quantity: 0,
-      },
-    });
-    form.reset();
+    if (item === null) {
+      form.setValue("item", {
+        label: undefined,
+        value: {
+          id: 0,
+          value: "",
+        },
+      });
+      form.setValue("remark", undefined);
+
+      form.reset();
+    } else {
+      form.setValue("remark", item?.description);
+      form.setValue("code", item?.code);
+      form.setValue("quantity", item?.quantity);
+      form.setValue("price", item?.price);
+      form.setValue("dummyPrice", item?.dummyPrice);
+      form.setValue("outsourced", item?.outsourced ?? false);
+      form.setValue("discount", item?.discount);
+      form.setValue("item", {
+        label: undefined,
+        value: {
+          id: 0,
+          value: "",
+        },
+      });
+    }
   };
 
   const sparePartsOptions =
@@ -86,6 +103,7 @@ export default function DummyItemForm({
   };
 
   const handleSubmit = async (values: DummyItemValues) => {
+
     let validationError: string | null = null;
 
     if (values.price === undefined) {
@@ -104,12 +122,60 @@ export default function DummyItemForm({
       return;
     }
 
+    if (item !== null) {
+      form.setError("item", null);
+
+      setItems(
+        items.map((t) =>
+          t.id === item.id
+            ? {
+                new: item.new,
+                sparePartId: item.sparePartId,
+                name: item.name,
+                quantity: values.quantity,
+                id: item.id,
+                dummyPrice: values.dummyPrice,
+                outsourced: values.outsourced,
+                code: values.code,
+                description: values.remark,
+                discount: values.discount,
+                outsourceItem: item.outsourceItem,
+                price: values.price,
+              }
+            : t
+        )
+      );
+
+      if (!item.outsourced && values.outsourced) {
+        setOutsourcedItems([
+          {
+            index: item.sparePartId,
+            buyingPrice: undefined,
+            companyName: undefined,
+            itemCode: values.code === undefined ? "" : values.code,
+            itemName: item.name,
+            quantity: values.quantity,
+          },
+          ...outsourcedItems,
+        ]);
+      }
+
+      // form.reset();
+      onClose();
+
+      return;
+    }
+
     const isNew = typeof values.item.value === "string";
     const newSparePartId = Math.floor(Math.random() * 100);
+    const id = Math.floor(Math.random() * 100);
 
     setItems([
       {
-        sparePartId: isNew ? newSparePartId : values.item.value.id,
+        sparePartId:
+          typeof values.item.value === "string"
+            ? newSparePartId
+            : values.item.value.id,
         new: isNew ? true : false,
         code: values.code === undefined ? "" : values.code,
         description: values.remark === undefined ? "" : values.remark,
@@ -119,6 +185,7 @@ export default function DummyItemForm({
         price: values.price,
         quantity: values.quantity,
         outsourced: values.outsourced === undefined ? false : values.outsourced,
+        id: id,
       },
       ...items,
     ]);
@@ -126,7 +193,10 @@ export default function DummyItemForm({
     if (values.outsourced !== undefined && values.outsourced) {
       setOutsourcedItems([
         {
-          index: isNew ? newSparePartId : values.item.value.id,
+          index:
+            typeof values.item.value === "string"
+              ? newSparePartId
+              : values.item.value.id,
           buyingPrice: undefined,
           companyName: undefined,
           itemCode: values.code === undefined ? "" : values.code,
@@ -145,6 +215,23 @@ export default function DummyItemForm({
     setSearchTerm(inputValue);
   };
 
+  const setItemValues = () => {
+    if (item === null) return;
+
+    form.setValue("id", item.sparePartId);
+    form.setValue("code", item.code);
+    form.setValue("quantity", item.quantity);
+    form.setValue("price", item.price);
+    form.setValue("dummyPrice", item.dummyPrice);
+    form.setValue("discount", item.discount);
+    form.setValue("remark", item.description);
+    form.setValue("outsourced", item.outsourced);
+  };
+
+  useEffect(() => {
+    setItemValues();
+  }, [item]);
+
   return (
     <div style={{ padding: 10 }}>
       <Form {...form}>
@@ -153,21 +240,33 @@ export default function DummyItemForm({
             <FormField
               control={form.control}
               name="item"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem className="w-full col-span-1 row-span-1">
                   <RequiredLabel label="Spare Part Item" />
                   <FormControl>
                     <CreatableSelect
                       className="select-place-holder"
-                      placeholder={"Search and Select or Add new spare part..."}
+                      placeholder={
+                        item === null
+                          ? "Search and Select or Add new spare part..."
+                          : item.name
+                      }
                       {...field}
                       isClearable
                       options={sparePartsOptions}
-                      value={field.value}
+                      value={item === null ? field.value : item.name}
                       onChange={field.onChange}
                       onInputChange={handleInputChange}
+                      isDisabled={item !== null}
                     />
                   </FormControl>
+                  {item === null && fieldState.error && (
+                    <CreatableSelectErrorMessage
+                      error={fieldState.error}
+                      label="Spart part item"
+                      value={field.value}
+                    />
+                  )}
                 </FormItem>
               )}
             />
@@ -206,14 +305,9 @@ export default function DummyItemForm({
                       onChange={(e) =>
                         field.onChange(
                           e.target.value === ""
-                            ? ""
+                            ? undefined
                             : parseFloat(e.target.value)
                         )
-                      }
-                      max={
-                        typeof form.getValues("item.value") === "string"
-                          ? 1000
-                          : form.getValues("item.value.quantity")
                       }
                     />
                   </FormControl>
@@ -221,7 +315,6 @@ export default function DummyItemForm({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="price"
@@ -240,7 +333,7 @@ export default function DummyItemForm({
                       onChange={(e) =>
                         field.onChange(
                           e.target.value === ""
-                            ? ""
+                            ? undefined
                             : parseFloat(e.target.value)
                         )
                       }
@@ -250,7 +343,6 @@ export default function DummyItemForm({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="dummyPrice"
@@ -272,6 +364,7 @@ export default function DummyItemForm({
                             : parseFloat(e.target.value)
                         )
                       }
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -299,6 +392,7 @@ export default function DummyItemForm({
                             : parseFloat(e.target.value)
                         )
                       }
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -330,7 +424,6 @@ export default function DummyItemForm({
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-8">
                   <FormControl>
                     <Checkbox
-                      defaultChecked={false}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
