@@ -67,7 +67,7 @@ function App() {
 
           <Route path="cheque" element={<ChequeManagement />} />
 
-          <Route path="return" element={<HandlingReturn />}/>
+          <Route path="return" element={<HandlingReturn />} />
 
           <Route path="log">
             <Route path="activity" element={<ActivityLog />} />

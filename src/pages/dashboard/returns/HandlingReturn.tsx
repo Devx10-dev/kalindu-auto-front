@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { DummyInvoiceService } from "@/service/invoice/dummy/DummyInvoiceService";
@@ -33,12 +34,16 @@ import { ReturnService } from "@/service/return/ReturnService";
 import { SparePartService } from "@/service/sparePartInventory/sparePartService";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
-import { BaseInvoice } from "@/types/returns/returnsTypes";
+import { BaseInvoice, ReturnItem } from "@/types/returns/returnsTypes";
 import { convertArrayToISOFormat } from "@/utils/dateTime";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import { Fragment } from "react/jsx-runtime";
+import CashInvoiceBase from "./cash/CashInvoice";
+import CreditorInvoiceBase from "./creditor/CreditorInvoiceBase";
+import useReturnInvoiceStore from "./context/useReturnInvoiceStore";
+import Summary from "./Summary";
 
 interface InvoiceOption {
   label: string;
@@ -46,6 +51,13 @@ interface InvoiceOption {
 }
 
 function HandlingReturn() {
+  const {
+    setSourceInvoiceId,
+    addReturnItem,
+    setReturnType,
+    invoiceItemDTOList,
+    setCustomer,
+  } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
 
@@ -62,10 +74,18 @@ function HandlingReturn() {
   const [isValid, setIsValid] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState<BaseInvoice>();
 
+  const [returnedQuantities, setReturnedQuantities] = useState<{
+    [key: string]: number;
+  }>({});
+  const [selectedReturnItems, setSelectedReturnItems] = useState<ReturnItem>();
+
+  const [totalReturnValue, setTotalReturnValue] = useState(0);
+
   const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
   const sparePartyService = new SparePartService(axiosPrivate);
 
   const returnService = new ReturnService(axiosPrivate);
+  const [activeTab, setActiveTab] = useState<string>("cash");
 
   const generateInvoiceId = () => {
     const now = new Date();
@@ -120,19 +140,19 @@ function HandlingReturn() {
         toast({
           variant: "default",
           title: "Success",
-          description: "Dummy invoive is created.",
+          description: "Dummy invoice is created.",
         });
       }
     },
     onError: (data) => {
       toast({
         variant: "destructive",
-        title: "Dummy Invoice creation is failed",
+        title: "Dummy Invoice creation failed",
         description: `${
           data.message.split(" ").at(-1) === "409"
-            ? "Invoice ID is already exists!"
+            ? "Invoice ID already exists!"
             : data.message.split(" ").at(-1) === "412"
-              ? "Requested quantity is not available for one of item"
+              ? "Requested quantity is not available for one of the items"
               : data.message
         }`,
         duration: 5000,
@@ -158,7 +178,7 @@ function HandlingReturn() {
       items.forEach((item) => {
         if (item.outsourced) {
           const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId
+            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
           )[0];
 
           if (
@@ -212,6 +232,50 @@ function HandlingReturn() {
     setSearchTerm(inputValue);
   };
 
+  const handleReturnedQuantityChange = (
+    itemCode: string,
+    quantity: number,
+    price: number,
+    id: number,
+  ) => {
+    addReturnItem({ id: id, returnedQuantity: quantity });
+    setReturnedQuantities((prev) => ({
+      ...prev,
+      [itemCode]: quantity,
+    }));
+  };
+
+  useEffect(() => {
+    const totalValue = Object.keys(returnedQuantities).reduce(
+      (acc, itemCode) => {
+        const quantity = returnedQuantities[itemCode];
+        const item = selectedInvoice?.items.find(
+          (item) => item.code === itemCode,
+        );
+        return acc + (item ? quantity * item.price : 0);
+      },
+      0,
+    );
+    setTotalReturnValue(totalValue);
+  }, [returnedQuantities, selectedInvoice]);
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    console.log(tab);
+  };
+
+  const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
+    setCustomer(baseInvoice.customer);
+    setReturnType(findReturnType(baseInvoice.invoiceId));
+    setSourceInvoiceId(baseInvoice.invoiceId);
+    setSelectedInvoice(baseInvoice);
+  };
+
+  const findReturnType = (invoiceId: string): string => {
+    const parts = invoiceId.split("-");
+    const returnType = parts[1];
+    return returnType;
+  };
+
   return (
     <Fragment>
       <div className="ml-2">
@@ -222,21 +286,15 @@ function HandlingReturn() {
             icon={<LeftRightArrow height="30" width="28" color="#162a3b" />}
           />
         </CardHeader>
+
+        {/* main section */}
         <CardContent
           style={{
             display: "flex",
             gap: "10px",
           }}
         >
-          <div style={{ flex: 7 }}>
-            {/* <div
-              style={{
-                boxShadow:
-                  "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
-                borderRadius: 5,
-              }}
-              className="p-6 pt-0"
-            > */}
+          <div style={{ flex: 9 }}>
             <div
               style={{
                 padding: 15,
@@ -250,120 +308,182 @@ function HandlingReturn() {
                 className="select-place-holder"
                 placeholder={"Search and select returned invoice"}
                 options={invoiceOptions}
-                onChange={(option) => setSelectedInvoice(option.value)}
+                onChange={(option) => {
+                  handleSourceInvoice(option.value);
+                }}
                 onInputChange={handleInputChange}
               />
             </div>
-            <div className="d-flex justify-start m-2 mt-4 mb-4">
-              <Button
-                className="gap-1"
-                style={{ maxHeight: "35px" }}
-                onClick={() => setShow(true)}
+            <div style={{ marginTop: 15 }}>
+              <Tabs
+                defaultValue="returnItems"
+                className="w-[100%]"
+                onValueChange={handleTabChange}
               >
-                <PlusIcon height="24" width="24" color="#fff" />
-                Item
-              </Button>
-            </div>
-            {/* <DummyInvoiceItemsGrid
-              items={items}
-              outsourcedItems={outsourcedItems}
-              setItems={setItems}
-              setOutsourcedItems={setOutsourcedItems}
-            /> */}
-            {/* </div> */}
-            <div>
-              {outsourcedItems.length > 0 && (
-                <Card className="mt-4 bg-slate-200">
-                  <CardContent className="pl-6 pr-2 pt-4 shadow-sm">
-                    <div>
-                      <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">
-                        Outsourced Item Details
-                      </h3>
-                      <div key={Math.random()}>
-                        <div className="d-flex gap-8">
-                          <div
-                            className="grid grid-cols-5 gap-4 w-full"
-                            key={Math.random()}
-                          >
-                            <OptionalLabel label="Item Name" />
-                            <OptionalLabel label="Item Code" />
-                            <OptionalLabel label="Quantity" />
-                            <RequiredLabel label="Company Name" />
-                            <RequiredLabel label="Buying Price" />
-                          </div>
-                          <div className="w-10"></div>
-                        </div>
-                        {outsourcedItems.map((item, index) => (
-                          <OutSourceItemForm
-                            outsourceItem={item}
-                            outsourceItems={outsourcedItems}
-                            setOutsourcedItems={setOutsourcedItems}
-                            key={Math.random()}
-                          />
-                        ))}
+                <div>
+                  <div className="flex justify-between items-center">
+                    <TabsList className="grid w-[40%] grid-cols-2">
+                      <TabsTrigger value="returnItems">
+                        Return Items
+                      </TabsTrigger>
+                      <TabsTrigger value="newItems">New Items</TabsTrigger>
+                    </TabsList>
+                  </div>
+                  {/* Return Item view section */}
+                  <TabsContent value="returnItems">
+                    <Card x-chunk="dashboard-07-chunk-1">
+                      <CardHeader>
+                        <CardTitle>Returned Invoice</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-[150px]">
+                                Spare Part
+                              </TableHead>
+                              <TableHead className="w-[100px]">
+                                Item Code
+                              </TableHead>
+                              <TableHead>Quantity</TableHead>
+                              <TableHead>Unit Price</TableHead>
+                              <TableHead>Returned Qty</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {selectedInvoice &&
+                              selectedInvoice?.items.map((item) => (
+                                <TableRow>
+                                  <TableCell className="font-semibold">
+                                    {item.name}
+                                  </TableCell>
+                                  <TableCell>{item.code}</TableCell>
+                                  <TableCell align="right">
+                                    {item.price}
+                                  </TableCell>
+                                  <TableCell align="right">
+                                    {item.quantity}
+                                  </TableCell>
+                                  <TableCell>
+                                    <Input
+                                      id={"" + item.id}
+                                      type="number"
+                                      max={item.quantity}
+                                      min={0}
+                                      value={returnedQuantities[item.code] || 0}
+                                      onChange={(e) =>
+                                        handleReturnedQuantityChange(
+                                          item.code,
+                                          parseInt(e.target.value, 10),
+                                          item.price,
+                                          item.id,
+                                        )
+                                      }
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                      <div className="mb-2 ml-2" style={{ paddingLeft: 10 }}>
+                        <h3 className="text-xl font-semibold leading-none tracking-tight">
+                          Total Return Value: Rs. {totalReturnValue.toFixed(2)}
+                        </h3>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                    </Card>
+                  </TabsContent>
+                  {/* <div className = "mb-4">
+                  {outsourcedItems.length > 0 && (
+                    <Card className="mt-4 bg-slate-200">
+                      <CardContent className="pl-6 pr-2 pt-4 shadow-sm">
+                        <div>
+                          <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">
+                            Outsourced Item Details
+                          </h3>
+                          <div key={Math.random()}>
+                            <div className="d-flex gap-8">
+                              <div
+                                className="grid grid-cols-5 gap-4 w-full"
+                                key={Math.random()}
+                              >
+                                <OptionalLabel label="Item Name" />
+                                <OptionalLabel label="Item Code" />
+                                <OptionalLabel label="Quantity" />
+                                <RequiredLabel label="Company Name" />
+                                <RequiredLabel label="Buying Price" />
+                              </div>
+                              <div className="w-10"></div>
+                            </div>
+                            {outsourcedItems.map((item, index) => (
+                              <OutSourceItemForm
+                                outsourceItem={item}
+                                outsourceItems={outsourcedItems}
+                                setOutsourcedItems={setOutsourcedItems}
+                                key={Math.random()}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div> */}
+
+                  {/* New invoice section */}
+                  <TabsContent value="newItems">
+                    <Fragment>
+                      {selectedInvoice && (
+                        <Tabs
+                          defaultValue="creditor"
+                          className="w-[100%]"
+                          onValueChange={handleTabChange}
+                        >
+                          {selectedInvoice?.invoiceType === "credit" && (
+                            <div>
+                              <div className="flex justify-between items-center">
+                                <TabsList className="grid w-[100%] grid-cols-2">
+                                  <TabsTrigger value="creditor">
+                                    Creditor Invoice
+                                  </TabsTrigger>
+                                  <TabsTrigger value="cash">
+                                    Cash Invoice
+                                  </TabsTrigger>
+                                </TabsList>
+                              </div>
+                              <TabsContent value="cash">
+                                <CashInvoiceBase />
+                              </TabsContent>
+                              <TabsContent value="creditor">
+                                <CreditorInvoiceBase />
+                              </TabsContent>
+                            </div>
+                          )}
+                          {selectedInvoice?.invoiceType === "cash" && (
+                            <div>
+                              <div className="flex justify-between items-center">
+                                <TabsList className="grid w-[40%] grid-cols-1">
+                                  <TabsTrigger value="cash">
+                                    Cash Invoice
+                                  </TabsTrigger>
+                                </TabsList>
+                              </div>
+                              <TabsContent value="cash">
+                                <CashInvoiceBase />
+                              </TabsContent>
+                            </div>
+                          )}
+                        </Tabs>
+                      )}
+                    </Fragment>
+                  </TabsContent>
+                </div>
+              </Tabs>
             </div>
           </div>
 
-          <div style={{ flex: 5 }}>
-            <Card x-chunk="dashboard-07-chunk-1">
-              <CardHeader>
-                <CardTitle>Returned Invoice</CardTitle>
-                <CardDescription>{`Invoice ID : ${selectedInvoice?.invoiceId}`}</CardDescription>
-                <div className="d-flex justify-between">
-                  <CardDescription>{`Customer : ${selectedInvoice?.customer}`}</CardDescription>
-                  <CardDescription>
-                    <p
-                      className="pl-2 pr-2"
-                      style={{
-                        background: "#2563eb",
-                        color: "#fff",
-                        borderRadius: 5,
-                        maxWidth: "max-content",
-                        fontSize: 12,
-                        fontWeight: 400,
-                      }}
-                    >{`Date : ${selectedInvoice && convertArrayToISOFormat(selectedInvoice?.date)}`}</p>
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[150px]">Spare Part</TableHead>
-                      <TableHead className="w-[100px]">Item Code</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Returned Qty</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {selectedInvoice &&
-                      selectedInvoice?.items.map((item) => (
-                        <TableRow>
-                          <TableCell className="font-semibold">
-                            {item.name}
-                          </TableCell>
-                          <TableCell>{item.code}</TableCell>
-                          <TableCell align="right">{item.quantity}</TableCell>
-                          <TableCell>
-                            <Input
-                              id="price-1"
-                              type="number"
-                              max={item.quantity}
-                              min={0}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+          <div style={{ flex: 3 }}>
+            <Summary />
           </div>
         </CardContent>
       </div>
