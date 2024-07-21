@@ -20,6 +20,7 @@ import EditUser from "./pages/dashboard/user-management/EditUser";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
+import { Analytics } from "./pages/dashboard/dashboard-root/Analytics";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
+          <Route path="" element={<Analytics />} />
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />
