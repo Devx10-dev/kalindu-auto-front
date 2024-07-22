@@ -41,6 +41,18 @@ class CreditInvoiceService extends Service {
       throw new Error("Failed to fetch cash invoice");
     }
   }
+
+  async createCreditInvoice(creditInvoiceData : InvoiceState ) : Promise<InvoiceState> {
+    try{
+      const response = await this.api.post<InvoiceState>(
+          CREDIT_INVOICE_URL,
+          creditInvoiceData,
+      );
+      return response.data;
+    } catch (error){
+      throw new Error("Fail to create credit invoice")
+    }
+  }
 }
 
 export { CreditInvoiceService };
