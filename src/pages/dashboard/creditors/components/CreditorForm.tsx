@@ -35,11 +35,14 @@ export function RegisterForm(props: {
   isEditMode?: boolean;
   creditor?: Creditor;
 }) {
+  //     ----------     VARIABLE INITIALIZATION     ----------     //
+
   const axiosPrivate = useAxiosPrivate();
-  const creditorService = new CreditorAPI(axiosPrivate);
+  const creditorAPI = new CreditorAPI(axiosPrivate);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // for the edit mode the default values will be propagated using the provided creditor data.
   const defaultValues: Partial<CreditorFormValues> = props.isEditMode
     ? {
         shopName: props.creditor.shopName,
@@ -47,8 +50,9 @@ export function RegisterForm(props: {
         email: props.creditor.email,
         primaryContact: props.creditor.primaryContact,
         secondaryContact: props.creditor.secondaryContact,
-        creditLimit: props.creditor.creditLimit.toString(),
+        creditLimit: props.creditor.creditLimit,
         maxDuePeriod: props.creditor.maxDuePeriod.toString(),
+        address: props.creditor.address,
       }
     : {};
 
@@ -57,9 +61,12 @@ export function RegisterForm(props: {
     defaultValues,
   });
 
+  //     ----------     BACKEND API FUNCTIONS     ----------     //
+
+  //create creditor mutation
   const createCreditorMutation = useMutation({
-    mutationFn: (data: CreditorFormValues) =>
-      creditorService.createCreditor(data),
+    mutationFn: (data: CreditorFormValues) => creditorAPI.createCreditor(data),
+
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["creditors"] });
@@ -67,7 +74,7 @@ export function RegisterForm(props: {
       toast({
         variant: "default",
         title: "Success",
-        description: "Successfully created creditor.",
+        description: "Successfully created creditor ✅",
         className: "bg-green-200",
         action: (
           <ToastAction altText="View Creditors">
@@ -76,41 +83,46 @@ export function RegisterForm(props: {
         ),
       });
     },
+
     onError: (data: any) => {
       toast({
         variant: "destructive",
-        title: data.response.data,
-        description: "Failed with status code : " + data.response.status,
+        title: "Creating creditor failed 🤕",
+        description: data.response.data,
         duration: 5000,
       });
     },
   });
 
+  // update creditor mutation and logic
   const updateCreditorMutation = useMutation({
     mutationFn: (data: CreditorFormValues) =>
-      creditorService.updateCreditor(data, props.creditor.creditorID),
+      creditorAPI.updateCreditor(
+        getModifiedCreditorFields(data, props.creditor),
+        props.creditor.creditorID,
+      ),
+
     onSuccess: (updatedCreditor) => {
-      // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["creditors"] });
       // Convert creditLimit and maxDuePeriod to strings
       const formattedCreditor = {
         ...updatedCreditor,
-        creditLimit: updatedCreditor.creditLimit.toString(),
         maxDuePeriod: updatedCreditor.maxDuePeriod.toString(),
       };
       form.reset(formattedCreditor);
       toast({
         variant: "default",
         title: "Success",
-        description: "Successfully Updated creditor.",
+        description: "Successfully Updated creditor ✅",
         className: "bg-green-200",
       });
     },
-    onError: (data) => {
+
+    onError: (data: any) => {
       toast({
         variant: "destructive",
-        title: "Something went wrong : " + data.name,
-        description: data.message,
+        title: "Updating creditor failed 🤕",
+        description: data.response.data,
         duration: 5000,
       });
     },
@@ -123,6 +135,25 @@ export function RegisterForm(props: {
 
     if (createCreditorMutation.isSuccess || updateCreditorMutation.isSuccess)
       form.reset();
+  }
+
+  //     ----------     HELPER FUNCTIONS     ----------     //
+
+  // when updating the creditor we only need to send the updated values to the backend.
+  // this function will remove any not updated values from the request data to be generated
+  function getModifiedCreditorFields(
+    newData: CreditorFormValues,
+    originalCreditor: Creditor,
+  ) {
+    const modifiedFields: any = {};
+
+    (Object.keys(newData) as Array<keyof CreditorFormValues>).forEach((key) => {
+      if (newData[key] !== originalCreditor[key]) {
+        modifiedFields[key] = newData[key];
+      }
+    });
+
+    return modifiedFields;
   }
 
   if (createCreditorMutation.isPending || updateCreditorMutation.isPending) {
@@ -187,6 +218,27 @@ export function RegisterForm(props: {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem className="w-full col-span-1 row-span-1">
+                <FormLabel>Address</FormLabel>
+                <FormControl>
+                  <Input
+                    className="w-full"
+                    type="text"
+                    {...field}
+                    placeholder="Type address"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="primaryContact"
@@ -196,10 +248,9 @@ export function RegisterForm(props: {
                 <FormControl>
                   <Input
                     className="w-full"
-                    type="tel"
+                    type="text"
                     {...field}
                     placeholder="Type contact no"
-                    minLength={10}
                   />
                 </FormControl>
                 <FormMessage />
@@ -215,10 +266,9 @@ export function RegisterForm(props: {
                 <FormControl>
                   <Input
                     className="w-full"
-                    type="number"
+                    type="text"
                     {...field}
                     placeholder="Type contact no"
-                    minLength={10}
                   />
                 </FormControl>
                 <FormMessage />
@@ -238,6 +288,13 @@ export function RegisterForm(props: {
                     {...field}
                     placeholder="Type credit limit"
                     minLength={4}
+                    onChange={(event) => {
+                      form.setValue(
+                        "creditLimit",
+                        parseInt(event.target.value),
+                        { shouldDirty: true },
+                      );
+                    }}
                   />
                 </FormControl>
                 <FormDescription>
