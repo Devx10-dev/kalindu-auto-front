@@ -63,7 +63,7 @@ export type Creditor = {
   secondaryContact?: string;
   address?: string;
   totalDue?: string;
-  creditLimit?: string;
+  creditLimit?: number;
   status?: string;
   dueDate?: string;
   isExpired?: string;

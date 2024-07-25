@@ -56,104 +56,107 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
     <Card className="p-4">
       <CardContent className="p-3 shadow-sm">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Item Name (Read-only)</FormLabel>
-                  <FormControl>
-                    <Input {...field} disabled />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                <div className="grid grid-cols-2 gap-5">
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Item Name (Read-only)</FormLabel>
+                                <FormControl>
+                                    <Input {...field} disabled/>
+                                </FormControl>
+                            </FormItem>
+                        )}
                     />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="quantity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quantity</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10))
-                      }
+                    <FormField
+                        control={form.control}
+                        name="price"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Price</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        {...field}
+                                        onChange={(e) =>
+                                            field.onChange(parseFloat(e.target.value))
+                                        }
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
                     />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Code</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="discount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Discount</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
+                    <FormField
+                        control={form.control}
+                        name="quantity"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Quantity</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        {...field}
+                                        onChange={(e) =>
+                                            field.onChange(parseInt(e.target.value, 10))
+                                        }
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
                     />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end gap-4 mt-12">
-              <Button onClick={onClose} variant="outline">
-                Cancel
-              </Button>
-              <Button type="submit">Update Item</Button>
-            </div>
-          </form>
+                    <FormField
+                        control={form.control}
+                        name="code"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Code</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="description"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="discount"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Discount</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        {...field}
+                                        onChange={(e) =>
+                                            field.onChange(parseFloat(e.target.value))
+                                        }
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
+                    <div className="flex justify-end gap-4 mt-12">
+                        <Button onClick={onClose} variant="outline">
+                            Cancel
+                        </Button>
+                        <Button type="submit">Update Item</Button>
+                    </div>
+            </form>
         </Form>
       </CardContent>
     </Card>

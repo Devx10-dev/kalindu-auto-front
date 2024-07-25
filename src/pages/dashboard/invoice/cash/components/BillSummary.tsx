@@ -28,16 +28,6 @@ const BillSummary = () => {
   const axiosPrivate = useAxiosPrivate();
   const cashInvoiceService = new CashInvoiceService(axiosPrivate);
 
-  /*
-      const subtotal = invoiceItemDTOList.reduce(
-          (acc: any, item: any) => acc + item.quantity * item.price - item.quantity * item.discount,
-          0
-      );
-
-      const discountedTotal = subtotal - (discountAmount || 0);
-      const totalWithVat = discountedTotal + (vatAmount || 0);
-      // setTotalPrice(totalWithVat);
-  */
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
