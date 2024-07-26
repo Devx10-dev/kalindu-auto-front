@@ -55,14 +55,15 @@ function HandlingReturn() {
     setSourceInvoiceId,
     addReturnItem,
     setReturnType,
-    invoiceItemDTOList,
     setCustomer,
+    setReturnAmount,
+    setPurchaseDate,
+    returnType,
   } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
 
   const [show, setShow] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(0);
   const [items, setItems] = useState<DummyInvoiceItem[]>([]);
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -220,8 +221,6 @@ function HandlingReturn() {
       }
       total += itemTotalPrice;
     });
-
-    setTotalPrice(total);
   };
 
   useEffect(() => {
@@ -257,6 +256,7 @@ function HandlingReturn() {
       0,
     );
     setTotalReturnValue(totalValue);
+    setReturnAmount(totalValue);
   }, [returnedQuantities, selectedInvoice]);
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -264,10 +264,13 @@ function HandlingReturn() {
   };
 
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
+    console.log("/////////////////// baseInvoice", baseInvoice);
     setCustomer(baseInvoice.customer);
+    setPurchaseDate(baseInvoice.date);
     setReturnType(findReturnType(baseInvoice.invoiceId));
     setSourceInvoiceId(baseInvoice.invoiceId);
     setSelectedInvoice(baseInvoice);
+    // setTotalPrice(baseInvoice.totalPrice);
   };
 
   const findReturnType = (invoiceId: string): string => {
@@ -322,7 +325,7 @@ function HandlingReturn() {
               >
                 <div>
                   <div className="flex justify-between items-center">
-                    <TabsList className="grid w-[40%] grid-cols-2">
+                    <TabsList className="grid w-[40%] grid-cols-2 bg-blue-600 text-slate-50">
                       <TabsTrigger value="returnItems">
                         Return Items
                       </TabsTrigger>
@@ -435,19 +438,19 @@ function HandlingReturn() {
                     <Fragment>
                       {selectedInvoice && (
                         <Tabs
-                          defaultValue="creditor"
+                          defaultValue="cash"
                           className="w-[100%]"
                           onValueChange={handleTabChange}
                         >
-                          {selectedInvoice?.invoiceType === "credit" && (
+                          {returnType === "CREDIT" && (
                             <div>
                               <div className="flex justify-between items-center">
-                                <TabsList className="grid w-[100%] grid-cols-2">
-                                  <TabsTrigger value="creditor">
-                                    Creditor Invoice
-                                  </TabsTrigger>
+                                <TabsList className="grid w-[100%] grid-cols-2 bg-blue-600 text-slate-50">
                                   <TabsTrigger value="cash">
                                     Cash Invoice
+                                  </TabsTrigger>
+                                  <TabsTrigger value="creditor">
+                                    Creditor Invoice
                                   </TabsTrigger>
                                 </TabsList>
                               </div>
@@ -455,14 +458,15 @@ function HandlingReturn() {
                                 <CashInvoiceBase />
                               </TabsContent>
                               <TabsContent value="creditor">
-                                <CreditorInvoiceBase />
+                                <CashInvoiceBase />
+                                {/* <CreditorInvoiceBase /> */}
                               </TabsContent>
                             </div>
                           )}
-                          {selectedInvoice?.invoiceType === "cash" && (
+                          {returnType === "CASH" && (
                             <div>
                               <div className="flex justify-between items-center">
-                                <TabsList className="grid w-[40%] grid-cols-1">
+                                <TabsList className="grid w-[40%] grid-cols-1 bg-blue-600 text-slate-50">
                                   <TabsTrigger value="cash">
                                     Cash Invoice
                                   </TabsTrigger>

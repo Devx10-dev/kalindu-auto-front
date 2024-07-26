@@ -25,8 +25,9 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   discountAmount: 0,
   vatPercentage: 0,
   vatAmount: 0,
+  returnAmount: 0,
   totalPrice: undefined,
-
+  purchaseDate: undefined,
   //commissions details
   commissionName: undefined,
   commissionAmount: undefined,
@@ -68,6 +69,18 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       creditInvoice: creditInvoice,
+    })),
+
+  setReturnAmount: (returnAmount: number) =>
+    set((state) => ({
+      ...state,
+      returnAmount: returnAmount,
+    })),
+
+  setPurchaseDate: (purchaseDate: Array<number>) =>
+    set((state) => ({
+      ...state,
+      purchaseDate: purchaseDate,
     })),
 
   addReturnItem: (newItem: ReturnItem) =>
@@ -185,10 +198,10 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       ...state,
       vatAmount: amount,
     })),
-  setTotalPrice: (price: number) =>
+  setTotalPrice: (totalPrice: number) =>
     set((state) => ({
       ...state,
-      totalPrice: price,
+      totalPrice: totalPrice,
     })),
 
   setCommissionName: (commissionName?: string) =>

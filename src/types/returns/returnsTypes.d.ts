@@ -6,6 +6,7 @@ export interface BaseInvoice {
   returnItems: InvoiceItem[];
   date: number[];
   invoiceType: string;
+  totalPrice: number;
 }
 
 export type InvoiceItem = {
@@ -57,6 +58,8 @@ export type InvoiceState = {
   discount?: number;
   vat?: number;
   totalDiscount?: number;
+  returnAmount?: number;
+  purchaseDate?: Array<number>;
 
   commissionName?: string;
   commissionRemark?: string;
@@ -88,6 +91,8 @@ export type InvoiceState = {
   setVatPercentage: (percentage: number) => void;
   setVatAmount: (amount: number) => void;
   setTotalPrice: (price: number) => void;
+  setReturnAmount: (returnAmount: number) => void;
+  setPurchaseDate: (purchaseDate: Array<number>) => void;
 
   setCommissionName: (name?: string) => void;
   setCommissionRemark: (remark?: string) => void;

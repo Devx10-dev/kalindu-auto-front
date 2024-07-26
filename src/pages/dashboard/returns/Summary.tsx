@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -31,21 +31,15 @@ const Summary = () => {
     setVatAmount,
     setTotalPrice,
     getRequestData,
+    returnAmount,
+    purchaseDate,
+    totalPrice,
   } = useReturnInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
   const returnInvoiceService = new ReturnService(axiosPrivate);
+  const [netPaidAmount, setNetPaidAmount] = useState(returnAmount);
 
-  /*
-      const subtotal = invoiceItemDTOList.reduce(
-          (acc: any, item: any) => acc + item.quantity * item.price - item.quantity * item.discount,
-          0
-      );
-
-      const discountedTotal = subtotal - (discountAmount || 0);
-      const totalWithVat = discountedTotal + (vatAmount || 0);
-      // setTotalPrice(totalWithVat);
-  */
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
@@ -64,6 +58,10 @@ const Summary = () => {
   );
 
   // Update the total price when discountedTotal or vatAmount changes
+  useEffect(() => {
+    setNetPaidAmount(totalWithVat - returnAmount);
+  }, [totalWithVat, setNetPaidAmount, returnAmount]);
+
   useEffect(() => {
     setTotalPrice(totalWithVat);
   }, [totalWithVat, setTotalPrice]);
@@ -112,7 +110,6 @@ const Summary = () => {
     try {
       const requestData = getRequestData();
       console.log(requestData);
-      // console.log("////////////////// request data",requestData)
       const createdInvoice =
         await returnInvoiceService.createReturnInvoice(requestData);
       console.log("Cash invoice created:", requestData);
@@ -140,13 +137,49 @@ const Summary = () => {
           Summary
         </h3>
         <div className="flex flex-col">
-          <div className="">
-            <p className="text-sm text-gray-500">
-              Invoice ID: {sourceInvoiceId}
-            </p>
-          </div>
-          <div className="d-flex align">
-            <p className="text-sm text-gray-500">Customer: {customerName}</p>
+          {sourceInvoiceId && (
+            <div
+              className="border-2 border-gray-300 "
+              style={{
+                padding: 15,
+                borderRadius: 5,
+              }}
+            >
+              <div>
+                {purchaseDate && (
+                  <p className="text-sm text-gray-500">#{sourceInvoiceId}</p>
+                )}
+              </div>
+              <div className="d-flex align">
+                <p className="text-2xl text-gray-800">{customerName}</p>
+              </div>
+              <div className="d-flex align">
+                {/* <p className="text-sm text-gray-500">{`Purchased ${purchaseDate[2]}/${purchaseDate[1]}/${purchaseDate[0]}`}</p> */}
+                {purchaseDate && (
+                  <p className="text-sm text-gray-400">{`Purchased ${purchaseDate[2]}/${purchaseDate[1]}/${purchaseDate[0]}`}</p>
+                )}
+              </div>
+            </div>
+          )}
+          <div
+            className="border-2 border-gray-300 mt-5"
+            style={{
+              padding: 15,
+              borderRadius: 5,
+            }}
+          >
+            <div className="d-flex align justify-between">
+              <p className="text-sm text-gray-500">Return Amount: </p>
+              <p className="text-sm text-gray-800">
+                LKR {returnAmount && returnAmount.toFixed(2)}
+              </p>
+            </div>
+            <div className="d-flex align justify-between">
+              <p className="text-sm text-gray-500">Purchase Amount: </p>
+              <p className="text-sm text-gray-800">
+                LKR {returnAmount && totalWithVat.toFixed(2)}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -212,10 +245,10 @@ const Summary = () => {
             />
           </div>
         </div>
-        <div className="flex justify-start text-left mt-16">
+        <div className="flex justify-start text-left mt-10">
           <div className="text-left">
-            <p className="text-xl font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-              Total : LKR {totalWithVat.toFixed(2)}
+            <p className="text-lg font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
+              NET PAID : LKR {netPaidAmount.toFixed(2)}
             </p>
             <div className="d-flex">
               <Button
