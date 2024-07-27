@@ -34,7 +34,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
-          <Route path="" element={<Analytics />} />
+          <Route path="all" element={<Analytics />} />
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />

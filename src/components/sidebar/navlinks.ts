@@ -2,6 +2,16 @@ import { NavLink } from "@/types/sidebar";
 
 const NavLinks: NavLink[] = [
   {
+    label: "Home",
+    href: "/dashboard",
+    sublinks: [
+      {
+        label: "Dashboard",
+        href: "/dashboard/home",
+      },
+    ]
+  },
+  {
     label: "Invoices",
     href: "/dashboard/invoices",
     sublinks: [
