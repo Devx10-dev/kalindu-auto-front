@@ -6,6 +6,7 @@ import {
 } from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
+import { DateRange } from "react-day-picker";
 
 const SALE_AND_EXPENSE_URL = "sale-expense";
 const CATEGORY_URL = `${SALE_AND_EXPENSE_URL}/category`;
@@ -75,6 +76,26 @@ class SaleAndExpenseService extends Service {
       null,
     );
     return response.data;
+  }
+
+  async fetchSalesAndExpensesForDateRange(
+    {
+      fromDate,
+      toDate,
+    }
+    : {
+      fromDate: string | undefined  ;
+      toDate: string | undefined;
+    },
+  ) {
+    try {
+      const response = await this.api.get(
+        `${SALE_AND_EXPENSE_URL}/summary/${fromDate == undefined ? null : fromDate}/${toDate == undefined ? null : toDate}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch sales and expenses");
+    }
   }
 }
 

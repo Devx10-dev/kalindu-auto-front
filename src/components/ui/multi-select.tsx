@@ -1,5 +1,5 @@
 // src/components/multi-select.tsx
-"use client";
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import {
@@ -117,6 +117,18 @@ interface MultiSelectProps
    * Optional, can be used to add custom styles.
    */
   className?: string;
+
+  /**
+   * If true, enables search functionality to filter the options based on user input.
+   * Optional, defaults to false.
+   */
+  search?: boolean;
+
+  /**
+   * If true, the close button will be displayed inline with the badges.
+   * Optional, defaults to false.
+  */
+  badgeInlineClose?: boolean;
 }
 
 export const MultiSelect = React.forwardRef<
@@ -135,6 +147,8 @@ export const MultiSelect = React.forwardRef<
       modalPopover = false,
       asChild = false,
       className,
+      search = false,
+      badgeInlineClose = true,
       ...props
     },
     ref
@@ -211,6 +225,7 @@ export const MultiSelect = React.forwardRef<
               "flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit",
               className
             )}
+            size="sm"
           >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
@@ -231,13 +246,15 @@ export const MultiSelect = React.forwardRef<
                           <IconComponent className="h-4 w-4 mr-2" />
                         )}
                         {option?.label}
-                        <XCircle
-                          className="ml-2 h-4 w-4 cursor-pointer"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            toggleOption(value);
-                          }}
-                        />
+                        {badgeInlineClose && (
+                          <XCircle
+                            className="ml-2 h-4 w-4 cursor-pointer"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              toggleOption(value);
+                            }}
+                          />
+                        )}
                       </Badge>
                     );
                   })}
@@ -262,13 +279,13 @@ export const MultiSelect = React.forwardRef<
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <XIcon
+                  {/* <XIcon
                     className="h-4 mx-2 cursor-pointer text-muted-foreground"
                     onClick={(event) => {
                       event.stopPropagation();
                       handleClear();
                     }}
-                  />
+                  /> */}
                   <Separator
                     orientation="vertical"
                     className="flex min-h-6 h-full"
@@ -291,19 +308,21 @@ export const MultiSelect = React.forwardRef<
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
-          <Command disablePointerSelection>
+          <Command>
+            {search && (
+              
             <CommandInput
               placeholder="Search..."
               onKeyDown={handleInputKeyDown}
             />
+            )}
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
                 <CommandItem
                   key="all"
                   onSelect={toggleAll}
-                  className="cursor-pointer"
-                  disabled={false}
+                  className="cursor-pointer data-[disabled]:pointer-events-auto data-[disabled]:opacity-100"
                 >
                   <div
                     className={cn(
@@ -323,11 +342,11 @@ export const MultiSelect = React.forwardRef<
                     <CommandItem
                       key={option.value}
                       onSelect={() => toggleOption(option.value)}
-                      className="cursor-pointer hover:bg-red-500 hover:text-white"
+                      className="cursor-pointer data-[disabled]:pointer-events-auto data-[disabled]:opacity-100"
                     >
                       <div
                         className={cn(
-                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary enabled",
+                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                           isSelected
                             ? "bg-primary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible"
@@ -350,7 +369,7 @@ export const MultiSelect = React.forwardRef<
                     <>
                       <CommandItem
                         onSelect={handleClear}
-                        className="flex-1 justify-center cursor-pointer"
+                        className="flex-1 justify-center cursor-pointer data-[disabled]:pointer-events-auto data-[disabled]:opacity-100"
                       >
                         Clear
                       </CommandItem>
@@ -360,10 +379,9 @@ export const MultiSelect = React.forwardRef<
                       />
                     </>
                   )}
-                  <CommandSeparator />
                   <CommandItem
                     onSelect={() => setIsPopoverOpen(false)}
-                    className="flex-1 justify-center cursor-pointer"
+                    className="flex-1 justify-center cursor-pointer max-w-full data-[disabled]:pointer-events-auto data-[disabled]:opacity-100"
                   >
                     Close
                   </CommandItem>

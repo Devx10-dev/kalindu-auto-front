@@ -21,10 +21,32 @@ import {
 import DashboardCard from "./components/DashboardCard";
 import OverviewChart from "./components/OverviewChart";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { DateRangePicker } from "../invoice/view-invoices/components/DateRangePicker";
+import { DateRange } from "react-day-picker";
+import { getAnalyticalRange } from "@/utils/dateRangeUtil";
+import { AnalyticalRange } from "@/types/analytics/dateRangeTypes";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
+import { useQuery } from "@tanstack/react-query";
+import dateToString from "@/utils/dateToString";
 
 export function Analytics() {
   //   active tab state
   const [activeTab, setActiveTab] = useState<string>("today");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  });
+  const [analiticalRange, setAnaliticalRange] = useState<AnalyticalRange | undefined>({
+    dateRange: {
+      from: undefined,
+      to: undefined,
+    },
+    rates: [],
+    defaultRate: "",
+  });
+
+  const [salesAndExpenses, setSalesAndExpenses] = useState<any[]>([]);
   //   const [search, setSearch] = useState<string>("");
   //   const debouncedSearch = useDebounce(search, 500);
   //   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -61,8 +83,27 @@ export function Analytics() {
   //     setSearch("");
   //   };
 
-  //   const axiosPrivate = useAxiosPrivate();
-  //   const invoiceService = new CashInvoiceService(axiosPrivate);
+    const axiosPrivate = useAxiosPrivate();
+    const salesAndExpenceService = new SaleAndExpenseService(axiosPrivate);
+
+    const {
+      data: salesAndExpensesData,
+      isLoading: salesAndExpensesLoading,
+      error: salesAndExpensesError,
+    } = useQuery<any[]>({
+      queryKey: [
+        "salesAndExpenses",
+        dateRange,
+      ],
+      queryFn: () =>
+        salesAndExpenceService.fetchSalesAndExpensesForDateRange(
+          {
+            fromDate: dateRange?.from ? dateToString(dateRange.from) : undefined,
+            toDate: dateRange?.to ? dateToString(dateRange.to) : undefined,
+          },
+        ),
+      enabled: true,
+    });
 
   //   const {
   //     data: cashInvoiceData,
@@ -158,6 +199,27 @@ export function Analytics() {
     console.log(tab);
   };
 
+  useEffect(() => {
+    console.log("ACTIVE TAB", activeTab);
+    const range = getAnalyticalRange({ range: activeTab });
+    setAnaliticalRange(range);
+    console.log("RANGE", range);
+  }
+  , [activeTab]);
+
+  useEffect(() => {
+    if(analiticalRange.dateRange){
+      setDateRange(analiticalRange.dateRange);
+    }
+  }
+  , [analiticalRange]);
+
+  useEffect(() => {
+    console.log("DATE RANGE", dateRange);
+  }
+  , [dateRange]);
+
+
   //   useEffect(() => {
   //     if (creditInvoiceData) {
   //       console.log("CREDITTTTTTTT", creditInvoiceData);
@@ -166,17 +228,11 @@ export function Analytics() {
 
   return (
     <Fragment>
-      
-      <Tabs
-        defaultValue="cash"
-        className="w-[100%]"
-        // onValueChange={handleTabChange}
-      >
         <div className="flex justify-between items-center">
           {/* <h1 className="text-2xl font-semibold">View Invoices</h1> */}
           <CardHeader>
             <PageHeader
-              title="Dashboard"
+              title="Analytics"
               description=""
               icon={<LayoutDashboard />}
             />
@@ -186,19 +242,27 @@ export function Analytics() {
               </p>
             </CardDescription>
           </CardHeader>
-          <Tabs
-            defaultValue="today"
-            className="w-[40%] size-sm"
-            onValueChange={handleTabChange}
-          >
-            <TabsList className="grid w-[100%] grid-cols-5 size-sm">
-              <TabsTrigger value="today">Today</TabsTrigger>
-              <TabsTrigger value="week">Week</TabsTrigger>
-              <TabsTrigger value="month">Month</TabsTrigger>
-              <TabsTrigger value="year">Year</TabsTrigger>
-              <TabsTrigger value="custom">Custom</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex gap-2 justify-end">
+            <DateRangePicker  
+              // dateRange={dateRange}
+              // setDateRange={setDateRange}
+              externalDateRange={dateRange}
+              disabled={true}
+            />
+            <Tabs
+              defaultValue="today"
+              className="w-[100%] size-sm"
+              onValueChange={handleTabChange}
+            >
+              <TabsList className="grid w-[100%] grid-cols-5 size-sm">
+                <TabsTrigger value="today">Today</TabsTrigger>
+                <TabsTrigger value="week">Week</TabsTrigger>
+                <TabsTrigger value="month">Month</TabsTrigger>
+                <TabsTrigger value="year">Year</TabsTrigger>
+                <TabsTrigger value="custom">Custom</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 ml-5">
           <DashboardCard
@@ -223,7 +287,7 @@ export function Analytics() {
           />
         </div>
         <div className="grid gap-4 md:grid-cols-1 md:gap-8 lg:grid-cols-5 ml-5 mt-5">
-          <OverviewChart className="col-span-3" />
+          <OverviewChart className="col-span-3" analyticalRange={analiticalRange} />
           <div className="col-span-2">
             <Card x-chunk="dashboard-01-chunk-5">
               <CardHeader>
@@ -319,7 +383,6 @@ export function Analytics() {
         <TabsContent value="dummy">
          
         </TabsContent> */}
-      </Tabs>
     </Fragment>
   );
 }

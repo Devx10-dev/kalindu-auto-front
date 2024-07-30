@@ -13,15 +13,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ClassValue } from "clsx";
 
 export function DateRangePicker({
   className,
   dateRange,
   setDateRange,
+  externalDateRange,
+  disabled=false,
 }: {
-  className?: React.HTMLAttributes<HTMLDivElement>;
+  className?: ClassValue;
   dateRange?: DateRange;
   setDateRange?: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  externalDateRange?: DateRange;
+  disabled?: boolean;
 }) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: undefined,
@@ -32,17 +37,24 @@ export function DateRangePicker({
     setDateRange && setDateRange(date);
   }, [date]);
 
+  React.useEffect(() => {
+    if (externalDateRange) {
+      setDate(externalDateRange);
+    }
+  }, [externalDateRange]);
+
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild> 
           <Button
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
+              "w-fill justify-start text-left font-normal",
               !date && "text-muted-foreground",
             )}
+            disabled={disabled}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
