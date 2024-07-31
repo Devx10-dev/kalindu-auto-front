@@ -43,11 +43,6 @@ const CreditorInvoiceBase: React.FC = () => {
     label: shopName,
   }));
 
-  useEffect(() => {
-    console.log(creditorID, creditorName);
-    console.log(data);
-  }, [creditorID, creditorName, creditorData]);
-
   return (
     <div className="mb-20">
       <CardHeader>
@@ -74,8 +69,6 @@ const CreditorInvoiceBase: React.FC = () => {
             <Select
               options={creditorData}
               onChange={(selectedOption) => {
-                console.log(selectedOption);
-
                 setCreditor(selectedOption?.label, selectedOption?.value);
               }}
               value={{

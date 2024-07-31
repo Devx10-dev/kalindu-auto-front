@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import useCashInvoiceStore from "../context/useCashInvoiceStore";
 import { X } from "lucide-react";
-import {useState} from "react";
+import { useState } from "react";
 import { InvoiceItem } from "@/types/invoice/cashInvoice";
 import { FormModal } from "@/components/modal/FormModal.tsx";
 import EditItem from "@/pages/dashboard/invoice/cash/components/EditItem.tsx";
@@ -61,15 +61,15 @@ const InvoiceTable: React.FC = () => {
                 <TableCell>
                   <div className="flex justify-center items-center gap-2">
                     <Button
-                        onClick={() => removeInvoiceItem(item)}
-                        variant={"secondary"}
+                      onClick={() => removeInvoiceItem(item)}
+                      variant={"secondary"}
                     >
                       <X className="mr-2" /> Remove
                     </Button>
                     <IconButton
-                        icon={<EditIcon height="20" width="20" />}
-                        tooltipMsg="Edit Spare Part"
-                        handleOnClick={() => setEditingItem(item)}
+                      icon={<EditIcon height="20" width="20" />}
+                      tooltipMsg="Edit Spare Part"
+                      handleOnClick={() => setEditingItem(item)}
                     />
                   </div>
                 </TableCell>
@@ -86,15 +86,15 @@ const InvoiceTable: React.FC = () => {
       </Table>
 
       <FormModal
-          title="Edit Item"
-          titleDescription="Edit spare part item in the invoice"
-          show={!!editingItem}
-          onClose={() => setEditingItem(null)}
-          component={
-              editingItem && (
-                  <EditItem item={editingItem} onClose={() => setEditingItem(null)} />
-              )
-          }
+        title="Edit Item"
+        titleDescription="Edit spare part item in the invoice"
+        show={!!editingItem}
+        onClose={() => setEditingItem(null)}
+        component={
+          editingItem && (
+            <EditItem item={editingItem} onClose={() => setEditingItem(null)} />
+          )
+        }
       />
     </div>
   );
