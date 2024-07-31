@@ -17,7 +17,7 @@ const CustomerDetails: React.FC = () => {
               <Label>Customer Name</Label>
               <Input
                 type="text"
-                value={customerName}
+                value={customerName || ""}
                 onChange={(e) => setCustomer(e.target.value)}
                 placeholder="Enter customer name"
               />
@@ -26,7 +26,7 @@ const CustomerDetails: React.FC = () => {
               <Label>Vehicle No</Label>
               <Input
                 type="text"
-                value={vehicleNumber}
+                value={vehicleNumber || ""}
                 onChange={(e) => setVehicleNumber(e.target.value)}
                 placeholder="Enter vehicle number"
               />

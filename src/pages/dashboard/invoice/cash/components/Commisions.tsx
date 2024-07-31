@@ -24,7 +24,7 @@ const Commissions: React.FC = () => {
               <Label>Name</Label>
               <Input
                 type="text"
-                value={commissionName}
+                value={commissionName || ""}
                 onChange={(e) => setCommissionName(e.target.value)}
                 placeholder="Enter commission name"
               />
@@ -34,7 +34,7 @@ const Commissions: React.FC = () => {
               <Input
                 type="text"
                 //this should be number and cannot be negative
-                value={commissionRemark}
+                value={commissionRemark || ""}
                 onChange={(e) => setCommissionRemark(e.target.value)}
                 placeholder="Small remark about the commission"
               />
@@ -44,7 +44,7 @@ const Commissions: React.FC = () => {
               <Input
                 type="number"
                 //this should be number and cannot be negative
-                value={commissionAmount}
+                value={commissionAmount || ""}
                 onChange={(e) => setCommissionAmount(parseInt(e.target.value))}
                 placeholder="Enter the total commise amount"
               />
