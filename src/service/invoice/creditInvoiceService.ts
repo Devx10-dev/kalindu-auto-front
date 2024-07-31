@@ -42,15 +42,17 @@ class CreditInvoiceService extends Service {
     }
   }
 
-  async createCreditInvoice(creditInvoiceData : InvoiceState ) : Promise<InvoiceState> {
-    try{
+  async createCreditInvoice(
+    creditInvoiceData: InvoiceState,
+  ): Promise<InvoiceState> {
+    try {
       const response = await this.api.post<InvoiceState>(
-          CREDIT_INVOICE_URL,
-          creditInvoiceData,
+        CREDIT_INVOICE_URL,
+        creditInvoiceData,
       );
       return response.data;
-    } catch (error){
-      throw new Error("Fail to create credit invoice")
+    } catch (error) {
+      throw new Error("Fail to create credit invoice");
     }
   }
 }

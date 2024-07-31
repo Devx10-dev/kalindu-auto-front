@@ -19,8 +19,11 @@ import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
 import EditUser from "./pages/dashboard/user-management/EditUser";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
+<<<<<<< HEAD
 import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
-import PrintCreditor from "@/pages/dashboard/invoice/creditor/Print.tsx";
+=======
+import PrintCreditor from "./pages/dashboard/invoice/creditor/Print";
+>>>>>>> 468b77d (commit before completion)
 
 function App() {
   return (

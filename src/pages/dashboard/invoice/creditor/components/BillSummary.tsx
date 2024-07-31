@@ -8,7 +8,8 @@ import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 import { useToast } from "@/components/ui/use-toast.ts";
 import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService.ts";
 import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
-import {CashInvoiceService} from "@/service/invoice/cashInvoiceApi.ts";
+import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi.ts";
+import { useNavigate } from "react-router-dom";
 
 const BillSummary: React.FC = () => {
   const {
@@ -23,11 +24,12 @@ const BillSummary: React.FC = () => {
     setVatAmount,
     setTotalPrice,
     getRequestData,
-      creditorID
+    creditorID,
   } = useCreditorInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
+  const navigate = useNavigate();
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
@@ -92,7 +94,7 @@ const BillSummary: React.FC = () => {
       });
     }
 
-    if (creditorID === undefined || creditorID === null ) {
+    if (creditorID === undefined || creditorID === null) {
       return toast({
         title: "No creditor selected",
         description: "Please select a creditor and then submit",
@@ -104,7 +106,7 @@ const BillSummary: React.FC = () => {
       const requestData = getRequestData();
       console.log(requestData);
       const createdCreditInvoice =
-          await creditInvoiceService.createCreditInvoice(requestData);
+        await creditInvoiceService.createCreditInvoice(requestData);
       console.log("Cash invoice created:", createdCreditInvoice);
       // Handle success response, such as printing the invoice or displaying a success message
       toast({
@@ -112,6 +114,9 @@ const BillSummary: React.FC = () => {
         description: "The cash invoice has been created and printed.",
         variant: "default",
       });
+
+      //after the successful invoice creation user will be redirected to the print invoice page.
+      navigate("print");
     } catch (error) {
       console.error("Error creating cash invoice:", error);
       // Handle error

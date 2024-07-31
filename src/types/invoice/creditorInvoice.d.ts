@@ -11,6 +11,8 @@ export type InvoiceState = {
   invoiceItems?: InvoiceItem[];
   issuedBy?: string;
   issuedTime?: number[];
+  address?: string;
+  contactNo?: string;
 
   discountPercentage?: number;
   discountAmount?: number;
@@ -56,6 +58,7 @@ export type InvoiceItem = {
     companyName?: string;
     buyingPrice?: number;
   };
+  description: string;
 };
 
 export type CreditorInvoiceList = {
