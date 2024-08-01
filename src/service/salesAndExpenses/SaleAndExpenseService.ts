@@ -87,7 +87,7 @@ class SaleAndExpenseService extends Service {
       fromDate: string | undefined  ;
       toDate: string | undefined;
     },
-  ) {
+  ) : Promise<DailySummery[]> {
     try {
       const response = await this.api.get(
         `${SALE_AND_EXPENSE_URL}/summary/${fromDate == undefined ? null : fromDate}/${toDate == undefined ? null : toDate}`,

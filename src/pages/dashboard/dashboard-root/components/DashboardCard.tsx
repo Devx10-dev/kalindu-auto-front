@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cloneElement, useEffect } from "react";
 
 export default function DashboardCard({
@@ -7,12 +8,14 @@ export default function DashboardCard({
   description,
   icon,
   badge,
+  isLoading = false,
 }: {
   title: string;
   content: string;
   description?: string;
   icon: JSX.Element;
   badge?: JSX.Element;
+  isLoading?: boolean;
 }) {
   const styledIcon = icon
     ? cloneElement(icon, {
@@ -28,8 +31,19 @@ export default function DashboardCard({
         {styledIcon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{content}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
+        {/* {isLoading || content.length === 0 ? (
+          // <div className="flex gap-2">
+            <Skeleton className="w-20 h-7" />
+          // </div>
+        ) : ( */}
+          <div className="text-2xl font-bold">{content}</div>
+        {/* )} */}
+        {/* <div className="text-2xl font-bold">{content}</div> */}
+        {isLoading ? (
+          <></>
+        ) : (
+          <div className="text-xs text-muted-foreground">{description}</div>
+        )}  
       </CardContent>
     </Card>
   );

@@ -27,9 +27,13 @@ import { getAnalyticalRange } from "@/utils/dateRangeUtil";
 import { AnalyticalRange } from "@/types/analytics/dateRangeTypes";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import dateToString from "@/utils/dateToString";
-
+import { calculateTotalSummary, currencyAmountString } from "@/utils/analyticsUtils";
+import { TotalSummary } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import { useToast } from "@/components/ui/use-toast";
+import {  useCacheStore, useTotalSummaryStore } from "./context/AnalyticsState";
+import { set } from "date-fns";
 export function Analytics() {
   //   active tab state
   const [activeTab, setActiveTab] = useState<string>("today");
@@ -46,18 +50,36 @@ export function Analytics() {
     defaultRate: "",
   });
 
-  const [salesAndExpenses, setSalesAndExpenses] = useState<any[]>([]);
-  //   const [search, setSearch] = useState<string>("");
-  //   const debouncedSearch = useDebounce(search, 500);
-  //   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-  //     from: undefined,
-  //     to: undefined,
-  //   });
-  //   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  //   const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  //   const [pageNo, setPageNo] = useState<number>(0);
-  //   const [pageSize, setPageSize] = useState<number>(10);
-  //   const { cashInvoicesStore, setCashInvoicesStore } = useInvoiceListStore();
+  const [salesAndExpenses, setSalesAndExpenses] = useState<TotalSummary | undefined>();
+
+
+  const { 
+    todaySummary,
+    weekSummary,
+    monthSummary,
+    yearSummary,
+    customSummary,
+    setTodaySummary,
+    setWeekSummary,
+    setMonthSummary,
+    setYearlySummary,
+    setCustomSummary,
+  } = useTotalSummaryStore();
+
+  const {
+    todaySummaryCache,
+    weekSummaryCache,
+    monthSummaryCache,
+    yearSummaryCache,
+    customSummaryCache,
+    setTodaySummaryCache,
+    setWeekSummaryCache,
+    setMonthSummaryCache,
+    setYearlySummaryCache,
+    setCustomSummaryCache,
+  } = useCacheStore();
+
+
   //   const { creditInvoicesStore, setCreditInvoicesStore } =
   //     useCreditInvoiceListStore();
 
@@ -102,84 +124,24 @@ export function Analytics() {
             toDate: dateRange?.to ? dateToString(dateRange.to) : undefined,
           },
         ),
-      enabled: true,
+      enabled: (dateRange?.from || dateRange?.to) ? true : false,
     });
 
-  //   const {
-  //     data: cashInvoiceData,
-  //     isLoading: cashInvoiceLoading,
-  //     error: cashInvoiceError,
-  //   } = useQuery<InvoiceList>({
-  //     queryKey: [
-  //       "cashInvoices",
-  //       debouncedSearch,
-  //       fromDate,
-  //       toDate,
-  //       pageNo,
-  //       pageSize,
-  //     ],
-  //     queryFn: () =>
-  //       invoiceService.fetchCashInvoices(
-  //         debouncedSearch,
-  //         fromDate ? dateToString(fromDate) : undefined,
-  //         toDate ? dateToString(toDate) : undefined,
-  //         pageNo,
-  //         pageSize,
-  //       ),
-  //     enabled: activeTab === "cash",
-  //   });
+  
 
-  //   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
+    const { toast } = useToast();
 
-  //   const {
-  //     data: creditInvoiceData,
-  //     isLoading: creditInvoiceLoading,
-  //     error: creditInvoiceError,
-  //   } = useQuery<CreditorInvoiceList>({
-  //     queryKey: [
-  //       "creditInvoices",
-  //       debouncedSearch,
-  //       fromDate,
-  //       toDate,
-  //       pageNo,
-  //       pageSize,
-  //     ],
-  //     queryFn: () =>
-  //       creditInvoiceService.fetchCreditInvoices(
-  //         debouncedSearch,
-  //         fromDate ? dateToString(fromDate) : undefined,
-  //         toDate ? dateToString(toDate) : undefined,
-  //         pageNo,
-  //         pageSize,
-  //       ),
-  //     enabled: activeTab === "creditor",
-  //   });
+    useEffect(() => {
+      if (salesAndExpensesError) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: "Failed to fetch invoices",
+          duration: 5000,
+        });
+      }
 
-  //   const { toast } = useToast();
-
-  //   useEffect(() => {
-  //     if (cashInvoiceError) {
-  //       toast({
-  //         variant: "destructive",
-  //         title: "Something went wrong",
-  //         description: "Failed to fetch invoices",
-  //         duration: 5000,
-  //       });
-  //     }
-
-  //     if (creditInvoiceError) {
-  //       toast({
-  //         variant: "destructive",
-  //         title: "Something went wrong",
-  //         description: "Failed to fetch invoices",
-  //         duration: 5000,
-  //       });
-  //     }
-  //   }, [cashInvoiceError, toast]);
-
-  //   if (cashInvoiceError) {
-  //     console.log(cashInvoiceError);
-  //   }
+    }, [salesAndExpensesError, toast]);
 
   //   useEffect(() => {
   //     if (cashInvoiceData?.invoices?.length > 0) {
@@ -218,6 +180,64 @@ export function Analytics() {
     console.log("DATE RANGE", dateRange);
   }
   , [dateRange]);
+
+  useEffect(() => {
+    if (!salesAndExpensesLoading && salesAndExpensesData) {
+      switch (activeTab) {
+        case "today":
+          setTodaySummary(calculateTotalSummary(salesAndExpensesData));
+          setTodaySummaryCache(salesAndExpensesData);
+          break;
+        case "week":
+          setWeekSummary(calculateTotalSummary(salesAndExpensesData));
+          setWeekSummaryCache(salesAndExpensesData);
+          break;
+        case "month":
+          setMonthSummary(calculateTotalSummary(salesAndExpensesData));
+          setMonthSummaryCache(salesAndExpensesData);
+          break;
+        case "year":
+          setYearlySummary(calculateTotalSummary(salesAndExpensesData));
+          setYearlySummaryCache(salesAndExpensesData);
+          console.log("YEAR", yearSummary);
+          break;
+        case "custom":
+          setCustomSummary(calculateTotalSummary(salesAndExpensesData));
+          setCustomSummaryCache(salesAndExpensesData);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+  , [salesAndExpensesData, salesAndExpensesLoading, activeTab, setTodaySummary, setWeekSummary, setMonthSummary, setYearlySummary, setCustomSummary]);
+
+  useEffect(() => {
+    switch (activeTab) {
+      case "today":
+        setSalesAndExpenses(todaySummary);
+        break;
+      case "week":
+        setSalesAndExpenses(weekSummary);
+        console.log("WEEKe", salesAndExpenses);
+        console.log("WEEK", weekSummary);
+        break;
+      case "month":
+        setSalesAndExpenses(monthSummary);
+        break;
+      case "year":
+        setSalesAndExpenses(yearSummary);
+        break;
+      case "custom":
+        setSalesAndExpenses(customSummary);
+        break;
+      default:
+        break;
+    }
+  }
+  , [activeTab, todaySummary, weekSummary, monthSummary, yearSummary, customSummary]);
+
+
 
 
   //   useEffect(() => {
@@ -268,22 +288,26 @@ export function Analytics() {
           <DashboardCard
             title="Total Revenue"
             icon={<DollarSign />}
-            content="Rs. 100,000"
+            content={ salesAndExpenses?.totalRevenueString }
+            // isLoading={salesAndExpensesLoading}
           />
           <DashboardCard
             title="Total Sales"
             icon={<TrendingUp />}
-            content="Rs. 100,000"
+            content={ salesAndExpenses?.totalSalesString }
+            isLoading={salesAndExpensesLoading}
           />
           <DashboardCard
             title="Total Expenses"
             icon={<TrendingDown />}
-            content="Rs. 100,000"
+            content={ salesAndExpenses?.totalExpensesString }
+            isLoading={salesAndExpensesLoading}
           />
           <DashboardCard
             title="Total Credit"
             icon={<CreditCard />}
             content="Rs. 100,000"
+            isLoading={salesAndExpensesLoading}
           />
         </div>
         <div className="grid gap-4 md:grid-cols-1 md:gap-8 lg:grid-cols-5 ml-5 mt-5">
