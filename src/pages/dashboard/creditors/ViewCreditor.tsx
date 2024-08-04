@@ -94,9 +94,11 @@ const ViewCreditor = () => {
                     )}
                   {!hasData && (
                     <TableRow className=" flex p-5 ">
-                      <Label className="font-bold">
-                        Empty Transaction history
-                      </Label>
+                      <TableCell>
+                        <Label className="font-bold">
+                          Empty Transaction history
+                        </Label>
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>

@@ -62,7 +62,6 @@ export type InvoiceState = {
 
   resetState: () => void;
   getRequestData: () => any;
-
 };
 
 export type InvoiceList = {
