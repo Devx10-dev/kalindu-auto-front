@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
-import React, { useRef } from "react";
-import { Link } from "react-router-dom";
-import { ReactToPrint, useReactToPrint } from "react-to-print";
-import useCreditorInvoiceStore from "./context/useCreditorInvoiceStore";
 import { Separator } from "@/components/ui/separator";
-import { InvoiceItem } from "@/types/invoice/creditorInvoice";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 
 const PrintCreditor = () => {
   const componentRef = useRef();
+  const today = new Date();
+  const location = useLocation();
+  const invoiceData = location.state?.invoiceData;
+
   // Function to generate the file name
   const generatePrintFileName = () => {
     const today = new Date();
@@ -20,9 +22,9 @@ const PrintCreditor = () => {
     documentTitle: generatePrintFileName(),
   });
 
-  const { getRequestData } = useCreditorInvoiceStore();
-  const invoiceData = getRequestData();
-  const today = new Date();
+  if (!invoiceData) {
+    return <div>No invoice data available. Please go back and try again.</div>;
+  }
 
   return (
     <>

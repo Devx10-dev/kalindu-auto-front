@@ -10,8 +10,12 @@ import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService.ts"
 import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi.ts";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 const BillSummary: React.FC = () => {
+
+  //     ----------     STATE INITIALIZATION     ----------     //
+
   const {
     invoiceItemDTOList,
     discountPercentage,
@@ -25,27 +29,29 @@ const BillSummary: React.FC = () => {
     setTotalPrice,
     getRequestData,
     creditorID,
+    resetState,
   } = useCreditorInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
         acc + item.quantity * item.price - item.quantity * item.discount,
-      0,
+      0
     );
   }, [invoiceItemDTOList]);
 
   const discountedTotal = useMemo(
     () => subtotal - (discountAmount || 0),
-    [subtotal, discountAmount],
+    [subtotal, discountAmount]
   );
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
-    [discountedTotal, vatAmount],
+    [discountedTotal, vatAmount]
   );
 
   // Update the total price when discountedTotal or vatAmount changes
@@ -53,39 +59,35 @@ const BillSummary: React.FC = () => {
     setTotalPrice(totalWithVat);
   }, [totalWithVat, setTotalPrice]);
 
-  const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const percentage = Math.max(parseFloat(e.target.value), 0);
-    setDiscountPercentage(percentage);
-    setDiscountAmount((subtotal * percentage) / 100);
-  };
+    //     ----------     BACKEND API MUTATIONS (CALLS)    ----------     //
 
-  const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const amount = Math.max(parseFloat(e.target.value), 0);
-    setDiscountAmount(amount);
-    setDiscountPercentage((amount / subtotal) * 100);
-  };
+  //create creditor mutation
+  const createCreditorInvoice = useMutation({
+    mutationFn: () =>
+    creditInvoiceService.createCreditInvoice(getRequestData()),
+    onSuccess: (invoiceData) => {
+      resetState();
+      navigate("print", { state: { invoiceData } }); // this state will be accessed from the print component
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "Successfully created creditor invoice ✅",
+        className: "bg-green-200",
+      });
+    },
 
-  const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const percentage = Math.max(parseFloat(e.target.value), 0);
-    setVatPercentage(percentage);
-    setVatAmount((discountedTotal * percentage) / 100);
-  };
-
-  const handleVatAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const amount = Math.max(parseFloat(e.target.value), 0);
-    setVatAmount(amount);
-    setVatPercentage((amount / discountedTotal) * 100);
-  };
-
-  const { toast } = useToast();
+    onError: (data: any) => {
+      toast({
+        variant: "destructive",
+        title: "Creating invoice failed 🤕",
+        description: data.response.data,
+        duration: 5000,
+      });
+    },
+  });
 
   async function printAndSaveInvoice() {
+    //validations
     if (invoiceItemDTOList.length === 0) {
       return toast({
         title: "No items added to the invoice",
@@ -102,31 +104,41 @@ const BillSummary: React.FC = () => {
       });
     }
 
-    try {
-      const requestData = getRequestData();
-      console.log(requestData);
-      const createdCreditInvoice =
-        await creditInvoiceService.createCreditInvoice(requestData);
-      console.log("Cash invoice created:", createdCreditInvoice);
-      // Handle success response, such as printing the invoice or displaying a success message
-      toast({
-        title: "Invoice created successfully",
-        description: "The cash invoice has been created and printed.",
-        variant: "default",
-      });
-
-      //after the successful invoice creation user will be redirected to the print invoice page.
-      navigate("print");
-    } catch (error) {
-      console.error("Error creating cash invoice:", error);
-      // Handle error
-      toast({
-        title: "Error creating invoice",
-        description: "Failed to create the cash invoice. Please try again.",
-        variant: "destructive",
-      });
-    }
+    //mutation
+    createCreditorInvoice.mutate();
   }
+
+  //     ----------     HELPER FUNCTIONS     ----------     //
+
+  const handleDiscountPercentageChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const percentage = Math.max(parseFloat(e.target.value), 0);
+    setDiscountPercentage(percentage);
+    setDiscountAmount((subtotal * percentage) / 100);
+  };
+
+  const handleDiscountAmountChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const amount = Math.max(parseFloat(e.target.value), 0);
+    setDiscountAmount(amount);
+    setDiscountPercentage((amount / subtotal) * 100);
+  };
+
+  const handleVatPercentageChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const percentage = Math.max(parseFloat(e.target.value), 0);
+    setVatPercentage(percentage);
+    setVatAmount((discountedTotal * percentage) / 100);
+  };
+
+  const handleVatAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const amount = Math.max(parseFloat(e.target.value), 0);
+    setVatAmount(amount);
+    setVatPercentage((amount / discountedTotal) * 100);
+  };
 
   return (
     <Card>
