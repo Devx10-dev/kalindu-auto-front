@@ -97,12 +97,15 @@ export function AddNewTransaction() {
 
   let invoiceOptions = [];
 
-  if (data && data.invoiceIdList && data.invoiceIdList.length > 0) {
-    invoiceOptions = data.invoiceIdList.map((invoiceId) => ({
-      value: invoiceId,
-      label: invoiceId,
+  if (data && Array.isArray(data) && data.length > 0) {
+    invoiceOptions = data.map((invoice) => ({
+      value: invoice.invoiceId,
+      label: invoice.invoiceId,
     }));
   }
+
+  console.log(invoiceOptions);
+  
 
   const createCreditorMutation = useMutation({
     mutationFn: (data: CreditorTransactionFormValues) =>
