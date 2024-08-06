@@ -69,6 +69,7 @@ const ViewCreditor = () => {
                     <TableHead>Invoice No</TableHead>
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
                   {hasData &&
                     transactionResponse.data.creditorTransactions.map(
