@@ -24,6 +24,12 @@ export default function DashboardCard({
       })
     : null;
 
+  // useEffect(() => {
+  //   console.log("DashboardCard rendered");
+  //   console.log("content: ", content);
+  // }
+  // , [content]);
+
   return (
     <Card x-chunk="dashboard-01-chunk-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -31,19 +37,18 @@ export default function DashboardCard({
         {styledIcon}
       </CardHeader>
       <CardContent>
-        {/* {isLoading || content.length === 0 ? (
-          // <div className="flex gap-2">
-            <Skeleton className="w-20 h-7" />
-          // </div>
-        ) : ( */}
-          <div className="text-2xl font-bold">{content}</div>
-        {/* )} */}
-        {/* <div className="text-2xl font-bold">{content}</div> */}
         {isLoading ? (
-          <></>
+          <Skeleton className="w-40 h-7" />
+        ) : content ? (
+          <div className="text-2xl font-bold">{content}</div>
         ) : (
+          <div className="text-2xl font-bold text-muted-foreground">
+            No data
+          </div>
+        )}
+        {!isLoading && description && (
           <div className="text-xs text-muted-foreground">{description}</div>
-        )}  
+        )}
       </CardContent>
     </Card>
   );

@@ -78,16 +78,13 @@ class SaleAndExpenseService extends Service {
     return response.data;
   }
 
-  async fetchSalesAndExpensesForDateRange(
-    {
-      fromDate,
-      toDate,
-    }
-    : {
-      fromDate: string | undefined  ;
-      toDate: string | undefined;
-    },
-  ) : Promise<DailySummery[]> {
+  async fetchSalesAndExpensesForDateRange({
+    fromDate,
+    toDate,
+  }: {
+    fromDate: string | undefined;
+    toDate: string | undefined;
+  }): Promise<DailySummery[]> {
     try {
       const response = await this.api.get(
         `${SALE_AND_EXPENSE_URL}/summary/${fromDate == undefined ? null : fromDate}/${toDate == undefined ? null : toDate}`,

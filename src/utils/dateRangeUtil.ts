@@ -1,23 +1,31 @@
 import { AnalyticalRange } from "@/types/analytics/dateRangeTypes";
 import { DateRange } from "react-day-picker";
 
-function getAnalyticalRange(
-    { 
-        range 
-    }: { 
-        range?: string | DateRange   
-    }
-): AnalyticalRange {
-  if (typeof range === 'string') {
+function getAnalyticalRange({
+  range,
+}: {
+  range?: string | DateRange;
+}): AnalyticalRange {
+  if (typeof range === "string") {
     switch (range) {
-      case "today":{
+      case "today": {
         // from day's time should be 00:00:00
         // to day's time should be 23:59:59
 
         const today = new Date();
-        const from = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        const to = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
-
+        const from = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+        );
+        const to = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          23,
+          59,
+          59,
+        );
 
         return {
           dateRange: {
@@ -27,7 +35,7 @@ function getAnalyticalRange(
           rates: ["hourly", "daily"],
           defaultRate: "hourly",
         };
-      }   
+      }
       case "week": {
         const today = new Date();
         const day = today.getDay();
@@ -88,7 +96,7 @@ function getAnalyticalRange(
       default:
         throw new Error("Invalid range string");
     }
-  } else if (range && 'from' in range && 'to' in range) {
+  } else if (range && "from" in range && "to" in range) {
     const from = range.from as Date;
     const to = range.to as Date;
     const diff = Math.abs(to.getTime() - from.getTime());
@@ -124,6 +132,4 @@ function getAnalyticalRange(
   }
 }
 
-export {
-    getAnalyticalRange
-}
+export { getAnalyticalRange };

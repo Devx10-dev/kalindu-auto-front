@@ -22,7 +22,6 @@ export interface SaleOrExpense {
   expense: boolean;
 }
 
-
 export interface DailySummery {
   id?: number;
   salesAmount: number;
@@ -85,6 +84,4 @@ interface AnalyticsCacheState {
   setMonthSummaryCache: (summary: DailySummery[]) => void;
   setYearlySummaryCache: (summary: DailySummery[]) => void;
   setCustomSummaryCache: (summary: DailySummery[]) => void;
-
-
 }

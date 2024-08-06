@@ -15,29 +15,50 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { Cat, Dog, Fish, Rabbit, TrendingDown, TrendingUp, Turtle } from "lucide-react";
+import {
+  Cat,
+  Dog,
+  Fish,
+  Rabbit,
+  TrendingDown,
+  TrendingUp,
+  Turtle,
+} from "lucide-react";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { DateRangePicker } from "../../invoice/view-invoices/components/DateRangePicker";
 import { Tabs, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AnalyticalRange } from "@/types/analytics/dateRangeTypes";
 import { set } from "date-fns";
 
-
-export default function OverviewChart(
-  {
-    className,
-    analyticalRange,
-  }: {
-    // type of the className prop
-    className?: string;
-    analyticalRange: AnalyticalRange;
-  } 
-) {
-
-  const [selectedOption, setSelectedOption] = useState<string[]>(["sales", "expenses"]);
+export default function OverviewChart({
+  className,
+  analyticalRange,
+}: {
+  // type of the className prop
+  className?: string;
+  analyticalRange: AnalyticalRange;
+}) {
+  const [selectedOption, setSelectedOption] = useState<string[]>([
+    "sales",
+    "expenses",
+  ]);
   const [rateSelected, setRateSelected] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("today");
 
@@ -68,15 +89,13 @@ export default function OverviewChart(
 
   useEffect(() => {
     console.log(selectedOption);
-  }
-  , [selectedOption]);
+  }, [selectedOption]);
 
   useEffect(() => {
-    if(analyticalRange) {
+    if (analyticalRange) {
       setRateSelected(analyticalRange.defaultRate);
     }
-  }
-  , [analyticalRange]);
+  }, [analyticalRange]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -90,7 +109,9 @@ export default function OverviewChart(
           <div className="flex justify-between items-center align-items-top">
             <CardHeader className="p-0 ">
               <CardTitle className="pl-0"> Overview </CardTitle>
-              <CardDescription className="pl-0">Summay of sales and Expenses</CardDescription>
+              <CardDescription className="pl-0">
+                Summay of sales and Expenses
+              </CardDescription>
             </CardHeader>
             <div className="gap-2 pt-0 flex">
               <MultiSelect
@@ -104,20 +125,18 @@ export default function OverviewChart(
                 modalPopover={true}
                 badgeInlineClose={false}
               />
-              <Select 
-                value={rateSelected}
-                onValueChange={setRateSelected}
-              >
+              <Select value={rateSelected} onValueChange={setRateSelected}>
                 <SelectTrigger className="w-[100px]">
                   <SelectValue placeholder="Rate" />
                 </SelectTrigger>
-                <SelectContent >
-                  {
-                    analyticalRange && analyticalRange.rates.map((rate) => (
-                      <SelectItem value={rate}>{rate.charAt(0).toUpperCase() + rate.slice(1)}</SelectItem>
-                    ))
-                  }
-                    {/* <SelectItem value="hourly">Hourly</SelectItem>
+                <SelectContent>
+                  {analyticalRange &&
+                    analyticalRange.rates.map((rate) => (
+                      <SelectItem value={rate}>
+                        {rate.charAt(0).toUpperCase() + rate.slice(1)}
+                      </SelectItem>
+                    ))}
+                  {/* <SelectItem value="hourly">Hourly</SelectItem>
                     <SelectItem value="daily">Daily</SelectItem>
                     <SelectItem value="weekly">Weekly</SelectItem>
                     <SelectItem value="monthly">Monthly</SelectItem> */}
@@ -146,11 +165,8 @@ export default function OverviewChart(
               <Bar dataKey="expenses" fill="#ff6f69" radius={4} />
             </BarChart>
           </ChartContainer>
-          <div className="flex justify-between items-center">
-            
-          </div>
+          <div className="flex justify-between items-center"></div>
         </CardContent>
-        
       </Card>
     </div>
   );

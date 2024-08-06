@@ -4,7 +4,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 
-
 const OutsourcedItemDetails: React.FC = () => {
   const {
     getOutsourcedItems,

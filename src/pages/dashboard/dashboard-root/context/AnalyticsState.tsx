@@ -1,7 +1,10 @@
-import { AnalyticsCacheState, DailySummery, Summary, TotalSummary } from "@/types/salesAndExpenses/saleAndExpenseTypes";
-import {create} from "zustand";
-
-
+import {
+  AnalyticsCacheState,
+  DailySummery,
+  Summary,
+  TotalSummary,
+} from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import { create } from "zustand";
 
 const useTotalSummaryStore = create<Summary>((set, get) => ({
   todaySummary: {
@@ -81,7 +84,6 @@ const useTotalSummaryStore = create<Summary>((set, get) => ({
     set({ customSummary: summary });
   },
 }));
-
 
 const useCacheStore = create<AnalyticsCacheState>((set, get) => ({
   todaySummaryCache: [],

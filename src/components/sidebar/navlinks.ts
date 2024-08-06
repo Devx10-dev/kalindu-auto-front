@@ -9,7 +9,7 @@ const NavLinks: NavLink[] = [
         label: "Dashboard",
         href: "/dashboard/home",
       },
-    ]
+    ],
   },
   {
     label: "Invoices",
