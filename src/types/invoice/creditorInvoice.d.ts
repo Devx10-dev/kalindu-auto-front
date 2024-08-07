@@ -44,6 +44,7 @@ export type InvoiceState = {
   setCommissionAmount: (commissionAmount?: number) => void;
 
   getRequestData: () => any;
+  resetState: () => void;
 };
 
 export type InvoiceItem = {
