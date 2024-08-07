@@ -64,11 +64,11 @@ const ViewCreditor = () => {
         <AddNewTransaction />
         <div className="grid gap-10 grid-cols-4 h-full">
           <Card className="shadow-md bg-slate-50 h-full col-span-3 flex flex-col">
-          <div className="flex-1" style={{ maxHeight: '300px' }}>
+          <div className="flex-1 max-h-80">
               <CardHeader>
                 <h3 className="text-lg font-bold">Transaction History</h3>
               </CardHeader>
-              <CardContent className="overflow-auto" style={{ height: '70%' }}>
+              <CardContent className="overflow-auto h-4/5">
                 <Table className="border bg-white">
                   <TableHeader>
                     <TableRow>
@@ -112,7 +112,7 @@ const ViewCreditor = () => {
               </CardContent>
             </div>
             <CardHeader>
-                <h3 className="text-lg font-bold">Overdue Invoices</h3>
+                <h3 className="text-lg font-bold mt-5">Overdue Invoices</h3>
               </CardHeader>
             <div className="flex-1 overflow-auto">
               <CardContent className="overflow-auto mt-100">
