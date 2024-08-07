@@ -120,7 +120,7 @@ function DummyInvoice() {
       items.forEach((item) => {
         if (item.outsourced) {
           const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
+            (outsourcedItem) => outsourcedItem.index === item.sparePartId
           )[0];
 
           if (
@@ -187,14 +187,6 @@ function DummyInvoice() {
           }}
         >
           <div style={{ flex: 9 }}>
-            {/* <div
-              style={{
-                boxShadow:
-                  "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
-                borderRadius: 5,
-              }}
-              className="p-6 pt-0"
-            > */}
             <div
               style={{
                 padding: 15,
@@ -226,7 +218,6 @@ function DummyInvoice() {
               setItems={setItems}
               setOutsourcedItems={setOutsourcedItems}
             />
-            {/* </div> */}
             <div>
               {outsourcedItems.length > 0 && (
                 <Card className="mt-4 bg-slate-200">
@@ -287,6 +278,7 @@ function DummyInvoice() {
         onClose={() => setShow(false)}
         component={
           <DummyItemForm
+            item={null}
             onClose={() => setShow(false)}
             sparePartService={sparePartyService}
             items={items}
