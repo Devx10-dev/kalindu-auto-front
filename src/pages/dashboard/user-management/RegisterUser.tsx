@@ -64,6 +64,41 @@ function RegisterUser() {
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
     try {
       if (form.getValues()) {
+        if (form.getValues().roles.length === 0) {
+          toast({
+            variant: "destructive",
+            title: "Validation Failed",
+            description: "At least one role should be selected",
+            duration: 5000,
+          });
+          return;
+        }
+
+        if (
+          form.getValues().password === undefined ||
+          form.getValues().password === ""
+        ) {
+          toast({
+            variant: "destructive",
+            title: "Validation Failed",
+            description: "Password is required",
+            duration: 5000,
+          });
+          return;
+        }
+        if (
+          form.getValues().password !== undefined &&
+          form.getValues().password !== "" &&
+          form.getValues().password !== form.getValues().confirmPassword
+        ) {
+          toast({
+            variant: "destructive",
+            title: "Validation Failed",
+            description: "Password and confirm password must be the same",
+            duration: 5000,
+          });
+          return;
+        }
         await createUserMutation.mutateAsync(form.getValues());
       }
     } catch (error) {
