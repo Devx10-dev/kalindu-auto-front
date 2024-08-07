@@ -176,7 +176,6 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     };
 
     const invoiceId = generateInvoiceId();
-    console.log(invoiceId);
 
     const requestData = {
       vat: state.vatPercentage,

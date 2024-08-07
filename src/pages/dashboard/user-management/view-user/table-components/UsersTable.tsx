@@ -51,7 +51,6 @@ const UsersTable = ({
   }) => {
     setSearchQuery(e.target.value);
   };
-  console.log(users);
   const handleEdit = (user: User) => {
     const encodedData = encodeURIComponent(JSON.stringify(user));
     navigate(USER_EDIT_PAGE + `?data=${encodedData}`);

@@ -69,8 +69,6 @@ function RegisterUser() {
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-
-    console.log(values);
   };
 
   const { data: roles } = useQuery({
@@ -106,8 +104,6 @@ function RegisterUser() {
       });
     },
   });
-
-  console.log(form.getValues());
 
   return (
     <div className="space-y-6 pl-2 pr-12">
@@ -186,11 +182,11 @@ function RegisterUser() {
                         options={roleOptions}
                         onChange={(selectedOptions) =>
                           field.onChange(
-                            selectedOptions.map((option) => option.value),
+                            selectedOptions.map((option) => option.value)
                           )
                         }
                         value={roleOptions.filter((option) =>
-                          field.value.includes(option.value),
+                          field.value.includes(option.value)
                         )}
                         placeholder={"Select or add new roles"}
                         className="basic-multi-select select-place-holder"

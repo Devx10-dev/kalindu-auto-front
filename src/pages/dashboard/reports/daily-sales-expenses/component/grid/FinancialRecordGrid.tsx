@@ -1,6 +1,4 @@
 import Loading from "@/components/Loading";
-import IconButton from "@/components/button/IconButton";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,28 +8,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SaleOrExpense } from "@/types/salesAndExpenses/saleAndExpenseTypes";
-import { EditIcon, ChevronDownIcon, ChevronRightIcon } from "lucide-react";
-import { useState, Fragment } from "react";
+import { FinancialRecord } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import { convertSnakeCaseToNormalCase } from "@/utils/string";
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
+import { Fragment, useState } from "react";
+import { record } from "zod";
 
-export default function SalesAndExpensesGrid({
-  salesOrExpenses,
+export default function FinancialRecordGrid({
+  financialRecords,
 }: {
-  salesOrExpenses: SaleOrExpense[];
+  financialRecords: FinancialRecord[];
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(
+    financialRecords.map((record) => record.field.category.name)
+  );
 
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories((prevExpandedCategories) =>
       prevExpandedCategories.includes(categoryName)
         ? prevExpandedCategories.filter((name) => name !== categoryName)
-        : [...prevExpandedCategories, categoryName],
+        : [...prevExpandedCategories, categoryName]
     );
   };
 
   // Group expenses by category
-  const groupedExpenses = salesOrExpenses.reduce((groups, expense) => {
+  const groupedExpenses = financialRecords.reduce((groups, expense) => {
     const categoryName = expense.field.category.name;
     if (!groups[categoryName]) {
       groups[categoryName] = [];
@@ -77,16 +79,21 @@ export default function SalesAndExpensesGrid({
                 </TableRow>
                 {expandedCategories.includes(categoryName) &&
                   groupedExpenses[categoryName].map(
-                    (expense: SaleOrExpense) => (
-                      <TableRow key={expense.id}>
-                        <TableCell>{expense.field.name}</TableCell>
+                    (financialRecord: FinancialRecord) => (
+                      <TableRow key={financialRecord.id}>
+                        <TableCell>{financialRecord.field.name}</TableCell>
                         <TableCell>
                           <p
                             className="pl-2 pr-2"
                             style={{
-                              background: expense.expense
-                                ? "#dc3545"
-                                : "#198754",
+                              background:
+                                financialRecord.type === "EXPENSE"
+                                  ? "#dc3545"
+                                  : financialRecord.type === "SALE"
+                                    ? "#198754"
+                                    : financialRecord.type === "CREDIT_BALANCE"
+                                      ? "#ffc107"
+                                      : "#6c757d",
                               color: "#fff",
                               borderRadius: 5,
                               maxWidth: "max-content",
@@ -94,14 +101,14 @@ export default function SalesAndExpensesGrid({
                               fontWeight: 400,
                             }}
                           >
-                            {expense.expense ? "Expense" : "Sale"}
+                            {convertSnakeCaseToNormalCase(financialRecord.type)}
                           </p>
                         </TableCell>
-                        <TableCell>{expense.amount}</TableCell>
-                        <TableCell>{`${expense.dateTime[0]}-${expense.dateTime[1]}-${expense.dateTime[2]} ${expense.dateTime[3]}:${expense.dateTime[4]}:${expense.dateTime[5]}`}</TableCell>
-                        <TableCell>{expense.reason}</TableCell>
+                        <TableCell>{financialRecord.amount}</TableCell>
+                        <TableCell>{`${financialRecord.dateTime[0]}-${financialRecord.dateTime[1]}-${financialRecord.dateTime[2]} ${financialRecord.dateTime[3]}:${financialRecord.dateTime[4]}:${financialRecord.dateTime[5]}`}</TableCell>
+                        <TableCell>{financialRecord.reason}</TableCell>
                       </TableRow>
-                    ),
+                    )
                   )}
               </Fragment>
             ))}

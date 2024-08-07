@@ -17,10 +17,11 @@ import { Button } from "@/components/ui/button.tsx";
 import PlusIcon from "@/components/icon/PlusIcon.tsx";
 import { CardContent, CardHeader } from "@/components/ui/card.tsx";
 import Commissions from "@/pages/dashboard/invoice/creditor/components/Commisions.tsx";
+import CreditorAPI from "../../creditors/api/CreditorAPI";
 
 const CreditorInvoiceBase: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
-  const creditorService = new CreditorInvoiceAPI(axiosPrivate);
+  const creditorService = new CreditorAPI(axiosPrivate);
   const sparePartService = new SparePartService(axiosPrivate);
   const {
     setCreditor,
@@ -34,14 +35,16 @@ const CreditorInvoiceBase: React.FC = () => {
   const [show, setShow] = useState(false);
 
   const { data } = useQuery({
-    queryKey: ["creditors"],
-    queryFn: () => creditorService.fetchCreditors(),
+    queryKey: ["allCreditors"],
+    queryFn: () => creditorService.fetchAllCreditors(),
   });
 
-  const creditorData = data?.creditors.map(({ creditorID, shopName }) => ({
-    value: parseInt(creditorID),
-    label: shopName,
-  }));
+  const creditorData =
+    data &&
+    data.map(({ creditorID, shopName }) => ({
+      value: parseInt(creditorID),
+      label: shopName,
+    }));
 
   return (
     <div className="mb-20">

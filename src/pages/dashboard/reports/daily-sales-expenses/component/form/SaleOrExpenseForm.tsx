@@ -13,6 +13,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select as SelectComponent,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
@@ -23,8 +30,9 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import Select from "react-select";
 import { z } from "zod";
+import Select from "react-select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function SaleOrExpenseForm({
   onClose,
@@ -52,7 +60,7 @@ function SaleOrExpenseForm({
   } = useQuery({
     queryKey: ["fields"],
     queryFn: () => salesAndExpenseService.fetchFields(),
-    retry: 2,
+    retry: 1,
   });
 
   const resetForm = () => {
@@ -60,7 +68,7 @@ function SaleOrExpenseForm({
     form.setValue("amount", undefined);
     form.setValue("reason", undefined);
     form.setValue("field", undefined);
-    form.setValue("isExpense", true);
+    form.setValue("type", undefined);
   };
 
   const fieldOptions =
@@ -74,7 +82,7 @@ function SaleOrExpenseForm({
       salesAndExpenseService.createSaleOrExpense({
         date: date,
         amount: formData.amount,
-        expense: formData.isExpense,
+        type: formData.type,
         reason: formData.reason,
         field: { id: formData.field.value.id, name: formData.field.value.name },
       }),
@@ -103,7 +111,6 @@ function SaleOrExpenseForm({
   };
 
   const handleSubmit = async () => {
-    console.log(form.getValues());
     try {
       if (form.getValues()) {
         await createSaleOrExpenseMutation.mutateAsync(form.getValues());
@@ -115,11 +122,38 @@ function SaleOrExpenseForm({
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
+    return (
+      <form className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="w-full col-span-1 row-span-1">
+            <Skeleton className="h-6 w-24 mb-2" />
+            <Skeleton className="h-10 w-full" />
+          </div>
 
-  if (error) {
-    return <div>Error loading fields</div>;
+          <div className="w-full col-span-1 row-span-1">
+            <Skeleton className="h-6 w-24 mb-2" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+
+          <div className="w-full col-span-1 row-span-1">
+            <Skeleton className="h-6 w-24 mb-2" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+
+          <div className="w-full col-span-1 row-span-1">
+            <Skeleton className="h-6 w-24 mb-2" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Skeleton className="h-10 w-24 mr-2" />
+          <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
+          <Skeleton className="h-10 w-24 mr-2" />
+          <Skeleton className="h-10 w-24" />
+        </div>
+      </form>
+    );
   }
 
   return (
@@ -168,7 +202,43 @@ function SaleOrExpenseForm({
               </FormItem>
             )}
           />
-
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <OptionalLabel label="Record Type" />
+                <SelectComponent
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select the record type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem key={Math.random()} value="SALE">
+                      Sale
+                    </SelectItem>
+                    <SelectItem key={Math.random()} value="EXPENSE">
+                      Expense
+                    </SelectItem>
+                    <SelectItem key={Math.random()} value="CREDIT_BALANCE">
+                      Credit Balance
+                    </SelectItem>
+                    <SelectItem
+                      key={Math.random()}
+                      value="UNSETTLED_CHEQUE_BALANCE"
+                    >
+                      Cheque
+                    </SelectItem>
+                  </SelectContent>
+                </SelectComponent>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="reason"
@@ -184,23 +254,6 @@ function SaleOrExpenseForm({
                   />
                 </FormControl>
                 <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="isExpense"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-8">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>Is an expense?</FormLabel>
-                </div>
               </FormItem>
             )}
           />

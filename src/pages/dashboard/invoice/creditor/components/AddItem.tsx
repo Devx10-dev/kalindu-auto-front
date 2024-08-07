@@ -71,7 +71,6 @@ const AddItem: React.FC<{
     })) || [];
 
   const onSubmit = (data: any) => {
-    console.log("add button Pressed");
     addInvoiceItem(data);
     form.reset();
     onClose();
@@ -91,7 +90,6 @@ const AddItem: React.FC<{
       // If the selected option is a new custom option
       form.setValue("name", option.label);
       form.setValue("sparePartId", -1);
-      console.log(form);
     } else if (option) {
       // If the selected option is an existing spare part
       form.setValue("name", option.value.partName);

@@ -42,7 +42,6 @@ class UserService extends Service {
   }
 
   async activeOrInactiveUser(user: UserType): Promise<User> {
-    console.log(user);
     const response = await this.api.put(USER_ACTIVE_OR_INACTIVE_URL, {
       ...user,
       active: !user.active,

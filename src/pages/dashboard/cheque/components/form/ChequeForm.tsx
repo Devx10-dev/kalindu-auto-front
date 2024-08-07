@@ -91,7 +91,6 @@ function ChequeForm({
   };
 
   const handleSubmit = async () => {
-    console.log(form.getValues());
     try {
       if (form.getValues()) {
         await createChequeMutation.mutateAsync(form.getValues());

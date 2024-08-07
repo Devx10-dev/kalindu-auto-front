@@ -14,7 +14,6 @@ const InvoiceTable: React.FC = () => {
   const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
     useCreditorInvoiceStore();
   useEffect(() => {
-    console.log(invoiceItemDTOList);
   }, [invoiceItemDTOList]);
 
   return (

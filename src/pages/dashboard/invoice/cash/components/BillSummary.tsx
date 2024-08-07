@@ -94,10 +94,8 @@ const BillSummary = () => {
 
     try {
       const requestData = getRequestData();
-      console.log(requestData);
       const createdInvoice =
         await cashInvoiceService.createCashInvoice(requestData);
-      console.log("Cash invoice created:", createdInvoice);
       // Handle success response, such as printing the invoice or displaying a success message
       toast({
         title: "Invoice created successfully",
