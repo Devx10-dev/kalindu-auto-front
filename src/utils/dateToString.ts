@@ -10,3 +10,20 @@ export default function dateToString(date: Date): string {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export function formatDateToHumanReadable(date: Date): string {
+  if (!(date instanceof Date)) {
+    throw new Error("Input must be a Date object");
+  }
+
+  // Define options for date formatting
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long", // e.g., "Monday"
+    year: "numeric", // e.g., "2024"
+    month: "long", // e.g., "August"
+    day: "numeric", // e.g., "5"
+  };
+
+  // Format the date
+  return date.toLocaleDateString("en-IN", options);
+}

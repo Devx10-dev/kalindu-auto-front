@@ -32,7 +32,7 @@ import ListCheckIcon from "@/components/icon/ListCheckIcon";
 import VerifyIcon from "@/components/icon/VerifyIcon";
 
 function ChequesGrid({
-  creditors,
+  creditors = [],
   chequeService,
 }: {
   creditors: Creditor[];
@@ -146,7 +146,7 @@ function ChequesGrid({
   const handleViewBtnClick = (cheque: Cheque) => {
     setGridModalTitle(`Credit invoices of ${cheque.chequeNo}`);
     setGridModalDescription(
-      `Credit invoices those settled by ${cheque.chequeNo}`,
+      `Credit invoices those settled by ${cheque.chequeNo}`
     );
     setSelectedChequeId(cheque.id);
     setGridModalShow(true);

@@ -88,7 +88,6 @@ function FieldForm({
   };
 
   const handleSubmit = async () => {
-    console.log(form.getValues());
     try {
       if (form.getValues()) {
         await createFieldMutation.mutateAsync(form.getValues());
@@ -98,8 +97,6 @@ function FieldForm({
       console.error("Error submitting form:", error);
     }
   };
-
-  console.log(form.getValues());
 
   return (
     <Form {...form}>

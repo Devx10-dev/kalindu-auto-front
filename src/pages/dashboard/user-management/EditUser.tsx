@@ -87,7 +87,6 @@ function EditUser() {
     searchParamData.forEach((value, key) => {
       if (key === "data") {
         const userData = JSON.parse(value) as UserType;
-        console.log(userData);
         updateFormData(userData);
       }
     });
@@ -106,8 +105,6 @@ function EditUser() {
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-
-    console.log(values);
   };
 
   const { data: roles } = useQuery({
@@ -227,12 +224,12 @@ function EditUser() {
                         options={roleOptions}
                         onChange={(selectedOptions) =>
                           field.onChange(
-                            selectedOptions.map((option) => option.value),
+                            selectedOptions.map((option) => option.value)
                           )
                         }
                         // defaultValue={roleOptions.filter((option) => field. option.value)}
                         value={roleOptions.filter((option) =>
-                          field.value.includes(option.value),
+                          field.value.includes(option.value)
                         )}
                         placeholder={"Select or add new roles"}
                         className="basic-multi-select select-place-holder"

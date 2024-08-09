@@ -2,7 +2,7 @@ import {
   Category,
   DailySummery,
   Field,
-  SaleOrExpense,
+  FinancialRecord,
 } from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
@@ -10,8 +10,7 @@ import { Service } from "../apiService";
 const SALE_AND_EXPENSE_URL = "sale-expense";
 const CATEGORY_URL = `${SALE_AND_EXPENSE_URL}/category`;
 const FIELD_URL = `${SALE_AND_EXPENSE_URL}/field`;
-const SALE_URL = "/sale";
-const EXPENSE_URL = "/expense";
+const SALE_URL = "/fin-record";
 const DAILY_SUMMERY_URL = `${SALE_AND_EXPENSE_URL}/summery`;
 const DAILY_SALES_AND_EXPENSES_VERIFY_URL = `${SALE_AND_EXPENSE_URL}/verify`;
 
@@ -41,7 +40,7 @@ class SaleAndExpenseService extends Service {
   async fetchDailySummery(date: string): Promise<DailySummery> {
     try {
       const response = await this.api.get<DailySummery>(
-        `${DAILY_SUMMERY_URL}/${date.trim()}`,
+        `${DAILY_SUMMERY_URL}/${date.trim()}`
       );
       return response.data;
     } catch (error) {
@@ -60,19 +59,16 @@ class SaleAndExpenseService extends Service {
   }
 
   async createSaleOrExpense(
-    saleOrExpense: SaleOrExpense,
-  ): Promise<SaleOrExpense> {
-    const response = await this.api.post(
-      `${saleOrExpense.expense ? EXPENSE_URL : SALE_URL}`,
-      saleOrExpense,
-    );
+    saleOrExpense: FinancialRecord
+  ): Promise<FinancialRecord> {
+    const response = await this.api.post(`${SALE_URL}`, saleOrExpense);
     return response.data;
   }
 
   async verifyDailySalesAndExpenses(date: string): Promise<DailySummery> {
     const response = await this.api.put(
       `${DAILY_SALES_AND_EXPENSES_VERIFY_URL}/${date}`,
-      null,
+      null
     );
     return response.data;
   }

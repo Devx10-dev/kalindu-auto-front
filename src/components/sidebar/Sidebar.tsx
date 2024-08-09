@@ -13,7 +13,6 @@ function Sidebar({
   showDrawer: boolean;
   toggleDrawer: () => void;
 }) {
-  console.log(showDrawer);
   const [isMobileView, setIsMobileView] = useState(false);
 
   useEffect(() => {

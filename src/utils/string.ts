@@ -32,3 +32,13 @@ export function truncate(
     return text.slice(0, maxLength - truncIndicator.length) + truncIndicator;
   }
 }
+
+export const convertSnakeCaseToNormalCase = (word: string): string => {
+  if (word === null) return "";
+
+  const words = word.toLowerCase().split("_");
+  for (let i = 0; i < words.length; i++) {
+    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+  }
+  return words.join(" ");
+};

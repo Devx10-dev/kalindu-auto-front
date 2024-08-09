@@ -9,22 +9,29 @@ export interface Field {
   category?: Category;
 }
 
-export interface SaleOrExpense {
+export type FinancialRecordType =
+  | "SALE"
+  | "EXPENSE"
+  | "CREDIT_BALANCE"
+  | "UNSETTLED_CHEQUE_BALANCE";
+
+export interface FinancialRecord {
   id?: number;
   amount: number;
   reason: string;
   dateTime?: number[];
   date: string;
   field: Field;
-  expense: boolean;
+  type: FinancialRecordType;
 }
 
 export interface DailySummery {
   id?: number;
-  salesAmount: number;
-  expensesAmount: number;
+  saleAmount: number;
+  expenseAmount: number;
+  creditBalance: number;
+  unsettledChequeAmount: number;
   date: string;
   verified: boolean;
-  expenses: SaleOrExpense[];
-  sales: SaleOrExpense[];
+  financialRecords: FinancialRecord[];
 }
