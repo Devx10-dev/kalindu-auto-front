@@ -110,3 +110,14 @@ const useCacheStore = create<AnalyticsCacheState>((set, get) => ({
 }));
 
 export { useTotalSummaryStore, useCacheStore };
+// => {
+//     set({ customSummaryCache: summary });
+//   },
+// }));
+
+// export { useTotalSummaryStore, useCacheStore };=> {
+//     set({ customSummaryCache: summary });
+//   },
+// }));
+
+// export { useTotalSummaryStore, useCacheStore };

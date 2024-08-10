@@ -38,6 +38,9 @@ import dateToString from "@/utils/dateToString";
 import {
   calculateTotalSummary,
   currencyAmountString,
+  processMonthlyData,
+  processWeeklyData,
+  processYearlyData,
 } from "@/utils/analyticsUtils";
 import { TotalSummary } from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import { useToast } from "@/components/ui/use-toast";
@@ -64,13 +67,11 @@ export function Analytics() {
   const [salesAndExpenses, setSalesAndExpenses] = useState<
     TotalSummary | undefined
   >();
-  const [dataLoaded, setDataLoaded] = useState({
-    today: false,
-    week: false,
-    month: false,
-    year: false,
-    custom: false,
-  });
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [todayDataLoaded, setTodayDataLoaded] = useState(false);
+  const [weekDataLoaded, setWeekDataLoaded] = useState(false);
+  const [monthDataLoaded, setMonthDataLoaded] = useState(false);
+  const [yearDataLoaded, setYearDataLoaded] = useState(false);
 
   const {
     todaySummary,
@@ -152,31 +153,63 @@ export function Analytics() {
       switch (activeTab) {
         case "today":
           setTodaySummary(calculatedSummary);
-          // setTodaySummaryCache(salesAndExpensesData);
-          // setDataLoaded(prev => ({ ...prev, today: true }));
+          setTodayDataLoaded(true);
           // setSalesAndExpenses(calculatedSummary);
           break;
         case "week":
           setWeekSummary(calculatedSummary);
-          // setWeekSummaryCache(salesAndExpensesData);
-          // setDataLoaded(prev => ({ ...prev, week: true }));
+          setWeekDataLoaded(true);
           // setSalesAndExpenses(calculatedSummary);
           break;
         case "month":
           setMonthSummary(calculatedSummary);
-          // setMonthSummaryCache(salesAndExpensesData);
-          // setDataLoaded(prev => ({ ...prev, month: true }));
+          setMonthDataLoaded(true);
           // setSalesAndExpenses(calculatedSummary);
           break;
         case "year":
           setYearlySummary(calculatedSummary);
-          // setYearlySummaryCache(salesAndExpensesData);
-          // setDataLoaded(prev => ({ ...prev, year: true }));
+          setYearDataLoaded(true);
           // setSalesAndExpenses(calculatedSummary);
           break;
         case "custom":
           setCustomSummary(calculatedSummary);
           // setCustomSummaryCache(salesAndExpensesData);
+          break;
+        default:
+          break;
+      }
+    }
+  }, [salesAndExpensesLoading]);
+
+  useEffect(() => {
+    if (analiticalRange.dateRange) {
+      setDateRange(analiticalRange.dateRange);
+    }
+  }, [analiticalRange]);
+
+  useEffect(() => {
+    if (salesAndExpensesLoading) {
+      console.log("LOADING", salesAndExpensesLoading);
+    }
+    if (!salesAndExpensesLoading && salesAndExpensesData) {
+      switch (activeTab) {
+        case "today":
+          // setDataLoaded(prev => ({ ...prev, today: true }));
+          setSalesAndExpenses(todaySummary);
+          break;
+        case "week":
+          // setDataLoaded(prev => ({ ...prev, week: true }));
+          setSalesAndExpenses(weekSummary);
+          break;
+        case "month":
+          // setDataLoaded(prev => ({ ...prev, month: true }));
+          setSalesAndExpenses(monthSummary);
+          break;
+        case "year":
+          // setDataLoaded(prev => ({ ...prev, year: true }));
+          setSalesAndExpenses(yearSummary);
+          break;
+        case "custom":
           // setDataLoaded(prev => ({ ...prev, custom: true }));
           break;
         default:
@@ -184,26 +217,56 @@ export function Analytics() {
       }
     }
   }, [
-    salesAndExpensesData,
-    salesAndExpensesLoading,
     activeTab,
-    setTodaySummary,
-    setWeekSummary,
-    setMonthSummary,
-    setYearlySummary,
-    setCustomSummary,
-    setTodaySummaryCache,
-    setWeekSummaryCache,
-    setMonthSummaryCache,
-    setYearlySummaryCache,
-    setCustomSummaryCache,
+    todaySummary,
+    weekSummary,
+    monthSummary,
+    yearSummary,
+    customSummary,
+    salesAndExpensesLoading,
+    salesAndExpensesData,
   ]);
 
   useEffect(() => {
-    console.log("SALES AND EXPENSES CHANGED");
-    console.log("salesAndExpenses", salesAndExpenses);
-    console.log("week", weekSummary);
-  }, [salesAndExpenses]);
+    switch (activeTab) {
+      case "today":
+        setDataLoaded(todayDataLoaded);
+        break;
+      case "week":
+        setDataLoaded(weekDataLoaded);
+        break;
+      case "month":
+        setDataLoaded(monthDataLoaded);
+        break;
+      case "year":
+        setDataLoaded(yearDataLoaded);
+        break;
+      case "custom":
+        break;
+      default:
+        break;
+    }
+  }, [
+    todayDataLoaded,
+    weekDataLoaded,
+    monthDataLoaded,
+    yearDataLoaded,
+    activeTab,
+  ]);
+
+  useEffect(() => {
+    if (salesAndExpensesData) {
+      const processedData = processWeeklyData(salesAndExpensesData, dateRange);
+      const processedData2 = processMonthlyData(
+        salesAndExpensesData,
+        dateRange,
+      );
+      const processedData3 = processYearlyData(salesAndExpensesData, dateRange);
+      console.log(processedData);
+      console.log(processedData2);
+      console.log(processedData3);
+    }
+  }, [salesAndExpensesData]);
 
   return (
     <Fragment>
@@ -248,25 +311,29 @@ export function Analytics() {
           title="Total Revenue"
           icon={<DollarSign />}
           content={salesAndExpenses?.totalRevenueString}
-          // isLoading={salesAndExpensesLoading || !dataLoaded[activeTab as keyof typeof dataLoaded]}
+          isLoading={!dataLoaded}
+          contentType="currencyAmount"
         />
         <DashboardCard
           title="Total Sales"
           icon={<TrendingUp />}
           content={salesAndExpenses?.totalSalesString}
-          // isLoading={salesAndExpensesLoading || !dataLoaded[activeTab as keyof typeof dataLoaded]}
+          isLoading={!dataLoaded}
+          contentType="currencyAmount"
         />
         <DashboardCard
           title="Total Expenses"
           icon={<TrendingDown />}
           content={salesAndExpenses?.totalExpensesString}
-          // isLoading={salesAndExpensesLoading || !dataLoaded[activeTab as keyof typeof dataLoaded]}
+          isLoading={!dataLoaded}
+          contentType="currencyAmount"
         />
         <DashboardCard
           title="Total Credit"
           icon={<CreditCard />}
-          content="Rs. 100,000"
+          content="Rs. 100,000.59"
           isLoading={salesAndExpensesLoading || !salesAndExpenses}
+          contentType="currencyAmount"
         />
       </div>
       <div className="grid gap-4 md:grid-cols-1 md:gap-8 lg:grid-cols-5 ml-5 mt-5">

@@ -63,7 +63,7 @@ export default function OverviewChart({
   const [activeTab, setActiveTab] = useState<string>("today");
 
   const chartData = [
-    { month: "January", sales: 186, expenses: 80 },
+    { month: "January", sales: 0, expenses: 0 },
     { month: "February", sales: 305, expenses: 200 },
     { month: "March", sales: 237, expenses: 120 },
     { month: "April", sales: 73, expenses: 190 },

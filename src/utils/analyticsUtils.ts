@@ -5,10 +5,11 @@ import {
   WeeklySummary,
   YearlySummary,
 } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import { DateRange } from "react-day-picker";
 
 function currencyAmountString(amount: number, currency: string = "Rs") {
-  //   comma seperated amount with 2 decimanls
-  return `${currency}. ${amount.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+  //   comma seperated amount with currency WITH 2 DECIMAL PLACES.
+  return `${currency}. ${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
 }
 
 function getWeekNumber(date: Date): number {
@@ -21,8 +22,36 @@ function getWeekNumber(date: Date): number {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-function processWeeklyData(dailySummaries: DailySummery[]): WeeklySummary[] {
+function processWeeklyData(
+  dailySummaries: DailySummery[],
+  dateRange: DateRange,
+): WeeklySummary[] {
   const weekMap = new Map<string, WeeklySummary>();
+
+  // prpare WeeklySummar from dateRange
+  const startDate = new Date(dateRange.from);
+  const endDate = new Date(dateRange.to);
+  const currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    const weekYear = `${currentDate.getFullYear()}-${getWeekNumber(currentDate)}`;
+    weekMap.set(weekYear, {
+      startDate: new Date(currentDate),
+      //7 days later in 11:59:59 PM if current date is today then end date will be today now
+      endDate: new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate() + 6,
+        23,
+        59,
+        59,
+      ),
+      totalSales: 0,
+      totalExpenses: 0,
+      salesCount: 0,
+      expensesCount: 0,
+    });
+    currentDate.setDate(currentDate.getDate() + 7);
+  }
 
   dailySummaries.forEach((summary) => {
     const date = new Date(
@@ -48,19 +77,37 @@ function processWeeklyData(dailySummaries: DailySummery[]): WeeklySummary[] {
     weekSummary.totalExpenses += summary.expensesAmount;
     weekSummary.salesCount += summary.sales.length;
     weekSummary.expensesCount += summary.expenses.length;
-    weekSummary.startDate = new Date(
-      Math.min(weekSummary.startDate.getTime(), date.getTime()),
-    );
-    weekSummary.endDate = new Date(
-      Math.max(weekSummary.endDate.getTime(), date.getTime()),
-    );
   });
 
   return Array.from(weekMap.values());
 }
 
-function processMonthlyData(dailySummaries: DailySummery[]): MonthlySummary[] {
+function processMonthlyData(
+  dailySummaries: DailySummery[],
+  dateRange: DateRange,
+): MonthlySummary[] {
   const monthMap = new Map<string, MonthlySummary>();
+
+  // prpare MonthlySummar from dateRange
+  const startDate = new Date(dateRange.from);
+  const endDate = new Date(dateRange.to);
+  const currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    const monthYear = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}`;
+    monthMap.set(monthYear, {
+      startDate: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+      endDate: new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0,
+      ),
+      totalSales: 0,
+      totalExpenses: 0,
+      salesCount: 0,
+      expensesCount: 0,
+    });
+    currentDate.setMonth(currentDate.getMonth() + 1);
+  }
 
   dailySummaries.forEach((summary) => {
     const date = new Date(
@@ -91,8 +138,28 @@ function processMonthlyData(dailySummaries: DailySummery[]): MonthlySummary[] {
   return Array.from(monthMap.values());
 }
 
-function processYearlyData(dailySummaries: DailySummery[]): YearlySummary[] {
+function processYearlyData(
+  dailySummaries: DailySummery[],
+  dateRange: DateRange,
+): YearlySummary[] {
   const yearMap = new Map<number, YearlySummary>();
+
+  // prpare YearlySummar from dateRange
+  const startDate = new Date(dateRange.from);
+  const endDate = new Date(dateRange.to);
+  const currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    const year = currentDate.getFullYear();
+    yearMap.set(year, {
+      startDate: new Date(year, 0, 1),
+      endDate: new Date(year, 11, 31),
+      totalSales: 0,
+      totalExpenses: 0,
+      salesCount: 0,
+      expensesCount: 0,
+    });
+    currentDate.setFullYear(currentDate.getFullYear() + 1);
+  }
 
   dailySummaries.forEach((summary) => {
     const date = new Date(
@@ -164,10 +231,12 @@ function calculateTotalSummary(dailySummaries: DailySummery[]): TotalSummary {
     if (currentDate < startDate) startDate = currentDate;
     if (currentDate > endDate) endDate = currentDate;
 
+    console.log("currentDate", summary);
+
     totalSales += summary.salesAmount;
     totalExpenses += summary.expensesAmount;
-    salesCount += summary.sales.length;
-    expensesCount += summary.expenses.length;
+    salesCount += summary.finacialRecords.length;
+    expensesCount += summary.finacialRecords.length;
   });
 
   totalRevenue = totalSales - totalExpenses;

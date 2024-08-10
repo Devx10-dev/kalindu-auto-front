@@ -9,6 +9,7 @@ export default function DashboardCard({
   icon,
   badge,
   isLoading = false,
+  contentType,
 }: {
   title: string;
   content: string;
@@ -16,6 +17,7 @@ export default function DashboardCard({
   icon: JSX.Element;
   badge?: JSX.Element;
   isLoading?: boolean;
+  contentType?: string;
 }) {
   const styledIcon = icon
     ? cloneElement(icon, {
@@ -24,11 +26,25 @@ export default function DashboardCard({
       })
     : null;
 
-  // useEffect(() => {
-  //   console.log("DashboardCard rendered");
-  //   console.log("content: ", content);
-  // }
-  // , [content]);
+  function contentRender(contentType: string) {
+    // split from firdst dot from the right
+    switch (contentType) {
+      case "currencyAmount": {
+        // this comes as strig "Rs. 180,666.00" i want to render the decimal part in a smaller font size
+        const [currency, amount] = content.split(/(?<=\..*)\./);
+        return (
+          <div className="text-2xl font-bold">
+            <span>{currency}</span>
+            <span className="text-sm font-bold color-muted-foreground">
+              .{amount}
+            </span>
+          </div>
+        );
+      }
+      default:
+        return <div className="text-2xl font-bold">{content}</div>;
+    }
+  }
 
   return (
     <Card x-chunk="dashboard-01-chunk-0">
@@ -40,7 +56,7 @@ export default function DashboardCard({
         {isLoading ? (
           <Skeleton className="w-40 h-7" />
         ) : content ? (
-          <div className="text-2xl font-bold">{content}</div>
+          contentRender(contentType || "")
         ) : (
           <div className="text-2xl font-bold text-muted-foreground">
             No data
