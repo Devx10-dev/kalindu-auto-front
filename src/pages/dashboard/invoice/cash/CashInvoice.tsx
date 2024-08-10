@@ -60,7 +60,7 @@ const CashInvoiceBase: React.FC = () => {
           <InvoiceTable />
 
           {hasOutsourcedItems && (
-            <div className="pb-[350px]">
+            <div className="pb-[30px]">
               <OutsourcedItemDetails />
             </div>
           )}

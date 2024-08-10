@@ -17,7 +17,11 @@ export const saleOrExpenseSchema = z.object({
     },
     { required_error: "Field is required" },
   ),
-  isExpense: z.boolean().default(true),
+  type: z
+    .enum(["SALE", "EXPENSE", "CREDIT_BALANCE", "UNSETTLED_CHEQUE_BALANCE"])
+    .refine((val) => val !== undefined, {
+      message: "Financial record type is required",
+    }),
 });
 
 export type SaleOrExpense = z.infer<typeof saleOrExpenseSchema>;

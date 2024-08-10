@@ -49,10 +49,7 @@ class SparePartService extends Service {
       code: sparePart.code,
       quantity: sparePart.quantity,
       description: sparePart.description,
-      chassisNo:
-        typeof sparePart.chassisNo.value === "string"
-          ? sparePart.chassisNo.value
-          : sparePart.chassisNo.value.chassisNo,
+      chassisNo: sparePart.chassisNo.value,
     });
     return response.data;
   }
@@ -64,10 +61,7 @@ class SparePartService extends Service {
       code: sparePart.code,
       quantity: sparePart.quantity,
       description: sparePart.description,
-      chassisNo:
-        typeof sparePart.chassisNo.value === "string"
-          ? sparePart.chassisNo.value
-          : sparePart.chassisNo.value.chassisNo,
+      chassisNo: sparePart.chassisNo.value,
     });
     return response.data;
   }

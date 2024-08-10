@@ -23,6 +23,7 @@ const BillSummary = () => {
     setVatAmount,
     setTotalPrice,
     getRequestData,
+    resetState,
   } = useInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
@@ -93,16 +94,17 @@ const BillSummary = () => {
 
     try {
       const requestData = getRequestData();
-      console.log(requestData);
       const createdInvoice =
         await cashInvoiceService.createCashInvoice(requestData);
-      console.log("Cash invoice created:", createdInvoice);
       // Handle success response, such as printing the invoice or displaying a success message
       toast({
         title: "Invoice created successfully",
         description: "The cash invoice has been created and printed.",
         variant: "default",
       });
+
+      // Reset the state after successful creation
+      resetState();
     } catch (error) {
       console.error("Error creating cash invoice:", error);
       // Handle error
@@ -195,7 +197,10 @@ const BillSummary = () => {
                 <Printer className={"mr-2"} />
                 Print Invoice
               </Button>
-              <Button className="mt-4 mb-3 bg-red-400 ml-2 text-white">
+              <Button
+                className="mt-4 mb-3 bg-red-400 ml-2 text-white"
+                onClick={() => resetState()}
+              >
                 <Delete className={"mr-2"} /> Cancel
               </Button>
             </div>

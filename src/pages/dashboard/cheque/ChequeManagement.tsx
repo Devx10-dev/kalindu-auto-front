@@ -20,9 +20,9 @@ function ChequeManagement() {
   const [show, setShow] = useState(false);
 
   const { data: creditors, error } = useQuery({
-    queryKey: ["creditors"],
+    queryKey: ["allCreditors"],
     queryFn: () => creditorService.fetchAllCreditors(),
-    retry: 2,
+    retry: 1,
   });
 
   return (

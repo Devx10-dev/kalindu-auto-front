@@ -43,8 +43,10 @@ export default function VehicleModel() {
           />
         </CardContent>
         <FormModal
-          title="Add new vehicle"
-          titleDescription="Add new vehicle details to the system"
+          title={
+            vehicle === null ? "Add new vehicle" : "Update vehicle details"
+          }
+          titleDescription={`${vehicle === null ? "Add new" : "Update"} vehicle details ${vehicle === null ? "to" : "in"} the system`}
           show={show}
           onClose={() => setShow(false)}
           component={

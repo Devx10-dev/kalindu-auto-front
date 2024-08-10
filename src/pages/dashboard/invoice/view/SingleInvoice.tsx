@@ -8,25 +8,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
-import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { Fragment } from "react/jsx-runtime";
-import InvoiceItemsGrid from "./components/InvoiceItemGrid";
-import BillSummaryViewCard from "./components/BillSummaryViewCard";
-import OutsourceItemsGrid from "./components/OutSourceItemGrid";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi";
+import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
-import { useParams } from "react-router-dom";
-import { useInvoiceListStore } from "../view-invoices/context/InvoiceListState";
-import StatusCard from "./components/StatusCard";
-import CancelIcon from "@/components/icon/CancelIcon";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
+import { useInvoiceListStore } from "../view-invoices/context/InvoiceListState";
+import BillSummaryViewCard from "./components/BillSummaryViewCard";
 import CommissionDetailsGrid from "./components/CommissionDetailsGrid";
-import TimeLine from "./components/TransactionTimeline";
+import InvoiceItemsGrid from "./components/InvoiceItemGrid";
+import OutsourceItemsGrid from "./components/OutSourceItemGrid";
+import StatusCard from "./components/StatusCard";
 import { TransactionDrawer } from "./components/TransactionDrawer";
 
 function SingleInvoice() {
@@ -49,11 +45,9 @@ function SingleInvoice() {
     if (id) {
       const invoice = getCashInvoiceById(id);
       if (invoice) {
-        console.log("INVOICE IN STORE", invoice);
         setInvoiceDetails(invoice);
         setIsAvailableInStore(true);
       } else {
-        console.log("INVOICE NOT IN STORE");
         setIsAvailableInStore(false);
       }
     }
@@ -79,20 +73,7 @@ function SingleInvoice() {
     }
   }, [invoiceData, isAvailableInStore, invoiceLoading]);
 
-  useEffect(() => {
-    console.log("STOREE", cashInvoicesStore);
-  }, [cashInvoicesStore]);
-
-  useEffect(() => {
-    if (invoiceLoading) {
-      console.log("loading");
-    } else {
-      console.log("loaded");
-    }
-    if (!invoiceLoading) {
-      console.log("IIINVOICE", invoiceDetails);
-    }
-  }, [invoiceDetails]);
+  useEffect(() => {}, [cashInvoicesStore]);
 
   return (
     <Fragment>

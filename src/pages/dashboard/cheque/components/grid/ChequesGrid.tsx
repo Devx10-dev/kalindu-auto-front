@@ -32,7 +32,7 @@ import ListCheckIcon from "@/components/icon/ListCheckIcon";
 import VerifyIcon from "@/components/icon/VerifyIcon";
 
 function ChequesGrid({
-  creditors,
+  creditors = [],
   chequeService,
 }: {
   creditors: Creditor[];

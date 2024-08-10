@@ -5,6 +5,8 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
   invoiceID: undefined,
   creditorName: undefined,
   creditorID: undefined,
+  address: undefined,
+  contactNo: undefined,
 
   // final bill summary items
   discountPercentage: 0,
@@ -150,7 +152,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
       totalPrice: state.totalPrice,
       totalDiscount: state.discountAmount,
       VAT: state.vatAmount,
-
+      creditorName: state.creditorName,
       invoiceItems: state.invoiceItemDTOList,
 
       commissions:
@@ -165,6 +167,24 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
           : [],
     };
   },
+
+  resetState: () =>
+    set({
+      invoiceId: undefined,
+      creditorName: undefined,
+      creditorID: undefined,
+      address: undefined,
+      contactNo: undefined,
+      discountPercentage: 0,
+      discountAmount: 0,
+      vatPercentage: 0,
+      vatAmount: 0,
+      totalPrice: undefined,
+      commissionName: undefined,
+      commissionAmount: undefined,
+      commissionRemark: undefined,
+      invoiceItemDTOList: [],
+    }),
 }));
 
 export default useCreditorInvoiceStore;

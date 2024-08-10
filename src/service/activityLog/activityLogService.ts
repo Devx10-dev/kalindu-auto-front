@@ -24,7 +24,6 @@ class ActivityLogService extends Service {
       }/${feature === "All" ? null : feature}/${
         action === "All" ? null : action
       }/${fromDate}/${toDate}/${pageNo}/${pageSize}`;
-      console.log(url);
 
       const response = await this.api.get<ActivityLogsResponseData>(url);
       return response.data;

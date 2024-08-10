@@ -87,7 +87,6 @@ function EditUser() {
     searchParamData.forEach((value, key) => {
       if (key === "data") {
         const userData = JSON.parse(value) as UserType;
-        console.log(userData);
         updateFormData(userData);
       }
     });
@@ -106,8 +105,6 @@ function EditUser() {
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-
-    console.log(values);
   };
 
   const { data: roles } = useQuery({

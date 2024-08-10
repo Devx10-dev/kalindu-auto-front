@@ -62,14 +62,14 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
                   >
                     <Button className="mr-5" variant="outline">
                       <ArrowLeftRight className="mr-2 h-4 w-4" />
-                      Transactions
+                      More
                     </Button>
                   </Link>
-                  {creditor.isExpired && (
+                  {/* {creditor.isExpired && (
                     <ViewExpiredInvoices
                       invoiceList={creditor.expiredInvoiceList}
                     />
-                  )}
+                  )} */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant={"outline"} className="w-18">

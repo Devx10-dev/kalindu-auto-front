@@ -19,6 +19,7 @@ import { Key, useState } from "react";
 import { useParams } from "react-router-dom";
 import CreditorAPI from "./api/CreditorAPI";
 import { AddNewTransaction } from "./components/AddNewTransaction";
+import CreditorInvoiceTable from "./components/CreditorInvoiceTable";
 
 const ViewCreditor = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -37,6 +38,11 @@ const ViewCreditor = () => {
     queryFn: () => creditorAPI.fetchSingleCreditor(id),
   });
 
+  const creditorInvoice = useQuery({
+    queryKey: ["creditorInvoice", id],
+    queryFn: () => creditorAPI.fetchCreditorInvoiceIDs(id),
+  });
+
   const onPageChange = (pageNo: number) => {
     setPageNo(pageNo);
     queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
@@ -50,58 +56,72 @@ const ViewCreditor = () => {
     return (
       <div className="w-full h-full p-10">
         <PageHeader
-          title="View Creditor Data"
+          title={`View Creditor Data - ${creditorDetails.data.shopName || "-"}`}
           description="View full creditor data and the transactions. You can add new transactions here."
           icon={<CreditCard height="30" width="28" color="#162a3b" />}
         />
         <AddNewTransaction />
-        <div className="grid gap-10 grid-cols-4">
-          <Card className="shadow-md bg-slate-50 h-full col-span-3 ">
-            <CardHeader>
-              <h3 className="text-lg font-bold">Transaction History</h3>
-            </CardHeader>
-            <CardContent>
-              <Table className="border bg-white">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Total Price</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Invoice No</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {hasData &&
-                    transactionResponse.data.creditorTransactions.map(
-                      (transaction: any, index: Key | null | undefined) => (
-                        <TableRow key={index}>
-                          <TableCell> Rs. {transaction.totalPrice}</TableCell>
-                          <TableCell>{transaction.transactionType}</TableCell>
-                          <TableCell>{transaction.invoiceNo}</TableCell>
-                          <TableCell>
-                            {transaction.type === "Invoice" ? (
-                              <Button variant={"outline"} className="w-48">
-                                View Invoice
-                              </Button>
-                            ) : null}
-                            {transaction.type === "Transaction" ? (
-                              <Button variant={"outline"} className="w-48">
-                                View Transaction Details
-                              </Button>
-                            ) : null}
-                          </TableCell>
-                        </TableRow>
-                      ),
-                    )}
-                  {!hasData && (
-                    <TableRow className=" flex p-5 ">
-                      <Label className="font-bold">
-                        Empty Transaction history
-                      </Label>
+        <div className="grid gap-10 grid-cols-4 h-full">
+          <Card className="shadow-md bg-slate-50 h-full col-span-3 flex flex-col">
+            <div className="flex-1 max-h-80">
+              <CardHeader>
+                <h3 className="text-lg font-bold">Transaction History</h3>
+              </CardHeader>
+              <CardContent className="overflow-auto h-4/5">
+                <Table className="border bg-white">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Total Price</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Invoice No</TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
+                  </TableHeader>
+                  <TableBody>
+                    {hasData &&
+                      transactionResponse.data.creditorTransactions.map(
+                        (transaction: any, index: Key | null | undefined) => (
+                          <TableRow key={index}>
+                            <TableCell> Rs. {transaction.totalPrice}</TableCell>
+                            <TableCell>{transaction.transactionType}</TableCell>
+                            <TableCell>{transaction.invoiceNo}</TableCell>
+                            <TableCell>
+                              {transaction.type === "Invoice" ? (
+                                <Button variant={"outline"} className="w-48">
+                                  View Invoice
+                                </Button>
+                              ) : null}
+                              {transaction.type === "Transaction" ? (
+                                <Button variant={"outline"} className="w-48">
+                                  View Transaction Details
+                                </Button>
+                              ) : null}
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
+                    {!hasData && (
+                      <TableRow className="flex p-5">
+                        <Label className="font-bold">
+                          Empty Transaction history
+                        </Label>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </div>
+            <CardHeader>
+              <h3 className="text-lg font-bold mt-5">Overdue Invoices</h3>
+            </CardHeader>
+            <div className="flex-1 overflow-auto">
+              <CardContent className="overflow-auto mt-100">
+                <CreditorInvoiceTable
+                  invoices={creditorInvoice.data}
+                  isLoading={creditorInvoice.isLoading}
+                  err={creditorInvoice.error}
+                />
+              </CardContent>
+            </div>
           </Card>
           <div className="h-full flex flex-col gap-5">
             <Card className="shadow-md bg-white h-full">
@@ -109,8 +129,7 @@ const ViewCreditor = () => {
                 <SquareGanttChart className="h-4" />
                 <h3 className="text-lg font-bold">Selected Creditor</h3>
               </CardHeader>
-
-              <CardContent className="flex flex-col gap-1">
+              <CardContent className="flex flex-col gap-1 overflow-auto">
                 <Label className="text-sm">Creditor/Shop Name : </Label>
                 <Badge
                   className="rounded-md p-2 text-sm mb-5"

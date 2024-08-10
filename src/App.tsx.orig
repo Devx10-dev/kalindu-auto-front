@@ -19,9 +19,11 @@ import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
 import EditUser from "./pages/dashboard/user-management/EditUser";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
+<<<<<<< HEAD
 import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
-import { Analytics } from "./pages/dashboard/dashboard-root/Analytics";
-import PrintCreditor from "@/pages/dashboard/invoice/creditor/Print.tsx";
+=======
+import PrintCreditor from "./pages/dashboard/invoice/creditor/Print";
+>>>>>>> 468b77d (commit before completion)
 
 function App() {
   return (
@@ -35,7 +37,6 @@ function App() {
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
-          <Route path="all" element={<Analytics />} />
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />

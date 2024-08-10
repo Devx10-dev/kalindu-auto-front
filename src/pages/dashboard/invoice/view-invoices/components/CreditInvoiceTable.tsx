@@ -1,12 +1,7 @@
-import { Option } from "@/types/component/propTypes";
-import { VehicleModel } from "@/types/sparePartInventory/vehicleTypes";
-import { Fragment } from "react/jsx-runtime";
-import IconButton from "@/components/button/IconButton";
-import FormSelect from "@/components/formElements/FormSelect";
-import EditIcon from "@/components/icon/EditIcon";
-import SparePartIcon from "@/components/icon/SparePartIcon";
+import TablePagination from "@/components/TablePagination";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -16,28 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { DateRangePicker } from "./DateRangePicker";
-import { Invoice } from "@/types/Invoices/invoiceTypes";
-import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
-import { Badge } from "@/components/ui/badge";
-import TablePagination from "@/components/TablePagination";
-import { InvoiceList, InvoiceState } from "@/types/invoice/cashInvoice";
-import { useEffect } from "react";
-import addLeadingZero from "@/utils/addLeadingZero";
-import { Link, useNavigate } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TableBodySkeleton } from "./TableSkeleton";
-import ErrorIcon from "@/components/icon/ErrorIcon";
-import ErrorPageIcon from "@/components/icon/ErrorPageIcon";
 import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
 import dateArrayToString from "@/utils/dateArrayToString";
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import { Link, useNavigate } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
+import { TableBodySkeleton } from "./TableSkeleton";
 // import { useState } from "react";
 // import { useQuery } from "@tanstack/react-query";
 // import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
@@ -59,10 +38,6 @@ export default function CreditInvoiceTable({
   isLoading?: boolean;
   err?: any;
 }) {
-  useEffect(() => {
-    console.log(invoices);
-  }, [invoices]);
-
   const nav = useNavigate();
 
   const handleViewInvoice = (invoiceId: string) => {
@@ -95,10 +70,6 @@ export default function CreditInvoiceTable({
       issuedTime[5],
     );
     const currentDate = new Date();
-    console.log(issuedDate.getTime());
-    console.log(currentDate.getTime());
-    console.log(currentDate.getDate() - issuedDate.getDate());
-    console.log(maxDueWeeks * 7);
     const diff = currentDate.getTime() - issuedDate.getTime();
     if (diff > maxDueWeeks * 7) {
       return "DUE";
@@ -141,7 +112,6 @@ export default function CreditInvoiceTable({
               pageNo={pageNo + 1}
               totalPages={invoices?.totalPages}
               onPageChange={(page) => {
-                console.log(page);
                 setPageNo(page - 1);
               }}
             />

@@ -1,3 +1,4 @@
+import CreatableSelectErrorMessage from "@/components/formElements/CreatableSelectErrorMessage";
 import {
   OptionalLabel,
   RequiredLabel,
@@ -104,6 +105,7 @@ export default function VehicleForm({
       "description",
       vehicleModel ? vehicleModel.description || "" : undefined,
     );
+    form.clearErrors();
   };
 
   const typeOptions =
@@ -230,7 +232,7 @@ export default function VehicleForm({
           <FormField
             control={form.control}
             name="type"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Type" />
                 <FormControl>
@@ -243,15 +245,20 @@ export default function VehicleForm({
                     value={field.value}
                   />
                 </FormControl>
-
-                <FormMessage />
+                {fieldState.error && (
+                  <CreatableSelectErrorMessage
+                    error={fieldState.error}
+                    label="Vehicle Type"
+                    value={field.value}
+                  />
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="brand"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Brand" />
                 <FormControl>
@@ -264,15 +271,20 @@ export default function VehicleForm({
                     value={field.value}
                   />
                 </FormControl>
-
-                <FormMessage />
+                {fieldState.error && (
+                  <CreatableSelectErrorMessage
+                    error={fieldState.error}
+                    label="Vehicle Brand"
+                    value={field.value}
+                  />
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="model"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Model" />
                 <FormControl>
@@ -284,14 +296,16 @@ export default function VehicleForm({
                     disabled={vehicleModel !== null}
                   />
                 </FormControl>
-                <FormMessage />
+                {fieldState.error && (
+                  <FormMessage>{fieldState.error.message}</FormMessage>
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="chassisNo"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Chassis No" />
                 <FormControl>
@@ -304,15 +318,20 @@ export default function VehicleForm({
                     value={field.value}
                   />
                 </FormControl>
-
-                <FormMessage />
+                {fieldState.error && (
+                  <CreatableSelectErrorMessage
+                    error={fieldState.error}
+                    label="Chassis No"
+                    value={field.value}
+                  />
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="description"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <OptionalLabel label="Remark" />
                 <FormControl>
@@ -323,7 +342,9 @@ export default function VehicleForm({
                     value={field.value || ""}
                   />
                 </FormControl>
-                <FormMessage />
+                {fieldState.error && (
+                  <FormMessage>{fieldState.error.message}</FormMessage>
+                )}
               </FormItem>
             )}
           />

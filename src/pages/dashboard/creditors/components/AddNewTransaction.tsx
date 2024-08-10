@@ -95,12 +95,16 @@ export function AddNewTransaction() {
     queryFn: () => creditorAPI.fetchCreditorInvoiceIDs(id),
   });
 
-  console.log(data);
-  const invoiceOptions =
-    data?.invoiceIdList.map((invoiceId) => ({
-      value: invoiceId,
-      label: invoiceId,
-    })) || [];
+  let invoiceOptions = [];
+
+  if (data && Array.isArray(data) && data.length > 0) {
+    invoiceOptions = data.map((invoice) => ({
+      value: invoice.invoiceId,
+      label: invoice.invoiceId,
+    }));
+  }
+
+  console.log(invoiceOptions);
 
   const createCreditorMutation = useMutation({
     mutationFn: (data: CreditorTransactionFormValues) =>
@@ -130,7 +134,7 @@ export function AddNewTransaction() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       invoiceNo: "",
-      totalPrice: null,
+      totalPrice: "",
       transactionType: "CASH",
       isPartial: "NO",
       description: "",

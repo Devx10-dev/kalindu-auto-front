@@ -60,6 +60,7 @@ export type InvoiceState = {
   setCommissionRemark: (remark?: string) => void;
   setCommissionAmount: (amount?: number) => void;
 
+  resetState: () => void;
   getRequestData: () => any;
 };
 

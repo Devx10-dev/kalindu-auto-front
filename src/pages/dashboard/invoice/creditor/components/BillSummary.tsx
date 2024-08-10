@@ -9,8 +9,12 @@ import { useToast } from "@/components/ui/use-toast.ts";
 import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService.ts";
 import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi.ts";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 const BillSummary: React.FC = () => {
+  //     ----------     STATE INITIALIZATION     ----------     //
+
   const {
     invoiceItemDTOList,
     discountPercentage,
@@ -24,10 +28,13 @@ const BillSummary: React.FC = () => {
     setTotalPrice,
     getRequestData,
     creditorID,
+    resetState,
   } = useCreditorInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
@@ -50,6 +57,57 @@ const BillSummary: React.FC = () => {
   useEffect(() => {
     setTotalPrice(totalWithVat);
   }, [totalWithVat, setTotalPrice]);
+
+  //     ----------     BACKEND API MUTATIONS (CALLS)    ----------     //
+
+  //create creditor mutation
+  const createCreditorInvoice = useMutation({
+    mutationFn: () =>
+      creditInvoiceService.createCreditInvoice(getRequestData()),
+    onSuccess: (invoiceData) => {
+      resetState();
+      navigate("print", { state: { invoiceData } }); // this state will be accessed from the print component
+      toast({
+        variant: "default",
+        title: "Success",
+        description: "Successfully created creditor invoice ✅",
+        className: "bg-green-200",
+      });
+    },
+
+    onError: (data: any) => {
+      toast({
+        variant: "destructive",
+        title: "Creating invoice failed 🤕",
+        description: data.response.data,
+        duration: 5000,
+      });
+    },
+  });
+
+  async function printAndSaveInvoice() {
+    //validations
+    if (invoiceItemDTOList.length === 0) {
+      return toast({
+        title: "No items added to the invoice",
+        description: "",
+        variant: "destructive",
+      });
+    }
+
+    if (creditorID === undefined || creditorID === null) {
+      return toast({
+        title: "No creditor selected",
+        description: "Please select a creditor and then submit",
+        variant: "destructive",
+      });
+    }
+
+    //mutation
+    createCreditorInvoice.mutate();
+  }
+
+  //     ----------     HELPER FUNCTIONS     ----------     //
 
   const handleDiscountPercentageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -80,48 +138,6 @@ const BillSummary: React.FC = () => {
     setVatAmount(amount);
     setVatPercentage((amount / discountedTotal) * 100);
   };
-
-  const { toast } = useToast();
-
-  async function printAndSaveInvoice() {
-    if (invoiceItemDTOList.length === 0) {
-      return toast({
-        title: "No items added to the invoice",
-        description: "",
-        variant: "destructive",
-      });
-    }
-
-    if (creditorID === undefined || creditorID === null) {
-      return toast({
-        title: "No creditor selected",
-        description: "Please select a creditor and then submit",
-        variant: "destructive",
-      });
-    }
-
-    try {
-      const requestData = getRequestData();
-      console.log(requestData);
-      const createdCreditInvoice =
-        await creditInvoiceService.createCreditInvoice(requestData);
-      console.log("Cash invoice created:", createdCreditInvoice);
-      // Handle success response, such as printing the invoice or displaying a success message
-      toast({
-        title: "Invoice created successfully",
-        description: "The cash invoice has been created and printed.",
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("Error creating cash invoice:", error);
-      // Handle error
-      toast({
-        title: "Error creating invoice",
-        description: "Failed to create the cash invoice. Please try again.",
-        variant: "destructive",
-      });
-    }
-  }
 
   return (
     <Card>
