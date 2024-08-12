@@ -264,7 +264,6 @@ function HandlingReturn() {
   };
 
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
-    console.log("/////////////////// baseInvoice", baseInvoice);
     setCustomer(baseInvoice.customer);
     setPurchaseDate(baseInvoice.date);
     setReturnType(findReturnType(baseInvoice.invoiceId));
@@ -342,12 +341,8 @@ function HandlingReturn() {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead className="w-[150px]">
-                                Spare Part
-                              </TableHead>
-                              <TableHead className="w-[100px]">
-                                Item Code
-                              </TableHead>
+                              <TableHead >Spare Part</TableHead>
+                              <TableHead >Item Code</TableHead>
                               <TableHead>Unit Price</TableHead>
                               <TableHead>Quantity</TableHead>
                               <TableHead>Returned Qty</TableHead>
@@ -356,17 +351,11 @@ function HandlingReturn() {
                           <TableBody>
                             {selectedInvoice &&
                               selectedInvoice?.items.map((item) => (
-                                <TableRow>
-                                  <TableCell className="font-semibold">
-                                    {item.name}
-                                  </TableCell>
+                                <TableRow key={item.id}>
+                                  <TableCell>{item.name}</TableCell>
                                   <TableCell>{item.code}</TableCell>
-                                  <TableCell align="center">
-                                    {item.price}
-                                  </TableCell>
-                                  <TableCell align="center">
-                                    {item.quantity}
-                                  </TableCell>
+                                  <TableCell>LKR {item.price}</TableCell>
+                                  <TableCell>{item.quantity}</TableCell>
                                   <TableCell>
                                     <Input
                                       id={"" + item.id}
