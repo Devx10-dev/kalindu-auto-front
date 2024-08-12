@@ -348,8 +348,8 @@ function HandlingReturn() {
                               <TableHead className="w-[100px]">
                                 Item Code
                               </TableHead>
-                              <TableHead>Quantity</TableHead>
                               <TableHead>Unit Price</TableHead>
+                              <TableHead>Quantity</TableHead>
                               <TableHead>Returned Qty</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -361,10 +361,10 @@ function HandlingReturn() {
                                     {item.name}
                                   </TableCell>
                                   <TableCell>{item.code}</TableCell>
-                                  <TableCell align="right">
+                                  <TableCell align="center">
                                     {item.price}
                                   </TableCell>
-                                  <TableCell align="right">
+                                  <TableCell align="center">
                                     {item.quantity}
                                   </TableCell>
                                   <TableCell>

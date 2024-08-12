@@ -183,7 +183,7 @@ const Summary = () => {
           </div>
         </div>
 
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <div className="d-flex justify-between mb-4">
             <Label>Discount (%)</Label>
             <Input
@@ -244,7 +244,8 @@ const Summary = () => {
               onChange={handleVatAmountChange}
             />
           </div>
-        </div>
+        </div> */}
+
         <div className="flex justify-start text-left mt-10">
           <div className="text-left">
             <p className="text-lg font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
