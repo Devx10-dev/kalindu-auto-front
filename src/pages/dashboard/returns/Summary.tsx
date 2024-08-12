@@ -99,14 +99,6 @@ const Summary = () => {
   const { toast } = useToast();
 
   async function printAndSaveInvoice() {
-    if (invoiceItemDTOList.length === 0) {
-      return toast({
-        title: "No items added to the invoice",
-        description: "",
-        variant: "destructive",
-      });
-    }
-
     try {
       const requestData = getRequestData();
       console.log(requestData);

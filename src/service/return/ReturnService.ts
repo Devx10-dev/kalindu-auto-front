@@ -3,6 +3,7 @@ import { Service } from "../apiService";
 import { BaseInvoice, InvoiceState } from "@/types/returns/returnsTypes";
 
 const INVOICE_URL = "invoice";
+const RETURN_INVOICE_URL = "return";
 
 class ReturnService extends Service {
   constructor(api: AxiosInstance) {
@@ -12,7 +13,7 @@ class ReturnService extends Service {
   async fetchAllInvoiceByGivenTerm(term: string): Promise<BaseInvoice[]> {
     try {
       const response = await this.api.get<BaseInvoice[]>(
-        `${INVOICE_URL}/${term}`,
+        `${INVOICE_URL}/search/${term}`,
       );
       return response.data;
     } catch (error) {
@@ -28,10 +29,10 @@ class ReturnService extends Service {
         "////////////////// request data in the return service",
         returnInvoiceData,
       );
-      // const response = await this.api.post<InvoiceState>(
-      //   RETURN_INVOICE_URL,
-      //   returnInvoiceData,
-      // );
+      const response = await this.api.post<InvoiceState>(
+        RETURN_INVOICE_URL,
+        returnInvoiceData,
+      );
       return returnInvoiceData;
     } catch (error) {
       throw new Error("Failed to create cash invoice");
