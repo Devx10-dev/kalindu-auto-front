@@ -12,10 +12,10 @@ export const saleOrExpenseSchema = z.object({
           id: z.number().optional(),
           name: z.string(),
         },
-        { required_error: "Field is required" }
+        { required_error: "Field is required" },
       ),
     },
-    { required_error: "Field is required" }
+    { required_error: "Field is required" },
   ),
   type: z
     .enum(["SALE", "EXPENSE", "CREDIT_BALANCE", "UNSETTLED_CHEQUE_BALANCE"])

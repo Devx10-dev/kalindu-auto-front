@@ -24,7 +24,7 @@ export const spaerPartSchema = z.object({
       label: z.string(),
       value: z.string(),
     },
-    { required_error: "Chassis No is required" }
+    { required_error: "Chassis No is required" },
   ),
   description: z
     .string()

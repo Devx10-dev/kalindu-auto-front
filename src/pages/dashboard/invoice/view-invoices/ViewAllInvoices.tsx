@@ -86,7 +86,7 @@ export function ViewAllInvoices() {
         fromDate ? dateToString(fromDate) : undefined,
         toDate ? dateToString(toDate) : undefined,
         pageNo,
-        pageSize
+        pageSize,
       ),
     enabled: activeTab === "cash",
   });
@@ -112,7 +112,7 @@ export function ViewAllInvoices() {
         fromDate ? dateToString(fromDate) : undefined,
         toDate ? dateToString(toDate) : undefined,
         pageNo,
-        pageSize
+        pageSize,
       ),
     enabled: activeTab === "creditor",
   });

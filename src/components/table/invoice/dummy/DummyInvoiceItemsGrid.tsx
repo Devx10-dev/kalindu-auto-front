@@ -35,30 +35,30 @@ function DummyInvoiceItemsGrid({
 
   const [show, setShow] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DummyInvoiceItem | null>(
-    null
+    null,
   );
 
   const onChangeCheckHandle = (item: DummyInvoiceItem) => {
     if (item.outsourced) {
       setOutsourcedItems(
         outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.sparePartId
-        )
+          (outsourcedItem) => outsourcedItem.index !== item.sparePartId,
+        ),
       );
       setItems(
         items.map((dummyItem) =>
           dummyItem.sparePartId === item.sparePartId
             ? { ...dummyItem, outsourced: false }
-            : dummyItem
-        )
+            : dummyItem,
+        ),
       );
     } else {
       setItems(
         items.map((dummyItem) =>
           dummyItem.sparePartId === item.sparePartId
             ? { ...dummyItem, outsourced: true }
-            : dummyItem
-        )
+            : dummyItem,
+        ),
       );
       setOutsourcedItems([
         {
@@ -78,12 +78,12 @@ function DummyInvoiceItemsGrid({
     if (item.outsourced) {
       setOutsourcedItems(
         outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.sparePartId
-        )
+          (outsourcedItem) => outsourcedItem.index !== item.sparePartId,
+        ),
       );
     }
     setItems(
-      items.filter((dummyItem) => dummyItem.sparePartId !== item.sparePartId)
+      items.filter((dummyItem) => dummyItem.sparePartId !== item.sparePartId),
     );
   };
 

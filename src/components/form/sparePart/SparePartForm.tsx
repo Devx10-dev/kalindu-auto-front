@@ -69,17 +69,17 @@ export default function SparePartForm({
             value: sparePart.chassisNo,
             label: sparePart.chassisNo,
           }
-        : undefined
+        : undefined,
     );
     form.setValue("partName", sparePart ? sparePart.partName : "");
     form.setValue(
       "quantity",
-      sparePart ? sparePart?.quantity?.toString() ?? "0" : ""
+      sparePart ? sparePart?.quantity?.toString() ?? "0" : "",
     );
     form.setValue("code", sparePart ? sparePart?.code ?? "" : "");
     form.setValue(
       "description",
-      sparePart ? sparePart.description || "" : undefined
+      sparePart ? sparePart.description || "" : undefined,
     );
 
     form.clearErrors();

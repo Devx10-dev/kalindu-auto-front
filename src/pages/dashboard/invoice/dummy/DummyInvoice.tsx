@@ -120,7 +120,7 @@ function DummyInvoice() {
       items.forEach((item) => {
         if (item.outsourced) {
           const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId
+            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
           )[0];
 
           if (

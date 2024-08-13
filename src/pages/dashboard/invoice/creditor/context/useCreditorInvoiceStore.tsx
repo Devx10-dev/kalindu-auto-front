@@ -168,23 +168,23 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     };
   },
 
-  resetState: () => set({
-    invoiceId: undefined,
-    creditorName: undefined,
-    creditorID: undefined,
-    address: undefined,
-    contactNo: undefined,
-    discountPercentage: 0,
-    discountAmount: 0,
-    vatPercentage: 0,
-    vatAmount: 0,
-    totalPrice: undefined,
-    commissionName: undefined,
-    commissionAmount: undefined,
-    commissionRemark: undefined,
-    invoiceItemDTOList: [],
-  }),
-
+  resetState: () =>
+    set({
+      invoiceId: undefined,
+      creditorName: undefined,
+      creditorID: undefined,
+      address: undefined,
+      contactNo: undefined,
+      discountPercentage: 0,
+      discountAmount: 0,
+      vatPercentage: 0,
+      vatAmount: 0,
+      totalPrice: undefined,
+      commissionName: undefined,
+      commissionAmount: undefined,
+      commissionRemark: undefined,
+      invoiceItemDTOList: [],
+    }),
 }));
 
 export default useCreditorInvoiceStore;

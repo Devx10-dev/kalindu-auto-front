@@ -16,13 +16,13 @@ class SparePartService extends Service {
   async fetchFilteredSpaerParts(
     pageNo: number,
     pageSize: number,
-    chassisNo: string | null
+    chassisNo: string | null,
   ): Promise<SparePartsResponseData> {
     try {
       const response = await this.api.get<SparePartsResponseData>(
         `${SPARE_PART_URL}/${
           chassisNo === "All" ? null : chassisNo
-        }/${pageNo}/${pageSize}`
+        }/${pageNo}/${pageSize}`,
       );
       return response.data;
     } catch (error) {
@@ -31,11 +31,11 @@ class SparePartService extends Service {
   }
 
   async fetchSpaerPartsByNameOrCode(
-    searchTerm: string
+    searchTerm: string,
   ): Promise<SparePartItem[]> {
     try {
       const response = await this.api.get<SparePartItem[]>(
-        `${SPARE_PART_URL}/${searchTerm.length === 0 ? null : searchTerm}`
+        `${SPARE_PART_URL}/${searchTerm.length === 0 ? null : searchTerm}`,
       );
       return response.data;
     } catch (error) {

@@ -13,7 +13,7 @@ export const userSchema = z.object({
         email === undefined ||
         email === "" ||
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email),
-      { message: "Invalid email address" }
+      { message: "Invalid email address" },
     ),
   address: z
     .string()
@@ -26,24 +26,17 @@ export const userSchema = z.object({
     .optional()
     .refine(
       (mobileNo) =>
-        mobileNo === undefined ||
-        mobileNo === "" ||
-        /^0\d{9}$/.test(
-          mobileNo
-        ),
-      { message: "Invalid contact number." }
+        mobileNo === undefined || mobileNo === "" || /^0\d{9}$/.test(mobileNo),
+      { message: "Invalid contact number." },
     ),
-  homeNo: z.string()
-  .optional()
-  .refine(
-    (mobileNo) =>
-      mobileNo === undefined ||
-      mobileNo === "" ||
-      /^0\d{9}$/.test(
-        mobileNo
-      ),
-    { message: "Invalid home number." }
-  ),
+  homeNo: z
+    .string()
+    .optional()
+    .refine(
+      (mobileNo) =>
+        mobileNo === undefined || mobileNo === "" || /^0\d{9}$/.test(mobileNo),
+      { message: "Invalid home number." },
+    ),
   designation: z.enum(["Manager", "Cashier", "Owner", "User"], {
     errorMap: () => ({ message: "Please select a valid designation." }),
   }),
@@ -64,9 +57,9 @@ export const userSchema = z.object({
         password === undefined ||
         password === "" ||
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/.test(
-          password
+          password,
         ),
-      { message: "Password didn't meet the requirements. Ex: Pwd@123" }
+      { message: "Password didn't meet the requirements. Ex: Pwd@123" },
     ),
   confirmPassword: z.string().optional(),
   active: z.boolean(),

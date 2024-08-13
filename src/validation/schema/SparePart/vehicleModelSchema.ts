@@ -22,7 +22,7 @@ export const creatableSelectValueSchema = z
           .min(2, { message: "Value must be at least 2 characters." })
           .max(255, {
             message: "Value must not be longer than 255 characters.",
-          })
+          }),
       ),
     __isNew__: z.boolean(),
   })

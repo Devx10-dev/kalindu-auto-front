@@ -103,7 +103,6 @@ export default function DummyItemForm({
   };
 
   const handleSubmit = async (values: DummyItemValues) => {
-
     let validationError: string | null = null;
 
     if (values.price === undefined) {
@@ -142,8 +141,8 @@ export default function DummyItemForm({
                 outsourceItem: item.outsourceItem,
                 price: values.price,
               }
-            : t
-        )
+            : t,
+        ),
       );
 
       if (!item.outsourced && values.outsourced) {
@@ -306,7 +305,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? undefined
-                            : parseFloat(e.target.value)
+                            : parseFloat(e.target.value),
                         )
                       }
                     />
@@ -334,7 +333,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? undefined
-                            : parseFloat(e.target.value)
+                            : parseFloat(e.target.value),
                         )
                       }
                     />
@@ -361,7 +360,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? ""
-                            : parseFloat(e.target.value)
+                            : parseFloat(e.target.value),
                         )
                       }
                       value={field.value || ""}
@@ -389,7 +388,7 @@ export default function DummyItemForm({
                         field.onChange(
                           e.target.value === ""
                             ? ""
-                            : parseFloat(e.target.value)
+                            : parseFloat(e.target.value),
                         )
                       }
                       value={field.value || ""}

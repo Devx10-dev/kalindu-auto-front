@@ -21,14 +21,14 @@ export default function FinancialRecordGrid({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>(
-    financialRecords.map((record) => record.field.category.name)
+    financialRecords.map((record) => record.field.category.name),
   );
 
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories((prevExpandedCategories) =>
       prevExpandedCategories.includes(categoryName)
         ? prevExpandedCategories.filter((name) => name !== categoryName)
-        : [...prevExpandedCategories, categoryName]
+        : [...prevExpandedCategories, categoryName],
     );
   };
 
@@ -108,7 +108,7 @@ export default function FinancialRecordGrid({
                         <TableCell>{`${financialRecord.dateTime[0]}-${financialRecord.dateTime[1]}-${financialRecord.dateTime[2]} ${financialRecord.dateTime[3]}:${financialRecord.dateTime[4]}:${financialRecord.dateTime[5]}`}</TableCell>
                         <TableCell>{financialRecord.reason}</TableCell>
                       </TableRow>
-                    )
+                    ),
                   )}
               </Fragment>
             ))}

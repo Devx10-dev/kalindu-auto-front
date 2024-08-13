@@ -13,8 +13,7 @@ import { useEffect } from "react";
 const InvoiceTable: React.FC = () => {
   const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
     useCreditorInvoiceStore();
-  useEffect(() => {
-  }, [invoiceItemDTOList]);
+  useEffect(() => {}, [invoiceItemDTOList]);
 
   return (
     <div>

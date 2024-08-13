@@ -67,7 +67,7 @@ export default function CreditInvoiceTable({
       issuedTime[2],
       issuedTime[3],
       issuedTime[4],
-      issuedTime[5]
+      issuedTime[5],
     );
     const currentDate = new Date();
     const diff = currentDate.getTime() - issuedDate.getTime();
@@ -161,8 +161,8 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(
                       calculateDueDate(
                         invoice.issuedTime,
-                        invoice.creditor.maxDuePeriod
-                      )
+                        invoice.creditor.maxDuePeriod,
+                      ),
                     )}
                   </TableCell>
                   <TableCell>Rs. {invoice.totalPrice}</TableCell>
@@ -170,7 +170,7 @@ export default function CreditInvoiceTable({
                     {/* make background greem intag */}
                     {generateStatusBadge(
                       invoice.issuedTime,
-                      invoice.creditor.maxDuePeriod
+                      invoice.creditor.maxDuePeriod,
                     )}
                   </TableCell>
                   <TableCell className="text-right">
