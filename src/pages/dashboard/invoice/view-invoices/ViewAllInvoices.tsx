@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import useDebounce from "@/hooks/useDebounce";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi";
+import { DummyInvoiceService } from "@/service/invoice/dummy/DummyInvoiceService";
 import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService";
 import { InvoiceList } from "@/types/invoice/cashInvoice";
 import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
@@ -91,6 +92,32 @@ export function ViewAllInvoices() {
     enabled: activeTab === "cash",
   });
 
+  const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
+
+  const {
+    data: dummyInvoiceData,
+    isLoading: dummyInvoiceLoading,
+    error: dummyInvoiceError,
+  } = useQuery<InvoiceList>({
+    queryKey: [
+      "dummyInvoices",
+      debouncedSearch,
+      fromDate,
+      toDate,
+      pageNo,
+      pageSize,
+    ],
+    queryFn: () =>
+      dummyInvoiceService.fetchDummyInvoices(
+        debouncedSearch,
+        fromDate ? dateToString(fromDate) : undefined,
+        toDate ? dateToString(toDate) : undefined,
+        pageNo,
+        pageSize
+      ),
+    enabled: activeTab === "dummy",
+  });
+
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
 
   const {
@@ -140,6 +167,7 @@ export function ViewAllInvoices() {
   }, [cashInvoiceError, toast]);
 
   useEffect(() => {
+    
     if (cashInvoiceData?.invoices?.length > 0) {
       setCashInvoicesStore(cashInvoiceData.invoices);
     }
@@ -244,7 +272,22 @@ export function ViewAllInvoices() {
           )}
         </TabsContent>
         <TabsContent value="dummy">
-          {/* <InvoiceTable invoices={invoices} type="dummy" /> */}
+        {dummyInvoiceError ? (
+            <ErrorPage
+              errorHeading="Uh oh! Something went wrong"
+              errorSubHeading="There was an unexpected error. Please try again or contact support."
+            />
+          ) : (
+            <InvoiceTable
+              invoices={dummyInvoiceData}
+              setPageNo={setPageNo}
+              type="cash"
+              pageNo={pageNo}
+              pageSize={pageSize}
+              isLoading={dummyInvoiceLoading}
+              err={dummyInvoiceError}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </Fragment>

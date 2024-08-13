@@ -18,7 +18,7 @@ function CustomerDetailsForm({
 }) {
   return (
     <div className="flex justify-between gap-5">
-      <div className="flex flex-col gap-2 flex-grow">
+      <div className="flex flex-col flex-grow">
         <RequiredLabel label="Customer Name" />
         <Input
           type="text"

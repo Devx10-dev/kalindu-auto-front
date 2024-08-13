@@ -29,17 +29,24 @@ class CashInvoiceService extends Service {
     fromDate?: string | null,
     toDate?: string | null,
     pageNo?: number,
-    pageSize?: number,
+    pageSize?: number
   ): Promise<InvoiceList> {
     try {
       const response = await this.api.get<InvoiceList>(
-        `${CASH_INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
+        `${CASH_INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`
       );
-      return response.data;
+      
+      const filteredInvoices = response.data.invoices.filter(invoice => !invoice.dummy);
+      
+      return {
+        ...response.data,
+        invoices: filteredInvoices
+      };
     } catch (error) {
       throw new Error("Failed to fetch cash invoices");
     }
   }
+  
 
   async fetchCashInvoiceById(invoiceId: string): Promise<InvoiceState> {
     try {
