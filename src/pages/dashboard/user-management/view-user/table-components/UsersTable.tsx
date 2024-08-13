@@ -60,7 +60,7 @@ const UsersTable = ({
     setShow(true);
     setTitle(`${user.active ? "Deactivate" : "Activate"} User! `);
     setDescription(
-      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`,
+      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`
     );
 
     setUser(user);
@@ -122,6 +122,7 @@ const UsersTable = ({
                 <TableHead>Full Name</TableHead>
                 <TableHead>Designation</TableHead>
                 <TableHead>Mobile No</TableHead>
+                <TableHead>Email Address</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Active</TableHead>
                 <TableHead className="text-center">Actions</TableHead>
@@ -137,6 +138,7 @@ const UsersTable = ({
                     <TableCell>{user.fullName}</TableCell>
                     <TableCell>{user.designation}</TableCell>
                     <TableCell>{user.mobileNo}</TableCell>
+                    <TableCell>{user.email ?? "-"}</TableCell>
                     <TableCell>{user.address ?? "-"}</TableCell>
                     <TableCell>
                       {user.active ? (
