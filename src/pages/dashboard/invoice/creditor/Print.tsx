@@ -53,8 +53,12 @@ const PrintCreditor = () => {
               <p className="text-gray-600">
                 Creditor Name: {invoiceData.creditor.shopName}
               </p>
-              <p className="text-gray-600">Address : {invoiceData.creditor.address || 'N/A'}</p>
-              <p className="text-gray-600">Contact No: {invoiceData.creditor.primaryContact}</p>
+              <p className="text-gray-600">
+                Address : {invoiceData.creditor.address || "N/A"}
+              </p>
+              <p className="text-gray-600">
+                Contact No: {invoiceData.creditor.primaryContact}
+              </p>
             </div>
             <div>{/* add more data here  */}</div>
           </div>
@@ -121,7 +125,7 @@ const PrintCreditor = () => {
         </Button>
         <Link to={"/dashboard/invoice/creditor"}>
           <Button
-            onClick={()=>navigate('')}
+            onClick={() => navigate("")}
             className="mt-10 ml-5"
             variant="outline"
           >

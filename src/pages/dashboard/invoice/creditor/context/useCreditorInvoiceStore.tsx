@@ -32,7 +32,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.filter(
-        (item) => item !== itemToRemove
+        (item) => item !== itemToRemove,
       ),
     })),
 
@@ -52,13 +52,13 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
               ...item,
               outsourced: status,
             }
-          : item
+          : item,
       ),
     })),
 
   setOutsourcedCompanyName: (
     itemOutsourced: InvoiceItem,
-    companyName: string
+    companyName: string,
   ) =>
     set((state) => ({
       ...state,
@@ -71,12 +71,12 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
                 companyName: companyName,
               },
             }
-          : item
+          : item,
       ),
     })),
   setOutsourcedBuyingPrice: (
     itemOutsourced: InvoiceItem,
-    buyingPrice: number
+    buyingPrice: number,
   ) =>
     set((state) => ({
       ...state,
@@ -89,7 +89,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
                 buyingPrice: buyingPrice,
               },
             }
-          : item
+          : item,
       ),
     })),
 

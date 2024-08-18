@@ -87,7 +87,10 @@ function BillSummaryCard({
         </h3>
         <div style={{ marginTop: "30px" }}>
           <div className="d-flex justify-between mb-2 mt-2">
-          <OptionalLabel label="Discount (%)" style={{ fontSize: 14, fontWeight: 'bold' }} />
+            <OptionalLabel
+              label="Discount (%)"
+              style={{ fontSize: 14, fontWeight: "bold" }}
+            />
             <Input
               type="number"
               value={discountPercentage}
@@ -105,7 +108,10 @@ function BillSummaryCard({
             />
           </div>
           <div className="d-flex justify-between mb-2 mt-4">
-            <OptionalLabel style={{ fontSize: 14 ,fontWeight: 'bold'}} label="Discount Amount" />
+            <OptionalLabel
+              style={{ fontSize: 14, fontWeight: "bold" }}
+              label="Discount Amount"
+            />
             <Input
               type="number"
               value={discount}
@@ -124,7 +130,10 @@ function BillSummaryCard({
             />
           </div>
           <div className="d-flex justify-between mb-2 mt-4">
-            <OptionalLabel style={{ fontSize: 14,fontWeight: 'bold' }} label="VAT (%)" />
+            <OptionalLabel
+              style={{ fontSize: 14, fontWeight: "bold" }}
+              label="VAT (%)"
+            />
             <Input
               type="number"
               value={vatPercentage}
@@ -141,7 +150,10 @@ function BillSummaryCard({
             />
           </div>
           <div className="d-flex justify-between mb-2 mt-4">
-            <OptionalLabel style={{ fontSize: 14,fontWeight: 'bold' }} label="VAT Amount" />
+            <OptionalLabel
+              style={{ fontSize: 14, fontWeight: "bold" }}
+              label="VAT Amount"
+            />
             <Input
               type="number"
               value={vat}

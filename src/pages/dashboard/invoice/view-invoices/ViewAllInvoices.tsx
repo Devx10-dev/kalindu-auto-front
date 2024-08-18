@@ -113,7 +113,7 @@ export function ViewAllInvoices() {
         fromDate ? dateToString(fromDate) : undefined,
         toDate ? dateToString(toDate) : undefined,
         pageNo,
-        pageSize
+        pageSize,
       ),
     enabled: activeTab === "dummy",
   });
@@ -167,7 +167,6 @@ export function ViewAllInvoices() {
   }, [cashInvoiceError, toast]);
 
   useEffect(() => {
-    
     if (cashInvoiceData?.invoices?.length > 0) {
       setCashInvoicesStore(cashInvoiceData.invoices);
     }
@@ -272,7 +271,7 @@ export function ViewAllInvoices() {
           )}
         </TabsContent>
         <TabsContent value="dummy">
-        {dummyInvoiceError ? (
+          {dummyInvoiceError ? (
             <ErrorPage
               errorHeading="Uh oh! Something went wrong"
               errorSubHeading="There was an unexpected error. Please try again or contact support."
