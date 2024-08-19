@@ -161,7 +161,7 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(
                       calculateDueDate(
                         invoice.issuedTime,
-                        invoice.creditor.maxDuePeriod,
+                        parseInt(invoice.creditor.maxDuePeriod),
                       ),
                     )}
                   </TableCell>
@@ -170,7 +170,7 @@ export default function CreditInvoiceTable({
                     {/* make background greem intag */}
                     {generateStatusBadge(
                       invoice.issuedTime,
-                      invoice.creditor.maxDuePeriod,
+                      parseInt(invoice.creditor.maxDuePeriod),
                     )}
                   </TableCell>
                   <TableCell className="text-right">

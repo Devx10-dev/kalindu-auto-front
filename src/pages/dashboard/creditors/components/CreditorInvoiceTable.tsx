@@ -1,4 +1,3 @@
-import { Fragment } from "react/jsx-runtime";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,20 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import TablePagination from "@/components/TablePagination";
 import dateArrayToString from "@/utils/dateArrayToString";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkelton";
 
 const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
-  useEffect(() => {
-    console.log(invoices);
-  }, [invoices]);
-
   const nav = useNavigate();
-
   const handleViewInvoice = (invoiceId) => {
     nav(`/dashboard/invoice/view/creditor/${invoiceId}`);
   };

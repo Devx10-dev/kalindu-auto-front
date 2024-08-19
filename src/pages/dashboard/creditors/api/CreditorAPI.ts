@@ -5,6 +5,7 @@ import {
 } from "@/types/creditor/creditorTypes";
 import { AxiosInstance } from "axios";
 import { CreditorEndpoints } from "./CreditorEndpoints";
+import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -90,6 +91,13 @@ class CreditorAPI {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_TRANSACTIONS_URL,
       creditorTransaction,
+    );
+    return response.data;
+  }
+
+  async fetchCreditInvoice(invoiceID: number): Promise<CreditInvoice> {
+    const response = await this.api.get(
+      CreditorEndpoints.GET_CREDITOR_INVOICE_URL + "/" + invoiceID,
     );
     return response.data;
   }

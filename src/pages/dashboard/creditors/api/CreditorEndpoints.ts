@@ -7,4 +7,5 @@ export const CreditorEndpoints = {
   GET_CREDITOR_TRANSACTIONS_URL: "/creditor/transactions",
   CREATE_CREDITOR_TRANSACTIONS_URL: "/creditor/transactions/add",
   GET_CREDITOR_INVOICE_IDS_URL: "/invoice/credit/creditor",
+  GET_CREDITOR_INVOICE_URL: "/invoice/credit",
 };
