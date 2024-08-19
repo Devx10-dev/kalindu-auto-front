@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Delete, Printer } from "lucide-react";
+import { Delete, Loader2, Printer } from "lucide-react";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 import { useToast } from "@/components/ui/use-toast.ts";
 import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService.ts";
@@ -11,6 +11,7 @@ import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi.ts";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import Loading from "@/components/Loading";
 
 const BillSummary: React.FC = () => {
   //     ----------     STATE INITIALIZATION     ----------     //
@@ -219,10 +220,24 @@ const BillSummary: React.FC = () => {
             <p className="text-xl font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
               Total : LKR {totalWithVat.toFixed(2)}
             </p>
-            <Button className="mt-4 mb-5" onClick={() => printAndSaveInvoice()}>
-              <Printer className={"mr-2"} /> Print Invoice
-            </Button>
-            <Button className="mt-4 mb-5 bg-red-500 ml-2">
+            {createCreditorInvoice.isPending ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+            ) : (
+              <Button
+                className="mt-4 mb-5"
+                onClick={() => printAndSaveInvoice()}
+              >
+                <Printer className={"mr-2"} /> Print Invoice
+              </Button>
+            )}
+
+            <Button
+              className="mt-4 mb-5 bg-red-500 ml-2"
+              onClick={() => resetState()}
+            >
               <Delete className={"mr-2"} /> Cancel
             </Button>
           </div>

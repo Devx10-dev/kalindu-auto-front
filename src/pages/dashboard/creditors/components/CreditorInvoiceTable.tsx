@@ -16,7 +16,6 @@ import { TableBodySkeleton } from "./TableSkelton";
 
 const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
   const nav = useNavigate();
-
   const handleViewInvoice = (invoiceId) => {
     nav(`/dashboard/invoice/view/creditor/${invoiceId}`);
   };
