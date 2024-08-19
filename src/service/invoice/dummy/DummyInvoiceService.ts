@@ -26,24 +26,25 @@ class DummyInvoiceService extends Service {
     fromDate?: string | null,
     toDate?: string | null,
     pageNo?: number,
-    pageSize?: number
+    pageSize?: number,
   ): Promise<InvoiceList> {
     try {
       const response = await this.api.get<InvoiceList>(
-        `${INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`
+        `${INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
       );
-      
-      const filteredInvoices = response.data.invoices.filter(invoice => invoice.dummy);
-      
+
+      const filteredInvoices = response.data.invoices.filter(
+        (invoice) => invoice.dummy,
+      );
+
       return {
         ...response.data,
-        invoices: filteredInvoices
+        invoices: filteredInvoices,
       };
     } catch (error) {
       throw new Error("Failed to fetch cash invoices");
     }
   }
-
 }
 
 export { DummyInvoiceService };

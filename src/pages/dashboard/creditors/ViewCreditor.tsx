@@ -42,7 +42,6 @@ const ViewCreditor = () => {
     queryKey: ["creditorInvoice", id],
     queryFn: () => creditorAPI.fetchCreditorInvoiceIDs(id),
   });
-  
 
   const onPageChange = (pageNo: number) => {
     setPageNo(pageNo);
@@ -57,14 +56,14 @@ const ViewCreditor = () => {
     return (
       <div className="w-full h-full p-10">
         <PageHeader
-            title={`View Creditor Data - ${creditorDetails.data.shopName || "-"}`}
+          title={`View Creditor Data - ${creditorDetails.data.shopName || "-"}`}
           description="View full creditor data and the transactions. You can add new transactions here."
           icon={<CreditCard height="30" width="28" color="#162a3b" />}
         />
         <AddNewTransaction />
         <div className="grid gap-10 grid-cols-4 h-full">
           <Card className="shadow-md bg-slate-50 h-full col-span-3 flex flex-col">
-          <div className="flex-1 max-h-80">
+            <div className="flex-1 max-h-80">
               <CardHeader>
                 <h3 className="text-lg font-bold">Transaction History</h3>
               </CardHeader>
@@ -98,7 +97,7 @@ const ViewCreditor = () => {
                               ) : null}
                             </TableCell>
                           </TableRow>
-                        )
+                        ),
                       )}
                     {!hasData && (
                       <TableRow className="flex p-5">
@@ -112,8 +111,8 @@ const ViewCreditor = () => {
               </CardContent>
             </div>
             <CardHeader>
-                <h3 className="text-lg font-bold mt-5">Overdue Invoices</h3>
-              </CardHeader>
+              <h3 className="text-lg font-bold mt-5">Overdue Invoices</h3>
+            </CardHeader>
             <div className="flex-1 overflow-auto">
               <CardContent className="overflow-auto mt-100">
                 <CreditorInvoiceTable
@@ -132,39 +131,66 @@ const ViewCreditor = () => {
               </CardHeader>
               <CardContent className="flex flex-col gap-1 overflow-auto">
                 <Label className="text-sm">Creditor/Shop Name : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.shopName || "-"}
                 </Badge>
                 <Label>Total Due : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.totalDue || "-"}
                 </Badge>
                 <Label>Primary Contact : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.primaryContact || "-"}
                 </Badge>
                 <Label>Secondary Contact : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.secondaryContact || "-"}
                 </Badge>
                 <Label>Contact Person Name : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.contactPersonName || "-"}
                 </Badge>
                 <Label>Email: </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.email || "-"}
                 </Badge>
                 <Label>Address : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.address || "-"}
                 </Badge>
                 <Label>Due Period : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.maxDuePeriod + " Weeks" || "-"}
                 </Badge>
                 <Label>Credit Limit : </Label>
-                <Badge className="rounded-md p-2 text-sm mb-5" variant={"secondary"}>
+                <Badge
+                  className="rounded-md p-2 text-sm mb-5"
+                  variant={"secondary"}
+                >
                   {creditorDetails.data.creditLimit || "-"}
                 </Badge>
               </CardContent>

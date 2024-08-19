@@ -5,4 +5,6 @@ export interface CreditInvoice {
   totalPrice: number;
   totalDiscount?: number;
   vat?: number;
+  settledAmount?: number;
+  settled?: boolean;
 }

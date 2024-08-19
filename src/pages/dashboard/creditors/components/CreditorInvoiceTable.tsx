@@ -1,4 +1,3 @@
-import { Fragment } from "react/jsx-runtime";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,22 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import TablePagination from "@/components/TablePagination";
 import dateArrayToString from "@/utils/dateArrayToString";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkelton";
 
-const CreditorInvoiceTable = ({
-  invoices,
-  isLoading,
-  err,
-}) => {
-  useEffect(() => {
-    console.log(invoices);
-  }, [invoices]);
-
+const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
   const nav = useNavigate();
 
   const handleViewInvoice = (invoiceId) => {
@@ -79,16 +68,16 @@ const CreditorInvoiceTable = ({
     );
   };
 
-  const overdueInvoices = invoices?.filter(invoice =>
-    getDueStatus(invoice.issuedTime, invoice.creditor.maxDuePeriod) === "OVERDUE"
+  const overdueInvoices = invoices?.filter(
+    (invoice) =>
+      getDueStatus(invoice.issuedTime, invoice.creditor.maxDuePeriod) ===
+      "OVERDUE",
   );
 
   return (
     <Fragment>
       <Table className="border rounded-md text-md mb-5 table-responsive">
-        <TableCaption>
-       
-        </TableCaption>
+        <TableCaption></TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Invoice No</TableHead>

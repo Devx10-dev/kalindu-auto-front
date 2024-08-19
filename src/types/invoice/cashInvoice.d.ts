@@ -14,6 +14,7 @@ export type InvoiceItem = {
 };
 
 export type InvoiceState = {
+  dummy: any;
   id?: number;
   invoiceId?: string;
   issuedTime?: number[];

@@ -1,4 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -22,8 +31,8 @@ import { useToast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { Loader2, PlusCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import Select from "react-select";
@@ -32,7 +41,7 @@ import CreditorAPI from "../api/CreditorAPI";
 
 const formSchema = z.object({
   invoiceNo: z.string().min(1, "Item name is required"),
-  totalPrice: z.any().refine((val) => val !== "", "Price is required"),
+  totalPrice: z.number().min(1, "Invalid value"),
   transactionType: z
     .any()
     .refine((val) => val !== "", "Transaction type is required"),
@@ -42,6 +51,17 @@ const formSchema = z.object({
 });
 
 type CreditorTransactionFormValues = z.infer<typeof formSchema>;
+
+export type CreditInvoice = {
+  id?: number;
+  invoiceId: string;
+  issuedTime: number[];
+  totalPrice: number;
+  totalDiscount?: number;
+  vat?: number;
+  settledAmount?: number;
+  settled?: boolean;
+};
 
 const INVOICE_NO_CONST = {
   invoice1: "123456",
@@ -77,6 +97,9 @@ export function AddNewTransaction() {
   const { id } = useParams();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedInvoiceID, setSelectedInvoiceID] = useState<
+    number | undefined
+  >(undefined);
 
   // const { isLoading, data } = useQuery({
   //   queryKey: ['creditor', pageNo],
@@ -104,9 +127,6 @@ export function AddNewTransaction() {
     }));
   }
 
-  console.log(invoiceOptions);
-  
-
   const createCreditorMutation = useMutation({
     mutationFn: (data: CreditorTransactionFormValues) =>
       creditorAPI.createCreditorTransaction(data),
@@ -121,11 +141,11 @@ export function AddNewTransaction() {
         description: "Successfully created Transaction.",
       });
     },
-    onError: (data) => {
+    onError: (data: any) => {
       toast({
         variant: "destructive",
-        title: "Something went wrong : " + data.name,
-        description: data.message,
+        title: "Creating transaction failed",
+        description: data.response.data,
         duration: 5000,
       });
     },
@@ -160,6 +180,26 @@ export function AddNewTransaction() {
     form.reset();
   };
 
+  const invoice = useQuery<CreditInvoice, Error>({
+    queryKey: ["creditInvoice", selectedInvoiceID],
+    queryFn: () =>
+      selectedInvoiceID
+        ? creditorAPI.fetchCreditInvoice(selectedInvoiceID)
+        : null,
+    enabled: selectedInvoiceID !== undefined,
+  });
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      const invoiceItem = data.find(
+        (item: any) => item.invoiceId == value.invoiceNo,
+      );
+      const invoiceID = invoiceItem?.id;
+      setSelectedInvoiceID(invoiceID);
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch, data]);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -175,6 +215,48 @@ export function AddNewTransaction() {
             Add new creditor transaction here by filling out the details below
           </DialogDescription>
         </DialogHeader>
+
+        {(invoice.isLoading || invoice.isFetching) && (
+          <Button disabled variant="ghost">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Getting invoice data
+          </Button>
+        )}
+
+        {invoice.data && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                Selected Invoice Details
+                {invoice.data.settled ? (
+                  <Badge variant="secondary" className="bg-green-300">
+                    SETTLED
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="bg-red-300">
+                    NOT SETTLED
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                INVOICE NO : {invoice.data.invoiceId}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Total Price : {invoice.data.totalPrice}</p>
+            </CardContent>
+            <CardFooter className="flex flex-col items-start">
+              <p>Settled Amount : {invoice.data.settledAmount || "N/A"}</p>
+              <p className="text-red-600">
+                Remaining :{" "}
+                {(invoice.data.settledAmount &&
+                  invoice.data.totalPrice &&
+                  invoice.data.totalPrice - invoice.data.settledAmount) ||
+                  "N/A"}
+              </p>
+            </CardFooter>
+          </Card>
+        )}
 
         <Form {...form}>
           <form
@@ -199,6 +281,7 @@ export function AddNewTransaction() {
                             form.setValue("invoiceNo", option?.value);
                           }
                         }}
+                        value={form.getValues().invoiceNo}
                         isSearchable
                       />
                     </FormControl>
@@ -206,6 +289,7 @@ export function AddNewTransaction() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="totalPrice"
@@ -213,7 +297,14 @@ export function AddNewTransaction() {
                   <FormItem>
                     <FormLabel>Total Price</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" className=" border-b-2" />
+                      <Input
+                        {...field}
+                        type="number"
+                        className="border-b-2"
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value))
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -306,9 +397,16 @@ export function AddNewTransaction() {
           <Button onClick={resetForm} className="w-36" variant={"outline"}>
             Reset
           </Button>
-          <Button type="submit" form="addTransactionForm" className="w-36">
-            Add Transaction
-          </Button>
+          {createCreditorMutation.isPending ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          ) : (
+            <Button type="submit" form="addTransactionForm" className="w-36">
+              Add Transaction
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

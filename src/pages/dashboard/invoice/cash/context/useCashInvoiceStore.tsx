@@ -5,6 +5,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
   invoiceID: undefined,
   customerName: undefined,
   vehicleNumber: undefined,
+  dummy: undefined,
 
   // final bill summary items
   discountPercentage: 0,
