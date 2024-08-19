@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 
 const PrintCreditor = () => {
@@ -9,6 +9,7 @@ const PrintCreditor = () => {
   const today = new Date();
   const location = useLocation();
   const invoiceData = location.state?.invoiceData;
+  const navigate = useNavigate();
 
   // Function to generate the file name
   const generatePrintFileName = () => {
@@ -50,10 +51,14 @@ const PrintCreditor = () => {
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <p className="text-gray-600">
-                Creditor Name: {invoiceData.creditorName}
+                Creditor Name: {invoiceData.creditor.shopName}
               </p>
-              <p className="text-gray-600">Address :</p>
-              <p className="text-gray-600">Contact No:</p>
+              <p className="text-gray-600">
+                Address : {invoiceData.creditor.address || "N/A"}
+              </p>
+              <p className="text-gray-600">
+                Contact No: {invoiceData.creditor.primaryContact}
+              </p>
             </div>
             <div>{/* add more data here  */}</div>
           </div>
@@ -120,7 +125,7 @@ const PrintCreditor = () => {
         </Button>
         <Link to={"/dashboard/invoice/creditor"}>
           <Button
-            onClick={handlePrint}
+            onClick={() => navigate("")}
             className="mt-10 ml-5"
             variant="outline"
           >

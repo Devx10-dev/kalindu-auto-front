@@ -105,7 +105,6 @@ export function AddNewTransaction() {
   }
 
   console.log(invoiceOptions);
-  
 
   const createCreditorMutation = useMutation({
     mutationFn: (data: CreditorTransactionFormValues) =>
