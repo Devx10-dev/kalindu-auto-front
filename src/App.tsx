@@ -22,6 +22,7 @@ import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
 import { Analytics } from "./pages/dashboard/dashboard-root/Analytics";
 import PrintCreditor from "@/pages/dashboard/invoice/creditor/Print.tsx";
+import { MainDashboard } from "./pages/dashboard/dashboard-main/MainDashboard";
 
 function App() {
   return (
@@ -35,7 +36,8 @@ function App() {
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
-          <Route path="all" element={<Analytics />} />
+          <Route path="home" element={<MainDashboard />} />
+          <Route path="analytics" element={<Analytics />} />
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />

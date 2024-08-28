@@ -13,6 +13,8 @@ export type InvoiceState = {
   issuedTime?: number[];
   address?: string;
   contactNo?: string;
+  settled?: boolean;
+  settled_amount?: number;
 
   discountPercentage?: number;
   discountAmount?: number;
@@ -74,4 +76,21 @@ export type CreditInvoices = {
   setCreditInvoicesStore: (invoices: InvoiceState[]) => void;
   addCreditInvoiceToStore: (invoice: InvoiceState) => void;
   getCreditInvoiceById: (invoiceId: string) => InvoiceState;
+};
+
+export type CreditInvoiceStats = {
+  overdueCreditors: number;
+  dueCreditors: number;
+  overdueAmount: number;
+  dueAmount: number;
+  totalCreditBalance: number;
+  totalCreditors: number;
+  totalDueInvoices: number;
+  totalOverdueInvoices: number;
+};
+
+export type PieChartData = {
+  status: string;
+  creditors: number;
+  fill: string;
 };

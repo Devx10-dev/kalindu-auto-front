@@ -11,15 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
+import { CreditorInvoiceList, InvoiceState } from "@/types/invoice/creditorInvoice";
 import dateArrayToString from "@/utils/dateArrayToString";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
-// import { useState } from "react";
-// import { useQuery } from "@tanstack/react-query";
-// import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+
 
 export default function CreditInvoiceTable({
   invoices,
@@ -60,46 +58,64 @@ export default function CreditInvoiceTable({
     return dateArray;
   };
 
-  const getDueStatus = (issuedTime: number[], maxDueWeeks: number) => {
+  const getDueStatus = (issuedTime: number[], maxDueWeeks: number, isSettled: boolean) => {
+    if (isSettled) {
+      return "SETTLED";
+    }
+
     const issuedDate = new Date(
       issuedTime[0],
-      issuedTime[1],
+      issuedTime[1]-1,
       issuedTime[2],
       issuedTime[3],
       issuedTime[4],
       issuedTime[5],
     );
     const currentDate = new Date();
-    const diff = currentDate.getTime() - issuedDate.getTime();
-    if (diff > maxDueWeeks * 7) {
+    let diff = currentDate.getTime() - issuedDate.getTime();
+    // convert diff to weeks
+    diff = diff / (1000 * 60 * 60 * 24 * 7);
+    if (diff < maxDueWeeks) {
       return "DUE";
     } else {
       return "OVERDUE";
     }
   };
 
-  const generateStatusBadge = (issuedTime: number[], maxDueWeeks: number) => {
-    const status = getDueStatus(issuedTime, maxDueWeeks);
-    if (status === "DUE") {
-      return (
-        <Badge
-          variant="secondary"
-          className="text-white bg-yellow-400 rounded-sm p-1"
-        >
-          DUE
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge
-          variant="secondary"
-          className="text-white bg-red-400 rounded-sm p-1"
-        >
-          OVERDUE
-        </Badge>
-      );
+  const generateStatusBadge = (
+    invoice: InvoiceState,
+  ) => {
+    console.log("HEREEEE",invoice);
+    const status = getDueStatus(invoice.issuedTime, Number(invoice.creditor.maxDuePeriod) as number, invoice.settled);
+    let className = "";
+    let statusText = "";
+
+    switch (status) {
+      case "SETTLED":
+        className = "text-white bg-green-400 rounded-sm p-1 hover:bg-green-500";
+        statusText = "COMPLETED";
+        break;
+      case "DUE":
+        className = "text-white bg-yellow-400 rounded-sm p-1 hover:bg-yellow-500";
+        statusText = "DUE";
+        break;
+      case "OVERDUE":
+        className = "text-white bg-red-400 rounded-sm p-1 hover:bg-red-500";
+        statusText = "OVERDUE";
+        break;
     }
+
+    return (
+      <Badge
+        variant="secondary"
+        className={className}
+      >
+        {statusText}
+      </Badge>
+    );
+
   };
+
 
   return (
     <Fragment>
@@ -125,7 +141,7 @@ export default function CreditInvoiceTable({
             <TableHead>Invoice Date</TableHead>
             <TableHead>Due Date</TableHead>
             <TableHead>Total Amount</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -161,17 +177,14 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(
                       calculateDueDate(
                         invoice.issuedTime,
-                        invoice.creditor.maxDuePeriod,
+                        Number(invoice.creditor.maxDuePeriod) as number,
                       ),
                     )}
                   </TableCell>
                   <TableCell>Rs. {invoice.totalPrice}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {/* make background greem intag */}
-                    {generateStatusBadge(
-                      invoice.issuedTime,
-                      invoice.creditor.maxDuePeriod,
-                    )}
+                    {generateStatusBadge(invoice)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-center">

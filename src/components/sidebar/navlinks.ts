@@ -6,8 +6,12 @@ const NavLinks: NavLink[] = [
     href: "/dashboard",
     sublinks: [
       {
-        label: "Dashboard",
+        label: "Home",
         href: "/dashboard/home",
+      },
+      {
+        label: "Anlytics",
+        href: "/dashboard/analytics",
       },
     ],
   },

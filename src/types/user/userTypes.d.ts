@@ -12,5 +12,16 @@ export type User = {
   designation: Designation;
 };
 
+// responseData.put("users", users.getContent());
+// responseData.put("currentPage", users.getNumber());
+// responseData.put("totalItems", users.getTotalElements());
+// responseData.put("totalPages", users.getTotalPages());
+export type UsersResponseData = {
+  users: User[];
+  currentPage: number;
+  totalItems: number;
+  totalPages: number;
+};
+
 export type Gender = "Male" | "Female" | "Non Binary";
 export type Designation = "Manager" | "Cashier" | "Owner" | "User";

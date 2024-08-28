@@ -22,8 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { useQuery } from "@tanstack/react-query";
-import { Fragment, useEffect, useState } from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { toNormalCase } from "@/utils/string";
 import { Calendar } from "@/components/ui/calendar";
 import { DateRange } from "react-day-picker";
@@ -38,6 +38,10 @@ import { format } from "date-fns";
 import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
 import { MOBILE_SCREEN_WIDTH } from "@/components/sidebar/Sidebar";
 import SkeletonGrid from "@/components/loader/SkeletonGrid";
+import { TableBodySkeleton } from "@/pages/dashboard/invoice/view-invoices/components/TableSkeleton";
+import useDebounce from "@/hooks/useDebounce";
+import dateArrayToString from "@/utils/dateArrayToString";
+import TablePagination from "@/components/TablePagination";
 
 // TODO: Add pagination to the grid
 function ActivityLogGrid({
@@ -46,7 +50,8 @@ function ActivityLogGrid({
   activityLogService: ActivityLogService;
 }) {
   const [pageNo, setPageNo] = useState(0);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
   const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
   const [selectedDBAction, setSelectedDBAction] = useState<string | null>(null);
@@ -55,6 +60,7 @@ function ActivityLogGrid({
   const [date, setDate] = useState<DateRange | undefined>(undefined);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const [isMobileView, setIsMobileView] = useState(false);
 
@@ -95,7 +101,7 @@ function ActivityLogGrid({
     data: activityLogs,
     refetch,
   } = useQuery<ActivityLogsResponseData>({
-    queryKey: ["activityLogs"],
+    queryKey: ["activityLogs",debouncedSearchQuery,pageNo],
     queryFn: () =>
       activityLogService.fetchActivityLogs(
         pageNo,
@@ -105,8 +111,12 @@ function ActivityLogGrid({
         selectedDBAction ?? "All",
         selectedFromDate,
         selectedToDate,
+        debouncedSearchQuery,
       ),
   });
+
+
+  
 
   const [viewActivityLogs, setViewActivityLogs] = useState<ActivityLog[]>(
     activityLogs?.activityLogs ?? [],
@@ -120,39 +130,6 @@ function ActivityLogGrid({
     refetch();
   };
 
-  function globalSearch() {
-    if (activityLogs) {
-      if (searchQuery.length === 0) {
-        setViewActivityLogs(activityLogs.activityLogs);
-        return;
-      }
-
-      const results: ActivityLog[] = [];
-      for (const row of activityLogs.activityLogs) {
-        for (const key in row) {
-          if (
-            Object.prototype.hasOwnProperty.call(row, key as keyof ActivityLog)
-          ) {
-            const value = row[key as keyof ActivityLog];
-            if (
-              value
-                ?.toString()
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())
-            ) {
-              results.push(row);
-              break;
-            }
-          }
-        }
-      }
-      setViewActivityLogs(results);
-    }
-  }
-
-  useEffect(() => {
-    globalSearch();
-  }, [searchQuery]);
 
   const setDateRange = (dateRange: DateRange | undefined) => {
     if (dateRange !== undefined) {
@@ -168,6 +145,13 @@ function ActivityLogGrid({
   useEffect(() => {
     setDateRange(date);
   }, [date]);
+
+  useEffect(()=>{
+    if(activityLogs){
+      setTotalPages(activityLogs.totalPages);
+    }
+  },
+  [activityLogs]);
 
   return (
     <Fragment>
@@ -291,11 +275,7 @@ function ActivityLogGrid({
             </Button>
           </div>
         </div>
-        {isLoading ? (
-          <SkeletonGrid noOfColumns={6} noOfItems={10} />
-        ) : (
           <Table className="border rounded-md text-md mb-5 table-responsive">
-            <TableCaption>Activity Logs</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Id</TableHead>
@@ -306,6 +286,9 @@ function ActivityLogGrid({
                 <TableHead>Description</TableHead>
               </TableRow>
             </TableHeader>
+        {isLoading ? (
+          <TableBodySkeleton cols={6} rows={10}/>
+        ) : (
             <TableBody>
               {viewActivityLogs &&
                 viewActivityLogs.map((activityLog) => (
@@ -315,14 +298,23 @@ function ActivityLogGrid({
                     <TableCell>{toNormalCase(activityLog.feature)}</TableCell>
                     <TableCell>{toNormalCase(activityLog.dbaction)}</TableCell>
                     <TableCell>
-                      {convertArrayToISOFormat(activityLog.doneAt)}
+                      {dateArrayToString(activityLog.doneAt)}
                     </TableCell>
                     <TableCell>{activityLog.description}</TableCell>
                   </TableRow>
                 ))}
             </TableBody>
-          </Table>
         )}
+            <TableCaption>
+              <TablePagination
+                pageNo={pageNo + 1}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setPageNo(page - 1);
+                }}
+              />
+            </TableCaption>
+          </Table>
       </>
     </Fragment>
   );

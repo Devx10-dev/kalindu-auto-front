@@ -44,10 +44,14 @@ interface TimeBasedSummary {
   endDate: Date;
   totalSales: number;
   totalExpenses: number;
+  totalCredit: number;
   salesCount: number;
   expensesCount: number;
+  creditCount?: number;
+  xlabel?: string;
 }
 
+interface DailySummaryTimeBased extends TimeBasedSummary {}
 interface WeeklySummary extends TimeBasedSummary {}
 interface MonthlySummary extends TimeBasedSummary {}
 interface YearlySummary extends TimeBasedSummary {}
@@ -56,13 +60,16 @@ interface TotalSummary {
   totalRevenue: number;
   totalSales: number;
   totalExpenses: number;
+  totalCredit: number;
   salesCount: number;
   expensesCount: number;
+  creditCount: number;
   startDate: Date;
   endDate: Date;
   totalRevenueString?: string;
   totalSalesString?: string;
   totalExpensesString?: string;
+  totalCreditString?: string;
 }
 
 interface Summary {

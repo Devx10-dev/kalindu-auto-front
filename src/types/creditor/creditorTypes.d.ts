@@ -53,6 +53,30 @@
 // :
 // 0
 
+// {
+//   "creditorID": 6,
+//   "shopName": "nisal new",
+//   "contactPersonName": "Avishka Sathyanjana",
+//   "email": "baavishka@gmail.com",
+//   "primaryContact": "0701097409",
+//   "secondaryContact": "0701097409",
+//   "address": "48/55, Epitamulla Road, Pitakotte",
+//   "maxDuePeriod": 1,
+//   "creditLimit": 2000.00,
+//   "totalDue": 1.00,
+//   "status": null,
+//   "createdBy": "b0a8ee5a-b0ec-49db-bef6-cd611b657ecf",
+//   "createdDate": 1721035263288,
+//   "modifiedBy": "b0a8ee5a-b0ec-49db-bef6-cd611b657ecf",
+//   "modifiedDate": 1722882515179,
+//   "dueDate": null,
+//   "isExpired": null,
+//   "expiredInvoiceList": null,
+//   "daysOverdueOrDueDays": 11,
+//   "dueInvoiceCount": 1,
+//   "overdueInvoiceCount": 1
+// },
+
 export type Creditor = {
   creditorID?: string;
   id?: number;
@@ -73,6 +97,10 @@ export type Creditor = {
   createdDate?: string;
   modifiedBy?: string;
   modifiedDate?: string;
+  daysOverdueOrDueDays?: number;
+  dueInvoiceCount?: number;
+  overdueInvoiceCount?: number;
+  
 };
 
 export type CreditorResponseData = {
@@ -158,4 +186,10 @@ export enum TransactionType {
 export enum YesNo {
   YES = "YES",
   NO = "NO",
+}
+
+
+export type OverdueCreditors = {
+  overdue?: Creditor[];
+  due?: Creditor[];
 }

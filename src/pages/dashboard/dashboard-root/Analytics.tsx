@@ -20,6 +20,7 @@ import {
   HomeIcon,
   LayoutDashboard,
   LucideHome,
+  SquareLibrary,
   TrendingDown,
   TrendingUp,
   Users,
@@ -38,14 +39,17 @@ import dateToString from "@/utils/dateToString";
 import {
   calculateTotalSummary,
   currencyAmountString,
+  processDailyData,
   processMonthlyData,
   processWeeklyData,
   processYearlyData,
 } from "@/utils/analyticsUtils";
-import { TotalSummary } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import { DailySummery, TotalSummary } from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import { useToast } from "@/components/ui/use-toast";
 import { useCacheStore, useTotalSummaryStore } from "./context/AnalyticsState";
 import { set } from "date-fns";
+import CreditorCard from "./components/CreditorCard";
+
 export function Analytics() {
   //   active tab state
   const [activeTab, setActiveTab] = useState<string>("today");
@@ -72,6 +76,9 @@ export function Analytics() {
   const [weekDataLoaded, setWeekDataLoaded] = useState(false);
   const [monthDataLoaded, setMonthDataLoaded] = useState(false);
   const [yearDataLoaded, setYearDataLoaded] = useState(false);
+  const [customDataLoaded, setCustomDataLoaded] = useState(false);
+  const [salesAndExpensesDataState, setSalesAndExpensesDataState] = useState<DailySummery[] | undefined>();
+  const [customActive, setCustomActive] = useState(false);
 
   const {
     todaySummary,
@@ -106,7 +113,7 @@ export function Analytics() {
     data: salesAndExpensesData,
     isLoading: salesAndExpensesLoading,
     error: salesAndExpensesError,
-  } = useQuery<any[]>({
+  } = useQuery<DailySummery[], Error>({
     queryKey: ["salesAndExpenses", dateRange],
     queryFn: () =>
       salesAndExpenceService.fetchSalesAndExpensesForDateRange({
@@ -134,6 +141,17 @@ export function Analytics() {
   };
 
   useEffect(() => {
+    if(activeTab === "custom") {
+      setAnaliticalRange({
+        dateRange: {
+          from: new Date(),
+          to: undefined,
+        },
+        rates: ["daily"],
+        defaultRate: "daily",
+      });
+      return;
+    }
     const range = getAnalyticalRange({ range: activeTab });
     setAnaliticalRange(range);
   }, [activeTab]);
@@ -145,34 +163,33 @@ export function Analytics() {
   }, [analiticalRange]);
 
   useEffect(() => {
-    if (salesAndExpensesLoading) {
-      console.log("LOADING", salesAndExpensesLoading);
-    }
     if (!salesAndExpensesLoading && salesAndExpensesData) {
       const calculatedSummary = calculateTotalSummary(salesAndExpensesData);
       switch (activeTab) {
         case "today":
           setTodaySummary(calculatedSummary);
+          setTodaySummaryCache(salesAndExpensesData);
           setTodayDataLoaded(true);
-          // setSalesAndExpenses(calculatedSummary);
           break;
         case "week":
           setWeekSummary(calculatedSummary);
+          setWeekSummaryCache(salesAndExpensesData);
           setWeekDataLoaded(true);
-          // setSalesAndExpenses(calculatedSummary);
           break;
         case "month":
           setMonthSummary(calculatedSummary);
+          setMonthSummaryCache(salesAndExpensesData);
           setMonthDataLoaded(true);
-          // setSalesAndExpenses(calculatedSummary);
           break;
         case "year":
           setYearlySummary(calculatedSummary);
+          setYearlySummaryCache(salesAndExpensesData);
           setYearDataLoaded(true);
-          // setSalesAndExpenses(calculatedSummary);
           break;
         case "custom":
           setCustomSummary(calculatedSummary);
+          setCustomSummaryCache(salesAndExpensesData);
+          setCustomDataLoaded(true);
           // setCustomSummaryCache(salesAndExpensesData);
           break;
         default:
@@ -188,29 +205,32 @@ export function Analytics() {
   }, [analiticalRange]);
 
   useEffect(() => {
-    if (salesAndExpensesLoading) {
-      console.log("LOADING", salesAndExpensesLoading);
-    }
     if (!salesAndExpensesLoading && salesAndExpensesData) {
       switch (activeTab) {
         case "today":
           // setDataLoaded(prev => ({ ...prev, today: true }));
           setSalesAndExpenses(todaySummary);
+          setSalesAndExpensesDataState(todaySummaryCache);
           break;
         case "week":
           // setDataLoaded(prev => ({ ...prev, week: true }));
           setSalesAndExpenses(weekSummary);
+          setSalesAndExpensesDataState(weekSummaryCache);
           break;
         case "month":
           // setDataLoaded(prev => ({ ...prev, month: true }));
           setSalesAndExpenses(monthSummary);
+          setSalesAndExpensesDataState(monthSummaryCache);
           break;
         case "year":
           // setDataLoaded(prev => ({ ...prev, year: true }));
           setSalesAndExpenses(yearSummary);
+          setSalesAndExpensesDataState(yearSummaryCache);
           break;
         case "custom":
           // setDataLoaded(prev => ({ ...prev, custom: true }));
+          setSalesAndExpenses(customSummary);
+          setSalesAndExpensesDataState(customSummaryCache);
           break;
         default:
           break;
@@ -242,6 +262,7 @@ export function Analytics() {
         setDataLoaded(yearDataLoaded);
         break;
       case "custom":
+        setDataLoaded(customDataLoaded);
         break;
       default:
         break;
@@ -251,22 +272,14 @@ export function Analytics() {
     weekDataLoaded,
     monthDataLoaded,
     yearDataLoaded,
+    customDataLoaded,
     activeTab,
   ]);
 
   useEffect(() => {
-    if (salesAndExpensesData) {
-      const processedData = processWeeklyData(salesAndExpensesData, dateRange);
-      const processedData2 = processMonthlyData(
-        salesAndExpensesData,
-        dateRange,
-      );
-      const processedData3 = processYearlyData(salesAndExpensesData, dateRange);
-      console.log(processedData);
-      console.log(processedData2);
-      console.log(processedData3);
-    }
-  }, [salesAndExpensesData]);
+    console.log("Data Loaded", dataLoaded);
+  }
+  , [dataLoaded]);
 
   return (
     <Fragment>
@@ -276,20 +289,20 @@ export function Analytics() {
           <PageHeader
             title="Analytics"
             description=""
-            icon={<LayoutDashboard />}
+            icon={<SquareLibrary />}
           />
           <CardDescription>
             <p className="text-sm text-muted-foreground">
-              Welcome to the Kalindu Auto Dashboard
+              Welcome to Analytics! Here you can view statistics of your sales and expenses
             </p>
           </CardDescription>
         </CardHeader>
         <div className="flex gap-2 justify-end">
           <DateRangePicker
-            // dateRange={dateRange}
-            // setDateRange={setDateRange}
-            externalDateRange={dateRange}
-            disabled={true}
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+            // externalDateRange={dateRange}
+            disabled={activeTab !== "custom"}
           />
           <Tabs
             defaultValue="today"
@@ -329,10 +342,10 @@ export function Analytics() {
           contentType="currencyAmount"
         />
         <DashboardCard
-          title="Total Credit"
+          title="Credit Sales"
           icon={<CreditCard />}
-          content="Rs. 100,000.59"
-          isLoading={salesAndExpensesLoading || !salesAndExpenses}
+          content={salesAndExpenses?.totalCreditString}
+          isLoading={!dataLoaded}
           contentType="currencyAmount"
         />
       </div>
@@ -340,100 +353,14 @@ export function Analytics() {
         <OverviewChart
           className="col-span-3"
           analyticalRange={analiticalRange}
+          analyticData={salesAndExpensesDataState}
+          isDataLoading={salesAndExpensesLoading}
         />
-        <div className="col-span-2">
-          <Card x-chunk="dashboard-01-chunk-5">
-            <CardHeader>
-              <CardTitle>Creditors</CardTitle>
-              <CardDescription>
-                Latest due and overdue creditors
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-8">
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage
-                    src="https://avatar.iran.liara.run/username?username=olivia+martin"
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>OM</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    Olivia Martin
-                  </p>
-                  <p className="text-sm text-muted-foreground">0716748593</p>
-                </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage
-                    src="https://avatar.iran.liara.run/username?username=jackson+lee"
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>JL</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    Jackson Lee
-                  </p>
-                  <p className="text-sm text-muted-foreground">0716748593</p>
-                </div>
-                <div className="ml-auto font-medium">+$39.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage
-                    src="https://avatar.iran.liara.run/username?username=isabella+nguyen"
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>IN</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    Isabella Nguyen
-                  </p>
-                  <p className="text-sm text-muted-foreground">0716748593</p>
-                </div>
-                <div className="ml-auto font-medium">+$299.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage
-                    src="https://avatar.iran.liara.run/username?username=william+kim"
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>WK</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    William Kim
-                  </p>
-                  <p className="text-sm text-muted-foreground">0776374859</p>
-                </div>
-                <div className="ml-auto font-medium">+$99.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage
-                    src="https://avatar.iran.liara.run/username?username=sofia+davis&color=3498db&background=f0f0f0"
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>SD</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    Sofia Davis
-                  </p>
-                  <p className="text-sm text-muted-foreground">0748596374</p>
-                </div>
-                <div className="ml-auto font-medium">+$39.00</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <CreditorCard
+          className="col-span-2 h-400 max-h-[500px]"
+        />
       </div>
+      
     </Fragment>
   );
 }

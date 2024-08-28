@@ -9,8 +9,6 @@ function getAnalyticalRange({
   if (typeof range === "string") {
     switch (range) {
       case "today": {
-        // from day's time should be 00:00:00
-        // to day's time should be 23:59:59
 
         const today = new Date();
         const from = new Date(
@@ -32,8 +30,8 @@ function getAnalyticalRange({
             from: from,
             to: undefined,
           },
-          rates: ["hourly", "daily"],
-          defaultRate: "hourly",
+          rates: ["daily"],
+          defaultRate: "daily",
         };
       }
       case "week": {
@@ -41,11 +39,6 @@ function getAnalyticalRange({
         const day = today.getDay();
         const diff = today.getDate() - day + (day == 0 ? -6 : 1);
         const firstDay = new Date(today.setDate(diff));
-
-        // from day's time should be 00:00:00
-        // to day's time should be 23:59:59
-        // firstDay.setHours(0, 0, 0, 0);
-        // today.setHours(23, 59, 59, 999);
 
         return {
           dateRange: {
@@ -60,8 +53,6 @@ function getAnalyticalRange({
         const today = new Date();
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
 
-        // from day's time should be 00:00:00
-        // to day's time should be 23:59:59
         firstDay.setHours(0, 0, 0, 0);
         today.setHours(23, 59, 59, 999);
 
@@ -77,9 +68,6 @@ function getAnalyticalRange({
       case "year": {
         const today = new Date();
         const firstDay = new Date(today.getFullYear(), 0, 1);
-
-        // from day's time should be 00:00:00
-        // to day's time should be 23:59:59
 
         firstDay.setHours(0, 0, 0, 0);
         today.setHours(23, 59, 59, 999);
