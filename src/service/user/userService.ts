@@ -28,13 +28,11 @@ class UserService extends Service {
     search?: string,
   ): Promise<UsersResponseData> {
     try {
-      const response = await this.api.get<UsersResponseData>(`${USER_URL}?pageNo=${
-        page ? page : 0
-      }&pageSize=${
-        size ? size : 10
-      }${
-        search ? "&search="+search : ""
-      }`);
+      const response = await this.api.get<UsersResponseData>(
+        `${USER_URL}?pageNo=${page ? page : 0}&pageSize=${size ? size : 10}${
+          search ? "&search=" + search : ""
+        }`,
+      );
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch users");

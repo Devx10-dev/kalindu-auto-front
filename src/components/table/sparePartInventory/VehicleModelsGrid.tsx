@@ -102,7 +102,7 @@ export default function VehicleModelsGrid({
     error,
     refetch,
   } = useQuery<VehicleModelResponseData>({
-    queryKey: ["vehicleModels", pageNo, pageSize,debounceSearch],
+    queryKey: ["vehicleModels", pageNo, pageSize, debounceSearch],
     queryFn: () =>
       vehicleService.fetchFilteredVehicleModels(
         pageNo,
@@ -144,11 +144,10 @@ export default function VehicleModelsGrid({
   };
 
   useEffect(() => {
-    if(vehicleModels) {
+    if (vehicleModels) {
       setTotalPages(vehicleModels.totalPages);
     }
-  }
-  , [vehicleModels]);
+  }, [vehicleModels]);
 
   return (
     <Fragment>
@@ -241,25 +240,25 @@ export default function VehicleModelsGrid({
             </Button>
           </div>
         </div>
-          <Table className="border rounded-md text-md mb-5 table-responsive">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Vehicle</TableHead>
-                <TableHead>Vehicle Type</TableHead>
-                <TableHead>Vehicle Brand</TableHead>
-                <TableHead>Chassis No</TableHead>
-                <TableHead>Remark</TableHead>
-                <TableHead className="text-center">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-        {isLoading ? (
-          // <SkeletonGrid noOfColumns={6} noOfItems={10} />
-          <TableBodySkeleton cols={6} rows={10} noHeader={true} />
-        ) : (
+        <Table className="border rounded-md text-md mb-5 table-responsive">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Vehicle</TableHead>
+              <TableHead>Vehicle Type</TableHead>
+              <TableHead>Vehicle Brand</TableHead>
+              <TableHead>Chassis No</TableHead>
+              <TableHead>Remark</TableHead>
+              <TableHead className="text-center">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          {isLoading ? (
+            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+            <TableBodySkeleton cols={6} rows={10} noHeader={true} />
+          ) : (
             <TableBody>
               {viewVehicleModels &&
                 viewVehicleModels.map((vehicle) => (
-                  <TableRow key={vehicle.id} >
+                  <TableRow key={vehicle.id}>
                     <TableCell className="font-medium">
                       {capitalize(vehicle.model)}
                     </TableCell>
@@ -288,17 +287,17 @@ export default function VehicleModelsGrid({
                   </TableRow>
                 ))}
             </TableBody>
-              )}
-            <TableCaption>
-              <TablePagination
-                pageNo={pageNo + 1}
-                totalPages={totalPages}
-                onPageChange={(page) => {
-                  setPageNo(page - 1);
-                }}
-              />
-            </TableCaption>
-          </Table>
+          )}
+          <TableCaption>
+            <TablePagination
+              pageNo={pageNo + 1}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setPageNo(page - 1);
+              }}
+            />
+          </TableCaption>
+        </Table>
       </>
     </Fragment>
   );

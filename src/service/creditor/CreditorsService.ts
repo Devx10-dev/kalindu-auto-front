@@ -7,7 +7,7 @@ import {
 import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
 import { DateRange } from "react-day-picker";
-import { OverdueCreditors } from "@/types/creditor/creditorTypes";
+import { Creditor } from "@/types/creditor/creditorTypes";
 
 // const SALE_AND_EXPENSE_URL = "sale-expense";
 // const CATEGORY_URL = `${SALE_AND_EXPENSE_URL}/category`;
@@ -15,7 +15,7 @@ import { OverdueCreditors } from "@/types/creditor/creditorTypes";
 // const SALE_URL = "/fin-record";
 // const DAILY_SUMMERY_URL = `${SALE_AND_EXPENSE_URL}/summery`;
 // const DAILY_SALES_AND_EXPENSES_VERIFY_URL = `${SALE_AND_EXPENSE_URL}/verify`;
-const OVERDUE_CREDITOR_URL = "creditor/overdue/all"
+const OVERDUE_CREDITOR_URL = "creditor/overdue/all";
 
 class CreditorsService extends Service {
   constructor(api: AxiosInstance) {
@@ -39,9 +39,10 @@ class CreditorsService extends Service {
   //   }
   // }
 
-  async fetchOverdueCreditors(): Promise<OverdueCreditors[]> {
+  async fetchOverdueCreditors(): Promise<Creditor[]> {
     try {
-      const response = await this.api.get<OverdueCreditors[]>(OVERDUE_CREDITOR_URL);
+      const response =
+        await this.api.get<Creditor[]>(OVERDUE_CREDITOR_URL);
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch overdue creditors");

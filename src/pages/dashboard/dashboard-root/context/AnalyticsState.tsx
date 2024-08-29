@@ -34,7 +34,7 @@ const useTotalSummaryStore = create<Summary>((set, get) => ({
     totalRevenueString: "",
     totalSalesString: "",
     totalCredit: 0,
-    creditCount: 0
+    creditCount: 0,
   },
   monthSummary: {
     endDate: new Date(),
@@ -48,7 +48,7 @@ const useTotalSummaryStore = create<Summary>((set, get) => ({
     totalRevenueString: "",
     totalSalesString: "",
     totalCredit: 0,
-    creditCount: 0
+    creditCount: 0,
   },
   yearSummary: {
     endDate: new Date(),
@@ -62,7 +62,7 @@ const useTotalSummaryStore = create<Summary>((set, get) => ({
     totalRevenueString: "",
     totalSalesString: "",
     totalCredit: 0,
-    creditCount: 0
+    creditCount: 0,
   },
   customSummary: {
     endDate: new Date(),
@@ -76,7 +76,7 @@ const useTotalSummaryStore = create<Summary>((set, get) => ({
     totalRevenueString: "",
     totalSalesString: "",
     totalCredit: 0,
-    creditCount: 0
+    creditCount: 0,
   },
 
   setTodaySummary: (summary: TotalSummary) => {

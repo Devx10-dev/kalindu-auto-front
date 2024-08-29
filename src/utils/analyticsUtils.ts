@@ -23,9 +23,12 @@ function getWeekNumber(date: Date): number {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-function processDailyData(dailySummaries: DailySummery[], dateRange: DateRange): DailySummaryTimeBased[] {
+function processDailyData(
+  dailySummaries: DailySummery[],
+  dateRange: DateRange,
+): DailySummaryTimeBased[] {
   const dailySummariesMap = new Map<string, DailySummaryTimeBased>();
-  
+
   // Prepare DailySummary from dateRange
   const startDate = new Date(dateRange.from);
   const endDate = new Date(dateRange.to);
@@ -73,8 +76,12 @@ function processDailyData(dailySummaries: DailySummery[], dateRange: DateRange):
     dailySummary.totalSales += summary.saleAmount;
     dailySummary.totalExpenses += summary.expenseAmount;
     dailySummary.totalCredit += summary.creditBalance;
-    dailySummary.salesCount += summary.financialRecords.filter(record => record.type === "SALE").length;
-    dailySummary.expensesCount += summary.financialRecords.filter(record => record.type === "EXPENSE").length;
+    dailySummary.salesCount += summary.financialRecords.filter(
+      (record) => record.type === "SALE",
+    ).length;
+    dailySummary.expensesCount += summary.financialRecords.filter(
+      (record) => record.type === "EXPENSE",
+    ).length;
   });
 
   return Array.from(dailySummariesMap.values());
@@ -145,8 +152,12 @@ function processWeeklyData(
     weekSummary.totalSales += summary.saleAmount;
     weekSummary.totalExpenses += summary.expenseAmount;
     weekSummary.totalCredit += summary.creditBalance;
-    weekSummary.salesCount += summary.financialRecords.filter(record => record.type === "SALE").length;
-    weekSummary.expensesCount += summary.financialRecords.filter(record => record.type === "EXPENSE").length;
+    weekSummary.salesCount += summary.financialRecords.filter(
+      (record) => record.type === "SALE",
+    ).length;
+    weekSummary.expensesCount += summary.financialRecords.filter(
+      (record) => record.type === "EXPENSE",
+    ).length;
   });
 
   return Array.from(weekMap.values());
@@ -158,7 +169,7 @@ function processMonthlyData(
 ): MonthlySummary[] {
   const monthMap = new Map<string, MonthlySummary>();
 
-  console.log("HEREEEE",dailySummaries);
+  console.log("HEREEEE", dailySummaries);
   // prpare MonthlySummar from dateRange
   const startDate = new Date(dateRange.from);
   const endDate = new Date(dateRange.to);
@@ -206,8 +217,12 @@ function processMonthlyData(
     monthSummary.totalSales += summary.saleAmount;
     monthSummary.totalExpenses += summary.expenseAmount;
     monthSummary.totalCredit += summary.creditBalance;
-    monthSummary.salesCount += summary.financialRecords.filter(record => record.type === "SALE").length;
-    monthSummary.expensesCount += summary.financialRecords.filter(record => record.type === "EXPENSE").length;
+    monthSummary.salesCount += summary.financialRecords.filter(
+      (record) => record.type === "SALE",
+    ).length;
+    monthSummary.expensesCount += summary.financialRecords.filter(
+      (record) => record.type === "EXPENSE",
+    ).length;
   });
 
   return Array.from(monthMap.values());
@@ -262,8 +277,12 @@ function processYearlyData(
     yearSummary.totalSales += summary.saleAmount;
     yearSummary.totalExpenses += summary.expenseAmount;
     yearSummary.totalCredit += summary.creditBalance;
-    yearSummary.salesCount += summary.financialRecords.filter(record => record.type === "SALE").length;
-    yearSummary.expensesCount += summary.financialRecords.filter(record => record.type === "EXPENSE").length;
+    yearSummary.salesCount += summary.financialRecords.filter(
+      (record) => record.type === "SALE",
+    ).length;
+    yearSummary.expensesCount += summary.financialRecords.filter(
+      (record) => record.type === "EXPENSE",
+    ).length;
   });
 
   return Array.from(yearMap.values());
@@ -315,13 +334,18 @@ function calculateTotalSummary(dailySummaries: DailySummery[]): TotalSummary {
     if (currentDate < startDate) startDate = currentDate;
     if (currentDate > endDate) endDate = currentDate;
 
-
     totalSales += summary.saleAmount;
     totalExpenses += summary.expenseAmount;
     totalCredit += summary.creditBalance;
-    salesCount += summary.financialRecords.filter(record => record.type === "SALE").length;
-    expensesCount += summary.financialRecords.filter(record => record.type === "EXPENSE").length;
-    creditCount += summary.financialRecords.filter(record => record.type === "CREDIT_BALANCE").length;
+    salesCount += summary.financialRecords.filter(
+      (record) => record.type === "SALE",
+    ).length;
+    expensesCount += summary.financialRecords.filter(
+      (record) => record.type === "EXPENSE",
+    ).length;
+    creditCount += summary.financialRecords.filter(
+      (record) => record.type === "CREDIT_BALANCE",
+    ).length;
   });
 
   totalRevenue = totalSales - totalExpenses;

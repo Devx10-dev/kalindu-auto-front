@@ -101,7 +101,7 @@ function ActivityLogGrid({
     data: activityLogs,
     refetch,
   } = useQuery<ActivityLogsResponseData>({
-    queryKey: ["activityLogs",debouncedSearchQuery,pageNo],
+    queryKey: ["activityLogs", debouncedSearchQuery, pageNo],
     queryFn: () =>
       activityLogService.fetchActivityLogs(
         pageNo,
@@ -115,9 +115,6 @@ function ActivityLogGrid({
       ),
   });
 
-
-  
-
   const [viewActivityLogs, setViewActivityLogs] = useState<ActivityLog[]>(
     activityLogs?.activityLogs ?? [],
   );
@@ -129,7 +126,6 @@ function ActivityLogGrid({
   const refetchActivityLogs = () => {
     refetch();
   };
-
 
   const setDateRange = (dateRange: DateRange | undefined) => {
     if (dateRange !== undefined) {
@@ -146,12 +142,11 @@ function ActivityLogGrid({
     setDateRange(date);
   }, [date]);
 
-  useEffect(()=>{
-    if(activityLogs){
+  useEffect(() => {
+    if (activityLogs) {
       setTotalPages(activityLogs.totalPages);
     }
-  },
-  [activityLogs]);
+  }, [activityLogs]);
 
   return (
     <Fragment>
@@ -275,20 +270,20 @@ function ActivityLogGrid({
             </Button>
           </div>
         </div>
-          <Table className="border rounded-md text-md mb-5 table-responsive">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Id</TableHead>
-                <TableHead>User ID</TableHead>
-                <TableHead>Feature</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Done at</TableHead>
-                <TableHead>Description</TableHead>
-              </TableRow>
-            </TableHeader>
-        {isLoading ? (
-          <TableBodySkeleton cols={6} rows={10}/>
-        ) : (
+        <Table className="border rounded-md text-md mb-5 table-responsive">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Id</TableHead>
+              <TableHead>User ID</TableHead>
+              <TableHead>Feature</TableHead>
+              <TableHead>Action</TableHead>
+              <TableHead>Done at</TableHead>
+              <TableHead>Description</TableHead>
+            </TableRow>
+          </TableHeader>
+          {isLoading ? (
+            <TableBodySkeleton cols={6} rows={10} />
+          ) : (
             <TableBody>
               {viewActivityLogs &&
                 viewActivityLogs.map((activityLog) => (
@@ -304,17 +299,17 @@ function ActivityLogGrid({
                   </TableRow>
                 ))}
             </TableBody>
-        )}
-            <TableCaption>
-              <TablePagination
-                pageNo={pageNo + 1}
-                totalPages={totalPages}
-                onPageChange={(page) => {
-                  setPageNo(page - 1);
-                }}
-              />
-            </TableCaption>
-          </Table>
+          )}
+          <TableCaption>
+            <TablePagination
+              pageNo={pageNo + 1}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setPageNo(page - 1);
+              }}
+            />
+          </TableCaption>
+        </Table>
       </>
     </Fragment>
   );

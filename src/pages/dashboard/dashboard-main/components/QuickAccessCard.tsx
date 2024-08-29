@@ -32,7 +32,7 @@ export default function QuickAccessCard({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center space-x-4">         
+            <div className="flex items-center space-x-4">
               <p className="text-sm text-muted-foreground">{description}</p>
             </div>
           </CardContent>

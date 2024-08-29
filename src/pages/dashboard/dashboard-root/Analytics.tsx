@@ -44,7 +44,10 @@ import {
   processWeeklyData,
   processYearlyData,
 } from "@/utils/analyticsUtils";
-import { DailySummery, TotalSummary } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import {
+  DailySummery,
+  TotalSummary,
+} from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import { useToast } from "@/components/ui/use-toast";
 import { useCacheStore, useTotalSummaryStore } from "./context/AnalyticsState";
 import { set } from "date-fns";
@@ -77,7 +80,9 @@ export function Analytics() {
   const [monthDataLoaded, setMonthDataLoaded] = useState(false);
   const [yearDataLoaded, setYearDataLoaded] = useState(false);
   const [customDataLoaded, setCustomDataLoaded] = useState(false);
-  const [salesAndExpensesDataState, setSalesAndExpensesDataState] = useState<DailySummery[] | undefined>();
+  const [salesAndExpensesDataState, setSalesAndExpensesDataState] = useState<
+    DailySummery[] | undefined
+  >();
   const [customActive, setCustomActive] = useState(false);
 
   const {
@@ -141,7 +146,7 @@ export function Analytics() {
   };
 
   useEffect(() => {
-    if(activeTab === "custom") {
+    if (activeTab === "custom") {
       setAnaliticalRange({
         dateRange: {
           from: new Date(),
@@ -278,8 +283,7 @@ export function Analytics() {
 
   useEffect(() => {
     console.log("Data Loaded", dataLoaded);
-  }
-  , [dataLoaded]);
+  }, [dataLoaded]);
 
   return (
     <Fragment>
@@ -293,7 +297,8 @@ export function Analytics() {
           />
           <CardDescription>
             <p className="text-sm text-muted-foreground">
-              Welcome to Analytics! Here you can view statistics of your sales and expenses
+              Welcome to Analytics! Here you can view statistics of your sales
+              and expenses
             </p>
           </CardDescription>
         </CardHeader>
@@ -356,11 +361,8 @@ export function Analytics() {
           analyticData={salesAndExpensesDataState}
           isDataLoading={salesAndExpensesLoading}
         />
-        <CreditorCard
-          className="col-span-2 h-400 max-h-[500px]"
-        />
+        <CreditorCard className="col-span-2 h-400 max-h-[500px]" />
       </div>
-      
     </Fragment>
   );
 }

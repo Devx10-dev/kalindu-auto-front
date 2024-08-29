@@ -36,7 +36,10 @@ import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import dateToString from "@/utils/dateToString";
-import { DailySummery, TotalSummary } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import {
+  DailySummery,
+  TotalSummary,
+} from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import { useToast } from "@/components/ui/use-toast";
 import CreditorCard from "../dashboard-root/components/CreditorCard";
 import Clock from "./components/Clock";
@@ -44,7 +47,6 @@ import QuickAccessCard from "./components/QuickAccessCard";
 import { CreditorStatPieChart } from "./components/CreditorStatPieChart";
 
 export function MainDashboard() {
-
   return (
     <Fragment>
       <div className="flex justify-between items-center">
@@ -95,16 +97,12 @@ export function MainDashboard() {
             linkTo="/dashboard/creditors/manage"
             // bgImage="/path-to-your-background-image.jpg" // Optional
           />
-
         </div>
         <div className="w-full col-span-2 row-span-2">
-          <CreditorStatPieChart/>
-          <CreditorCard
-            className="h-400 max-h-[500px] mt-4"
-          />
+          <CreditorStatPieChart />
+          <CreditorCard className="h-400 max-h-[500px] mt-4" />
         </div>
       </div>
-      
     </Fragment>
   );
 }

@@ -31,11 +31,7 @@ import useDebounce from "@/hooks/useDebounce";
 
 const USER_EDIT_PAGE = "/dashboard/users/edit";
 
-const UsersTable = ({
-  userService,
-}: {
-  userService: UserService;
-}) => {
+const UsersTable = ({ userService }: { userService: UserService }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -50,12 +46,10 @@ const UsersTable = ({
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
-  const { 
-    isLoading, 
-    data: users 
-  } = useQuery<UsersResponseData>({
-    queryKey: ["users",debouncedSearchQuery, pageNo, pageSize],
-    queryFn: () => userService.fetchUsers(pageNo, pageSize, debouncedSearchQuery),
+  const { isLoading, data: users } = useQuery<UsersResponseData>({
+    queryKey: ["users", debouncedSearchQuery, pageNo, pageSize],
+    queryFn: () =>
+      userService.fetchUsers(pageNo, pageSize, debouncedSearchQuery),
     retry: 2,
   });
 
@@ -127,22 +121,22 @@ const UsersTable = ({
         {/* {isLoading ? (
           <SkeletonGrid noOfColumns={7} noOfItems={10} />
         ) : ( */}
-          <Table className="border rounded-md text-md mb-5">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Username</TableHead>
-                <TableHead>Full Name</TableHead>
-                <TableHead>Designation</TableHead>
-                <TableHead>Mobile No</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Active</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            {isLoading ? (
-              // <SkeletonGrid noOfColumns={6} noOfItems={10} />
-              <TableBodySkeleton cols={7} rows={10} noHeader={true} />
-            ) : (
+        <Table className="border rounded-md text-md mb-5">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Username</TableHead>
+              <TableHead>Full Name</TableHead>
+              <TableHead>Designation</TableHead>
+              <TableHead>Mobile No</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead>Active</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          {isLoading ? (
+            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+            <TableBodySkeleton cols={7} rows={10} noHeader={true} />
+          ) : (
             <TableBody>
               {users &&
                 users.users.map((user) => (
@@ -189,17 +183,17 @@ const UsersTable = ({
                   </TableRow>
                 ))}
             </TableBody>
-            )}
-            <TableCaption>
-              <TablePagination
-                pageNo={pageNo + 1}
-                totalPages={totalPages}
-                onPageChange={(page) => {
-                  setPageNo(page - 1);
-                }}
-              />
-            </TableCaption>
-          </Table>
+          )}
+          <TableCaption>
+            <TablePagination
+              pageNo={pageNo + 1}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setPageNo(page - 1);
+              }}
+            />
+          </TableCaption>
+        </Table>
         {/* )} */}
         <ConfirmationModal
           onClose={() => setShow(false)}

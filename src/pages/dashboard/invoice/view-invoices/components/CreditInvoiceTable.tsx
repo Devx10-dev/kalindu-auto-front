@@ -11,13 +11,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreditorInvoiceList, InvoiceState } from "@/types/invoice/creditorInvoice";
+import {
+  CreditorInvoiceList,
+  InvoiceState,
+} from "@/types/invoice/creditorInvoice";
 import dateArrayToString from "@/utils/dateArrayToString";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
-
 
 export default function CreditInvoiceTable({
   invoices,
@@ -58,14 +60,18 @@ export default function CreditInvoiceTable({
     return dateArray;
   };
 
-  const getDueStatus = (issuedTime: number[], maxDueWeeks: number, isSettled: boolean) => {
+  const getDueStatus = (
+    issuedTime: number[],
+    maxDueWeeks: number,
+    isSettled: boolean,
+  ) => {
     if (isSettled) {
       return "SETTLED";
     }
 
     const issuedDate = new Date(
       issuedTime[0],
-      issuedTime[1]-1,
+      issuedTime[1] - 1,
       issuedTime[2],
       issuedTime[3],
       issuedTime[4],
@@ -82,11 +88,13 @@ export default function CreditInvoiceTable({
     }
   };
 
-  const generateStatusBadge = (
-    invoice: InvoiceState,
-  ) => {
-    console.log("HEREEEE",invoice);
-    const status = getDueStatus(invoice.issuedTime, Number(invoice.creditor.maxDuePeriod) as number, invoice.settled);
+  const generateStatusBadge = (invoice: InvoiceState) => {
+    console.log("HEREEEE", invoice);
+    const status = getDueStatus(
+      invoice.issuedTime,
+      Number(invoice.creditor.maxDuePeriod) as number,
+      invoice.settled,
+    );
     let className = "";
     let statusText = "";
 
@@ -96,7 +104,8 @@ export default function CreditInvoiceTable({
         statusText = "COMPLETED";
         break;
       case "DUE":
-        className = "text-white bg-yellow-400 rounded-sm p-1 hover:bg-yellow-500";
+        className =
+          "text-white bg-yellow-400 rounded-sm p-1 hover:bg-yellow-500";
         statusText = "DUE";
         break;
       case "OVERDUE":
@@ -106,16 +115,11 @@ export default function CreditInvoiceTable({
     }
 
     return (
-      <Badge
-        variant="secondary"
-        className={className}
-      >
+      <Badge variant="secondary" className={className}>
         {statusText}
       </Badge>
     );
-
   };
-
 
   return (
     <Fragment>

@@ -38,9 +38,7 @@ function ViewUsers() {
             User
           </Button>
         </div>
-        <UsersTable
-          userService={userService}
-        />
+        <UsersTable userService={userService} />
       </CardContent>
     </div>
   );

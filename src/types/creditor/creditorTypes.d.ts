@@ -1,80 +1,54 @@
-// address
-// :
-// null
-// contactPersonName
-// :
-// "Harsha"
-// createdBy
-// :
-// null
-// createdDate
-// :
-// null
-// creditLimit
-// :
-// 10000
-// creditorID
-// :
-// 52
-// dueDate
-// :
-// null
-// email
-// :
-// "harsha@gmail.com"
-// expiredInvoiceList
-// :
-// null
-// isExpired
-// :
-// null
-// maxDuePeriod
-// :
-// 1
-// modifiedBy
-// :
-// null
-// modifiedDate
-// :
-// null
-// primaryContact
-// :
-// "0776650827"
-// secondaryContact
-// :
-// "0348759490"
-// shopName
-// :
-// "Chathuramga"
-// status
-// :
-// null
-// totalDue
-// :
-// 0
-
 // {
-//   "creditorID": 6,
-//   "shopName": "nisal new",
-//   "contactPersonName": "Avishka Sathyanjana",
-//   "email": "baavishka@gmail.com",
-//   "primaryContact": "0701097409",
-//   "secondaryContact": "0701097409",
-//   "address": "48/55, Epitamulla Road, Pitakotte",
-//   "maxDuePeriod": 1,
-//   "creditLimit": 2000.00,
-//   "totalDue": 1.00,
+//   "creditorID": 512,
+//   "shopName": "DN Car Sale",
+//   "contactPersonName": "DN Car Sale",
+//   "email": "dncarsale@gmail.com",
+//   "primaryContact": "0779737738",
+//   "secondaryContact": "0779737738",
+//   "address": null,
+//   "maxDuePeriod": 2,
+//   "creditLimit": 100000.00,
+//   "totalDue": 10000.00,
 //   "status": null,
-//   "createdBy": "b0a8ee5a-b0ec-49db-bef6-cd611b657ecf",
-//   "createdDate": 1721035263288,
-//   "modifiedBy": "b0a8ee5a-b0ec-49db-bef6-cd611b657ecf",
-//   "modifiedDate": 1722882515179,
-//   "dueDate": null,
-//   "isExpired": null,
-//   "expiredInvoiceList": null,
-//   "daysOverdueOrDueDays": 11,
+//   "dueStatus": "DUE",
+//   "latestOverdueDays": -2,
+//   "latestDueDays": -2,
 //   "dueInvoiceCount": 1,
-//   "overdueInvoiceCount": 1
+//   "overdueInvoiceCount": 0,
+//   "dueAmount": 10000.00,
+//   "overdueAmount": 0,
+//   "creditInvoices": [
+//       {
+//           "id": 102,
+//           "invoiceId": "INV-CRE-2408181829",
+//           "creditorId": null,
+//           "issuedTime": [
+//               2024,
+//               8,
+//               18,
+//               18,
+//               29,
+//               11,
+//               42735000
+//           ],
+//           "dueTime": [
+//               2024,
+//               9,
+//               1,
+//               18,
+//               29,
+//               11,
+//               42735000
+//           ],
+//           "totalPrice": 10000.00,
+//           "settled": false,
+//           "settledAmount": null,
+//           "totalDiscount": 0.00,
+//           "issuedBy": "b0a8ee5a-b0ec-49db-bef6-cd611b657ecf",
+//           "dueStatus": "DUE",
+//           "vat": null
+//       }
+//   ]
 // },
 
 export type Creditor = {
@@ -100,7 +74,12 @@ export type Creditor = {
   daysOverdueOrDueDays?: number;
   dueInvoiceCount?: number;
   overdueInvoiceCount?: number;
-  
+  dueAmount?: number;
+  overdueAmount?: number;
+  creditInvoices?: CreditInvoice[];
+  dueStatus?: string;
+  latestDueDays?: number;
+  latestOverdueDays?: number;
 };
 
 export type CreditorResponseData = {
@@ -186,10 +165,4 @@ export enum TransactionType {
 export enum YesNo {
   YES = "YES",
   NO = "NO",
-}
-
-
-export type OverdueCreditors = {
-  overdue?: Creditor[];
-  due?: Creditor[];
 }

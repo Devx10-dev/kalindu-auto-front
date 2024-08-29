@@ -26,7 +26,6 @@ export function DateRangePicker({
   setDateRange?: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
   disabled?: boolean;
 }) {
-
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>

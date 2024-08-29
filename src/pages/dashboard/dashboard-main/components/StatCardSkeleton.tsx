@@ -1,6 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-
 export function StatCardSkeleton() {
   return (
     <div className="h-200 w-full">

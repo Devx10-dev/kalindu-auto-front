@@ -9,7 +9,6 @@ function getAnalyticalRange({
   if (typeof range === "string") {
     switch (range) {
       case "today": {
-
         const today = new Date();
         const from = new Date(
           today.getFullYear(),

@@ -58,7 +58,9 @@ class CreditInvoiceService extends Service {
 
   async fetchCreditInvoiceStats(): Promise<CreditInvoiceStats> {
     try {
-      const response = await this.api.get<CreditInvoiceStats>(`${CREDIT_INVOICE_URL}/stats`);
+      const response = await this.api.get<CreditInvoiceStats>(
+        `${CREDIT_INVOICE_URL}/stats`,
+      );
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch credit invoice stats");

@@ -36,7 +36,7 @@ import TablePagination from "@/components/TablePagination";
 import { TableBodySkeleton } from "@/pages/dashboard/creditors/components/TableSkelton";
 import useDebounce from "@/hooks/useDebounce";
 
-export default function SparePartGrid({ 
+export default function SparePartGrid({
   setShow,
   vehicleService,
   sparePartService,
@@ -64,7 +64,7 @@ export default function SparePartGrid({
     error,
     refetch,
   } = useQuery<SparePartsResponseData>({
-    queryKey: ["spareParts", pageNo, pageSize,debouncedSearch],
+    queryKey: ["spareParts", pageNo, pageSize, debouncedSearch],
     queryFn: () =>
       sparePartService.fetchFilteredSpaerParts(
         pageNo,
@@ -142,15 +142,13 @@ export default function SparePartGrid({
 
   useEffect(() => {
     console.log("Page No: ", pageNo);
-  }
-  , [pageNo]);
+  }, [pageNo]);
 
   useEffect(() => {
-    if(spareParts) {
+    if (spareParts) {
       setTotalPages(spareParts.totalPages);
     }
-  }
-  , [spareParts]);
+  }, [spareParts]);
 
   return (
     <Fragment>
@@ -203,22 +201,22 @@ export default function SparePartGrid({
           </div>
         </div>
 
-          <Table className="border rounded-md text-md mb-5 table-responsive">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Spare Part</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Chassis No</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Remark</TableHead>
-                <TableHead className="text-center">Action</TableHead>
-              </TableRow>
-            </TableHeader>
+        <Table className="border rounded-md text-md mb-5 table-responsive">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Spare Part</TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>Chassis No</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Remark</TableHead>
+              <TableHead className="text-center">Action</TableHead>
+            </TableRow>
+          </TableHeader>
 
-        {isLoading ? (
-          // <SkeletonGrid noOfColumns={6} noOfItems={10} />
-          <TableBodySkeleton cols={6} rows={10} noHeader={true} />
-        ) : (
+          {isLoading ? (
+            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+            <TableBodySkeleton cols={6} rows={10} noHeader={true} />
+          ) : (
             <TableBody>
               {viewSpareParts &&
                 viewSpareParts.map((sparePart) => (
@@ -245,16 +243,16 @@ export default function SparePartGrid({
                 ))}
             </TableBody>
           )}
-            <TableCaption>
-              <TablePagination
-                pageNo={pageNo + 1}
-                totalPages={totalPages}
-                onPageChange={(page) => {
-                  setPageNo(page - 1);
-                }}
-              />
-            </TableCaption>
-          </Table>
+          <TableCaption>
+            <TablePagination
+              pageNo={pageNo + 1}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setPageNo(page - 1);
+              }}
+            />
+          </TableCaption>
+        </Table>
       </>
     </Fragment>
   );
