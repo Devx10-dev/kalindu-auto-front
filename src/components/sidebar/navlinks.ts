@@ -10,7 +10,7 @@ const NavLinks: NavLink[] = [
         href: "/dashboard/home",
       },
       {
-        label: "Anlytics",
+        label: "Analytics",
         href: "/dashboard/analytics",
       },
     ],
