@@ -110,28 +110,38 @@ export default function VehicleForm({
 
   const typeOptions =
     vehicleTypes?.map((type) => ({
-      value: type,
+      value: { id: type.id, value: type.type },
       label: type.type,
       __isNew__: false,
     })) || [];
 
   const brandOptions =
     vehicleBrands?.map((brand) => ({
-      value: brand,
+      value: { id: brand.id, value: brand.brand },
       label: brand.brand,
       __isNew__: false,
     })) || [];
 
   const chassisNoOptions =
     chassisNos?.map((chassisNo) => ({
-      value: chassisNo,
+      value: { id: chassisNo.id, value: chassisNo.chassisNo },
       label: chassisNo.chassisNo,
       __isNew__: false,
     })) || [];
 
+  console.log("FORM VALUES -> ", form.getValues());
+  console.log("TYPE ERRORS -> ", form.getFieldState("type").error);
+  console.log("BRAND ERRORS -> ", form.getFieldState("brand").error);
+  console.log("CHASSIS NO ERRORS -> ", form.getFieldState("chassisNo").error);
+
   const createVehicleMutation = useMutation({
-    mutationFn: (formData: VehicleModel) =>
-      service.createVehicleModel(formData),
+    mutationFn: (formData: VehicleModel) => {
+      console.log("*******************************");
+      console.log(formData);
+      console.log("*******************************");
+
+      return service.createVehicleModel(formData);
+    },
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["vehicleModels"] });
@@ -187,6 +197,8 @@ export default function VehicleForm({
   };
 
   const handleSubmit = async () => {
+    console.log("-------------------------");
+    console.log(form.getValues());
     try {
       if (form.getValues()) {
         if (vehicleModel === null) {

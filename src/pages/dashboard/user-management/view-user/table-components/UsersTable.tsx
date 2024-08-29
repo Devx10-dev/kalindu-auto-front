@@ -147,6 +147,7 @@ const UsersTable = ({ userService }: { userService: UserService }) => {
                     <TableCell>{user.fullName}</TableCell>
                     <TableCell>{user.designation}</TableCell>
                     <TableCell>{user.mobileNo}</TableCell>
+                    <TableCell>{user.email ?? "-"}</TableCell>
                     <TableCell>{user.address ?? "-"}</TableCell>
                     <TableCell>
                       {user.active ? (

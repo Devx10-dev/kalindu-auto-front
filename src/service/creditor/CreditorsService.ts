@@ -41,8 +41,7 @@ class CreditorsService extends Service {
 
   async fetchOverdueCreditors(): Promise<Creditor[]> {
     try {
-      const response =
-        await this.api.get<Creditor[]>(OVERDUE_CREDITOR_URL);
+      const response = await this.api.get<Creditor[]>(OVERDUE_CREDITOR_URL);
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch overdue creditors");

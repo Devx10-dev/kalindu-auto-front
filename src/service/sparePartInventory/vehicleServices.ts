@@ -92,15 +92,15 @@ class VehicleService extends Service {
       vehicleType:
         typeof vehicleModel.type.value === "string"
           ? vehicleModel.type.value
-          : vehicleModel.type.value.type,
+          : vehicleModel.type.value.value,
       vehicleBrand:
         typeof vehicleModel.brand.value === "string"
           ? vehicleModel.brand.value
-          : vehicleModel.brand.value.brand,
+          : vehicleModel.brand.value.value,
       chassisNo:
         typeof vehicleModel.chassisNo.value === "string"
           ? vehicleModel.chassisNo.value
-          : vehicleModel.chassisNo.value.chassisNo,
+          : vehicleModel.chassisNo.value.value,
     });
     return response.data;
   }
@@ -113,15 +113,15 @@ class VehicleService extends Service {
       vehicleType:
         typeof vehicleModel.type.value === "string"
           ? vehicleModel.type.value
-          : vehicleModel.type.value.type,
+          : vehicleModel.type.value.value,
       vehicleBrand:
         typeof vehicleModel.brand.value === "string"
           ? vehicleModel.brand.value
-          : vehicleModel.brand.value.brand,
+          : vehicleModel.brand.value.value,
       chassisNo:
         typeof vehicleModel.chassisNo.value === "string"
           ? vehicleModel.chassisNo.value
-          : vehicleModel.chassisNo.value.chassisNo,
+          : vehicleModel.chassisNo.value.value,
     });
     return response.data;
   }

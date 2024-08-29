@@ -86,8 +86,11 @@ function BillSummaryCard({
           Bill Summary
         </h3>
         <div style={{ marginTop: "30px" }}>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel label="Discount (%)" style={{ fontSize: 14 }} />
+          <div className="d-flex justify-between mb-2 mt-2">
+            <OptionalLabel
+              label="Discount (%)"
+              style={{ fontSize: 14, fontWeight: "bold" }}
+            />
             <Input
               type="number"
               value={discountPercentage}
@@ -96,7 +99,7 @@ function BillSummaryCard({
                 maxWidth: "100px",
                 textAlign: "right",
                 padding: 1,
-                maxHeight: 20,
+                maxHeight: 30,
               }}
               step={"0.01"}
               onChange={(e) => calculateDiscount(parseFloat(e.target.value))}
@@ -104,8 +107,11 @@ function BillSummaryCard({
               max={100}
             />
           </div>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel style={{ fontSize: 14 }} label="Discount Amount" />
+          <div className="d-flex justify-between mb-2 mt-4">
+            <OptionalLabel
+              style={{ fontSize: 14, fontWeight: "bold" }}
+              label="Discount Amount"
+            />
             <Input
               type="number"
               value={discount}
@@ -113,7 +119,7 @@ function BillSummaryCard({
               style={{
                 maxWidth: "100px",
                 textAlign: "right",
-                maxHeight: 20,
+                maxHeight: 30,
                 padding: 1,
               }}
               min={0}
@@ -123,8 +129,11 @@ function BillSummaryCard({
               }
             />
           </div>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel style={{ fontSize: 14 }} label="VAT (%)" />
+          <div className="d-flex justify-between mb-2 mt-4">
+            <OptionalLabel
+              style={{ fontSize: 14, fontWeight: "bold" }}
+              label="VAT (%)"
+            />
             <Input
               type="number"
               value={vatPercentage}
@@ -132,7 +141,7 @@ function BillSummaryCard({
               style={{
                 maxWidth: "100px",
                 textAlign: "right",
-                maxHeight: 20,
+                maxHeight: 30,
                 padding: 1,
               }}
               step={"0.01"}
@@ -140,8 +149,11 @@ function BillSummaryCard({
               onChange={(e) => calculateVat(parseFloat(e.target.value))}
             />
           </div>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel style={{ fontSize: 14 }} label="VAT Amount" />
+          <div className="d-flex justify-between mb-2 mt-4">
+            <OptionalLabel
+              style={{ fontSize: 14, fontWeight: "bold" }}
+              label="VAT Amount"
+            />
             <Input
               type="number"
               value={vat}
@@ -149,7 +161,7 @@ function BillSummaryCard({
               style={{
                 maxWidth: "100px",
                 textAlign: "right",
-                maxHeight: 20,
+                maxHeight: 30,
                 padding: 1,
               }}
               min={0}
