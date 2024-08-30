@@ -30,11 +30,10 @@ class CashInvoiceService extends Service {
     toDate?: string | null,
     pageNo?: number,
     pageSize?: number,
-    dummy: boolean = false,
   ): Promise<InvoiceList> {
     try {
       const response = await this.api.get<InvoiceList>(
-        `${CASH_INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}/${dummy}`,
+        `${CASH_INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
       );
 
       return response.data;

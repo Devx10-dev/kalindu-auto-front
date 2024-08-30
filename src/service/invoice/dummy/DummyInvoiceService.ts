@@ -27,11 +27,10 @@ class DummyInvoiceService extends Service {
     toDate?: string | null,
     pageNo?: number,
     pageSize?: number,
-    dummy: boolean = true,
   ): Promise<InvoiceList> {
     try {
       const response = await this.api.get<InvoiceList>(
-        `${INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}/${dummy}`,
+        `${INVOICE_URL}/${search ? search : null}/${fromDate ? fromDate : null}/${toDate ? toDate : null}/${pageNo ? pageNo : 0}/${pageSize ? pageSize : 10}`,
       );
 
       return response.data;
