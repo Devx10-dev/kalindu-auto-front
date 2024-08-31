@@ -21,6 +21,7 @@ import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAll
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
 import PrintCreditor from "@/pages/dashboard/invoice/creditor/Print.tsx";
+import { AddTransaction } from "./pages/dashboard/creditors/AddTransaction";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
             <Route path="register" element={<RegisterCreditor />} />
             <Route path="manage" element={<CreditorManagement />} />
             <Route path="manage/:id" element={<ViewCreditor />} />
+            <Route path="transaction" element={<AddTransaction />} />
           </Route>
 
           <Route path="reports">

@@ -37,8 +37,8 @@ function Sidebar({
   }, []);
 
   const sidebarComponent = (
-    <div className="h-full pl-1 w-full pb-4">
-      <ul className="mt-4">{sidebarItems}</ul>
+    <div className="h-full pl-1 w-[300px] pb-4">
+      <ul className="mt-4 w-[200px]">{sidebarItems}</ul>
     </div>
   );
 
@@ -46,7 +46,7 @@ function Sidebar({
     <>
       {/* Sidebar for larger screens */}
       {!isMobileView && (
-        <div className="h-full pl-1 w-full pb-4">{sidebarComponent}</div>
+        <div className="h-full pl-1 pb-4">{sidebarComponent}</div>
       )}
 
       {/* Drawer for smaller screens */}
