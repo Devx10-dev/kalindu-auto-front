@@ -33,9 +33,8 @@ export function AddTransaction() {
             icon={<ArrowLeftRight />}
           />
         </CardHeader>
-        <Separator />
         {/* <Card className="my-6"> */}
-          <CardContent className="py-4" style={{ width: "98%" }}>
+          <CardContent className="py-4">
             <TransactionForm
               chequeService={chequeService}
               creditorService={creditorService}

@@ -24,7 +24,7 @@ export function toNormalCase(input: string): string {
 export function truncate(
   text: string,
   maxLength: number,
-  truncIndicator = "...",
+  truncIndicator = "..."
 ) {
   if (text.length <= maxLength) {
     return text;
@@ -41,4 +41,11 @@ export const convertSnakeCaseToNormalCase = (word: string): string => {
     words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
   }
   return words.join(" ");
+};
+
+export const getInitials = (name: string) => {
+  if (!name || typeof name !== "string") return "";
+
+  // Extract the first two letters and convert them to uppercase
+  return name.slice(0, 2).toUpperCase();
 };
