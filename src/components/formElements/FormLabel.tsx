@@ -8,7 +8,9 @@ type LabelProps = {
 function RequiredLabel({ label }: LabelProps) {
   return (
     <div className="flex gap-1 mb-2">
-      <p>{capitalize(label)}</p>
+      <p className="text-sm font-medium">
+        {capitalize(label)}
+      </p>
       <span className="color-red">*</span>
     </div>
   );

@@ -119,7 +119,7 @@ function TransactionForm({
   return (
     <Form {...form}>
       <form className="space-y-8">
-        <div className="grid grid-cols-3 grid-rows-3 gap-x-7 grid-flow-row mb-10 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-5 grid-flow-row mb-10 w-full">
           <FormField
             control={form.control}
             name="creditor"

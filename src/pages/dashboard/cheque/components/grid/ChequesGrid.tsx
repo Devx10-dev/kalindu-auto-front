@@ -30,6 +30,7 @@ import GridModal from "@/components/modal/GridModal";
 import CreditInvoiceGrid from "./CreditInvoiceGrid";
 import ListCheckIcon from "@/components/icon/ListCheckIcon";
 import VerifyIcon from "@/components/icon/VerifyIcon";
+import { Filter, Search } from "lucide-react";
 
 function ChequesGrid({
   creditors = [],
@@ -146,7 +147,7 @@ function ChequesGrid({
   const handleViewBtnClick = (cheque: Cheque) => {
     setGridModalTitle(`Credit invoices of ${cheque.chequeNo}`);
     setGridModalDescription(
-      `Credit invoices those settled by ${cheque.chequeNo}`,
+      `Credit invoices those settled by ${cheque.chequeNo}`
     );
     setSelectedChequeId(cheque.id);
     setGridModalShow(true);
@@ -156,11 +157,9 @@ function ChequesGrid({
     <Fragment>
       <>
         <div
-          className="mb-4 p-4"
+          className="mb-4 pt-2 pb-2 pr-2 w-1/2"
           style={{
             borderRadius: "5px",
-            boxShadow:
-              "rgba(255, 255, 255, 0.1) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.20) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
           }}
         >
           <div className=" d-flex gap-4">
@@ -181,7 +180,8 @@ function ChequesGrid({
               </SelectContent>
             </Select>
 
-            <Button variant={"default"} onClick={refetchCheques}>
+            <Button variant={"secondary"} onClick={refetchCheques}>
+              <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
           </div>

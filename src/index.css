@@ -41,6 +41,10 @@ td {
   color: red;
 }
 
+.color-gray {
+  color: rgb(97, 96, 96);
+}
+
 .d-flex {
   display: flex;
 }
