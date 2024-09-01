@@ -45,6 +45,7 @@ import CreditorCard from "../dashboard-root/components/CreditorCard";
 import Clock from "./components/Clock";
 import QuickAccessCard from "./components/QuickAccessCard";
 import { CreditorStatPieChart } from "./components/CreditorStatPieChart";
+import QuickSearch from "./components/QuickSearch";
 
 export function MainDashboard() {
   return (
@@ -67,40 +68,43 @@ export function MainDashboard() {
           <Clock />
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-1 md:gap-8 lg:grid-cols-4 lg:grid-rows-2 ml-5">
-        <div className="grid gap-0 md:grid-cols-2 md:gap-8 lg:grid-cols-2 col-span-2 row-span-1 h-auto">
-          <QuickAccessCard
-            title="Cash Invoice"
-            description="Quick Access to Cash Invoice Creation"
-            icon={<FileText className="h-6 w-6 text-primary" />}
-            linkTo="/dashboard/invoice/cash"
-            // bgImage="https://cdni.iconscout.com/illustration/premium/thumb/money-invoice-11878369-9684535.png?f=webp" // Optional
-          />
-          <QuickAccessCard
-            title="Credit Invoice"
-            description="Quick Access to Credit Invoice Creation"
-            icon={<CreditCard className="h-6 w-6 text-primary" />}
-            linkTo="/dashboard/invoice/creditor"
-            // bgImage="/path-to-your-background-image.jpg" // Optional
-          />
-          <QuickAccessCard
-            title="Dummy Invoice"
-            description="Quickl Access to Dummy Invoice Creation"
-            icon={<NotepadTextDashed className="h-6 w-6 text-primary" />}
-            linkTo="/dashboard/invoice/dummy"
-            // bgImage="/path-to-your-background-image.jpg" // Optional
-          />
-          <QuickAccessCard
-            title="Manage Creditors"
-            description="Quick Access to Creditor Management"
-            icon={<Contact className="h-6 w-6 text-primary" />}
-            linkTo="/dashboard/creditors/manage"
-            // bgImage="/path-to-your-background-image.jpg" // Optional
-          />
+      <div className="flex justify-between items-top gap-5 ">
+        <div className="flex flex-col lg:w-[50%] md:w-full h-auto mb-5 gap-5">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2  h-fit">
+            <QuickAccessCard
+              title="Cash Invoice"
+              description="Quick Access to Cash Invoice Creation"
+              icon={<FileText className="h-6 w-6 text-primary" />}
+              linkTo="/dashboard/invoice/cash"
+              // bgImage="https://cdni.iconscout.com/illustration/premium/thumb/money-invoice-11878369-9684535.png?f=webp" // Optional
+            />
+            <QuickAccessCard
+              title="Credit Invoice"
+              description="Quick Access to Credit Invoice Creation"
+              icon={<CreditCard className="h-6 w-6 text-primary" />}
+              linkTo="/dashboard/invoice/creditor"
+              // bgImage="/path-to-your-background-image.jpg" // Optional
+            />
+            <QuickAccessCard
+              title="Dummy Invoice"
+              description="Quickl Access to Dummy Invoice Creation"
+              icon={<NotepadTextDashed className="h-6 w-6 text-primary" />}
+              linkTo="/dashboard/invoice/dummy"
+              // bgImage="/path-to-your-background-image.jpg" // Optional
+            />
+            <QuickAccessCard
+              title="Manage Creditors"
+              description="Quick Access to Creditor Management"
+              icon={<Contact className="h-6 w-6 text-primary" />}
+              linkTo="/dashboard/creditors/manage"
+              // bgImage="/path-to-your-background-image.jpg" // Optional
+            />
+          </div>
+          <QuickSearch />
         </div>
-        <div className="w-full col-span-2 row-span-2">
+        <div className="lg:w-[50%] md:w-full h-auto mb-5">
           <CreditorStatPieChart />
-          <CreditorCard className="h-400 max-h-[500px] mt-4" />
+          <CreditorCard className="max-h-[400px] mt-4 mb-5" />
         </div>
       </div>
     </Fragment>
