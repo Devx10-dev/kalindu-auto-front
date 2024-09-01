@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-const numberOnlyRegex = new RegExp(/^\d+$/);
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
 );
@@ -24,9 +23,7 @@ export const creditorFormSchema = z.object({
     })
     .max(30, {
       message: "Name must not be longer than 30 characters.",
-    })
-    .regex(numberOnlyRegex, "Contact person name cannot contain only numbers!"),
-
+    }),
   email: z.string({ required_error: "Email is Required" }).email({
     message: "Please enter a valid email",
   }),

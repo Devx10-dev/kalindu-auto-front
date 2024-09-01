@@ -31,8 +31,9 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Creditor Name</TableHead>
-              <TableHead> Primary Contact</TableHead>
-              <TableHead>Balance</TableHead>
+              <TableHead>Primary Contact</TableHead>
+              <TableHead>Due Balance</TableHead>
+              <TableHead>Cheque Balance</TableHead>
               <TableHead>Credit Limit (LKR)</TableHead>
               <TableHead>Expired Due Date</TableHead>
               <TableHead>Actions</TableHead>
@@ -48,14 +49,19 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
                   {creditor.shopName}
                 </TableCell>
                 <TableCell>{creditor.primaryContact}</TableCell>
-                <TableCell>
+                <TableCell align="right">
                   {creditor.totalDue ? creditor.totalDue : 0}
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
+                  {creditor.totalDue ? creditor.chequeBalance : 0}
+                </TableCell>
+                <TableCell align="right">
                   {creditor.creditLimit ? creditor.creditLimit : "-"}
                 </TableCell>
 
-                <TableCell>{creditor.isExpired ? "YES" : "NO"}</TableCell>
+                <TableCell align="center">
+                  {creditor.isExpired ? "Yes" : "No"}
+                </TableCell>
                 <TableCell className="text-right flex">
                   <Link
                     to={`/dashboard/creditors/manage/${creditor.creditorID}`}

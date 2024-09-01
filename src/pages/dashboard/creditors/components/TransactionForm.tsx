@@ -108,6 +108,7 @@ function TransactionForm({
     form.setValue("creditor", null);
     form.setValue("creditInvoice", null);
     form.setValue("remark", "");
+    form.setValue("amount", undefined);
 
     setCreditorSelectKey((prevKey) => prevKey + 1);
     setCreditInvoiceSelectKey((prevKey) => prevKey + 1);
@@ -130,9 +131,9 @@ function TransactionForm({
       creditorService.createCreditorTransaction(data),
     onSuccess: () => {
       // Handle onSuccess logic here
-      queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["allCreditors"] });
       queryClient.invalidateQueries({
-        queryKey: ["creditor", selectedCreditor.creditorID],
+        queryKey: ["creditors", selectedCreditor.creditorID],
       });
       toast({
         variant: "default",
@@ -344,6 +345,7 @@ function TransactionForm({
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
+                        value={field.value}
                         max={
                           selectedCreditInvoice === null
                             ? 1000000

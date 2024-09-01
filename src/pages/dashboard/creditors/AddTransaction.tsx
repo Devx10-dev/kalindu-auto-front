@@ -1,5 +1,5 @@
 import PageHeader from "@/components/card/PageHeader";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { CardContent, CardHeader } from "@/components/ui/card";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { ChequeService } from "@/service/cheque/ChequeService";
 import { useQuery } from "@tanstack/react-query";
@@ -7,7 +7,6 @@ import { ArrowLeftRight } from "lucide-react";
 import { Fragment, useState } from "react";
 import CreditorAPI from "./api/CreditorAPI";
 import TransactionForm from "./components/TransactionForm";
-import { Separator } from "@/components/ui/separator";
 
 export function AddTransaction() {
   const axiosPrivate = useAxiosPrivate();
@@ -34,14 +33,14 @@ export function AddTransaction() {
           />
         </CardHeader>
         {/* <Card className="my-6"> */}
-          <CardContent className="py-4">
-            <TransactionForm
-              chequeService={chequeService}
-              creditorService={creditorService}
-              creditors={creditors}
-              onClose={() => setShow(false)}
-            />
-          </CardContent>
+        <CardContent className="py-4">
+          <TransactionForm
+            chequeService={chequeService}
+            creditorService={creditorService}
+            creditors={creditors}
+            onClose={() => setShow(false)}
+          />
+        </CardContent>
         {/* </Card> */}
       </div>
     </Fragment>
