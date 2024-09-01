@@ -44,6 +44,7 @@ import CashInvoiceBase from "./cash/CashInvoice";
 import CreditorInvoiceBase from "./creditor/CreditorInvoiceBase";
 import useReturnInvoiceStore from "./context/useReturnInvoiceStore";
 import Summary from "./Summary";
+import useDebounce from "@/hooks/useDebounce";
 
 interface InvoiceOption {
   label: string;
@@ -67,6 +68,7 @@ function HandlingReturn() {
   const [items, setItems] = useState<DummyInvoiceItem[]>([]);
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const [vatPrecentage, setVatPrecentage] = useState(0);
   const [discountPercentage, setDiscountPercentage] = useState(0);
@@ -105,8 +107,9 @@ function HandlingReturn() {
   };
 
   const { data: baseInvoices } = useQuery<BaseInvoice[]>({
-    queryKey: ["baseInvoices", searchTerm],
-    queryFn: () => returnService.fetchAllInvoiceByGivenTerm(searchTerm),
+    queryKey: ["baseInvoices", debouncedSearchTerm],
+    queryFn: () =>
+      returnService.fetchAllInvoiceByGivenTerm(debouncedSearchTerm),
     retry: 1,
   });
 
