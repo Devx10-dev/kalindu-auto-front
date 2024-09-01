@@ -90,7 +90,10 @@ class CreditorAPI {
   ): Promise<CreditorTransaction> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_TRANSACTIONS_URL,
-      creditorTransaction
+      {
+        ...creditorTransaction,
+        isPartial: creditorTransaction.isPartial ? "YES" : "NO",
+      }
     );
     return response.data;
   }
@@ -103,7 +106,6 @@ class CreditorAPI {
   }
 
   async fetchUnsettledCreditInvoicesByID(id: number): Promise<CreditInvoice[]> {
-    console.log(id)
     if (id === undefined || id === 0) return [];
     const response = await this.api.get(
       `${CreditorEndpoints.GET_CREDITOR_INVOICE_URL}/creditor/${id}/unsettled`

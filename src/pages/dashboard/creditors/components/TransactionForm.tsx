@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -45,6 +47,9 @@ import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "lucide-react";
+import CreditorDetailsCard from "./CreditorDetailsCard";
 
 const RANDOM_COLOR = getRandomColor();
 
@@ -83,21 +88,34 @@ function TransactionForm({
       ),
   });
 
-  console.log(selectedCreditor);
+  const [creditorSelectKey, setCreditorSelectKey] = useState(0);
+  const [creditInvoiceSelectKey, setCreditInvoiceSelectKey] = useState(0);
+
   const resetForm = () => {
     setSelectedCreditor(null);
+    setSelectedCreditInvoice(null);
 
-    form.setValue("id", undefined);
-    form.setValue("amount", undefined);
-    form.setValue("creditInvoice", undefined);
-    form.setValue("creditor", undefined);
-    form.setValue("type", "Cash");
-    form.setValue("remark", undefined);
+    form.reset({
+      id: undefined,
+      amount: undefined,
+      creditInvoice: undefined,
+      creditor: undefined,
+      type: "Cash",
+      remark: "",
+      isPartial: false,
+    });
+
+    form.setValue("creditor", null);
+    form.setValue("creditInvoice", null);
+    form.setValue("remark", "");
+
+    setCreditorSelectKey((prevKey) => prevKey + 1);
+    setCreditInvoiceSelectKey((prevKey) => prevKey + 1);
   };
 
   const creditorOptions =
     creditors?.map((creditor) => ({
-      value: creditor.id,
+      value: parseInt(creditor.creditorID),
       label: creditor.contactPersonName,
     })) || [];
 
@@ -107,42 +125,74 @@ function TransactionForm({
       label: creditInvoice.invoiceId,
     })) || [];
 
-  const createChequeMutation = useMutation({
-    mutationFn: (formData: Cheque) =>
-      chequeService.createCheque({
-        chequeNo: formData.chequeNo,
-        amount: formData.amount,
-        creditor: {
-          creditorID: formData.creditor.value.id.toString(),
-          contactPersonName: formData.creditor.value.contactPersonName,
-        },
-      }),
+  const createTransactionMutation = useMutation({
+    mutationFn: (data: transactionValues) =>
+      creditorService.createCreditorTransaction(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cheques"] });
+      // Handle onSuccess logic here
+      queryClient.invalidateQueries({ queryKey: ["creditorTransactions"] });
+      queryClient.invalidateQueries({
+        queryKey: ["creditor", selectedCreditor.creditorID],
+      });
       toast({
         variant: "default",
         title: "Success",
-        description: `Cheque is created successfully.`,
+        className: " bg-green-200",
+        description: "Successfully added Transaction.",
       });
+
+      resetForm();
     },
-    onError: (data) => {
+    onError: (data: any) => {
       toast({
         variant: "destructive",
-        title: "Cheque creation is failed",
-        description: data.message,
+        title: "Creating transaction failed",
+        description: data.response.data,
         duration: 5000,
       });
     },
   });
 
-  const handleCancel = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-
-    onClose();
-  };
-
   const handleSubmit = async () => {
     try {
+      const transaction = form.getValues();
+
+      console.log(transaction.type);
+      console.log(
+        transaction.amount >
+          (selectedCreditor.chequeBalance === undefined
+            ? 0
+            : parseFloat(selectedCreditor.chequeBalance))
+      );
+
+      if (
+        transaction.type === "Cheque" &&
+        transaction.amount >
+          (selectedCreditor.chequeBalance === undefined
+            ? 0
+            : parseFloat(selectedCreditor.chequeBalance))
+      ) {
+        toast({
+          title: "Validation error",
+          description: "Creditor has no enough cheque amount",
+          variant: "destructive",
+          duration: 5000,
+        });
+
+        return;
+      }
+      if (transaction) {
+        const transactionData = {
+          creditorID: transaction.creditor.value,
+          transactionType: transaction.type.toUpperCase(),
+          invoiceNo: selectedCreditInvoice.invoiceId,
+          totalPrice: transaction.amount,
+          isPartial: transaction.isPartial,
+          remark: transaction.remark,
+        };
+
+        await createTransactionMutation.mutateAsync(transactionData);
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -150,6 +200,25 @@ function TransactionForm({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      {selectedCreditor !== null && (
+        <Card
+          style={{
+            opacity: selectedCreditor === null ? 0 : 1,
+            height: selectedCreditor === null ? "0" : "auto",
+            transition: "opacity 0.5s ease, height 0.5s ease",
+            overflow: "hidden",
+            minWidth: "350px",
+            width: "100%",
+          }}
+          className="lg:hidden block"
+        >
+          <CreditorDetailsCard
+            color={RANDOM_COLOR}
+            selectedCreditInvoice={selectedCreditInvoice}
+            selectedCreditor={selectedCreditor}
+          />
+        </Card>
+      )}
       <div
         className={`py-4 w-full ${selectedCreditor === null ? "lg:col-span-12" : "lg:col-span-8"}`}
         style={{ width: "98%" }}
@@ -157,30 +226,39 @@ function TransactionForm({
         <Form {...form}>
           <form className="space-y-4">
             <div
-              className={`grid grid-cols-1 ${selectedCreditor === null ? "lg:grid-cols-3" : ""} sm:grid-cols-2 gap-4`}
+              className={`grid grid-cols-1 ${selectedCreditor === null ? "lg:grid-cols-3" : ""} sm:grid-cols-2 gap-6`}
             >
               <FormField
                 control={form.control}
                 name="creditor"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <RequiredLabel label="Creditor" />
                     <FormControl>
                       <Select
+                        key={creditorSelectKey}
                         className="select-place-holder"
-                        placeholder={"Select Creditor"}
+                        placeholder={"Please select creditor"}
                         options={creditorOptions}
                         onChange={(selectedOption) => {
                           field.onChange(selectedOption);
                           const selectedCreditor = creditors.find(
-                            (creditor) => creditor.id === selectedOption.value
+                            (creditor) =>
+                              parseInt(creditor.creditorID) ===
+                              selectedOption.value
                           );
                           setSelectedCreditor(selectedCreditor || null);
                         }}
                       />
                     </FormControl>
-
-                    <FormMessage />
+                    {fieldState.error &&
+                    (fieldState.error.message === "Required" ||
+                      fieldState.error.message ===
+                        "Expected object, received null") ? (
+                      <p className="error-msg">Creditor is required</p>
+                    ) : (
+                      <FormMessage />
+                    )}
                   </FormItem>
                 )}
               />
@@ -188,13 +266,14 @@ function TransactionForm({
               <FormField
                 control={form.control}
                 name="creditInvoice"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <RequiredLabel label="Credit Invoice" />
                     <FormControl>
                       <Select
+                        key={creditInvoiceSelectKey}
                         className="select-place-holder"
-                        placeholder={`${selectedCreditor === null ? "Please select creditor first" : "Select Credit invoice"}`}
+                        placeholder={`${selectedCreditor === null ? "Please select creditor first" : "Please select Credit invoice"}`}
                         options={creditInvoiceOptions}
                         onChange={(selectedOption) => {
                           field.onChange(selectedOption);
@@ -210,7 +289,14 @@ function TransactionForm({
                       />
                     </FormControl>
 
-                    <FormMessage />
+                    {fieldState.error &&
+                    (fieldState.error.message === "Required" ||
+                      fieldState.error.message ===
+                        "Expected object, received null") ? (
+                      <p className="error-msg">Credit invoice is required</p>
+                    ) : (
+                      <FormMessage />
+                    )}
                   </FormItem>
                 )}
               />
@@ -227,7 +313,7 @@ function TransactionForm({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select the Designation" />
+                          <SelectValue placeholder="Please select the transaction type" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -253,19 +339,47 @@ function TransactionForm({
                     <FormControl>
                       <Input
                         type="number"
-                        min={0}
                         {...field}
-                        placeholder="Please enter amount"
-                        value={field.value}
+                        placeholder={`${selectedCreditInvoice === null ? "Please select credit invoice first" : "Please enter amount"}`}
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
+                        max={
+                          selectedCreditInvoice === null
+                            ? 1000000
+                            : selectedCreditInvoice.totalPrice -
+                              selectedCreditInvoice.settledAmount
+                        }
+                        disabled={selectedCreditInvoice === null}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="isPartial"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Is partial payment ? </FormLabel>
+                      <FormDescription>
+                        Indicate whether this transaction involves a payment
+                        that is less than the full amount due.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="remark"
@@ -273,7 +387,11 @@ function TransactionForm({
                   <FormItem>
                     <OptionalLabel label="Remark" />
                     <FormControl>
-                      <Textarea placeholder="Add remark" {...field} />
+                      <Textarea
+                        placeholder="Add remark"
+                        {...field}
+                        value={field.value}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -301,150 +419,29 @@ function TransactionForm({
         </Form>
       </div>
 
-      <Card
-        style={{
-          opacity: selectedCreditor === null ? 0 : 1,
-          height: selectedCreditor === null ? "0" : "auto",
-          transition: "opacity 0.5s ease, height 0.5s ease",
-          overflow: "hidden",
-        }}
-        className={`lg:col-span-${selectedCreditor === null ? "0" : "4"}`}
-      >
-        <CardHeader className="flex flex-row items-start bg-muted/50">
-          <div className="grid gap-0.5">
-            <CardTitle className="group flex items-center gap-2 text-lg">
-              <div className="flex gap-2 items-center">
-                <Avatar>
-                  <AvatarFallback style={{ background: RANDOM_COLOR }}>
-                    {selectedCreditor !== null
-                      ? getInitials(selectedCreditor.contactPersonName)
-                      : "NA"}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p>
-                    {selectedCreditor !== null
-                      ? truncate(selectedCreditor?.shopName, 20)
-                      : ""}
-                  </p>
-                  <CardDescription>{`Contact Name : ${
-                    selectedCreditor !== null
-                      ? truncate(selectedCreditor?.contactPersonName, 20)
-                      : ""
-                  }`}</CardDescription>
-                </div>
-              </div>
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6 text-sm">
-          <div className="grid gap-3">
-            <div className="font-semibold">Creditor Balance Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Total Due Amount</span>
-                <span
-                  style={{
-                    background: "#FFAAAA",
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    borderRadius: 5,
-                  }}
-                >
-                  Rs {selectedCreditor?.totalDue ?? 0}
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Cheque Balance</span>
-                <span
-                  style={{
-                    background: "#B4E380",
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    borderRadius: 5,
-                  }}
-                >
-                  Rs {selectedCreditor?.chequeBalance ?? 0}
-                </span>
-              </li>
-            </ul>
-            <Separator className="my-2" />
-            <div className="font-semibold">Contact Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Contact No</span>
-                <span>{selectedCreditor?.primaryContact ?? ""}</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Email Address</span>
-                <span>{selectedCreditor?.email ?? ""}</span>
-              </li>
-            </ul>
-
-            {selectedCreditInvoice !== null && (
-              <>
-                <Separator className="my-2" />
-                <div className="font-semibold">Credit Invoice Details</div>
-                <ul className="grid gap-3">
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Invoice ID</span>
-                    <span>{selectedCreditInvoice?.invoiceId ?? ""}</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Date</span>
-                    <span>
-                      {selectedCreditInvoice
-                        ? convertArrayToISOFormat(
-                            selectedCreditInvoice?.issuedTime
-                          )
-                        : ""}
-                    </span>
-                  </li>
-                </ul>
-
-                <ul className="grid gap-3">
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Total Amount</span>
-                    <span>{selectedCreditInvoice?.totalPrice ?? ""}</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">
-                      Settled Am,ount
-                    </span>
-                    <span
-                      style={{
-                        background: "#B4E380",
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        borderRadius: 5,
-                      }}
-                    >
-                      Rs {selectedCreditInvoice?.settledAmount ?? 0}
-                    </span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Due Amount</span>
-                    <span
-                      style={{
-                        background: "#FFAAAA",
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        borderRadius: 5,
-                      }}
-                    >
-                      Rs{" "}
-                      {selectedCreditInvoice.totalPrice -
-                        selectedCreditInvoice.settledAmount ?? 0}
-                    </span>
-                  </li>
-                </ul>
-              </>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {selectedCreditor !== null && (
+        <Card
+          style={{
+            opacity: selectedCreditor === null ? 0 : 1,
+            height: selectedCreditor === null ? "0" : "auto",
+            transition: "opacity 0.5s ease, height 0.5s ease",
+            overflow: "hidden",
+            minWidth: "350px",
+            width: "100%",
+          }}
+          className={`hidden lg:block lg:col-span-4`}
+        >
+          <CreditorDetailsCard
+            color={RANDOM_COLOR}
+            selectedCreditInvoice={selectedCreditInvoice}
+            selectedCreditor={selectedCreditor}
+          />
+        </Card>
+      )}
     </div>
   );
 }
 
 export default TransactionForm;
+
+// grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-3
