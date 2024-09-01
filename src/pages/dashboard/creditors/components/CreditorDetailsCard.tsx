@@ -146,7 +146,7 @@ function CreditorDetailsCard({
                   <span>{selectedCreditInvoice?.totalPrice ?? ""}</span>
                 </li>
                 <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Settled Am,ount</span>
+                  <span className="text-muted-foreground">Settled Amount</span>
                   <span
                     style={{
                       background: "#B4E380",

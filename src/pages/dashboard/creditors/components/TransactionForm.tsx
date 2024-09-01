@@ -131,7 +131,9 @@ function TransactionForm({
       creditorService.createCreditorTransaction(data),
     onSuccess: () => {
       // Handle onSuccess logic here
-      queryClient.invalidateQueries({ queryKey: ["allCreditors"] });
+      queryClient.invalidateQueries({
+        queryKey: ["allCreditors", "unsettledCreditorInvoices"],
+      });
       queryClient.invalidateQueries({
         queryKey: ["creditors", selectedCreditor.creditorID],
       });
