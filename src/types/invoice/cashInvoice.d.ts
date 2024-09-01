@@ -85,3 +85,17 @@ export type Commission = {
   amount: number;
   remark: string;
 };
+
+// {
+//   "id": 15,
+//   "customerName": "Kmal",
+//   "invoiceId": "INV-CASH-2408261146",
+//   "totalPrice": 1000.00
+// }
+
+export type QuickSearchInvoice = {
+  id: number;
+  customerName: string;
+  invoiceId: string;
+  totalPrice: number;
+};

@@ -38,6 +38,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import CreditorsListSkeleton from "./CreditorListSkeleton";
 import AllCaughtUp from "./AllCaughtUp";
+import CreditorPopup from "./CreditorPopup";
 
 export default function CreditorCard({
   className,
@@ -73,17 +74,9 @@ export default function CreditorCard({
   function handleCreditorClick(key) {
     popupButtonRef.current?.click();
 
-    if (creditorType === "overdue") {
-      setSelectedCreditor(
-        overdueCreditors["overdue"].find(
-          (creditor) => creditor.creditorID === key,
-        ),
-      );
-    } else {
-      setSelectedCreditor(
-        overdueCreditors["due"].find((creditor) => creditor.creditorID === key),
-      );
-    }
+    setSelectedCreditor(
+      overdueCreditors?.find((creditor) => creditor.creditorID === key),
+    );
   }
 
   useEffect(() => {
@@ -94,7 +87,10 @@ export default function CreditorCard({
 
   return (
     <div className={className}>
-      <Card x-chunk="dashboard-01-chunk-5" className="h-full max-h-[500px]">
+      <Card
+        x-chunk="dashboard-01-chunk-5"
+        className="h-full max-h-[500px] mb-5"
+      >
         <div className="flex h-[20%] justify-between items-center align-items-top p-6">
           <CardHeader className="p-0 h-[100%]  flex flex-col">
             <CardTitle className="pl-0">Creditors</CardTitle>
@@ -115,8 +111,8 @@ export default function CreditorCard({
           </div>
         </div>
 
-        <CardContent className="flex h-[350px]">
-          <div className=" flex-row w-full h-full overflow-auto">
+        <CardContent className="flex max-h-[350px] overflow-auto">
+          <div className=" flex-row w-full h-full ">
             {overdueCreditorsLoading ? (
               <CreditorsListSkeleton load_count={6} />
             ) : overdueCreditors ? (
@@ -140,64 +136,10 @@ export default function CreditorCard({
           </div>
         </CardContent>
       </Card>
-      <Dialog>
-        <DialogTrigger asChild className="hidden">
-          <Button
-            ref={popupButtonRef}
-            className="hidden"
-            variant="outline"
-            hidden={true}
-          >
-            Edit Profile
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[400]">
-          <div className="grid gap-4 py-4">
-            <div className="flex justify-start gap-5">
-              <div className="">
-                <Avatar className="h-14 w-14">
-                  <AvatarImage
-                    src={
-                      "https://avatar.iran.liara.run/username?username=" +
-                      selectedCreditor?.shopName.split(" ").join("+")
-                    }
-                    alt="Avatar"
-                  />
-                  <AvatarFallback>
-                    {selectedCreditor?.shopName
-                      .split(" ")
-                      .map((word) => word[0].toUpperCase())
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="">
-                <div className="grid-col-4 gap-5">
-                  <p className="text-xl font-medium leading-none col-span-4">
-                    {selectedCreditor?.shopName}
-                  </p>
-                  <div className="col-span-2">
-                    {selectedCreditor?.overdueInvoiceCount > 0 && (
-                      <Badge className="w-fit" variant="destructive">
-                        {selectedCreditor?.overdueInvoiceCount} overdue
-                      </Badge>
-                    )}
-                    {selectedCreditor?.dueInvoiceCount > 0 && (
-                      <Badge className="ml-2 w-fit" variant="outline">
-                        {" "}
-                        {selectedCreditor?.dueInvoiceCount} due
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            {/* <Button type="submit">Save changes</Button> */}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <CreditorPopup
+        creditor={selectedCreditor}
+        popupButtonRef={popupButtonRef}
+      />
     </div>
   );
 }
