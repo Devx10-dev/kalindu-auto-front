@@ -14,6 +14,7 @@ export type InvoiceItem = {
 };
 
 export type InvoiceState = {
+  dummy: any;
   id?: number;
   invoiceId?: string;
   issuedTime?: number[];
@@ -43,6 +44,7 @@ export type InvoiceState = {
 
   addInvoiceItem: (item: InvoiceItem) => void;
   removeInvoiceItem: (item: InvoiceItem) => void;
+  updateInvoiceItem: (updateItem: InvoiceItem) => void;
 
   setOutsourcedStatus: (item: InvoiceItem, status: boolean) => void;
   getOutsourcedItems: () => InvoiceItem[];
@@ -59,6 +61,7 @@ export type InvoiceState = {
   setCommissionRemark: (remark?: string) => void;
   setCommissionAmount: (amount?: number) => void;
 
+  resetState: () => void;
   getRequestData: () => any;
 };
 

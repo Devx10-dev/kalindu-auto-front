@@ -38,12 +38,15 @@ class VehicleService extends Service {
     type: string | null,
     brand: string | null,
     chassisNo: string | null,
+    searchTerms: string,
   ): Promise<VehicleModelResponseData> {
     try {
       const response = await this.api.get<VehicleModelResponseData>(
         `${VEHICLE_MODEL_URL}/${type === "All" ? null : type}/${
           brand === "All" ? null : brand
-        }/${chassisNo === "All" ? null : chassisNo}/${pageNo}/${pageSize}`,
+        }/${chassisNo === "All" ? null : chassisNo}/${pageNo}/${pageSize}?search=${
+          searchTerms || null
+        }`,
       );
       return response.data;
     } catch (error) {
@@ -89,15 +92,15 @@ class VehicleService extends Service {
       vehicleType:
         typeof vehicleModel.type.value === "string"
           ? vehicleModel.type.value
-          : vehicleModel.type.value.type,
+          : vehicleModel.type.value.value,
       vehicleBrand:
         typeof vehicleModel.brand.value === "string"
           ? vehicleModel.brand.value
-          : vehicleModel.brand.value.brand,
+          : vehicleModel.brand.value.value,
       chassisNo:
         typeof vehicleModel.chassisNo.value === "string"
           ? vehicleModel.chassisNo.value
-          : vehicleModel.chassisNo.value.chassisNo,
+          : vehicleModel.chassisNo.value.value,
     });
     return response.data;
   }
@@ -110,15 +113,15 @@ class VehicleService extends Service {
       vehicleType:
         typeof vehicleModel.type.value === "string"
           ? vehicleModel.type.value
-          : vehicleModel.type.value.type,
+          : vehicleModel.type.value.value,
       vehicleBrand:
         typeof vehicleModel.brand.value === "string"
           ? vehicleModel.brand.value
-          : vehicleModel.brand.value.brand,
+          : vehicleModel.brand.value.value,
       chassisNo:
         typeof vehicleModel.chassisNo.value === "string"
           ? vehicleModel.chassisNo.value
-          : vehicleModel.chassisNo.value.chassisNo,
+          : vehicleModel.chassisNo.value.value,
     });
     return response.data;
   }

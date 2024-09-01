@@ -1,9 +1,10 @@
-import { User as UserType } from "@/types/user/userTypes";
+import { UsersResponseData, User as UserType } from "@/types/user/userTypes";
 import { User } from "@/validation/schema/userSchema";
 import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
 
 const USER_ROLES_URL = "/user/roles";
+const USER_PROFILE_URL = "/user/profile";
 const USER_URL = "/user";
 const USER_ACTIVE_OR_INACTIVE_URL = "/user/active";
 
@@ -21,9 +22,17 @@ class UserService extends Service {
     }
   }
 
-  async fetchUsers(): Promise<UserType[]> {
+  async fetchUsers(
+    page?: number,
+    size?: number,
+    search?: string,
+  ): Promise<UsersResponseData> {
     try {
-      const response = await this.api.get<UserType[]>(`${USER_URL}`);
+      const response = await this.api.get<UsersResponseData>(
+        `${USER_URL}?pageNo=${page ? page : 0}&pageSize=${size ? size : 10}${
+          search ? "&search=" + search : ""
+        }`,
+      );
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch users");
@@ -41,12 +50,23 @@ class UserService extends Service {
   }
 
   async activeOrInactiveUser(user: UserType): Promise<User> {
-    console.log(user);
     const response = await this.api.put(USER_ACTIVE_OR_INACTIVE_URL, {
       ...user,
       active: !user.active,
     });
     return response.data;
+  }
+
+  async fetchUserProfileDetails(username: string): Promise<UserType> {
+    try {
+      if (username === undefined) return;
+      const response = await this.api.get<UserType>(
+        `${USER_PROFILE_URL}/${username}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch user roles");
+    }
   }
 }
 

@@ -51,8 +51,10 @@ export default function VehicleSparePart() {
           />
         </CardContent>
         <FormModal
-          title="Add new Spare Part"
-          titleDescription="Add new spare part details to the system"
+          title={
+            sparePart === null ? "Add new Spare Part" : "Update Spare Part"
+          }
+          titleDescription={`${sparePart === null ? "Add new" : "Update"} spare part details ${sparePart === null ? "to" : "in"} the system`}
           show={show}
           onClose={() => setShow(false)}
           component={

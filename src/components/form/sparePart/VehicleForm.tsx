@@ -1,3 +1,4 @@
+import CreatableSelectErrorMessage from "@/components/formElements/CreatableSelectErrorMessage";
 import {
   OptionalLabel,
   RequiredLabel,
@@ -104,32 +105,43 @@ export default function VehicleForm({
       "description",
       vehicleModel ? vehicleModel.description || "" : undefined,
     );
+    form.clearErrors();
   };
 
   const typeOptions =
     vehicleTypes?.map((type) => ({
-      value: type,
+      value: { id: type.id, value: type.type },
       label: type.type,
       __isNew__: false,
     })) || [];
 
   const brandOptions =
     vehicleBrands?.map((brand) => ({
-      value: brand,
+      value: { id: brand.id, value: brand.brand },
       label: brand.brand,
       __isNew__: false,
     })) || [];
 
   const chassisNoOptions =
     chassisNos?.map((chassisNo) => ({
-      value: chassisNo,
+      value: { id: chassisNo.id, value: chassisNo.chassisNo },
       label: chassisNo.chassisNo,
       __isNew__: false,
     })) || [];
 
+  console.log("FORM VALUES -> ", form.getValues());
+  console.log("TYPE ERRORS -> ", form.getFieldState("type").error);
+  console.log("BRAND ERRORS -> ", form.getFieldState("brand").error);
+  console.log("CHASSIS NO ERRORS -> ", form.getFieldState("chassisNo").error);
+
   const createVehicleMutation = useMutation({
-    mutationFn: (formData: VehicleModel) =>
-      service.createVehicleModel(formData),
+    mutationFn: (formData: VehicleModel) => {
+      console.log("*******************************");
+      console.log(formData);
+      console.log("*******************************");
+
+      return service.createVehicleModel(formData);
+    },
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["vehicleModels"] });
@@ -185,6 +197,8 @@ export default function VehicleForm({
   };
 
   const handleSubmit = async () => {
+    console.log("-------------------------");
+    console.log(form.getValues());
     try {
       if (form.getValues()) {
         if (vehicleModel === null) {
@@ -230,7 +244,7 @@ export default function VehicleForm({
           <FormField
             control={form.control}
             name="type"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Type" />
                 <FormControl>
@@ -243,15 +257,20 @@ export default function VehicleForm({
                     value={field.value}
                   />
                 </FormControl>
-
-                <FormMessage />
+                {fieldState.error && (
+                  <CreatableSelectErrorMessage
+                    error={fieldState.error}
+                    label="Vehicle Type"
+                    value={field.value}
+                  />
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="brand"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Brand" />
                 <FormControl>
@@ -264,15 +283,20 @@ export default function VehicleForm({
                     value={field.value}
                   />
                 </FormControl>
-
-                <FormMessage />
+                {fieldState.error && (
+                  <CreatableSelectErrorMessage
+                    error={fieldState.error}
+                    label="Vehicle Brand"
+                    value={field.value}
+                  />
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="model"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Model" />
                 <FormControl>
@@ -284,14 +308,16 @@ export default function VehicleForm({
                     disabled={vehicleModel !== null}
                   />
                 </FormControl>
-                <FormMessage />
+                {fieldState.error && (
+                  <FormMessage>{fieldState.error.message}</FormMessage>
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="chassisNo"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Chassis No" />
                 <FormControl>
@@ -304,15 +330,20 @@ export default function VehicleForm({
                     value={field.value}
                   />
                 </FormControl>
-
-                <FormMessage />
+                {fieldState.error && (
+                  <CreatableSelectErrorMessage
+                    error={fieldState.error}
+                    label="Chassis No"
+                    value={field.value}
+                  />
+                )}
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
             name="description"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <OptionalLabel label="Remark" />
                 <FormControl>
@@ -323,7 +354,9 @@ export default function VehicleForm({
                     value={field.value || ""}
                   />
                 </FormControl>
-                <FormMessage />
+                {fieldState.error && (
+                  <FormMessage>{fieldState.error.message}</FormMessage>
+                )}
               </FormItem>
             )}
           />

@@ -2,7 +2,7 @@ import { InvoiceItem, InvoiceState } from "@/types/invoice/creditorInvoice";
 import { create } from "zustand";
 
 const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
-  invoiceID: undefined,
+  invoiceId: undefined,
   creditorName: undefined,
   creditorID: undefined,
   totalPrice: undefined,
@@ -96,6 +96,14 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
       invoiceItemsDTOList: state.invoiceItemDTOList,
     };
   },
+
+  setCommissionName: (name: string) =>
+    set((state) => ({ ...state, commissionName: name })),
+  setCommissionRemark: (remark: string) =>
+    set((state) => ({ ...state, commissionRemark: remark })),
+  setCommissionAmount: (amount: number) =>
+    set((state) => ({ ...state, commissionAmount: amount })),
+  resetState: () => set({}),
 }));
 
 export default useCreditorInvoiceStore;

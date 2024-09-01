@@ -17,14 +17,16 @@ class ActivityLogService extends Service {
     action: string,
     fromDate: string | null,
     toDate: string | null,
+    search?: string,
   ): Promise<ActivityLogsResponseData> {
     try {
       const url = `${ACTIVITY_LOG_URL}/${
         username === "All" ? null : username
       }/${feature === "All" ? null : feature}/${
         action === "All" ? null : action
-      }/${fromDate}/${toDate}/${pageNo}/${pageSize}`;
-      console.log(url);
+      }/${fromDate}/${toDate}/${pageNo}/${pageSize}${
+        search ? `?search=${search}` : ""
+      }`;
 
       const response = await this.api.get<ActivityLogsResponseData>(url);
       return response.data;

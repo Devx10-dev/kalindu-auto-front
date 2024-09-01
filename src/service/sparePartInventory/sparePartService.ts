@@ -17,12 +17,15 @@ class SparePartService extends Service {
     pageNo: number,
     pageSize: number,
     chassisNo: string | null,
+    searchString: string,
   ): Promise<SparePartsResponseData> {
     try {
       const response = await this.api.get<SparePartsResponseData>(
         `${SPARE_PART_URL}/${
           chassisNo === "All" ? null : chassisNo
-        }/${pageNo}/${pageSize}`,
+        }/${pageNo}/${pageSize}/${
+          searchString.length === 0 ? null : searchString
+        }`,
       );
       return response.data;
     } catch (error) {
@@ -49,10 +52,7 @@ class SparePartService extends Service {
       code: sparePart.code,
       quantity: sparePart.quantity,
       description: sparePart.description,
-      chassisNo:
-        typeof sparePart.chassisNo.value === "string"
-          ? sparePart.chassisNo.value
-          : sparePart.chassisNo.value.chassisNo,
+      chassisNo: sparePart.chassisNo.value,
     });
     return response.data;
   }
@@ -64,10 +64,7 @@ class SparePartService extends Service {
       code: sparePart.code,
       quantity: sparePart.quantity,
       description: sparePart.description,
-      chassisNo:
-        typeof sparePart.chassisNo.value === "string"
-          ? sparePart.chassisNo.value
-          : sparePart.chassisNo.value.chassisNo,
+      chassisNo: sparePart.chassisNo.value,
     });
     return response.data;
   }

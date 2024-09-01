@@ -1,12 +1,7 @@
-import { Option } from "@/types/component/propTypes";
-import { VehicleModel } from "@/types/sparePartInventory/vehicleTypes";
-import { Fragment } from "react/jsx-runtime";
-import IconButton from "@/components/button/IconButton";
-import FormSelect from "@/components/formElements/FormSelect";
-import EditIcon from "@/components/icon/EditIcon";
-import SparePartIcon from "@/components/icon/SparePartIcon";
+import TablePagination from "@/components/TablePagination";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -16,26 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { DateRangePicker } from "./DateRangePicker";
-import { Invoice } from "@/types/Invoices/invoiceTypes";
-import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
-import { Badge } from "@/components/ui/badge";
-import TablePagination from "@/components/TablePagination";
-import { InvoiceList, InvoiceState } from "@/types/invoice/cashInvoice";
-import { useEffect } from "react";
+import { InvoiceList } from "@/types/invoice/cashInvoice";
 import addLeadingZero from "@/utils/addLeadingZero";
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
-import ErrorIcon from "@/components/icon/ErrorIcon";
-import ErrorPageIcon from "@/components/icon/ErrorPageIcon";
 // import { useState } from "react";
 // import { useQuery } from "@tanstack/react-query";
 // import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
@@ -57,10 +38,6 @@ export default function InvoiceTable({
   isLoading?: boolean;
   err?: any;
 }) {
-  useEffect(() => {
-    console.log(invoices);
-  }, [invoices]);
-
   const nav = useNavigate();
 
   const handleViewInvoice = (invoiceId: string) => {
@@ -78,7 +55,6 @@ export default function InvoiceTable({
               pageNo={pageNo + 1}
               totalPages={invoices?.totalPages}
               onPageChange={(page) => {
-                console.log(page);
                 setPageNo(page - 1);
               }}
             />

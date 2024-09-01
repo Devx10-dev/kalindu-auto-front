@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -10,9 +17,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Creditor } from "@/types/creditor/creditorTypes";
-import { Search, View } from "lucide-react";
-import React, { useState } from "react";
+import { ArrowLeftRight, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
+import { RegisterForm } from "./CreditorForm";
 import { ViewExpiredInvoices } from "./ViewExpiredInvoices";
 
 const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
@@ -28,7 +35,7 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
               <TableHead>Balance</TableHead>
               <TableHead>Credit Limit (LKR)</TableHead>
               <TableHead>Expired Due Date</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -53,15 +60,35 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
                   <Link
                     to={`/dashboard/creditors/manage/${creditor.creditorID}`}
                   >
-                    <Button className="mr-5 bg-white" variant="outline">
-                      View Transactions
+                    <Button className="mr-5" variant="outline">
+                      <ArrowLeftRight className="mr-2 h-4 w-4" />
+                      More
                     </Button>
                   </Link>
-                  {creditor.isExpired && (
+                  {/* {creditor.isExpired && (
                     <ViewExpiredInvoices
                       invoiceList={creditor.expiredInvoiceList}
                     />
-                  )}
+                  )} */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant={"outline"} className="w-18">
+                        <Pencil className="mr-2 h-3 w-4" />
+                        Edit
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[1000px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit Creditor</DialogTitle>
+                        <DialogDescription>
+                          Edit the necessary creditor details and hit save
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <RegisterForm isEditMode={true} creditor={creditor} />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </TableCell>
               </TableRow>
             ))}

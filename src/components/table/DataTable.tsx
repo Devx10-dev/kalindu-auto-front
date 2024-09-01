@@ -48,14 +48,10 @@ export default function DataTable({
     queryFn: () => vehicleService.fetchVehicleBrands(),
   });
 
-  console.log(vehicleBrands);
-
   const resetFilter = () => {
     setSelectedBrand(null);
     setSelectedType(null);
   };
-
-  console.log(selectedType, selectedBrand);
 
   return (
     <Fragment>

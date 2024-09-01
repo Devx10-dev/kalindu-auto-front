@@ -20,6 +20,9 @@ import Error500 from "./pages/error/500";
 import ActivityLog from "./pages/log/ActivityLog";
 import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
+import { Analytics } from "./pages/dashboard/dashboard-root/Analytics";
+import PrintCreditor from "@/pages/dashboard/invoice/creditor/Print.tsx";
+import { MainDashboard } from "./pages/dashboard/dashboard-main/MainDashboard";
 
 function App() {
   return (
@@ -33,6 +36,8 @@ function App() {
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
+          <Route path="home" element={<MainDashboard />} />
+          <Route path="analytics" element={<Analytics />} />
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />
@@ -40,6 +45,7 @@ function App() {
             <Route path="all" element={<ViewAllInvoices />} />
             {/* single invoice using id */}
             <Route path="cash/:id" element={<SingleInvoice />} />
+            <Route path="creditor/print" element={<PrintCreditor />} />
           </Route>
 
           <Route path="vehicle">

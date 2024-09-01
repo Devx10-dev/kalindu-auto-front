@@ -5,6 +5,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
   invoiceID: undefined,
   customerName: undefined,
   vehicleNumber: undefined,
+  dummy: undefined,
 
   // final bill summary items
   discountPercentage: 0,
@@ -31,6 +32,14 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.filter(
         (item) => item !== itemToRemove,
+      ),
+    })),
+
+  updateInvoiceItem: (updateItem: InvoiceItem) =>
+    set((state) => ({
+      ...state,
+      invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
+        item.name === updateItem.name ? updateItem : item,
       ),
     })),
 
@@ -132,6 +141,22 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       commissionRemark: commissionRemark,
     })),
 
+  resetState: () =>
+    set({
+      invoiceId: undefined,
+      customerName: undefined,
+      vehicleNumber: undefined,
+      discountPercentage: 0,
+      discountAmount: 0,
+      vatPercentage: 0,
+      vatAmount: 0,
+      totalPrice: undefined,
+      commissionName: undefined,
+      commissionAmount: undefined,
+      commissionRemark: undefined,
+      invoiceItemDTOList: [],
+    }),
+
   getRequestData: () => {
     const state = get();
 
@@ -152,7 +177,6 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     };
 
     const invoiceId = generateInvoiceId();
-    console.log(invoiceId);
 
     const requestData = {
       vat: state.vatPercentage,

@@ -1,5 +1,5 @@
-import { InvoiceItem } from "@/pages/dashboard/invoice/cash/context/Store";
 import { OutsourcedItem } from "../cash/cashInvoiceTypes";
+import { InvoiceItem } from "../cashInvoice";
 
 export interface DummyInvoiceItem extends InvoiceItem {
   id?: number;

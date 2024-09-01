@@ -1,5 +1,33 @@
 import { z } from "zod";
 
+export const creatableSelectValueSchema = z
+  .object({
+    label: z
+      .string()
+      .min(2, { message: "Label must be at least 2 characters." })
+      .max(255, { message: "Label must not be longer than 255 characters." }),
+    value: z
+      .object({
+        value: z
+          .string()
+          .min(2, { message: "Value must be at least 2 characters." })
+          .max(255, {
+            message: "Value must not be longer than 255 characters.",
+          }),
+        id: z.number().optional(),
+      })
+      .or(
+        z
+          .string()
+          .min(2, { message: "Value must be at least 2 characters." })
+          .max(255, {
+            message: "Value must not be longer than 255 characters.",
+          }),
+      ),
+    __isNew__: z.boolean(),
+  })
+  .required();
+
 export const vehicleModelSchema = z.object({
   id: z.number().optional(),
   model: z
@@ -10,67 +38,13 @@ export const vehicleModelSchema = z.object({
     .max(255, {
       message: "Vehicle model must not be longer than 255 characters.",
     }),
-  chassisNo: z
-    .object({
-      label: z
-        .string()
-        .min(2, { message: "Chassis No must be atleast 2 characters." }),
-      value: z
-        .object({
-          chassisNo: z
-            .string()
-            .min(2, { message: "Chassis No must be atleast 2 characters." }),
-          id: z.number(),
-        })
-        .or(
-          z
-            .string()
-            .min(2, { message: "Chassis No must be atleast 2 characters." }),
-        ),
-      __isNew__: z.boolean(),
-    })
-    .required(),
-  type: z
-    .object({
-      label: z
-        .string()
-        .min(2, { message: "Vechicle type must be atleast 2 characters." }),
-      value: z
-        .object({
-          type: z
-            .string()
-            .min(2, { message: "Vechicle type must be atleast 2 characters." }),
-          id: z.number(),
-        })
-        .or(
-          z
-            .string()
-            .min(2, { message: "Vechicle type must be atleast 2 characters." }),
-        ),
-      __isNew__: z.boolean(),
-    })
-    .required(),
-  brand: z
-    .object({
-      label: z
-        .string()
-        .min(2, { message: "Vechicle brand must be atleast 2 characters." }),
-      value: z
-        .object({
-          brand: z.string().min(2, {
-            message: "Vechicle brand must be atleast 2 characters.",
-          }),
-          id: z.number(),
-        })
-        .or(
-          z.string().min(2, {
-            message: "Vechicle brand must be atleast 2 characters.",
-          }),
-        ),
-      __isNew__: z.boolean(),
-    })
-    .required(),
-  description: z.string().optional(),
+  chassisNo: creatableSelectValueSchema,
+  type: creatableSelectValueSchema,
+  brand: creatableSelectValueSchema,
+  description: z
+    .string()
+    .max(255, { message: "Description must not be longer than 255 characters" })
+    .optional(),
 });
 
 export type VehicleModel = z.infer<typeof vehicleModelSchema>;

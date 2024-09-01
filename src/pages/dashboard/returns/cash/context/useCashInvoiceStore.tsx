@@ -1,7 +1,13 @@
 import { InvoiceItem, InvoiceState } from "@/types/invoice/cashInvoice";
 import { create } from "zustand";
 
-const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
+interface ExtendedInvoiceState extends InvoiceState {
+  dummy: any;
+  updateInvoiceItem: (item: InvoiceItem) => void;
+  resetState: () => void;
+}
+
+const useCashInvoiceStore = create<ExtendedInvoiceState>((set, get) => ({
   invoiceID: undefined,
   customerName: undefined,
   vehicleNumber: undefined,
@@ -178,6 +184,10 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
 
     return requestData;
   },
+
+  dummy: undefined,
+  updateInvoiceItem: (item: InvoiceItem) => {},
+  resetState: () => {},
 }));
 
 export default useCashInvoiceStore;

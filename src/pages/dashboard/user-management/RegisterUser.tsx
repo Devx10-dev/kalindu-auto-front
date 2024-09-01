@@ -53,6 +53,7 @@ function RegisterUser() {
       password: "",
       active: true,
       roles: [],
+      gender: "Male",
     },
     mode: "onChange",
   });
@@ -63,13 +64,46 @@ function RegisterUser() {
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
     try {
       if (form.getValues()) {
+        if (form.getValues().roles.length === 0) {
+          toast({
+            variant: "destructive",
+            title: "Validation Failed",
+            description: "At least one role should be selected",
+            duration: 5000,
+          });
+          return;
+        }
+
+        if (
+          form.getValues().password === undefined ||
+          form.getValues().password === ""
+        ) {
+          toast({
+            variant: "destructive",
+            title: "Validation Failed",
+            description: "Password is required",
+            duration: 5000,
+          });
+          return;
+        }
+        if (
+          form.getValues().password !== undefined &&
+          form.getValues().password !== "" &&
+          form.getValues().password !== form.getValues().confirmPassword
+        ) {
+          toast({
+            variant: "destructive",
+            title: "Validation Failed",
+            description: "Password and confirm password must be the same",
+            duration: 5000,
+          });
+          return;
+        }
         await createUserMutation.mutateAsync(form.getValues());
       }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-
-    console.log(values);
   };
 
   const { data: roles } = useQuery({
@@ -247,8 +281,12 @@ function RegisterUser() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Manager">Manager</SelectItem>
-                        <SelectItem value="Cashier">Cashier</SelectItem>
+                        <SelectItem key={Math.random()} value="Manager">
+                          Manager
+                        </SelectItem>
+                        <SelectItem key={Math.random()} value="Cashier">
+                          Cashier
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -285,23 +323,36 @@ function RegisterUser() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="active"
+                name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="space-y-0.5 d-flex gap-4">
-                      <OptionalLabel label="Active" />
+                    <RequiredLabel label="Gender" />
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select the Designation" />
+                        </SelectTrigger>
                       </FormControl>
-                    </div>
+                      <SelectContent>
+                        <SelectItem key={Math.random()} value="Male">
+                          Male
+                        </SelectItem>
+                        <SelectItem key={Math.random()} value="Female">
+                          Female
+                        </SelectItem>
+                        <SelectItem key={Math.random()} value="Non Binary">
+                          Non Binary
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="address"
@@ -316,6 +367,23 @@ function RegisterUser() {
                       />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="active"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="space-y-0.5 d-flex gap-4">
+                      <OptionalLabel label="Active" />
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </div>
                   </FormItem>
                 )}
               />

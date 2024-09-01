@@ -341,8 +341,8 @@ function HandlingReturn() {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead >Spare Part</TableHead>
-                              <TableHead >Item Code</TableHead>
+                              <TableHead>Spare Part</TableHead>
+                              <TableHead>Item Code</TableHead>
                               <TableHead>Unit Price</TableHead>
                               <TableHead>Quantity</TableHead>
                               <TableHead>Returned Qty</TableHead>

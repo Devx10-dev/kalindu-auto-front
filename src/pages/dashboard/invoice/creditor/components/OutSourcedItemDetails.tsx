@@ -4,17 +4,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 
-interface OutsourcedItem {
-  index: number;
-  itemName: string;
-  itemCode: string;
-  quantity: number;
-  companyName: string;
-  buyingPrice: number;
-}
-
 const OutsourcedItemDetails: React.FC = () => {
-  const { getOutsourcedItems } = useCreditorInvoiceStore();
+  const {
+    getOutsourcedItems,
+    setOutsourcedCompanyName,
+    setOutsourcedBuyingPrice,
+  } = useCreditorInvoiceStore();
   const outsourcedItems = getOutsourcedItems();
   return (
     <div>
@@ -27,11 +22,11 @@ const OutsourcedItemDetails: React.FC = () => {
             <div key={item.index} className="grid grid-cols-5 gap-4 mb-4">
               <div className="flex flex-col gap-2">
                 <Label>Item Name</Label>
-                <Input type="text" value={item.itemName} disabled />
+                <Input type="text" value={item.name} disabled />
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Item Code</Label>
-                <Input type="text" value={item.itemCode} disabled />
+                <Input type="text" value={item.code} disabled />
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Quantity</Label>
@@ -39,11 +34,23 @@ const OutsourcedItemDetails: React.FC = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Company Name</Label>
-                <Input type="text" value={item.companyName} />
+                <Input
+                  type="text"
+                  value={item.companyName}
+                  onChange={(e) =>
+                    setOutsourcedCompanyName(item, e.target.value)
+                  }
+                />
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Buying Price</Label>
-                <Input type="number" value={item.buyingPrice} />
+                <Input
+                  type="number"
+                  value={item.buyingPrice}
+                  onChange={(e) => {
+                    setOutsourcedBuyingPrice(item, parseFloat(e.target.value));
+                  }}
+                />
               </div>
             </div>
           ))}

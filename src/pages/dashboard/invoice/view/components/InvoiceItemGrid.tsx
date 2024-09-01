@@ -26,16 +26,10 @@ function InvoiceItemsGrid({
   const [items, setItems] = useState<InvoiceItem[]>([]);
 
   useEffect(() => {
-    console.log("intable", invoiceDetails);
     if (invoiceDetails) {
-      console.log("setting items");
       setItems(invoiceDetails.invoiceItems);
     }
   }, [invoiceDetails]);
-
-  useEffect(() => {
-    console.log("ITEMS", items);
-  }, [items]);
 
   return (
     <Table className="border rounded-md text-md mb-5 table-responsive">

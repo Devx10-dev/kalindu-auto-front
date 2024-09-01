@@ -24,3 +24,4 @@ RUN npm install typescript
 
 EXPOSE 8080
 # CMD ["npm", "run", "preview"]
+

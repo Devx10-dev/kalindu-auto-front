@@ -1,4 +1,3 @@
-import { ResponseData } from "@/types/component/commonTypes";
 import {
   Creditor,
   CreditorResponseData,
@@ -6,6 +5,7 @@ import {
 } from "@/types/creditor/creditorTypes";
 import { AxiosInstance } from "axios";
 import { CreditorEndpoints } from "./CreditorEndpoints";
+import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -63,6 +63,21 @@ class CreditorAPI {
     return response.data;
   }
 
+  async updateCreditor(
+    creditor: Creditor,
+    creditorID: string,
+  ): Promise<Creditor> {
+    creditor = {
+      ...creditor,
+      creditorID,
+    };
+    const response = await this.api.put(
+      CreditorEndpoints.CREDITOR_BASE_URL,
+      creditor,
+    );
+    return response.data;
+  }
+
   async getCreditorTransactions(creditorID?: string) {
     const response = await this.api.get(
       CreditorEndpoints.GET_CREDITOR_TRANSACTIONS_URL + "/" + creditorID,
@@ -76,6 +91,13 @@ class CreditorAPI {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_TRANSACTIONS_URL,
       creditorTransaction,
+    );
+    return response.data;
+  }
+
+  async fetchCreditInvoice(invoiceID: number): Promise<CreditInvoice> {
+    const response = await this.api.get(
+      CreditorEndpoints.GET_CREDITOR_INVOICE_URL + "/" + invoiceID,
     );
     return response.data;
   }

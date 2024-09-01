@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { z } from "zod";
-import { RegisterForm } from "./components/RegisterForm";
+import { RegisterForm } from "./components/CreditorForm";
 import { creditorFormSchema } from "./components/formScheme";
 import PageHeader from "@/components/card/PageHeader";
 import { RectangleEllipsis } from "lucide-react";

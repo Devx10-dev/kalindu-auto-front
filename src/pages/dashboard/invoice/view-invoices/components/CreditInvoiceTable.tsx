@@ -1,12 +1,7 @@
-import { Option } from "@/types/component/propTypes";
-import { VehicleModel } from "@/types/sparePartInventory/vehicleTypes";
-import { Fragment } from "react/jsx-runtime";
-import IconButton from "@/components/button/IconButton";
-import FormSelect from "@/components/formElements/FormSelect";
-import EditIcon from "@/components/icon/EditIcon";
-import SparePartIcon from "@/components/icon/SparePartIcon";
+import TablePagination from "@/components/TablePagination";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -17,30 +12,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { DateRangePicker } from "./DateRangePicker";
-import { Invoice } from "@/types/Invoices/invoiceTypes";
-import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
-import { Badge } from "@/components/ui/badge";
-import TablePagination from "@/components/TablePagination";
-import { InvoiceList, InvoiceState } from "@/types/invoice/cashInvoice";
-import { useEffect } from "react";
-import addLeadingZero from "@/utils/addLeadingZero";
-import { Link, useNavigate } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TableBodySkeleton } from "./TableSkeleton";
-import ErrorIcon from "@/components/icon/ErrorIcon";
-import ErrorPageIcon from "@/components/icon/ErrorPageIcon";
-import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
+  CreditorInvoiceList,
+  InvoiceState,
+} from "@/types/invoice/creditorInvoice";
 import dateArrayToString from "@/utils/dateArrayToString";
-// import { useState } from "react";
-// import { useQuery } from "@tanstack/react-query";
-// import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import { Link, useNavigate } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
+import { TableBodySkeleton } from "./TableSkeleton";
 
 export default function CreditInvoiceTable({
   invoices,
@@ -59,10 +38,6 @@ export default function CreditInvoiceTable({
   isLoading?: boolean;
   err?: any;
 }) {
-  useEffect(() => {
-    console.log(invoices);
-  }, [invoices]);
-
   const nav = useNavigate();
 
   const handleViewInvoice = (invoiceId: string) => {
@@ -85,49 +60,65 @@ export default function CreditInvoiceTable({
     return dateArray;
   };
 
-  const getDueStatus = (issuedTime: number[], maxDueWeeks: number) => {
+  const getDueStatus = (
+    issuedTime: number[],
+    maxDueWeeks: number,
+    isSettled: boolean,
+  ) => {
+    if (isSettled) {
+      return "SETTLED";
+    }
+
     const issuedDate = new Date(
       issuedTime[0],
-      issuedTime[1],
+      issuedTime[1] - 1,
       issuedTime[2],
       issuedTime[3],
       issuedTime[4],
       issuedTime[5],
     );
     const currentDate = new Date();
-    console.log(issuedDate.getTime());
-    console.log(currentDate.getTime());
-    console.log(currentDate.getDate() - issuedDate.getDate());
-    console.log(maxDueWeeks * 7);
-    const diff = currentDate.getTime() - issuedDate.getTime();
-    if (diff > maxDueWeeks * 7) {
+    let diff = currentDate.getTime() - issuedDate.getTime();
+    // convert diff to weeks
+    diff = diff / (1000 * 60 * 60 * 24 * 7);
+    if (diff < maxDueWeeks) {
       return "DUE";
     } else {
       return "OVERDUE";
     }
   };
 
-  const generateStatusBadge = (issuedTime: number[], maxDueWeeks: number) => {
-    const status = getDueStatus(issuedTime, maxDueWeeks);
-    if (status === "DUE") {
-      return (
-        <Badge
-          variant="secondary"
-          className="text-white bg-yellow-400 rounded-sm p-1"
-        >
-          DUE
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge
-          variant="secondary"
-          className="text-white bg-red-400 rounded-sm p-1"
-        >
-          OVERDUE
-        </Badge>
-      );
+  const generateStatusBadge = (invoice: InvoiceState) => {
+    console.log("HEREEEE", invoice);
+    const status = getDueStatus(
+      invoice.issuedTime,
+      Number(invoice.creditor.maxDuePeriod) as number,
+      invoice.settled,
+    );
+    let className = "";
+    let statusText = "";
+
+    switch (status) {
+      case "SETTLED":
+        className = "text-white bg-green-400 rounded-sm p-1 hover:bg-green-500";
+        statusText = "COMPLETED";
+        break;
+      case "DUE":
+        className =
+          "text-white bg-yellow-400 rounded-sm p-1 hover:bg-yellow-500";
+        statusText = "DUE";
+        break;
+      case "OVERDUE":
+        className = "text-white bg-red-400 rounded-sm p-1 hover:bg-red-500";
+        statusText = "OVERDUE";
+        break;
     }
+
+    return (
+      <Badge variant="secondary" className={className}>
+        {statusText}
+      </Badge>
+    );
   };
 
   return (
@@ -141,7 +132,6 @@ export default function CreditInvoiceTable({
               pageNo={pageNo + 1}
               totalPages={invoices?.totalPages}
               onPageChange={(page) => {
-                console.log(page);
                 setPageNo(page - 1);
               }}
             />
@@ -155,7 +145,7 @@ export default function CreditInvoiceTable({
             <TableHead>Invoice Date</TableHead>
             <TableHead>Due Date</TableHead>
             <TableHead>Total Amount</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -191,17 +181,14 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(
                       calculateDueDate(
                         invoice.issuedTime,
-                        invoice.creditor.maxDuePeriod,
+                        Number(invoice.creditor.maxDuePeriod) as number,
                       ),
                     )}
                   </TableCell>
                   <TableCell>Rs. {invoice.totalPrice}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {/* make background greem intag */}
-                    {generateStatusBadge(
-                      invoice.issuedTime,
-                      invoice.creditor.maxDuePeriod,
-                    )}
+                    {generateStatusBadge(invoice)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-center">

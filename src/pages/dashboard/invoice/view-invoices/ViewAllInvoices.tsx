@@ -4,27 +4,27 @@ import { Button } from "@/components/ui/button";
 import { CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Fragment } from "react/jsx-runtime";
-import InvoiceTable from "./components/InvoiceTable";
-import { useEffect, useState } from "react";
-import { DateRangePicker } from "./components/DateRangePicker";
+import { useToast } from "@/components/ui/use-toast";
+import useDebounce from "@/hooks/useDebounce";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi";
-import { useQuery } from "@tanstack/react-query";
+import { DummyInvoiceService } from "@/service/invoice/dummy/DummyInvoiceService";
+import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService";
 import { InvoiceList } from "@/types/invoice/cashInvoice";
-import useDebounce from "@/hooks/useDebounce";
-import { DateRange } from "react-day-picker";
+import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
 import dateToString from "@/utils/dateToString";
-import { useToast } from "@/components/ui/use-toast";
-import { TableSkeleton } from "./components/TableSkeleton";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
+import { Fragment } from "react/jsx-runtime";
+import CreditInvoiceTable from "./components/CreditInvoiceTable";
+import { DateRangePicker } from "./components/DateRangePicker";
+import { ErrorPage } from "./components/ErrorPage";
+import InvoiceTable from "./components/InvoiceTable";
 import {
   useCreditInvoiceListStore,
   useInvoiceListStore,
 } from "./context/InvoiceListState";
-import { ErrorPage } from "./components/ErrorPage";
-import { CreditorInvoiceList } from "@/types/invoice/creditorInvoice";
-import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService";
-import CreditInvoiceTable from "./components/CreditInvoiceTable";
 
 export function ViewAllInvoices() {
   // active tab state
@@ -92,6 +92,32 @@ export function ViewAllInvoices() {
     enabled: activeTab === "cash",
   });
 
+  const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
+
+  const {
+    data: dummyInvoiceData,
+    isLoading: dummyInvoiceLoading,
+    error: dummyInvoiceError,
+  } = useQuery<InvoiceList>({
+    queryKey: [
+      "dummyInvoices",
+      debouncedSearch,
+      fromDate,
+      toDate,
+      pageNo,
+      pageSize,
+    ],
+    queryFn: () =>
+      dummyInvoiceService.fetchDummyInvoices(
+        debouncedSearch,
+        fromDate ? dateToString(fromDate) : undefined,
+        toDate ? dateToString(toDate) : undefined,
+        pageNo,
+        pageSize,
+      ),
+    enabled: activeTab === "dummy",
+  });
+
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
 
   const {
@@ -140,10 +166,6 @@ export function ViewAllInvoices() {
     }
   }, [cashInvoiceError, toast]);
 
-  if (cashInvoiceError) {
-    console.log(cashInvoiceError);
-  }
-
   useEffect(() => {
     if (cashInvoiceData?.invoices?.length > 0) {
       setCashInvoicesStore(cashInvoiceData.invoices);
@@ -159,14 +181,7 @@ export function ViewAllInvoices() {
   // on tab change
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    console.log(tab);
   };
-
-  useEffect(() => {
-    if (creditInvoiceData) {
-      console.log("CREDITTTTTTTT", creditInvoiceData);
-    }
-  }, [creditInvoiceData]);
 
   return (
     <Fragment>
@@ -256,7 +271,22 @@ export function ViewAllInvoices() {
           )}
         </TabsContent>
         <TabsContent value="dummy">
-          {/* <InvoiceTable invoices={invoices} type="dummy" /> */}
+          {dummyInvoiceError ? (
+            <ErrorPage
+              errorHeading="Uh oh! Something went wrong"
+              errorSubHeading="There was an unexpected error. Please try again or contact support."
+            />
+          ) : (
+            <InvoiceTable
+              invoices={dummyInvoiceData}
+              setPageNo={setPageNo}
+              type="cash"
+              pageNo={pageNo}
+              pageSize={pageSize}
+              isLoading={dummyInvoiceLoading}
+              err={dummyInvoiceError}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </Fragment>

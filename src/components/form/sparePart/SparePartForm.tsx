@@ -2,6 +2,7 @@ import {
   OptionalLabel,
   RequiredLabel,
 } from "@/components/formElements/FormLabel";
+import SelectErrorMessage from "@/components/formElements/SelectErrorMessage";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -26,6 +27,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
+import { isNumberObject } from "util/types";
 import { z } from "zod";
 
 type SparePartValues = z.infer<typeof spaerPartSchema>;
@@ -67,18 +69,20 @@ export default function SparePartForm({
             value: sparePart.chassisNo,
             label: sparePart.chassisNo,
           }
-        : { label: undefined, value: undefined },
+        : undefined,
     );
     form.setValue("partName", sparePart ? sparePart.partName : "");
     form.setValue(
       "quantity",
-      sparePart ? sparePart?.quantity?.toString() ?? "0" : "0",
+      sparePart ? sparePart?.quantity?.toString() ?? "0" : "",
     );
     form.setValue("code", sparePart ? sparePart?.code ?? "" : "");
     form.setValue(
       "description",
       sparePart ? sparePart.description || "" : undefined,
     );
+
+    form.clearErrors();
   };
 
   const chassisNoOptions =
@@ -88,8 +92,10 @@ export default function SparePartForm({
     })) || [];
 
   const createSparePartMutation = useMutation({
-    mutationFn: (formData: SparePart) =>
-      sparePartservice.createSparePart(formData),
+    mutationFn: (formData: SparePart) => {
+      const qty = parseInt(formData.quantity);
+      return sparePartservice.createSparePart(formData);
+    },
     onSuccess: () => {
       // Handle onSuccess logic here
       queryClient.invalidateQueries({ queryKey: ["spareParts"] });
@@ -228,19 +234,20 @@ export default function SparePartForm({
                     {...field}
                     className="w-full"
                     placeholder="Please enter quantity"
-                    value={field.value}
+                    value={field.value !== undefined ? field.value : ""}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="chassisNo"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <OptionalLabel label="Chassis No" />
+                <RequiredLabel label="Chassis No" />
                 <FormControl>
                   <Select
                     className="select-place-holder"
@@ -250,8 +257,13 @@ export default function SparePartForm({
                     onChange={field.onChange}
                   />
                 </FormControl>
-
-                <FormMessage />
+                {fieldState.error && (
+                  <SelectErrorMessage
+                    error={fieldState.error}
+                    label="Chassis No"
+                    value={field.value}
+                  />
+                )}
               </FormItem>
             )}
           />

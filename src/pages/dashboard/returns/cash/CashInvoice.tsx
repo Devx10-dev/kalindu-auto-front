@@ -1,6 +1,5 @@
 import InvoiceTable from "./components/InvoiceTable";
 import AddItem from "./components/AddItem";
-import BillSummary from "./components/BillSummary";
 import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
 import useCashInvoiceStore from "./context/useCashInvoiceStore";
 import useReturnInvoiceStore from "../context/useReturnInvoiceStore";

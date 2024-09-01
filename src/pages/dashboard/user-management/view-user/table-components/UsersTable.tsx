@@ -22,21 +22,16 @@ import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import { UserService } from "@/service/user/userService";
-import { User } from "@/types/user/userTypes";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { User, UsersResponseData } from "@/types/user/userTypes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { TableBodySkeleton } from "@/pages/dashboard/invoice/view-invoices/components/TableSkeleton";
+import TablePagination from "@/components/TablePagination";
+import useDebounce from "@/hooks/useDebounce";
 
 const USER_EDIT_PAGE = "/dashboard/users/edit";
 
-const UsersTable = ({
-  users,
-  userService,
-  isLoading,
-}: {
-  users: User[];
-  userService: UserService;
-  isLoading: boolean;
-}) => {
+const UsersTable = ({ userService }: { userService: UserService }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -45,13 +40,24 @@ const UsersTable = ({
   const [description, setDescription] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  const [pageNo, setPageNo] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const { isLoading, data: users } = useQuery<UsersResponseData>({
+    queryKey: ["users", debouncedSearchQuery, pageNo, pageSize],
+    queryFn: () =>
+      userService.fetchUsers(pageNo, pageSize, debouncedSearchQuery),
+    retry: 2,
+  });
 
   const handleSearch = (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
     setSearchQuery(e.target.value);
   };
-
   const handleEdit = (user: User) => {
     const encodedData = encodeURIComponent(JSON.stringify(user));
     navigate(USER_EDIT_PAGE + `?data=${encodedData}`);
@@ -107,30 +113,33 @@ const UsersTable = ({
             placeholder="Search users..."
             className="w-1/4"
           />
-          <Button variant={"secondary"}>
+          {/* <Button variant={"secondary"}>
             <Search className="mr-2 h-4 w-4" />
             Search
-          </Button>
+          </Button> */}
         </div>
-        {isLoading ? (
+        {/* {isLoading ? (
           <SkeletonGrid noOfColumns={7} noOfItems={10} />
-        ) : (
-          <Table className="border rounded-md text-md mb-5">
-            <TableCaption>User Details</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Username</TableHead>
-                <TableHead>Full Name</TableHead>
-                <TableHead>Designation</TableHead>
-                <TableHead>Mobile No</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Active</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+        ) : ( */}
+        <Table className="border rounded-md text-md mb-5">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Username</TableHead>
+              <TableHead>Full Name</TableHead>
+              <TableHead>Designation</TableHead>
+              <TableHead>Mobile No</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead>Active</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          {isLoading ? (
+            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+            <TableBodySkeleton cols={7} rows={10} noHeader={true} />
+          ) : (
             <TableBody>
               {users &&
-                users.map((user) => (
+                users.users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">
                       {user.username}
@@ -138,6 +147,7 @@ const UsersTable = ({
                     <TableCell>{user.fullName}</TableCell>
                     <TableCell>{user.designation}</TableCell>
                     <TableCell>{user.mobileNo}</TableCell>
+                    <TableCell>{user.email ?? "-"}</TableCell>
                     <TableCell>{user.address ?? "-"}</TableCell>
                     <TableCell>
                       {user.active ? (
@@ -174,8 +184,18 @@ const UsersTable = ({
                   </TableRow>
                 ))}
             </TableBody>
-          </Table>
-        )}
+          )}
+          <TableCaption>
+            <TablePagination
+              pageNo={pageNo + 1}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setPageNo(page - 1);
+              }}
+            />
+          </TableCaption>
+        </Table>
+        {/* )} */}
         <ConfirmationModal
           onClose={() => setShow(false)}
           onConfirm={activeOrInactiveUser}
