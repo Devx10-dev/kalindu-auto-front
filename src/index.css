@@ -41,6 +41,10 @@
   color: red;
 }
 
+.color-gray {
+  color: rgb(97, 96, 96);
+}
+
 .d-flex {
   display: flex;
 }
@@ -119,4 +123,16 @@ body > div {
   font-size: 0.875rem;
   line-height: 1.25rem;
   font-weight: 500;
+}
+
+.fs-14 {
+  font-size: 14px;
+}
+
+.fs-15 {
+  font-size: 15px;
+}
+
+.color-40 {
+  color: #505050;
 }

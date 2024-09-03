@@ -1,12 +1,22 @@
 import { NavLink } from "@/types/sidebar";
+import {
+  CalendarCheck2,
+  FileClock,
+  GalleryHorizontalEnd,
+  HandCoins,
+  Home,
+  Users,
+  Wrench,
+} from "lucide-react";
 
 const NavLinks: NavLink[] = [
   {
+    icon: <Home />,
     label: "Home",
     href: "/dashboard",
     sublinks: [
       {
-        label: "Home",
+        label: "Dashboard",
         href: "/dashboard/home",
       },
       {
@@ -16,6 +26,7 @@ const NavLinks: NavLink[] = [
     ],
   },
   {
+    icon: <GalleryHorizontalEnd />,
     label: "Invoices",
     href: "/dashboard/invoices",
     sublinks: [
@@ -38,6 +49,7 @@ const NavLinks: NavLink[] = [
     ],
   },
   {
+    icon: <HandCoins />,
     label: "Creditors",
     href: "/creditors",
     sublinks: [
@@ -53,14 +65,19 @@ const NavLinks: NavLink[] = [
         label: "Cheque Handling",
         href: "/dashboard/cheque",
       },
+      {
+        label: "Add Transaction",
+        href: "/dashboard/creditors/transaction",
+      },
     ],
   },
   {
+    icon: <CalendarCheck2 />,
     label: "Summary",
     href: "/reports",
     sublinks: [
       {
-        label: "Daily Sales and Expenses",
+        label: "Daily Summary",
         href: "/dashboard/reports/daily-sales",
       },
     ],
@@ -68,41 +85,44 @@ const NavLinks: NavLink[] = [
 
   //user-management
   {
+    icon: <Users />,
     label: "Users",
     href: "/dashboard/users",
     sublinks: [
       {
-        label: "Manage Users",
-        href: "/dashboard/users/list",
-      },
-      {
         label: "Register User",
         href: "/dashboard/users/register",
+      },
+      {
+        label: "User Management",
+        href: "/dashboard/users/list",
       },
     ],
   },
 
   {
-    label: "Spare Part Inventory",
+    icon: <Wrench />,
+    label: "Spare Parts",
     href: "/creditors",
     sublinks: [
       {
-        label: "Vehicles",
+        label: "Vehicle",
         href: "/dashboard/vehicle/model",
       },
       {
-        label: "Spare Parts",
+        label: "Spare Part",
         href: "/dashboard/vehicle/part",
       },
     ],
   },
 
   {
+    icon: <FileClock />,
     label: "Logs",
     href: "/log",
     sublinks: [
       {
-        label: "Activity Logs",
+        label: "Activity Log",
         href: "/dashboard/log/activity",
       },
     ],

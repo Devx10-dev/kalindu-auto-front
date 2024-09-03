@@ -28,6 +28,7 @@ import { Link } from "react-router-dom";
 import { z } from "zod";
 import CreditorAPI from "../api/CreditorAPI";
 import { creditorFormSchema } from "./formScheme";
+import { RequiredLabel } from "@/components/formElements/FormLabel";
 
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
@@ -163,18 +164,18 @@ export function RegisterForm(props: {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-3 grid-rows-3 gap-x-7 grid-flow-row mb-10 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7 gap-y-5 grid-flow-row mb-10 w-full">
           <FormField
             control={form.control}
             name="shopName"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Name</FormLabel>
+                <RequiredLabel label="Shop Name" />
                 <FormControl>
                   <Input
                     {...field}
                     className="w-full"
-                    placeholder="Type name"
+                    placeholder="Please enter the shop name"
                   />
                 </FormControl>
                 <FormMessage />
@@ -186,12 +187,12 @@ export function RegisterForm(props: {
             name="contactPersonName"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Contact Person Name</FormLabel>
+                <RequiredLabel label="Contact Person Name" />
                 <FormControl>
                   <Input
                     className="w-full"
                     {...field}
-                    placeholder="Type name"
+                    placeholder="Please enter the contact person name"
                   />
                 </FormControl>
 
@@ -204,13 +205,13 @@ export function RegisterForm(props: {
             name="email"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Email Address</FormLabel>
+                <RequiredLabel label="Email Address" />
                 <FormControl>
                   <Input
                     className="w-full"
                     type="email"
                     {...field}
-                    placeholder="Type email"
+                    placeholder="Please enter the email address"
                   />
                 </FormControl>
 
@@ -224,13 +225,13 @@ export function RegisterForm(props: {
             name="address"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Address</FormLabel>
+                <RequiredLabel label="Address" />
                 <FormControl>
                   <Input
                     className="w-full"
                     type="text"
                     {...field}
-                    placeholder="Type address"
+                    placeholder="Please enter the address"
                   />
                 </FormControl>
 
@@ -244,15 +245,16 @@ export function RegisterForm(props: {
             name="primaryContact"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Primary Contact No </FormLabel>
+                <RequiredLabel label="Primary Contact No" />
                 <FormControl>
                   <Input
                     className="w-full"
                     type="text"
                     {...field}
-                    placeholder="Type contact no"
+                    placeholder="Please enter primary contact no"
                   />
                 </FormControl>
+                <FormDescription>Ex : 0771234567</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -262,15 +264,16 @@ export function RegisterForm(props: {
             name="secondaryContact"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Secondary Contact No </FormLabel>
+                <RequiredLabel label="Secondary Contact No" />
                 <FormControl>
                   <Input
                     className="w-full"
                     type="text"
                     {...field}
-                    placeholder="Type contact no"
+                    placeholder="Please enter the secondary contact no"
                   />
                 </FormControl>
+                <FormDescription>Ex : 0771234567</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -280,13 +283,13 @@ export function RegisterForm(props: {
             name="creditLimit"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Credit Limit </FormLabel>
+                <RequiredLabel label="Credit Limit" />
                 <FormControl>
                   <Input
                     className="w-full"
                     type="number"
                     {...field}
-                    placeholder="Type credit limit"
+                    placeholder="please enter the credit limit"
                     minLength={4}
                     onChange={(event) => {
                       form.setValue(
@@ -298,8 +301,7 @@ export function RegisterForm(props: {
                   />
                 </FormControl>
                 <FormDescription>
-                  Enter the maximum amount this creditor is eligible to borrow
-                  in LKR
+                  Maximum amount this creditor is eligible to borrow
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -310,7 +312,7 @@ export function RegisterForm(props: {
             name="maxDuePeriod"
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
-                <FormLabel>Max credit due period </FormLabel>
+                <RequiredLabel label="Credit due period" />
                 <FormControl>
                   <Controller
                     name="maxDuePeriod"
@@ -321,7 +323,7 @@ export function RegisterForm(props: {
                         value={field.value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select" />
+                          <SelectValue placeholder="Select credit due period" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="1">1 week</SelectItem>
@@ -332,8 +334,7 @@ export function RegisterForm(props: {
                   />
                 </FormControl>
                 <FormDescription>
-                  Enter the max number of time period that a creditor can remain
-                  their due balance
+                  Max due period that a creditor can remain his due balance
                 </FormDescription>
                 <FormMessage />
               </FormItem>

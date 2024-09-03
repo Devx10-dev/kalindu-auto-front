@@ -203,7 +203,7 @@ export function AddNewTransaction() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="mt-10 mb-10">
+        <Button className="mt-6 mb-6">
           <PlusCircle className={"mr-2"} />
           Add New Transaction
         </Button>
