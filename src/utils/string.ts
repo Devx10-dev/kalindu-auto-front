@@ -24,7 +24,7 @@ export function toNormalCase(input: string): string {
 export function truncate(
   text: string,
   maxLength: number,
-  truncIndicator = "..."
+  truncIndicator = "...",
 ) {
   if (text.length <= maxLength) {
     return text;

@@ -1,27 +1,28 @@
+import PrintCreditor from "@/pages/dashboard/invoice/creditor/Print.tsx";
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Keycloak from "./components/auth/Keycloak";
 import Dashboard from "./pages/dashboard/Dashboard";
+import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
+import { AddTransaction } from "./pages/dashboard/creditors/AddTransaction";
 import CreditorManagement from "./pages/dashboard/creditors/CreditorManagement";
 import RegisterCreditor from "./pages/dashboard/creditors/RegisterCreditor";
 import ViewCreditor from "./pages/dashboard/creditors/ViewCreditor";
+import { MainDashboard } from "./pages/dashboard/dashboard-main/MainDashboard";
+import { Analytics } from "./pages/dashboard/dashboard-root/Analytics";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
-import RegiserUser from "./pages/dashboard/user-management/RegisterUser";
-import Error500 from "./pages/error/500";
-import VehicleModel from "./pages/sparePart/VehicleModel";
-import SpareParts from "./pages/sparePart/SpareParts";
-import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
 import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
 import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
-import RegisterUser from "./pages/dashboard/user-management/RegisterUser";
-import ActivityLog from "./pages/log/ActivityLog";
-import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
-import EditUser from "./pages/dashboard/user-management/EditUser";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
-import ChequeManagement from "./pages/dashboard/cheque/ChequeManagement";
-import PrintCreditor from "@/pages/dashboard/invoice/creditor/Print.tsx";
-import { AddTransaction } from "./pages/dashboard/creditors/AddTransaction";
+import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
+import EditUser from "./pages/dashboard/user-management/EditUser";
+import RegisterUser from "./pages/dashboard/user-management/RegisterUser";
+import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
+import Error500 from "./pages/error/500";
+import ActivityLog from "./pages/log/ActivityLog";
+import SpareParts from "./pages/sparePart/SpareParts";
+import VehicleModel from "./pages/sparePart/VehicleModel";
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
         <Route index element={<Home />} />
         <Route path="dashboard" element={<Dashboard />}>
           {/* Invoice Routes */}
+          <Route path="home" element={<MainDashboard />} />
+          <Route path="analytics" element={<Analytics />} />
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />

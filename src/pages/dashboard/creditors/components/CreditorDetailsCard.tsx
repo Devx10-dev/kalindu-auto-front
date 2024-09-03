@@ -133,7 +133,7 @@ function CreditorDetailsCard({
                   <span>
                     {selectedCreditInvoice
                       ? convertArrayToISOFormat(
-                          selectedCreditInvoice?.issuedTime
+                          selectedCreditInvoice?.issuedTime,
                         )
                       : ""}
                   </span>

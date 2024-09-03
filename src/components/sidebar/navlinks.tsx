@@ -1,12 +1,9 @@
 import { NavLink } from "@/types/sidebar";
-import InvoiceIcon from "../icon/InvoiceIcon";
 import {
   CalendarCheck2,
   FileClock,
   GalleryHorizontalEnd,
   HandCoins,
-  HandIcon,
-  UserIcon,
   Users,
   Wrench,
 } from "lucide-react";
@@ -14,6 +11,20 @@ import {
 const NavLinks: NavLink[] = [
   {
     icon: <GalleryHorizontalEnd />,
+    label: "Home",
+    href: "/dashboard",
+    sublinks: [
+      {
+        label: "Home",
+        href: "/dashboard/home",
+      },
+      {
+        label: "Analytics",
+        href: "/dashboard/analytics",
+      },
+    ],
+  },
+  {
     label: "Invoices",
     href: "/dashboard/invoices",
     sublinks: [

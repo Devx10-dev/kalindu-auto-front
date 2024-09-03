@@ -67,7 +67,7 @@ function TransactionForm({
   const queryClient = useQueryClient();
 
   const [selectedCreditor, setSelectedCreditor] = useState<Creditor | null>(
-    null
+    null,
   );
   const [selectedCreditInvoice, setSelectedCreditInvoice] =
     useState<CreditInvoice | null>(null);
@@ -84,7 +84,7 @@ function TransactionForm({
     queryKey: ["unsettledCreditorInvoices", selectedCreditor],
     queryFn: () =>
       creditorService.fetchUnsettledCreditInvoicesByID(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
       ),
   });
 
@@ -165,7 +165,7 @@ function TransactionForm({
         transaction.amount >
           (selectedCreditor.chequeBalance === undefined
             ? 0
-            : parseFloat(selectedCreditor.chequeBalance))
+            : parseFloat(selectedCreditor.chequeBalance)),
       );
 
       if (
@@ -248,7 +248,7 @@ function TransactionForm({
                           const selectedCreditor = creditors.find(
                             (creditor) =>
                               parseInt(creditor.creditorID) ===
-                              selectedOption.value
+                              selectedOption.value,
                           );
                           setSelectedCreditor(selectedCreditor || null);
                         }}
@@ -282,10 +282,10 @@ function TransactionForm({
                           field.onChange(selectedOption);
                           const selectedCreditInvoice = creditInvoices.find(
                             (creditInvoice) =>
-                              creditInvoice.id === selectedOption.value
+                              creditInvoice.id === selectedOption.value,
                           );
                           setSelectedCreditInvoice(
-                            selectedCreditInvoice || null
+                            selectedCreditInvoice || null,
                           );
                         }}
                         isDisabled={selectedCreditor === null}

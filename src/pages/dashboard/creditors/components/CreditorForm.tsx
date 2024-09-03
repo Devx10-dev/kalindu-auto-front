@@ -100,7 +100,7 @@ export function RegisterForm(props: {
     mutationFn: (data: CreditorFormValues) =>
       creditorAPI.updateCreditor(
         getModifiedCreditorFields(data, props.creditor),
-        props.creditor.creditorID
+        props.creditor.creditorID,
       ),
 
     onSuccess: (updatedCreditor) => {
@@ -144,7 +144,7 @@ export function RegisterForm(props: {
   // this function will remove any not updated values from the request data to be generated
   function getModifiedCreditorFields(
     newData: CreditorFormValues,
-    originalCreditor: Creditor
+    originalCreditor: Creditor,
   ) {
     const modifiedFields: any = {};
 
@@ -295,7 +295,7 @@ export function RegisterForm(props: {
                       form.setValue(
                         "creditLimit",
                         parseInt(event.target.value),
-                        { shouldDirty: true }
+                        { shouldDirty: true },
                       );
                     }}
                   />

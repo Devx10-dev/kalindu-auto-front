@@ -13,25 +13,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ClassValue } from "clsx";
 
 export function DateRangePicker({
   className,
   dateRange,
   setDateRange,
+  disabled = false,
 }: {
-  className?: React.HTMLAttributes<HTMLDivElement>;
+  className?: ClassValue;
   dateRange?: DateRange;
   setDateRange?: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  disabled?: boolean;
 }) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: undefined,
-    to: undefined,
-  });
-
-  React.useEffect(() => {
-    setDateRange && setDateRange(date);
-  }, [date]);
-
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -40,19 +34,20 @@ export function DateRangePicker({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
-              !date && "text-muted-foreground",
+              "w-fill justify-start text-left font-normal",
+              !dateRange && "text-muted-foreground",
             )}
+            disabled={disabled}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
+            {dateRange?.from ? (
+              dateRange.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {format(dateRange.from, "LLL dd, y")} -{" "}
+                  {format(dateRange.to, "LLL dd, y")}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                format(dateRange.from, "LLL dd, y")
               )
             ) : (
               <span>Pick a date</span>
@@ -64,9 +59,10 @@ export function DateRangePicker({
             initialFocus
             mode="range"
             defaultMonth={new Date()}
-            selected={date}
-            onSelect={setDate}
+            selected={dateRange}
+            onSelect={setDateRange}
             numberOfMonths={2}
+            toDate={new Date()}
           />
         </PopoverContent>
       </Popover>

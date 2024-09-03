@@ -8,14 +8,14 @@ export const transactionSchema = z.object({
       label: z.string(),
       value: z.number(),
     },
-    { required_error: "Creditor is required" }
+    { required_error: "Creditor is required" },
   ),
   creditInvoice: z.object(
     {
       label: z.string(),
       value: z.number(),
     },
-    { required_error: "Credit invoice is required" }
+    { required_error: "Credit invoice is required" },
   ),
   type: z.enum(["Cheque", "Cash"], {
     errorMap: () => ({ message: "Please select a valid transaction type." }),
