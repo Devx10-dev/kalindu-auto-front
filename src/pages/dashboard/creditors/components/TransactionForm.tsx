@@ -43,7 +43,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { getRandomColor } from "@/utils/colors";
 import { getInitials, truncate } from "@/utils/string";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
@@ -102,7 +102,6 @@ function TransactionForm({
       creditor: undefined,
       type: "Cash",
       remark: "",
-      isPartial: false,
     });
 
     form.setValue("creditor", null);
@@ -190,7 +189,6 @@ function TransactionForm({
           transactionType: transaction.type.toUpperCase(),
           invoiceNo: selectedCreditInvoice.invoiceId,
           totalPrice: transaction.amount,
-          isPartial: transaction.isPartial,
           remark: transaction.remark,
         };
 
@@ -200,6 +198,26 @@ function TransactionForm({
       console.error("Error submitting form:", error);
     }
   };
+
+  useEffect(() => {
+    setSelectedCreditInvoice(null);
+
+    form.reset({
+      id: undefined,
+      amount: undefined,
+      creditInvoice: undefined,
+      creditor: undefined,
+      type: "Cash",
+      remark: "",
+    });
+
+    form.setValue("creditor", null);
+    form.setValue("creditInvoice", null);
+    form.setValue("remark", "");
+    form.setValue("amount", undefined);
+
+    setCreditInvoiceSelectKey((prevKey) => prevKey + 1);
+  }, [selectedCreditor]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -354,32 +372,11 @@ function TransactionForm({
                             : selectedCreditInvoice.totalPrice -
                               selectedCreditInvoice.settledAmount
                         }
+                        min={0}
                         disabled={selectedCreditInvoice === null}
                       />
                     </FormControl>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="isPartial"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Is partial payment ? </FormLabel>
-                      <FormDescription>
-                        Indicate whether this transaction involves a payment
-                        that is less than the full amount due.
-                      </FormDescription>
-                    </div>
                   </FormItem>
                 )}
               />

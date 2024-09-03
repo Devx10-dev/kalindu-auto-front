@@ -2,7 +2,9 @@ import { z } from "zod";
 
 export const transactionSchema = z.object({
   id: z.number().optional(),
-  amount: z.number({ required_error: "Amount is required" }),
+  amount: z
+    .number({ required_error: "Amount is required" })
+    .min(0, "Amount cannot be minus value"),
   creditor: z.object(
     {
       label: z.string(),
@@ -20,7 +22,6 @@ export const transactionSchema = z.object({
   type: z.enum(["Cheque", "Cash"], {
     errorMap: () => ({ message: "Please select a valid transaction type." }),
   }),
-  isPartial: z.boolean().default(false),
   remark: z.string().optional(),
 });
 
