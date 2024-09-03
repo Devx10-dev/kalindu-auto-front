@@ -4,18 +4,19 @@ import {
   FileClock,
   GalleryHorizontalEnd,
   HandCoins,
+  Home,
   Users,
   Wrench,
 } from "lucide-react";
 
 const NavLinks: NavLink[] = [
   {
-    icon: <GalleryHorizontalEnd />,
+    icon: <Home />,
     label: "Home",
     href: "/dashboard",
     sublinks: [
       {
-        label: "Home",
+        label: "Dashboard",
         href: "/dashboard/home",
       },
       {
@@ -25,6 +26,7 @@ const NavLinks: NavLink[] = [
     ],
   },
   {
+    icon: <GalleryHorizontalEnd />,
     label: "Invoices",
     href: "/dashboard/invoices",
     sublinks: [
