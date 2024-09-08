@@ -3,8 +3,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import useCashInvoiceStore from "../context/useCashInvoiceStore.tsx";
+import { useRef,forwardRef } from "react";
 
-const CustomerDetails: React.FC = () => {
+// Define the props type if any (can be empty for now)
+type CustomerDetailsProps = {
+  // Add any other props here if necessary
+};
+const CustomerDetails = forwardRef<HTMLButtonElement, CustomerDetailsProps>((props, ref) => {
+
+//================ feild navigaton ==================//
+const customerNameRef = useRef(null);
+const vehicleNoRef = useRef(null);
+
+const handleKeyDown = (e, nextRef) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (nextRef.current) {
+      nextRef.current.focus();
+    }
+  }
+};
+//================ feild navigaton ==================//
+
   const { setCustomer, setVehicleNumber, customerName, vehicleNumber } =
     useCashInvoiceStore();
 
@@ -19,6 +39,7 @@ const CustomerDetails: React.FC = () => {
                 type="text"
                 value={customerName || ""}
                 onChange={(e) => setCustomer(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, vehicleNoRef)}
                 placeholder="Enter customer name"
               />
             </div>
@@ -27,6 +48,8 @@ const CustomerDetails: React.FC = () => {
               <Input
                 type="text"
                 value={vehicleNumber || ""}
+                ref={vehicleNoRef}
+                onKeyDown={(e) => handleKeyDown(e, ref)}
                 onChange={(e) => setVehicleNumber(e.target.value)}
                 placeholder="Enter vehicle number"
               />
@@ -36,6 +59,6 @@ const CustomerDetails: React.FC = () => {
       </CardContent>
     </Card>
   );
-};
+});
 
 export default CustomerDetails;

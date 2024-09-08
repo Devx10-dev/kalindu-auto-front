@@ -22,7 +22,7 @@ import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { dummyItemSchema } from "@/validation/schema/invoice/dummy/DummyItemSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 import { z } from "zod";
@@ -49,6 +49,7 @@ export default function DummyItemForm({
   outsourcedItems: OutsourcedItem[];
 }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const inputRefs = useRef<any[]>([]);
 
   const { data: spareParts } = useQuery({
     queryKey: ["spareParts", searchTerm],
@@ -231,6 +232,16 @@ export default function DummyItemForm({
     setItemValues();
   }, [item]);
 
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
+
   return (
     <div style={{ padding: 10 }}>
       <Form {...form}>
@@ -262,7 +273,7 @@ export default function DummyItemForm({
                   {item === null && fieldState.error && (
                     <CreatableSelectErrorMessage
                       error={fieldState.error}
-                      label="Spart part item"
+                      label="Spare part item"
                       value={field.value}
                     />
                   )}
@@ -281,9 +292,10 @@ export default function DummyItemForm({
                       className="w-full"
                       placeholder="Please enter spare part code ..."
                       value={field.value || ""}
+                      ref={(el) => (inputRefs.current[0] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 0)}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -298,19 +310,11 @@ export default function DummyItemForm({
                       {...field}
                       className="w-full"
                       placeholder="Please enter quantity ..."
-                      type="number"
-                      min={0}
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ""
-                            ? undefined
-                            : parseFloat(e.target.value),
-                        )
-                      }
+                      value={field.value || ""}
+                      ref={(el) => (inputRefs.current[1] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 1)}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -324,21 +328,12 @@ export default function DummyItemForm({
                     <Input
                       {...field}
                       className="w-full"
-                      placeholder="Please enter price ..."
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ""
-                            ? undefined
-                            : parseFloat(e.target.value),
-                        )
-                      }
+                      placeholder="Please enter the price ..."
+                      value={field.value || ""}
+                      ref={(el) => (inputRefs.current[2] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 2)}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -353,20 +348,11 @@ export default function DummyItemForm({
                       {...field}
                       className="w-full"
                       placeholder="Please enter dummy price ..."
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ""
-                            ? ""
-                            : parseFloat(e.target.value),
-                        )
-                      }
                       value={field.value || ""}
+                      ref={(el) => (inputRefs.current[3] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 3)}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -381,20 +367,11 @@ export default function DummyItemForm({
                       {...field}
                       className="w-full"
                       placeholder="Please enter discount ..."
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ""
-                            ? ""
-                            : parseFloat(e.target.value),
-                        )
-                      }
                       value={field.value || ""}
+                      ref={(el) => (inputRefs.current[4] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 4)}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -403,16 +380,17 @@ export default function DummyItemForm({
               name="remark"
               render={({ field }) => (
                 <FormItem className="w-full col-span-1 row-span-1">
-                  <OptionalLabel label="Remark" />
+                  <OptionalLabel label="Remarks" />
                   <FormControl>
                     <Textarea
-                      className="w-full"
                       {...field}
-                      placeholder="Add a remark ..."
+                      className="w-full"
+                      placeholder="Please enter remarks ..."
                       value={field.value || ""}
+                      ref={(el) => (inputRefs.current[5] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 5)}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -420,10 +398,12 @@ export default function DummyItemForm({
               control={form.control}
               name="outsourced"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-8">
+                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
+                      ref={(el) => (inputRefs.current[6] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 6)}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
@@ -434,7 +414,7 @@ export default function DummyItemForm({
               )}
             />
           </div>
-
+          
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button onClick={handleCancel} variant={"outline"}>
               Cancel
@@ -443,6 +423,7 @@ export default function DummyItemForm({
             <div>
               <Button
                 className="mr-2"
+                ref={(el) => (inputRefs.current[7] = el)}
                 onClick={() => handleSubmit(form.getValues())}
               >
                 Save

@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea.tsx";
 import { RequiredLabel } from "@/components/formElements/FormLabel.tsx";
 import { SparePartService } from "@/service/sparePartInventory/sparePartService.ts";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import CreatableSelect from "react-select/creatable";
 
 const formSchema = z.object({
@@ -57,6 +57,25 @@ const AddItem: React.FC<{
     },
   });
   const [searchTerm, setSearchTerm] = useState("");
+
+//================ feild navigaton ==================//
+const itemNameRef = useRef(null);
+const priceRef = useRef(null);
+const quantityRef = useRef(null);
+const codeRef = useRef(null);
+const descriptionRef = useRef(null);
+const discountRef = useRef(null);
+const addItemBtn = useRef(null);
+
+const handleKeyDown = (e, nextRef) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (nextRef.current) {
+      nextRef.current.focus();
+    }
+  }
+};
+//================ feild navigaton ==================//
 
   const { data: spareParts } = useQuery({
     queryKey: ["spareParts", searchTerm],
@@ -114,6 +133,8 @@ const AddItem: React.FC<{
                     <CreatableSelect
                       options={sparePartsOptions}
                       onInputChange={handleInputChange}
+                      ref={itemNameRef}
+                      onKeyDown={(e) => handleKeyDown(e,priceRef)}
                       isClearable
                       onChange={handleSelectChange}
                     />
@@ -127,13 +148,16 @@ const AddItem: React.FC<{
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Price" />
-                    <FormControl>
+                    <FormControl
+                        ref={priceRef}
+                    >
                       <Input
                         type="number"
                         placeholder="Price"
                         min={0}
                         step="0.01"
                         {...field}
+                        onKeyDown={(e) => handleKeyDown(e, quantityRef)}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       />
                     </FormControl>
@@ -147,13 +171,16 @@ const AddItem: React.FC<{
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Quantity" />
-                    <FormControl>
+                    <FormControl
+                      ref={quantityRef}
+                    >
                       <Input
                         type="number"
                         placeholder="Quantity"
-                        {...field}
                         min={0}
                         step="1"
+                        {...field}
+                        onKeyDown={(e) => handleKeyDown(e, codeRef)}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       />
                     </FormControl>
@@ -163,13 +190,21 @@ const AddItem: React.FC<{
               />
               <FormField
                 control={form.control}
-                name="code"
+                name="Code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Code</FormLabel>
-                    <FormControl>
-                      <Input type="text" placeholder="Code" {...field} />
+                     <FormLabel>Code</FormLabel>
+                    <FormControl
+                        ref={codeRef}
+                    >
+                      <Input
+                        type="text"
+                        placeholder="Code"
+                        {...field}
+                        onKeyDown={(e) => handleKeyDown(e, descriptionRef)}
+                      />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -181,8 +216,14 @@ const AddItem: React.FC<{
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Description" {...field} />
+                    <FormControl
+                      ref={descriptionRef}
+                    >
+                      <Textarea 
+                      placeholder="Description" 
+                      {...field}
+                      onKeyDown={(e) => handleKeyDown(e, discountRef)} 
+                      />
                     </FormControl>
                   </FormItem>
                 )}
@@ -193,10 +234,13 @@ const AddItem: React.FC<{
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Discount</FormLabel>
-                    <FormControl>
+                    <FormControl
+                      ref={discountRef} 
+                    >
                       <Input
                         type="number"
                         placeholder="Discount"
+                        onKeyDown={(e) => handleKeyDown(e,addItemBtn)}
                         min={0}
                         step="0.01"
                         {...field}
@@ -212,7 +256,7 @@ const AddItem: React.FC<{
                 Cancel
               </Button>
               <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
-              <Button type="submit" className="">
+              <Button type="submit" className="" ref={addItemBtn}>
                 <PlusCircle className="mr-2" /> Add Item
               </Button>
               <Button type="reset" onClick={onReset} className="bg-slate-500">

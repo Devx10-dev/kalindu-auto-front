@@ -9,7 +9,7 @@ import {
 } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { UseMutationResult } from "@tanstack/react-query";
 import { Delete, Printer } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 function BillSummaryCard({
   total,
@@ -41,6 +41,19 @@ function BillSummaryCard({
 }) {
   const [vat, setVat] = useState(0);
   const [discount, setDiscount] = useState(0);
+
+  //================ feild navigaton ==================//
+  const inputRefs = useRef<any[]>([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
+//================ feild navigaton ==================//
 
   const [finalPrice, setFinalPrice] = useState(total);
 
@@ -78,7 +91,7 @@ function BillSummaryCard({
     setCustomerName("");
     setVehicleNo("");
   };
-
+  
   return (
     <Card>
       <CardContent className="p-5 shadow-sm pt-0">
@@ -93,6 +106,8 @@ function BillSummaryCard({
             />
             <Input
               type="number"
+              ref={(el) => (inputRefs.current[1] = el)}
+              onKeyDown={(e) => handleKeyDown(e, 1)}
               value={discountPercentage}
               placeholder="Discount"
               style={{
@@ -115,6 +130,8 @@ function BillSummaryCard({
             <Input
               type="number"
               value={discount}
+              ref={(el) => (inputRefs.current[2] = el)}
+              onKeyDown={(e) => handleKeyDown(e, 2)}
               placeholder="Discount Amount"
               style={{
                 maxWidth: "100px",
@@ -137,6 +154,8 @@ function BillSummaryCard({
             <Input
               type="number"
               value={vatPercentage}
+              ref={(el) => (inputRefs.current[3] = el)}
+              onKeyDown={(e) => handleKeyDown(e, 3)}
               placeholder="VAT"
               style={{
                 maxWidth: "100px",
@@ -157,6 +176,8 @@ function BillSummaryCard({
             <Input
               type="number"
               value={vat}
+              ref={(el) => (inputRefs.current[4] = el)}
+              onKeyDown={(e) => handleKeyDown(e, 4)}
               placeholder="VAT amount"
               style={{
                 maxWidth: "100px",
@@ -181,6 +202,7 @@ function BillSummaryCard({
             </p>
             <div className="d-flex">
               <Button
+                ref={(el) => (inputRefs.current[5] = el)}
                 className="mt-4 mb-3"
                 onClick={() => createDummyInvoiceMutation.mutate()}
               >

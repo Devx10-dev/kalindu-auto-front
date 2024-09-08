@@ -19,6 +19,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { z } from "zod";
+import { useRef } from "react";
 
 function FieldForm({
   onClose,
@@ -28,6 +29,17 @@ function FieldForm({
   salesAndExpenseService: SaleAndExpenseService;
 }) {
   const queryClient = useQueryClient();
+
+  const inputRefs = useRef<any[]>([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
 
   type FieldValues = z.infer<typeof fieldSchema>;
   const defaultValues: Partial<FieldValues> = {};
@@ -108,7 +120,7 @@ function FieldForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Category" />
-                <FormControl>
+                <FormControl onKeyDown={(e) => handleKeyDown(e, 1)} ref={(el) => (inputRefs.current[1] = el)}>
                   <Select
                     className="select-place-holder"
                     placeholder={"Select category"}
@@ -129,8 +141,9 @@ function FieldForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Field Name" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 2)} 
                     {...field}
                     className="w-full"
                     placeholder="Please enter field name"
@@ -149,7 +162,7 @@ function FieldForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div>
-            <Button onClick={form.handleSubmit(handleSubmit)} className="mr-2">
+            <Button ref={(el) => (inputRefs.current[3] = el)} onClick={form.handleSubmit(handleSubmit)} className="mr-2">
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRef } from "react";
 
 function CategoryForm({
   onClose,
@@ -37,6 +38,17 @@ function CategoryForm({
   const resetForm = () => {
     form.setValue("id", undefined);
     form.setValue("name", undefined);
+  };
+
+  const inputRefs = useRef<any[]>([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
   };
 
   const createCategoryMutation = useMutation({
@@ -88,8 +100,9 @@ function CategoryForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Category Name" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                   <Input
+                  onKeyDown={(e) => handleKeyDown(e, 1)} 
                     {...field}
                     className="w-full"
                     placeholder="Please enter category name"
@@ -108,7 +121,7 @@ function CategoryForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div>
-            <Button onClick={form.handleSubmit(handleSubmit)} className="mr-2">
+            <Button ref={(el) => (inputRefs.current[2] = el)} onClick={form.handleSubmit(handleSubmit)} className="mr-2">
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>
