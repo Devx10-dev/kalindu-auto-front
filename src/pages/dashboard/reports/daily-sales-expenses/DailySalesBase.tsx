@@ -5,6 +5,7 @@ import VerifyIcon from "@/components/icon/VerifyIcon";
 import { FormModal } from "@/components/modal/FormModal";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Printer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Popover,
@@ -37,10 +38,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FinancialRecord } from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import FinancialRecordGrid from "./component/grid/FinancialRecordGrid";
 import { formatDateToHumanReadable } from "@/utils/dateToString";
+import { useNavigate } from "react-router-dom";
 
 const DailySalesBase = () => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [show, setShow] = useState(false);
   const [confirmationModalShow, setconfirmationModalShow] = useState(false);
@@ -126,6 +129,20 @@ const DailySalesBase = () => {
     summery.financialRecords.forEach((s) => financialRecords.push(s));
   }
 
+  const handlePrint = () => {
+    if (summery) {
+      navigate("print-page", {
+        state: { summary: summery, financialRecords: financialRecords },
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No summary data available for printing.",
+      });
+    }
+  };
+
   return (
     <div className="mr-2 ml-2 mb-4">
       <CardHeader>
@@ -188,28 +205,42 @@ const DailySalesBase = () => {
 
       <Card className="m-8 pl-4 p-4 pt-0">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 mb-4 mt-0 pt-0">
-          <CardTitle className="text-xl font-bold">{`Summary of ${formatDateToHumanReadable(date)}`}</CardTitle>
-          {summery !== undefined && summery.verified ? (
-            <div
-              className="d-flex gap-2 pl-4 pr-4 pt-1 pb-1"
-              style={{
-                background: "#9ec16c",
-                alignItems: "center",
-                borderRadius: 5,
-              }}
-            >
-              <p style={{ color: "#fff" }}>Verified</p>{" "}
-              <VerifyIcon height="20" width="20" color="#fff" />
-            </div>
-          ) : (
-            <Button onClick={() => setconfirmationModalShow(true)}>
-              <div className="gap-2 d-flex">
+          <CardTitle className="text-xl font-bold">
+            {`Summary of ${formatDateToHumanReadable(date)}`}
+          </CardTitle>
+
+          <div className="flex items-center space-x-4">
+            {summery !== undefined && summery.verified ? (
+              <div
+                className="d-flex gap-2 pl-4 pr-4 pt-1 pb-1"
+                style={{
+                  background: "#9ec16c",
+                  alignItems: "center",
+                  borderRadius: 5,
+                }}
+              >
+                <p style={{ color: "#fff" }}>Verified</p>
                 <VerifyIcon height="20" width="20" color="#fff" />
-                Verify Daily Summary
               </div>
+            ) : (
+              <Button onClick={() => setconfirmationModalShow(true)}>
+                <div className="gap-2 d-flex">
+                  <VerifyIcon height="20" width="20" color="#fff" />
+                  Verify Daily Summary
+                </div>
+              </Button>
+            )}
+
+            <Button
+              onClick={handlePrint}
+              className="px-4 py-2 text-white rounded"
+            >
+              <Printer className={"mr-2"} />
+              Print Daily Summary
             </Button>
-          )}
+          </div>
         </CardHeader>
+
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Card x-chunk="dashboard-01-chunk-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
