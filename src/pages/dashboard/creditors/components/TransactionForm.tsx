@@ -6,10 +6,8 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -17,7 +15,6 @@ import { toast } from "@/components/ui/use-toast";
 import CreditorAPI from "@/pages/dashboard/creditors/api/CreditorAPI";
 import { ChequeService } from "@/service/cheque/ChequeService";
 import { Creditor } from "@/types/creditor/creditorTypes";
-import { Cheque } from "@/validation/schema/cheque/chequeSchema";
 import { transactionSchema } from "@/validation/schema/creditor/transaction/transactionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,14 +22,7 @@ import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { z } from "zod";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Select as SelectComponent,
   SelectContent,
@@ -41,14 +31,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { getRandomColor } from "@/utils/colors";
-import { getInitials, truncate } from "@/utils/string";
-import { useEffect, useState } from "react";
-import { Separator } from "@/components/ui/separator";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
-import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "lucide-react";
+import { getRandomColor } from "@/utils/colors";
+import { useEffect, useState } from "react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
 
 const RANDOM_COLOR = getRandomColor();
@@ -100,7 +85,7 @@ function TransactionForm({
       amount: undefined,
       creditInvoice: undefined,
       creditor: undefined,
-      type: "Cash",
+      type: "CASH",
       remark: "",
     });
 
@@ -159,16 +144,8 @@ function TransactionForm({
     try {
       const transaction = form.getValues();
 
-      console.log(transaction.type);
-      console.log(
-        transaction.amount >
-          (selectedCreditor.chequeBalance === undefined
-            ? 0
-            : parseFloat(selectedCreditor.chequeBalance)),
-      );
-
       if (
-        transaction.type === "Cheque" &&
+        transaction.type === "CHEQUE" &&
         transaction.amount >
           (selectedCreditor.chequeBalance === undefined
             ? 0
@@ -202,16 +179,6 @@ function TransactionForm({
   useEffect(() => {
     setSelectedCreditInvoice(null);
 
-    form.reset({
-      id: undefined,
-      amount: undefined,
-      creditInvoice: undefined,
-      creditor: undefined,
-      type: "Cash",
-      remark: "",
-    });
-
-    form.setValue("creditor", null);
     form.setValue("creditInvoice", null);
     form.setValue("remark", "");
     form.setValue("amount", undefined);
@@ -268,7 +235,7 @@ function TransactionForm({
                               parseInt(creditor.creditorID) ===
                               selectedOption.value,
                           );
-                          setSelectedCreditor(selectedCreditor || null);
+                          setSelectedCreditor(selectedCreditor);
                         }}
                       />
                     </FormControl>
@@ -338,11 +305,14 @@ function TransactionForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem key={Math.random()} value="Cash">
+                        <SelectItem key={Math.random()} value="CASH">
                           Cash
                         </SelectItem>
-                        <SelectItem key={Math.random()} value="Cheque">
+                        <SelectItem key={Math.random()} value="CHEQUE">
                           Cheque
+                        </SelectItem>
+                        <SelectItem key={Math.random()} value="DEPOSIT">
+                          Deposit
                         </SelectItem>
                       </SelectContent>
                     </SelectComponent>
@@ -365,7 +335,7 @@ function TransactionForm({
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
-                        value={field.value}
+                        value={field.value ?? ""}
                         max={
                           selectedCreditInvoice === null
                             ? 1000000
@@ -444,5 +414,3 @@ function TransactionForm({
 }
 
 export default TransactionForm;
-
-// grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-3

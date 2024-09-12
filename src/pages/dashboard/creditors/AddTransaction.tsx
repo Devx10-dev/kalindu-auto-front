@@ -32,7 +32,6 @@ export function AddTransaction() {
             icon={<ArrowLeftRight />}
           />
         </CardHeader>
-        {/* <Card className="my-6"> */}
         <CardContent className="py-4">
           <TransactionForm
             chequeService={chequeService}
@@ -41,7 +40,6 @@ export function AddTransaction() {
             onClose={() => setShow(false)}
           />
         </CardContent>
-        {/* </Card> */}
       </div>
     </Fragment>
   );
