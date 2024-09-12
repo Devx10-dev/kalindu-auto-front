@@ -11,8 +11,9 @@ import { Creditor } from "@/types/creditor/creditorTypes";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { convertArrayToISOFormat } from "@/utils/dateTime";
 import { getInitials, truncate } from "@/utils/string";
-import { ChevronsDown, ChevronsUp, ChevronUp } from "lucide-react";
+import { CheckCircle, ChevronsDown, ChevronsUp, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import StatusCard from "../../invoice/view/components/StatusCard";
 
 function CreditorDetailsCard({
   selectedCreditor,
@@ -177,6 +178,19 @@ function CreditorDetailsCard({
             </div>
           )}
         </div>
+        {selectedCreditInvoice &&
+          selectedCreditInvoice.totalPrice -
+            selectedCreditInvoice.settledAmount ===
+            0 && (
+            <StatusCard
+              className="p-2 mt-4"
+              icon={<CheckCircle size={30} color="green" />}
+              status="Completed"
+              statusColor="red"
+              statusText="This invoice has been completed"
+              type={"Cash"}
+            />
+          )}
       </CardContent>
     </>
   );
