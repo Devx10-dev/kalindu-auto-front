@@ -1,173 +1,181 @@
-import { InvoiceItem, InvoiceState } from "@/types/invoice/creditorInvoice";
-import { create } from "zustand";
+import {InvoiceItem, InvoiceState} from "@/types/invoice/creditorInvoice";
+import {create} from "zustand";
 
 const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
-  invoiceID: undefined,
-  creditorName: undefined,
-  creditorID: undefined,
-  address: undefined,
-  contactNo: undefined,
+    invoiceID: undefined,
+    creditorName: undefined,
+    creditorID: undefined,
+    address: undefined,
+    contactNo: undefined,
 
-  // final bill summary items
-  discountPercentage: 0,
-  discountAmount: 0,
-  vatPercentage: 0,
-  vatAmount: 0,
-  totalPrice: undefined,
+    // final bill summary items
+    discountPercentage: 0,
+    discountAmount: 0,
+    vatPercentage: 0,
+    vatAmount: 0,
+    totalPrice: undefined,
 
-  //commissions details
-  commissionName: undefined,
-  commissionAmount: undefined,
-  commissionRemark: undefined,
+    //commissions details
+    commissionName: undefined,
+    commissionAmount: undefined,
+    commissionRemark: undefined,
 
-  invoiceItemDTOList: [],
+    invoiceItemDTOList: [],
 
-  addInvoiceItem: (item: InvoiceItem) =>
-    set((state) => ({
-      ...state,
-      invoiceItemDTOList: [...state.invoiceItemDTOList, item],
-    })),
+    addInvoiceItem: (item: InvoiceItem) =>
+        set((state) => ({
+            ...state,
+            invoiceItemDTOList: [...state.invoiceItemDTOList, item],
+        })),
 
-  removeInvoiceItem: (itemToRemove: InvoiceItem) =>
-    set((state) => ({
-      ...state,
-      invoiceItemDTOList: state.invoiceItemDTOList.filter(
-        (item) => item !== itemToRemove,
-      ),
-    })),
+    removeInvoiceItem: (itemToRemove: InvoiceItem) =>
+        set((state) => ({
+            ...state,
+            invoiceItemDTOList: state.invoiceItemDTOList.filter(
+                (item) => item !== itemToRemove,
+            ),
+        })),
 
-  setCreditor: (creditorName?: string, creditorID?: number) =>
-    set((state) => ({
-      ...state,
-      creditorName: creditorName,
-      creditorID: creditorID,
-    })),
+    updateInvoiceItem: (updateItem: InvoiceItem) =>
+        set((state) => ({
+            ...state,
+            invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
+                item.name === updateItem.name ? updateItem : item,
+            ),
+        })),
 
-  setOutsourcedStatus: (itemOutsourced: InvoiceItem, status: boolean) =>
-    set((state) => ({
-      ...state,
-      invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced
-          ? {
-              ...item,
-              outsourced: status,
-            }
-          : item,
-      ),
-    })),
+    setCreditor: (creditorName?: string, creditorID?: number) =>
+        set((state) => ({
+            ...state,
+            creditorName: creditorName,
+            creditorID: creditorID,
+        })),
 
-  setOutsourcedCompanyName: (
-    itemOutsourced: InvoiceItem,
-    companyName: string,
-  ) =>
-    set((state) => ({
-      ...state,
-      invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced
-          ? {
-              ...item,
-              outsourceItem: {
-                ...item.outsourceItem,
-                companyName: companyName,
-              },
-            }
-          : item,
-      ),
-    })),
-  setOutsourcedBuyingPrice: (
-    itemOutsourced: InvoiceItem,
-    buyingPrice: number,
-  ) =>
-    set((state) => ({
-      ...state,
-      invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced
-          ? {
-              ...item,
-              outsourceItem: {
-                ...item.outsourceItem,
-                buyingPrice: buyingPrice,
-              },
-            }
-          : item,
-      ),
-    })),
+    setOutsourcedStatus: (itemOutsourced: InvoiceItem, status: boolean) =>
+        set((state) => ({
+            ...state,
+            invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
+                item === itemOutsourced
+                    ? {
+                        ...item,
+                        outsourced: status,
+                    }
+                    : item,
+            ),
+        })),
 
-  getOutsourcedItems: () => {
-    const state = get();
-    return state.invoiceItemDTOList.filter((item) => item.outsourced === true);
-  },
-  setDiscountPercentage: (percentage: number) =>
-    set((state) => ({ ...state, discountPercentage: percentage })),
-  setDiscountAmount: (amount: number) =>
-    set((state) => ({ ...state, discountAmount: amount })),
-  setVatPercentage: (percentage: number) =>
-    set((state) => ({ ...state, vatPercentage: percentage })),
-  setVatAmount: (amount: number) =>
-    set((state) => ({ ...state, vatAmount: amount })),
-  setTotalPrice: (amount: number) =>
-    set((state) => ({ ...state, totalPrice: amount })),
+    setOutsourcedCompanyName: (
+        itemOutsourced: InvoiceItem,
+        companyName: string,
+    ) =>
+        set((state) => ({
+            ...state,
+            invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
+                item === itemOutsourced
+                    ? {
+                        ...item,
+                        outsourceItem: {
+                            ...item.outsourceItem,
+                            companyName: companyName,
+                        },
+                    }
+                    : item,
+            ),
+        })),
+    setOutsourcedBuyingPrice: (
+        itemOutsourced: InvoiceItem,
+        buyingPrice: number,
+    ) =>
+        set((state) => ({
+            ...state,
+            invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
+                item === itemOutsourced
+                    ? {
+                        ...item,
+                        outsourceItem: {
+                            ...item.outsourceItem,
+                            buyingPrice: buyingPrice,
+                        },
+                    }
+                    : item,
+            ),
+        })),
 
-  setCommissionName: (commissionName?: string) =>
-    set((state) => ({
-      ...state,
-      commissionName: commissionName,
-    })),
+    getOutsourcedItems: () => {
+        const state = get();
+        return state.invoiceItemDTOList.filter((item) => item.outsourced === true);
+    },
+    setDiscountPercentage: (percentage: number) =>
+        set((state) => ({...state, discountPercentage: percentage})),
+    setDiscountAmount: (amount: number) =>
+        set((state) => ({...state, discountAmount: amount})),
+    setVatPercentage: (percentage: number) =>
+        set((state) => ({...state, vatPercentage: percentage})),
+    setVatAmount: (amount: number) =>
+        set((state) => ({...state, vatAmount: amount})),
+    setTotalPrice: (amount: number) =>
+        set((state) => ({...state, totalPrice: amount})),
 
-  setCommissionAmount: (CommissionAmount?: number) =>
-    set((state) => ({
-      ...state,
-      commissionAmount: CommissionAmount,
-    })),
+    setCommissionName: (commissionName?: string) =>
+        set((state) => ({
+            ...state,
+            commissionName: commissionName,
+        })),
 
-  setCommissionRemark: (commissionRemark?: string) =>
-    set((state) => ({
-      ...state,
-      commissionRemark: commissionRemark,
-    })),
+    setCommissionAmount: (CommissionAmount?: number) =>
+        set((state) => ({
+            ...state,
+            commissionAmount: CommissionAmount,
+        })),
 
-  getRequestData: () => {
-    const state = get();
-    const invoiceId = generateInvoiceId();
-    return {
-      invoiceId: invoiceId,
-      creditorId: state.creditorID,
-      totalPrice: state.totalPrice,
-      totalDiscount: state.discountAmount,
-      VAT: state.vatAmount,
-      creditorName: state.creditorName,
-      invoiceItems: state.invoiceItemDTOList,
+    setCommissionRemark: (commissionRemark?: string) =>
+        set((state) => ({
+            ...state,
+            commissionRemark: commissionRemark,
+        })),
 
-      commissions:
-        state.commissionName && state.commissionAmount
-          ? [
-              {
-                personName: state.commissionName,
-                amount: state.commissionAmount,
-                remark: state.commissionRemark,
-              },
-            ]
-          : [],
-    };
-  },
+    getRequestData: () => {
+        const state = get();
+        const invoiceId = generateInvoiceId();
+        return {
+            invoiceId: invoiceId,
+            creditorId: state.creditorID,
+            totalPrice: state.totalPrice,
+            totalDiscount: state.discountAmount,
+            VAT: state.vatAmount,
+            creditorName: state.creditorName,
+            invoiceItems: state.invoiceItemDTOList,
 
-  resetState: () =>
-    set({
-      invoiceId: undefined,
-      creditorName: undefined,
-      creditorID: undefined,
-      address: undefined,
-      contactNo: undefined,
-      discountPercentage: 0,
-      discountAmount: 0,
-      vatPercentage: 0,
-      vatAmount: 0,
-      totalPrice: undefined,
-      commissionName: undefined,
-      commissionAmount: undefined,
-      commissionRemark: undefined,
-      invoiceItemDTOList: [],
-    }),
+            commissions:
+                state.commissionName && state.commissionAmount
+                    ? [
+                        {
+                            personName: state.commissionName,
+                            amount: state.commissionAmount,
+                            remark: state.commissionRemark,
+                        },
+                    ]
+                    : [],
+        };
+    },
+
+    resetState: () =>
+        set({
+            invoiceId: undefined,
+            creditorName: undefined,
+            creditorID: undefined,
+            address: undefined,
+            contactNo: undefined,
+            discountPercentage: 0,
+            discountAmount: 0,
+            vatPercentage: 0,
+            vatAmount: 0,
+            totalPrice: undefined,
+            commissionName: undefined,
+            commissionAmount: undefined,
+            commissionRemark: undefined,
+            invoiceItemDTOList: [],
+        }),
 }));
 
 /**
@@ -186,10 +194,10 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
  *    - Generates a number between 1000 and 9999
  */
 const generateInvoiceId = (): string => {
-  const now = new Date();
-  const date = now.toISOString().slice(2, 10).replace(/-/g, "");
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `INV-CRE-${date}${random}`;
+    const now = new Date();
+    const date = now.toISOString().slice(2, 10).replace(/-/g, "");
+    const random = Math.floor(1000 + Math.random() * 9000);
+    return `INV-CRE-${date}${random}`;
 };
 
 export default useCreditorInvoiceStore;

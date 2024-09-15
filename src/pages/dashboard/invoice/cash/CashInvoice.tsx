@@ -46,7 +46,7 @@ const CashInvoiceBase: React.FC = () => {
         >
           <CustomerDetails />
           {/*<AddItem/>*/}
-          <div className="d-flex justify-start m-2 mt-4  gap-10">
+          <div className="d-flex justify-start mt-4  gap-10">
             <Button
               className="gap-1"
               style={{ maxHeight: "35px" }}

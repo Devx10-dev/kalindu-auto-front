@@ -8,12 +8,19 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
+import EditIcon from "@/components/icon/EditIcon.tsx";
+import IconButton from "@/components/button/IconButton.tsx";
+import {InvoiceItem} from "@/types/invoice/creditorInvoice";
+import {FormModal} from "@/components/modal/FormModal.tsx";
+import EditItem from "@/pages/dashboard/invoice/creditor/components/EditItem.tsx";
 
 const InvoiceTable: React.FC = () => {
   const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
     useCreditorInvoiceStore();
   useEffect(() => {}, [invoiceItemDTOList]);
+
+  const [editingItem, setEditingItem] = useState<InvoiceItem | null>(null)
 
   return (
     <div>
@@ -58,6 +65,11 @@ const InvoiceTable: React.FC = () => {
                   >
                     Remove
                   </Button>
+                  <IconButton
+                      icon={<EditIcon height="20" width="20" />}
+                      tooltipMsg="Edit Spare Part"
+                      handleOnClick={() => setEditingItem(item)}
+                  />
                 </TableCell>
               </TableRow>
             ))
@@ -70,6 +82,17 @@ const InvoiceTable: React.FC = () => {
           )}
         </TableBody>
       </Table>
+      <FormModal
+          title="Edit Item"
+          titleDescription="Edit spare part item in the invoice"
+          show={!!editingItem}
+          onClose={() => setEditingItem(null)}
+          component={
+              editingItem && (
+                  <EditItem item={editingItem} onClose={() => setEditingItem(null)} />
+              )
+          }
+      />
     </div>
   );
 };

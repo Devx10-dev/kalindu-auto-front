@@ -9,9 +9,8 @@ const CustomerDetails: React.FC = () => {
     useCashInvoiceStore();
 
   return (
-    <Card className="mb-3">
-      <CardContent className="p-3 shadow-sm">
-        <div className="flex flex-col gap-5">
+
+        <div className="flex flex-col gap-5 mb-7">
           <div className="flex justify-between gap-5">
             <div className="flex flex-col gap-2 flex-grow">
               <Label>Customer Name</Label>
@@ -33,8 +32,8 @@ const CustomerDetails: React.FC = () => {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+
+
   );
 };
 
