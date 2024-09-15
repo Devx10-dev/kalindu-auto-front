@@ -53,7 +53,6 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
     };
 
     return (
-        <Card className="p-4">
             <CardContent className="p-3 shadow-sm">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -159,7 +158,7 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
                     </form>
                 </Form>
             </CardContent>
-        </Card>
+
     );
 };
 

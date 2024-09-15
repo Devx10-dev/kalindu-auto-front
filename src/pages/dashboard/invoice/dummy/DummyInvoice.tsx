@@ -189,11 +189,8 @@ function DummyInvoice() {
           <div style={{ flex: 9 }}>
             <div
               style={{
-                padding: 15,
-                borderRadius: 5,
-                boxShadow:
-                  "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px",
-              }}
+                padding: 0
+                }}
             >
               <CustomerDetailsForm
                 customerName={customerName}
@@ -202,7 +199,7 @@ function DummyInvoice() {
                 vehicleNo={vehicleNo}
               />
             </div>
-            <div className="d-flex justify-start m-2 mt-4 mb-4">
+            <div className="d-flex justify-start  mt-4 mb-4">
               <Button
                 className="gap-1"
                 style={{ maxHeight: "35px" }}
