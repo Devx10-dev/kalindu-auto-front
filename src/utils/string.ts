@@ -42,3 +42,10 @@ export const convertSnakeCaseToNormalCase = (word: string): string => {
   }
   return words.join(" ");
 };
+
+export const getInitials = (name: string) => {
+  if (!name || typeof name !== "string") return "";
+
+  // Extract the first two letters and convert them to uppercase
+  return name.slice(0, 2).toUpperCase();
+};

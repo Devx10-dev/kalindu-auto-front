@@ -1,6 +1,5 @@
-import Loading from "@/components/Loading";
-import IconButton from "@/components/button/IconButton";
-import PatchVerifyIcon from "@/components/icon/PatchVerifyIcon";
+import SkeletonGrid from "@/components/loader/SkeletonGrid";
+import GridModal from "@/components/modal/GridModal";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -23,13 +22,11 @@ import { ChequeService } from "@/service/cheque/ChequeService";
 import { Cheque, ChequeResponseData } from "@/types/cheque/chequeTypes";
 import { Creditor } from "@/types/creditor/creditorTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { BadgeCheck, Filter } from "lucide-react";
 import { Fragment, useState } from "react";
 import { SettlementModal } from "../modal/SettlementModal";
-import SkeletonGrid from "@/components/loader/SkeletonGrid";
-import GridModal from "@/components/modal/GridModal";
 import CreditInvoiceGrid from "./CreditInvoiceGrid";
-import ListCheckIcon from "@/components/icon/ListCheckIcon";
-import VerifyIcon from "@/components/icon/VerifyIcon";
+import { convertSnakeCaseToNormalCase, truncate } from "@/utils/string";
 
 function ChequesGrid({
   creditors = [],
@@ -156,11 +153,9 @@ function ChequesGrid({
     <Fragment>
       <>
         <div
-          className="mb-4 p-4"
+          className="mb-4 pt-2 pb-2 pr-2 w-1/2"
           style={{
             borderRadius: "5px",
-            boxShadow:
-              "rgba(255, 255, 255, 0.1) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.20) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset",
           }}
         >
           <div className=" d-flex gap-4">
@@ -181,7 +176,8 @@ function ChequesGrid({
               </SelectContent>
             </Select>
 
-            <Button variant={"default"} onClick={refetchCheques}>
+            <Button variant={"secondary"} onClick={refetchCheques}>
+              <Filter className="mr-2 h-4 w-4" />
               Filter
             </Button>
           </div>
@@ -195,7 +191,7 @@ function ChequesGrid({
               <TableRow>
                 <TableHead>Cheque No</TableHead>
                 <TableHead>Creditor</TableHead>
-                <TableHead>Amount</TableHead>
+                <TableHead align="right">Amount</TableHead>
                 <TableHead>Date & Time</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead align="center">Action</TableHead>
@@ -206,10 +202,10 @@ function ChequesGrid({
                 cheques.cheques.map((cheque) => (
                   <TableRow key={cheque.id}>
                     <TableCell className="font-medium">
-                      {cheque.chequeNo}
+                      {truncate(cheque.chequeNo, 20)}
                     </TableCell>
                     <TableCell>{cheque?.creditorName ?? "-"}</TableCell>
-                    <TableCell>{cheque.amount}</TableCell>
+                    <TableCell align="right">{cheque.amount}</TableCell>
                     <TableCell>{`${cheque.dateTime[0]}-${cheque.dateTime[1]}-${cheque.dateTime[2]} ${cheque.dateTime[3]}:${cheque.dateTime[4]}:${cheque.dateTime[5]}`}</TableCell>
                     <TableCell>
                       {
@@ -229,38 +225,21 @@ function ChequesGrid({
                             fontWeight: 400,
                           }}
                         >
-                          {cheque.status}
+                          {convertSnakeCaseToNormalCase(cheque.status)}
                         </p>
                       }
                     </TableCell>
                     <TableCell align="center">
                       {
-                        <div className="d-flex gap-2">
-                          <Button
-                            onClick={() => handleActionBtnClick(cheque)}
-                            disabled={cheque.status !== "PENDING"}
-                          >
-                            <div className="gap-2 d-flex">
-                              <VerifyIcon height="20" width="20" color="#fff" />
-                              Settle Cheque
-                            </div>
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            onClick={() => handleViewBtnClick(cheque)}
-                            disabled={cheque.status !== "SETTLED"}
-                          >
-                            <div className="gap-2 d-flex">
-                              <ListCheckIcon
-                                height="20"
-                                width="20"
-                                color="#000"
-                              />
-                              View Credit Invoices
-                            </div>
-                          </Button>
-                        </div>
+                        <Button
+                          className="mr-5"
+                          variant="outline"
+                          onClick={() => handleActionBtnClick(cheque)}
+                          disabled={cheque.status !== "PENDING"}
+                        >
+                          <BadgeCheck className="mr-2 h-4 w-4" />
+                          Settle Cheque
+                        </Button>
                       }
                     </TableCell>
                   </TableRow>

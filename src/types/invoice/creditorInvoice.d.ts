@@ -1,6 +1,39 @@
 import { Creditor } from "../creditor/creditorTypes";
 import { Commission } from "./cashInvoice";
 
+//   "creditInvoices": [
+//       {
+//           "id": 102,
+//           "invoiceId": "INV-CRE-2408181829",
+//           "creditorId": null,
+//           "issuedTime": [
+//               2024,
+//               8,
+//               18,
+//               18,
+//               29,
+//               11,
+//               42735000
+//           ],
+//           "dueTime": [
+//               2024,
+//               9,
+//               1,
+//               18,
+//               29,
+//               11,
+//               42735000
+//           ],
+//           "totalPrice": 10000.00,
+//           "settled": false,
+//           "settledAmount": null,
+//           "totalDiscount": 0.00,
+//           "issuedBy": "b0a8ee5a-b0ec-49db-bef6-cd611b657ecf",
+//           "dueStatus": "DUE",
+//           "vat": null
+//       }
+//   ]
+
 export type InvoiceState = {
   creditorName?: string;
   creditorID?: number;
@@ -13,6 +46,8 @@ export type InvoiceState = {
   issuedTime?: number[];
   address?: string;
   contactNo?: string;
+  settled?: boolean;
+  settled_amount?: number;
 
   discountPercentage?: number;
   discountAmount?: number;
@@ -25,6 +60,9 @@ export type InvoiceState = {
   commissionName?: string;
   commissionRemark?: string;
   commissionAmount?: number;
+
+  dueTime?: number[];
+  dueStatus?: string;
 
   addInvoiceItem: (item: InvoiceItem) => void;
   removeInvoiceItem: (item: InvoiceItem) => void;
@@ -74,4 +112,21 @@ export type CreditInvoices = {
   setCreditInvoicesStore: (invoices: InvoiceState[]) => void;
   addCreditInvoiceToStore: (invoice: InvoiceState) => void;
   getCreditInvoiceById: (invoiceId: string) => InvoiceState;
+};
+
+export type CreditInvoiceStats = {
+  overdueCreditors: number;
+  dueCreditors: number;
+  overdueAmount: number;
+  dueAmount: number;
+  totalCreditBalance: number;
+  totalCreditors: number;
+  totalDueInvoices: number;
+  totalOverdueInvoices: number;
+};
+
+export type PieChartData = {
+  status: string;
+  creditors: number;
+  fill: string;
 };

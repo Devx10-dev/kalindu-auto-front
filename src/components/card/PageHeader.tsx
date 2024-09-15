@@ -8,7 +8,7 @@ function PageHeader({
 }: {
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon?: JSX.Element;
   badge?: JSX.Element;
 }) {
   return (

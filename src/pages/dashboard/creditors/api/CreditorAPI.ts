@@ -90,7 +90,10 @@ class CreditorAPI {
   ): Promise<CreditorTransaction> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_TRANSACTIONS_URL,
-      creditorTransaction,
+      {
+        ...creditorTransaction,
+        isPartial: creditorTransaction.isPartial ? "YES" : "NO",
+      },
     );
     return response.data;
   }
@@ -98,6 +101,14 @@ class CreditorAPI {
   async fetchCreditInvoice(invoiceID: number): Promise<CreditInvoice> {
     const response = await this.api.get(
       CreditorEndpoints.GET_CREDITOR_INVOICE_URL + "/" + invoiceID,
+    );
+    return response.data;
+  }
+
+  async fetchUnsettledCreditInvoicesByID(id: number): Promise<CreditInvoice[]> {
+    if (id === undefined || id === 0) return [];
+    const response = await this.api.get(
+      `${CreditorEndpoints.GET_CREDITOR_INVOICE_URL}/creditor/${id}/unsettled`,
     );
     return response.data;
   }

@@ -1,5 +1,9 @@
 import { AxiosInstance } from "axios";
-import { InvoiceList, InvoiceState } from "@/types/invoice/cashInvoice";
+import {
+  InvoiceList,
+  InvoiceState,
+  QuickSearchInvoice,
+} from "@/types/invoice/cashInvoice";
 import { Service } from "../apiService";
 import { useInvoiceListStore } from "@/pages/dashboard/invoice/view-invoices/context/InvoiceListState";
 
@@ -50,6 +54,20 @@ class CashInvoiceService extends Service {
       return response.data;
     } catch (error) {
       throw new Error("Failed to fetch cash invoice");
+    }
+  }
+
+  async fetchQuickSearchCashInvoices(
+    search: string,
+  ): Promise<QuickSearchInvoice[]> {
+    try {
+      const response = await this.api.get<QuickSearchInvoice[]>(
+        `${CASH_INVOICE_URL}/quickSearch/${search ? search : null}`,
+      );
+
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch cash invoices");
     }
   }
 }

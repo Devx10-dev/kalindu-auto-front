@@ -129,17 +129,8 @@ export default function VehicleForm({
       __isNew__: false,
     })) || [];
 
-  console.log("FORM VALUES -> ", form.getValues());
-  console.log("TYPE ERRORS -> ", form.getFieldState("type").error);
-  console.log("BRAND ERRORS -> ", form.getFieldState("brand").error);
-  console.log("CHASSIS NO ERRORS -> ", form.getFieldState("chassisNo").error);
-
   const createVehicleMutation = useMutation({
     mutationFn: (formData: VehicleModel) => {
-      console.log("*******************************");
-      console.log(formData);
-      console.log("*******************************");
-
       return service.createVehicleModel(formData);
     },
     onSuccess: () => {

@@ -31,6 +31,10 @@ import {
 } from "../../ui/table";
 import { toast } from "../../ui/use-toast";
 import SkeletonGrid from "@/components/loader/SkeletonGrid";
+import { Skeleton } from "@/components/ui/skeleton";
+import TablePagination from "@/components/TablePagination";
+import { TableBodySkeleton } from "@/pages/dashboard/creditors/components/TableSkelton";
+import useDebounce from "@/hooks/useDebounce";
 
 export default function SparePartGrid({
   setShow,
@@ -40,12 +44,14 @@ export default function SparePartGrid({
 }: SparePartGridProps) {
   const { state } = useLocation();
   const [pageNo, setPageNo] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
     null,
   );
 
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
 
   const { data: vehicleChassisNos } = useQuery<ChassisNo[]>({
     queryKey: ["vehicleChassisNos"],
@@ -58,12 +64,13 @@ export default function SparePartGrid({
     error,
     refetch,
   } = useQuery<SparePartsResponseData>({
-    queryKey: ["spareParts"],
+    queryKey: ["spareParts", pageNo, pageSize, debouncedSearch],
     queryFn: () =>
       sparePartService.fetchFilteredSpaerParts(
         pageNo,
         pageSize,
         selectedChassisNo,
+        debouncedSearch,
       ),
     retry: 2,
   });
@@ -91,47 +98,57 @@ export default function SparePartGrid({
     });
   }
 
-  function globalSearch() {
-    if (spareParts) {
-      if (searchQuery.length === 0) {
-        setViewSpareParts(spareParts.spareParts);
-        return;
-      }
+  // function globalSearch() {
+  //   if (spareParts) {
+  //     if (searchQuery.length === 0) {
+  //       setViewSpareParts(spareParts.spareParts);
+  //       return;
+  //     }
 
-      const results: SparePartItem[] = [];
-      for (const row of spareParts.spareParts) {
-        for (const key in row) {
-          if (
-            Object.prototype.hasOwnProperty.call(
-              row,
-              key as keyof SparePartItem,
-            )
-          ) {
-            const value = row[key as keyof SparePartItem];
-            if (
-              value
-                ?.toString()
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())
-            ) {
-              results.push(row);
-              break;
-            }
-          }
-        }
-      }
-      setViewSpareParts(results);
-    }
-  }
+  //     const results: SparePartItem[] = [];
+  //     for (const row of spareParts.spareParts) {
+  //       for (const key in row) {
+  //         if (
+  //           Object.prototype.hasOwnProperty.call(
+  //             row,
+  //             key as keyof SparePartItem,
+  //           )
+  //         ) {
+  //           const value = row[key as keyof SparePartItem];
+  //           if (
+  //             value
+  //               ?.toString()
+  //               .toLowerCase()
+  //               .includes(searchQuery.toLowerCase())
+  //           ) {
+  //             results.push(row);
+  //             break;
+  //           }
+  //         }
+  //       }
+  //     }
+  //     setViewSpareParts(results);
+  //   }
+  // }
 
-  useEffect(() => {
-    globalSearch();
-  }, [searchQuery]);
+  // useEffect(() => {
+  //   globalSearch();
+  // }, [searchQuery]);
 
   const handleEditClick = (sparePart: SparePartItem) => {
     setSparePart(sparePart);
     setShow(true);
   };
+
+  useEffect(() => {
+    console.log("Page No: ", pageNo);
+  }, [pageNo]);
+
+  useEffect(() => {
+    if (spareParts) {
+      setTotalPages(spareParts.totalPages);
+    }
+  }, [spareParts]);
 
   return (
     <Fragment>
@@ -184,22 +201,22 @@ export default function SparePartGrid({
           </div>
         </div>
 
-        {isLoading ? (
-          <SkeletonGrid noOfColumns={6} noOfItems={10} />
-        ) : (
-          <Table className="border rounded-md text-md mb-5 table-responsive">
-            <TableCaption>Spare Part Details</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Spare Part</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Chassis No</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Remark</TableHead>
-                <TableHead className="text-center">Action</TableHead>
-              </TableRow>
-            </TableHeader>
+        <Table className="border rounded-md text-md mb-5 table-responsive">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Spare Part</TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>Chassis No</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Remark</TableHead>
+              <TableHead className="text-center">Action</TableHead>
+            </TableRow>
+          </TableHeader>
 
+          {isLoading ? (
+            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+            <TableBodySkeleton cols={6} rows={10} noHeader={true} />
+          ) : (
             <TableBody>
               {viewSpareParts &&
                 viewSpareParts.map((sparePart) => (
@@ -225,8 +242,17 @@ export default function SparePartGrid({
                   </TableRow>
                 ))}
             </TableBody>
-          </Table>
-        )}
+          )}
+          <TableCaption>
+            <TablePagination
+              pageNo={pageNo + 1}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setPageNo(page - 1);
+              }}
+            />
+          </TableCaption>
+        </Table>
       </>
     </Fragment>
   );

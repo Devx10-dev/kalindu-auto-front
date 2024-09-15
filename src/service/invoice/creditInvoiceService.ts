@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
 import { useInvoiceListStore } from "@/pages/dashboard/invoice/view-invoices/context/InvoiceListState";
 import {
+  CreditInvoiceStats,
   CreditorInvoiceList,
   InvoiceState,
 } from "@/types/invoice/creditorInvoice";
@@ -52,6 +53,17 @@ class CreditInvoiceService extends Service {
       return response.data;
     } catch (error) {
       throw new Error("Fail to create credit invoice");
+    }
+  }
+
+  async fetchCreditInvoiceStats(): Promise<CreditInvoiceStats> {
+    try {
+      const response = await this.api.get<CreditInvoiceStats>(
+        `${CREDIT_INVOICE_URL}/stats`,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch credit invoice stats");
     }
   }
 }
