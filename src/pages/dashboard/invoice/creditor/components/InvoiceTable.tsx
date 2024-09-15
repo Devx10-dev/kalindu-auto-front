@@ -15,6 +15,7 @@ import {InvoiceItem} from "@/types/invoice/creditorInvoice";
 import {FormModal} from "@/components/modal/FormModal.tsx";
 import EditItem from "@/pages/dashboard/invoice/creditor/components/EditItem.tsx";
 import {X} from "lucide-react";
+import CancelIcon from "@/components/icon/CancelIcon.tsx";
 
 const InvoiceTable: React.FC = () => {
   const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
@@ -35,7 +36,7 @@ const InvoiceTable: React.FC = () => {
             <TableHead>Discount</TableHead>
             <TableHead>Total</TableHead>
             <TableHead>Outsource</TableHead>
-            <TableHead>Action</TableHead>
+            <TableHead className="flex justify-center items-center">Action</TableHead>
           </TableRow>
           {invoiceItemDTOList.length > 0 ? (
             invoiceItemDTOList.map((item: any, index: any) => (
@@ -60,13 +61,14 @@ const InvoiceTable: React.FC = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-center items-center gap-2">
-                      <Button
-                          onClick={() => removeInvoiceItem(item)}
-                          variant={"secondary"}
-                      >
-                        <X className="mr-2"/> Remove
-                      </Button>
+                    <div className="flex justify-center gap-2">
+                      <IconButton
+                          handleOnClick={() => removeInvoiceItem(item)}
+                          icon={<CancelIcon height="25" width="25" />}
+                          tooltipMsg="Remove Item"
+                          variant="ghost"
+                      />
+
                       <IconButton
                           icon={<EditIcon height="20" width="20"/>}
                           tooltipMsg="Edit Spare Part"

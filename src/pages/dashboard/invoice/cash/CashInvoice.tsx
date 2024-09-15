@@ -57,7 +57,7 @@ const CashInvoiceBase: React.FC = () => {
             </Button>
             {/*<p className="text-l">Add new item to the invoice</p>*/}
           </div>
-          <InvoiceTable />
+          <InvoiceTable sparePartService={sparePartyService}/>
 
           {hasOutsourcedItems && (
             <div className="pb-[30px]">
