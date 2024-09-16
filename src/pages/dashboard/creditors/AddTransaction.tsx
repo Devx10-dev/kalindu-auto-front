@@ -32,7 +32,7 @@ export function AddTransaction() {
             icon={<ArrowLeftRight />}
           />
         </CardHeader>
-        <CardContent className="py-4">
+        <CardContent>
           <TransactionForm
             chequeService={chequeService}
             creditorService={creditorService}

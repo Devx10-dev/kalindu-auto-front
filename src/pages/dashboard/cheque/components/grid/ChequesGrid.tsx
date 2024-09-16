@@ -22,11 +22,23 @@ import { ChequeService } from "@/service/cheque/ChequeService";
 import { Cheque, ChequeResponseData } from "@/types/cheque/chequeTypes";
 import { Creditor } from "@/types/creditor/creditorTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BadgeCheck, Filter } from "lucide-react";
+import {
+  BadgeCheck,
+  CheckCheck,
+  Filter,
+  GalleryHorizontalEnd,
+  GalleryVerticalEnd,
+} from "lucide-react";
 import { Fragment, useState } from "react";
 import { SettlementModal } from "../modal/SettlementModal";
 import CreditInvoiceGrid from "./CreditInvoiceGrid";
 import { convertSnakeCaseToNormalCase, truncate } from "@/utils/string";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function ChequesGrid({
   creditors = [],
@@ -44,6 +56,7 @@ function ChequesGrid({
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
   const [selectedChequeId, setSelectedChequeId] = useState(0);
+  const [selectedCheque, setSelectedCheque] = useState<Cheque | null>(null);
 
   const [gridModalShow, setGridModalShow] = useState(false);
   const [gridModalTitle, setGridModalTitle] = useState("");
@@ -123,12 +136,14 @@ function ChequesGrid({
 
   const onClose = () => {
     setSelectedChequeId(0);
+    setSelectedCheque(null);
     setTitle("");
     setShow(false);
   };
 
   const onGridModalClose = () => {
     setSelectedChequeId(0);
+    setSelectedCheque(null);
     setGridModalTitle("");
     setGridModalDescription("");
     setGridModalShow(false);
@@ -145,7 +160,7 @@ function ChequesGrid({
     setGridModalDescription(
       `Credit invoices those settled by ${cheque.chequeNo}`,
     );
-    setSelectedChequeId(cheque.id);
+    setSelectedCheque(cheque);
     setGridModalShow(true);
   };
 
@@ -191,10 +206,10 @@ function ChequesGrid({
               <TableRow>
                 <TableHead>Cheque No</TableHead>
                 <TableHead>Creditor</TableHead>
-                <TableHead align="right">Amount</TableHead>
+                <TableHead style={{ textAlign: "end" }}>Amount</TableHead>
                 <TableHead>Date & Time</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead align="center">Action</TableHead>
+                <TableHead style={{ textAlign: "center" }}>Status</TableHead>
+                <TableHead style={{ textAlign: "center" }}>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -207,7 +222,7 @@ function ChequesGrid({
                     <TableCell>{cheque?.creditorName ?? "-"}</TableCell>
                     <TableCell align="right">{cheque.amount}</TableCell>
                     <TableCell>{`${cheque.dateTime[0]}-${cheque.dateTime[1]}-${cheque.dateTime[2]} ${cheque.dateTime[3]}:${cheque.dateTime[4]}:${cheque.dateTime[5]}`}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       {
                         <p
                           className="pl-2 pr-2"
@@ -231,15 +246,38 @@ function ChequesGrid({
                     </TableCell>
                     <TableCell align="center">
                       {
-                        <Button
-                          className="mr-5"
-                          variant="outline"
-                          onClick={() => handleActionBtnClick(cheque)}
-                          disabled={cheque.status !== "PENDING"}
-                        >
-                          <BadgeCheck className="mr-2 h-4 w-4" />
-                          Settle Cheque
-                        </Button>
+                        <>
+                          <Button
+                            className="mr-2"
+                            variant="outline"
+                            onClick={() => handleActionBtnClick(cheque)}
+                            disabled={cheque.status !== "PENDING"}
+                          >
+                            <CheckCheck className="mr-2 h-4 w-4" />
+                            Settle
+                          </Button>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  className=""
+                                  variant="outline"
+                                  onClick={() => handleViewBtnClick(cheque)}
+                                  disabled={
+                                    cheque.status === "PENDING" ||
+                                    cheque.status === "REJECTED"
+                                  }
+                                >
+                                  <GalleryHorizontalEnd className="mr-2 h-4 w-4" />
+                                  View
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{"View settled invoices"}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </>
                       }
                     </TableCell>
                   </TableRow>
@@ -261,8 +299,7 @@ function ChequesGrid({
           titleDescription={gridModalDescription}
           component={
             <CreditInvoiceGrid
-              chequeId={selectedChequeId}
-              chequeService={chequeService}
+              cheque={selectedCheque}
               onClose={onGridModalClose}
             />
           }
