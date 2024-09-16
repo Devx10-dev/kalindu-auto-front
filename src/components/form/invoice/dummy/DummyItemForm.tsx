@@ -296,6 +296,7 @@ export default function DummyItemForm({
                       onKeyDown={(e) => handleKeyDown(e, 0)}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -315,6 +316,7 @@ export default function DummyItemForm({
                       onKeyDown={(e) => handleKeyDown(e, 1)}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -334,6 +336,7 @@ export default function DummyItemForm({
                       onKeyDown={(e) => handleKeyDown(e, 2)}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -353,6 +356,7 @@ export default function DummyItemForm({
                       onKeyDown={(e) => handleKeyDown(e, 3)}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -372,6 +376,7 @@ export default function DummyItemForm({
                       onKeyDown={(e) => handleKeyDown(e, 4)}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -391,6 +396,7 @@ export default function DummyItemForm({
                       onKeyDown={(e) => handleKeyDown(e, 5)}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
