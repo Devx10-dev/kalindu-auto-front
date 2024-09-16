@@ -12,24 +12,29 @@ const PrintPage = () => {
   const financialRecords = location.state?.financialRecords || {};
   const navigate = useNavigate();
 
-  // useReactToPrint hook for printing with a custom document title
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: `Summary of ${formatDateToHumanReadable(new Date())}`,
   });
 
   const handleCancel = () => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1);
   };
 
-  console.log(financialRecords);
-
   return (
-    <div className="border border-gray-300 rounded-md p-6 m-8">
-      <div className="w-full border-b mb-4 pb-2">
-        <h1 className="font-bold text-2xl">Daily Sales Summary</h1>
+    <div
+      ref={componentRef}
+      className="border border-gray-300 rounded-md p-6 m-8"
+    >
+      <div className="w-full h-24 flex items-center justify-center flex-col">
+        <span className={"font-bold text-2xl"}>
+          KALINDU AUTO DAILY SALES SUMMARY
+        </span>
         <p>{formatDateToHumanReadable(new Date())}</p>
+        <span>Colombo-Kandy Highway, 252/4 Kandy Rd, Yakkala</span>
+        <span>0332 234 900</span>
       </div>
+      <div className="w-full border-b mb-4 pb-2"></div>
 
       <div className="mb-4 border p-4 rounded-md">
         <h2 className="font-bold mb-2">Daily Sales</h2>
@@ -40,10 +45,8 @@ const PrintPage = () => {
           <span>Rs. {summary.creditBalance || "0"}</span>
           <span>Daily Deposit sales</span>
           <span>Rs. {summary.depositSales || "0"}</span>
-          <span>Cheque sales</span>
+          <span>Unsettled Cheque sales</span>
           <span>Rs. {summary.unsettledChequeAmount || "0"}</span>
-          <span>Card pay</span>
-          <span>Rs. {summary.cardPay || "0"}</span>
         </div>
         <div className="border-t mt-2 pt-2">
           <span className="font-bold">Daily Total Sales</span>
@@ -53,8 +56,7 @@ const PrintPage = () => {
               Number(summary.saleAmount || 0) +
               Number(summary.creditBalance || 0) +
               Number(summary.depositSales || 0) +
-              Number(summary.unsettledChequeAmount || 0) +
-              Number(summary.cardPay || 0)
+              Number(summary.unsettledChequeAmount || 0)
             ).toFixed(2)}
           </span>
         </div>
@@ -73,25 +75,66 @@ const PrintPage = () => {
             ))}
         </div>
 
-        {/* Total expenses */}
         <div className="border-t mt-2 pt-2">
           <span className="font-bold">Total Expenses</span>
           <span className="float-right">
-            Rs. {summary.totalExpenses || "XXX"}
+            Rs.{" "}
+            {financialRecords
+              .filter((financialRecord) => financialRecord.type === "EXPENSE")
+              .reduce(
+                (total, expenseRecord) =>
+                  total + Number(expenseRecord.amount || 0),
+                0,
+              )
+              .toFixed(2)}
           </span>
         </div>
       </div>
 
       <div className="border p-4 rounded-md">
         <div className="grid grid-cols-2 gap-2">
-          <span className="font-bold">Sales - Exp</span>
-          <span>Rs. {summary.salesMinusExpenses || "XXX"}</span>
-          <span className="font-bold">Cashin Till a/c Exp</span>
-          <span>Rs. {summary.cashInTillAccountExp || "XXX"}</span>
+          <span className="font-bold">Total Sales - Exp</span>
+          <span className="text-right">
+            Rs.
+            {(
+              Number(summary.saleAmount || 0) +
+              Number(summary.creditBalance || 0) +
+              Number(summary.depositSales || 0) +
+              Number(summary.unsettledChequeAmount || 0) -
+              financialRecords
+                .filter((financialRecord) => financialRecord.type === "EXPENSE")
+                .reduce(
+                  (total, expenseRecord) =>
+                    total + Number(expenseRecord.amount || 0),
+                  0,
+                )
+            ).toFixed(2)}
+          </span>
+          <span className="font-bold">Cashier Total - Exp</span>
+          <span className="text-right">
+            Rs.
+            {(
+              Number(summary.saleAmount || 0) -
+              financialRecords
+                .filter((financialRecord) => financialRecord.type === "EXPENSE")
+                .reduce(
+                  (total, expenseRecord) =>
+                    total + Number(expenseRecord.amount || 0),
+                  0,
+                )
+            ).toFixed(2)}
+          </span>
         </div>
       </div>
 
       <div className="flex justify-end p-4 print:hidden">
+        <Button
+          onClick={handleCancel}
+          className="px-4 py-2 rounded mr-5"
+          variant="outline"
+        >
+          Cancel
+        </Button>
         <Button onClick={handlePrint} className="px-4 py-2 text-white rounded">
           Print Daily Summary
         </Button>
