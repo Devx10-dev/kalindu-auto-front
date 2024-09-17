@@ -189,8 +189,8 @@ function DummyInvoice() {
           <div style={{ flex: 9 }}>
             <div
               style={{
-                padding: 0
-                }}
+                padding: 0,
+              }}
             >
               <CustomerDetailsForm
                 customerName={customerName}

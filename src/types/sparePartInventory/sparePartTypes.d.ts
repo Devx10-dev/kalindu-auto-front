@@ -23,5 +23,3 @@ export type SparePartsResponseData = {
   totalPages: number;
   spareParts: SparePartItem[];
 };
-
-
