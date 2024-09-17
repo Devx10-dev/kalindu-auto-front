@@ -100,7 +100,7 @@ const CreditorInvoiceBase: React.FC = () => {
               Item
             </Button>
           </div>
-          <InvoiceTable />
+          <InvoiceTable sparePartService={sparePartService} />
           {hasOutsourcedItems && <OutsourcedItemDetails />}
           <Commissions />
         </div>
