@@ -1,7 +1,7 @@
 import React from "react";
 import { z } from "zod";
 import { InvoiceItem } from "@/types/invoice/cashInvoice";
-import useCashInvoiceStore from "@/pages/dashboard/invoice/cash/context/useCashInvoiceStore.tsx";
+import useCreditorInvoiceStore from "@/pages/dashboard/invoice/creditor/context/useCreditorInvoiceStore.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent } from "@/components/ui/card.tsx";
@@ -32,7 +32,7 @@ interface EditItemProps {
 }
 
 const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
-  const { updateInvoiceItem } = useCashInvoiceStore();
+  const { updateInvoiceItem } = useCreditorInvoiceStore();
 
   const form = useForm({
     resolver: zodResolver(formSchema),

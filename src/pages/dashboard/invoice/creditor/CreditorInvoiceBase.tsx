@@ -18,6 +18,7 @@ import PlusIcon from "@/components/icon/PlusIcon.tsx";
 import { CardContent, CardHeader } from "@/components/ui/card.tsx";
 import Commissions from "@/pages/dashboard/invoice/creditor/components/Commisions.tsx";
 import CreditorAPI from "../../creditors/api/CreditorAPI";
+import { RequiredLabel } from "@/components/formElements/FormLabel.tsx";
 
 const CreditorInvoiceBase: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -30,6 +31,7 @@ const CreditorInvoiceBase: React.FC = () => {
     getOutsourcedItems,
     invoiceItemDTOList,
   } = useCreditorInvoiceStore();
+
   const noCreditorSelected = !creditorID;
   const hasOutsourcedItems = getOutsourcedItems().length > 0;
   const [show, setShow] = useState(false);
@@ -37,6 +39,7 @@ const CreditorInvoiceBase: React.FC = () => {
   const { data } = useQuery({
     queryKey: ["allCreditors"],
     queryFn: () => creditorService.fetchAllCreditors(),
+    retry: 1,
   });
 
   const creditorData =
@@ -67,26 +70,27 @@ const CreditorInvoiceBase: React.FC = () => {
           }}
         >
           {/* Add creditor data section */}
-          <section className="flex flex-col mb-5 gap-2 items-left mt-2 border p-3 rounded-md shadow-sm">
-            <Label className="">Select Creditor</Label>
+          <section className="flex flex-col ">
+            <RequiredLabel label="Creditor" />
             <Select
               options={creditorData}
               onChange={(selectedOption) => {
                 setCreditor(selectedOption?.label, selectedOption?.value);
               }}
-              value={{
-                value: creditorID,
-                label: creditorName,
-              }}
+              value={
+                creditorID
+                  ? {
+                      value: creditorID,
+                      label: creditorName,
+                    }
+                  : null
+              }
               className="w-1/2"
               placeholder="Select Creditor"
             />
-            {noCreditorSelected && (
-              <span className="text-md text-red-600">No Creditor Selected</span>
-            )}
           </section>
           {/*<AddItem/>*/}
-          <div className="d-flex justify-start m-2 mt-4  gap-10">
+          <div className="d-flex justify-start  mt-4  gap-10">
             <Button
               className="gap-1"
               style={{ maxHeight: "35px" }}
@@ -95,9 +99,8 @@ const CreditorInvoiceBase: React.FC = () => {
               <PlusIcon height="24" width="24" color="#fff" />
               Item
             </Button>
-            <p className="text-l">Add new item to the invoice</p>
           </div>
-          <InvoiceTable />
+          <InvoiceTable sparePartService={sparePartService} />
           {hasOutsourcedItems && <OutsourcedItemDetails />}
           <Commissions />
         </div>
