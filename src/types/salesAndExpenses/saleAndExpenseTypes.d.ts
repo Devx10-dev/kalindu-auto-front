@@ -16,7 +16,8 @@ export type FinancialRecordType =
   | "SALE"
   | "EXPENSE"
   | "CREDIT_BALANCE"
-  | "UNSETTLED_CHEQUE_BALANCE";
+  | "UNSETTLED_CHEQUE_BALANCE"
+  | "DEPOSIT";
 
 export interface FinancialRecord {
   id?: number;
@@ -34,6 +35,7 @@ export interface DailySummery {
   expenseAmount: number;
   creditBalance: number;
   unsettledChequeAmount: number;
+  depositAmount?: number;
   date: string;
   verified: boolean;
   financialRecords: FinancialRecord[];
