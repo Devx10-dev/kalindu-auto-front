@@ -136,3 +136,9 @@ body > div {
 .color-40 {
   color: #505050;
 }
+
+@media print {
+  .no-print {
+    display: none;
+  }
+}
