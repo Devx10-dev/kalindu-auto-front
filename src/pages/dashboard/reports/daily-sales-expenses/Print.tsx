@@ -56,7 +56,7 @@ const PrintPage = () => {
               Number(summary.saleAmount || 0) +
               Number(summary.creditBalance || 0) +
               Number(summary.depositAmount || 0) +
-              Number(summary.unsettledChequeAmount || 0)+
+              Number(summary.unsettledChequeAmount || 0)
             ).toFixed(2)}
           </span>
         </div>
