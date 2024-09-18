@@ -29,7 +29,7 @@ import { z } from "zod";
 import CreditorAPI from "../api/CreditorAPI";
 import { creditorFormSchema } from "./formScheme";
 import { RequiredLabel } from "@/components/formElements/FormLabel";
-
+import {useRef} from "react";
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export function RegisterForm(props: {
@@ -62,6 +62,17 @@ export function RegisterForm(props: {
     defaultValues,
   });
 
+  const inputRefs = useRef<any[]>([]);
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
   //     ----------     BACKEND API FUNCTIONS     ----------     //
 
   //create creditor mutation
@@ -174,6 +185,8 @@ export function RegisterForm(props: {
                 <FormControl>
                   <Input
                     {...field}
+                    ref={(el) => (inputRefs.current[1] = el)}
+                    onKeyDown={(e) => handleKeyDown(e, 1)}
                     className="w-full"
                     placeholder="Please enter the shop name"
                   />
@@ -188,9 +201,10 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Contact Person Name" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                   <Input
                     className="w-full"
+                    onKeyDown={(e) => handleKeyDown(e, 2)}
                     {...field}
                     placeholder="Please enter the contact person name"
                   />
@@ -206,8 +220,9 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Email Address" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[3] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 3)}
                     className="w-full"
                     type="email"
                     {...field}
@@ -226,10 +241,11 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Address" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[4] = el)}>
                   <Input
                     className="w-full"
                     type="text"
+                    onKeyDown={(e) => handleKeyDown(e, 4)}
                     {...field}
                     placeholder="Please enter the address"
                   />
@@ -246,10 +262,11 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Primary Contact No" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[5] = el)}>
                   <Input
                     className="w-full"
                     type="text"
+                    onKeyDown={(e) => handleKeyDown(e, 5)}
                     {...field}
                     placeholder="Please enter primary contact no"
                   />
@@ -265,10 +282,11 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Secondary Contact No" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[6] = el)}>
                   <Input
                     className="w-full"
                     type="text"
+                    onKeyDown={(e) => handleKeyDown(e, 6)}
                     {...field}
                     placeholder="Please enter the secondary contact no"
                   />
@@ -284,12 +302,13 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Credit Limit" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[7] = el)}>
                   <Input
                     className="w-full"
                     type="number"
                     {...field}
                     placeholder="please enter the credit limit"
+                    onKeyDown={(e) => handleKeyDown(e, 7)}
                     minLength={4}
                     onChange={(event) => {
                       form.setValue(
@@ -313,7 +332,7 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Credit due period" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[8] = el)}>
                   <Controller
                     name="maxDuePeriod"
                     control={form.control}

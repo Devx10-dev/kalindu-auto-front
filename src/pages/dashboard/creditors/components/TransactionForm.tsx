@@ -35,9 +35,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { getRandomColor } from "@/utils/colors";
-import { useEffect, useState } from "react";
+import { getInitials, truncate } from "@/utils/string";
+import { useEffect, useState, useRef} from "react";
+import { Separator } from "@/components/ui/separator";
+import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
+import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "lucide-react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Cheque } from "@/types/cheque/chequeTypes";
@@ -60,6 +65,19 @@ function TransactionForm({
   const [selectedCreditor, setSelectedCreditor] = useState<Creditor | null>(
     null,
   );
+
+  const inputRefs = useRef<any[]>([]);
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
+
 
   const [selectedType, setSelectedType] = useState<TransactionTypes>("CASH");
   const [selectedCreditInvoices, setSelectedCreditInvoices] = useState<
@@ -273,12 +291,13 @@ function TransactionForm({
                 render={({ field, fieldState }) => (
                   <FormItem>
                     <RequiredLabel label="Creditor" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                       <Select
                         key={creditorSelectKey}
                         className="select-place-holder"
                         placeholder={"Please select creditor"}
                         options={creditorOptions}
+                        onKeyDown={(e) => handleKeyDown(e, 1)}
                         onChange={(selectedOption) => {
                           field.onChange(selectedOption);
                           const selectedCreditor = creditors.find(
@@ -308,10 +327,11 @@ function TransactionForm({
                 render={({ field, fieldState }) => (
                   <FormItem>
                     <RequiredLabel label="Credit Invoices" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                       <MultiSelect
                         key={creditInvoiceSelectKey}
                         options={creditInvoiceOptions}
+                        onKeyDown={(e) => handleKeyDown(e, 2)} 
                         onValueChange={(selectedOptions) => {
                           field.onChange(selectedOptions);
                           const selectedCreditInvoices = creditInvoices.filter(
@@ -360,7 +380,7 @@ function TransactionForm({
                       }}
                       value={field.value}
                     >
-                      <FormControl>
+                      <FormControl onKeyDown={(e) => handleKeyDown(e, 3)} ref={(el) => (inputRefs.current[3] = el)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Please select the transaction type" />
                         </SelectTrigger>
@@ -428,7 +448,7 @@ function TransactionForm({
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Amount" />
-                    <FormControl>
+                    <FormControl onKeyDown={(e) => handleKeyDown(e, 3)} ref={(el) => (inputRefs.current[3] = el)}>
                       <Input
                         type="number"
                         {...field}
@@ -452,7 +472,7 @@ function TransactionForm({
                 render={({ field }) => (
                   <FormItem>
                     <OptionalLabel label="Remark" />
-                    <FormControl>
+                    <FormControl onKeyDown={(e) => handleKeyDown(e, 4)} ref={(el) => (inputRefs.current[4] = el)}>
                       <Textarea
                         placeholder="Add remark"
                         {...field}
@@ -467,6 +487,7 @@ function TransactionForm({
 
             <div className="flex justify-start gap-2 py-4">
               <Button
+                ref={(el) => (inputRefs.current[5] = el)}
                 onClick={form.handleSubmit(handleSubmit)}
                 className="px-6"
               >
