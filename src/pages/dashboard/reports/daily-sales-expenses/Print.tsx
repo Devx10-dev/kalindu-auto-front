@@ -44,7 +44,7 @@ const PrintPage = () => {
           <span>Credit sales</span>
           <span>Rs. {summary.creditBalance || "0"}</span>
           <span>Daily Deposit sales</span>
-          <span>Rs. {summary.depositSales || "0"}</span>
+          <span>Rs. {summary.depositAmount || "0"}</span>
           <span>Unsettled Cheque sales</span>
           <span>Rs. {summary.unsettledChequeAmount || "0"}</span>
         </div>
@@ -55,8 +55,8 @@ const PrintPage = () => {
             {(
               Number(summary.saleAmount || 0) +
               Number(summary.creditBalance || 0) +
-              Number(summary.depositSales || 0) +
-              Number(summary.unsettledChequeAmount || 0)
+              Number(summary.depositAmount || 0) +
+              Number(summary.unsettledChequeAmount || 0)+
             ).toFixed(2)}
           </span>
         </div>

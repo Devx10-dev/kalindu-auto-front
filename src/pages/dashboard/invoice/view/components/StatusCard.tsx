@@ -1,18 +1,4 @@
-import IconButton from "@/components/button/IconButton";
-import CancelIcon from "@/components/icon/CancelIcon";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@/components/ui/table";
-import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
-import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 
 function StatusCard({
   icon,
@@ -20,16 +6,18 @@ function StatusCard({
   statusColor,
   statusText,
   type,
+  className,
 }: {
   icon: React.ReactNode;
   status: string;
   statusColor: string;
   statusText: string;
   type: string;
+  className?: string;
 }) {
   return (
     <>
-      <Card className="p-4 shadow-sm bg-green-50">
+      <Card className={`p-4 shadow-sm bg-green-50 ${className}`}>
         <div className="flex items-center">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green">
             {icon}

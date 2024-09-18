@@ -2,6 +2,8 @@ import PageHeader from "@/components/card/PageHeader";
 import ListCheckIcon from "@/components/icon/ListCheckIcon";
 import PlusIcon from "@/components/icon/PlusIcon";
 import VerifyIcon from "@/components/icon/VerifyIcon";
+import SkeletonGrid from "@/components/loader/SkeletonGrid";
+import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
 import { FormModal } from "@/components/modal/FormModal";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -12,32 +14,27 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { toast } from "@/components/ui/use-toast";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { cn } from "@/lib/utils";
 import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
+import { FinancialRecord } from "@/types/salesAndExpenses/saleAndExpenseTypes";
+import { formatDateToHumanReadable } from "@/utils/dateToString";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   Activity,
+  BanknoteIcon,
   CalendarIcon,
   CreditCard,
   DollarSign,
   Users,
 } from "lucide-react";
 import { useState } from "react";
-import { Fragment } from "react/jsx-runtime";
 import CategoryForm from "./component/form/CategoryForm";
 import FieldForm from "./component/form/FieldForm";
 import SaleOrExpenseForm from "./component/form/SaleOrExpenseForm";
-import SalesAndExpensesGrid from "./component/grid/FinancialRecordGrid";
-import { toast } from "@/components/ui/use-toast";
-import Loading from "@/components/Loading";
-import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
-import SkeletonGrid from "@/components/loader/SkeletonGrid";
-import { Skeleton } from "@/components/ui/skeleton";
-import { FinancialRecord } from "@/types/salesAndExpenses/saleAndExpenseTypes";
 import FinancialRecordGrid from "./component/grid/FinancialRecordGrid";
-import { formatDateToHumanReadable } from "@/utils/dateToString";
 import { useNavigate } from "react-router-dom";
 
 const DailySalesBase = () => {
@@ -240,8 +237,7 @@ const DailySalesBase = () => {
             </Button>
           </div>
         </CardHeader>
-
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-5">
           <Card x-chunk="dashboard-01-chunk-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Sales</CardTitle>
@@ -305,6 +301,22 @@ const DailySalesBase = () => {
               </div>
               <p className="text-xs text-muted-foreground">
                 {`Cheque count : ${summery !== undefined ? summery.financialRecords.filter((record) => record.type === "UNSETTLED_CHEQUE_BALANCE").length : 0}`}
+              </p>
+            </CardContent>
+          </Card>
+          <Card x-chunk="dashboard-01-chunk-3">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Deposit</CardTitle>
+              <BanknoteIcon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {summery !== undefined
+                  ? `Rs. ${summery.depositAmount}`
+                  : "Rs. 0"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {`Cheque count : ${summery !== undefined ? summery.financialRecords.filter((record) => record.type === "DEPOSIT").length : 0}`}
               </p>
             </CardContent>
           </Card>
