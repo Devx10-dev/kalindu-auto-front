@@ -36,6 +36,14 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
       ),
     })),
 
+  updateInvoiceItem: (updateItem: InvoiceItem) =>
+    set((state) => ({
+      ...state,
+      invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
+        item.name === updateItem.name ? updateItem : item,
+      ),
+    })),
+
   setCreditor: (creditorName?: string, creditorID?: number) =>
     set((state) => ({
       ...state,

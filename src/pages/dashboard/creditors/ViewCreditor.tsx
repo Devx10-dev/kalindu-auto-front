@@ -111,7 +111,7 @@ const ViewCreditor = () => {
               </CardContent>
             </div>
             <CardHeader>
-              <h3 className="text-lg font-bold mt-5">Overdue Invoices</h3>
+              <h3 className="text-lg font-bold mt-5">Invoices</h3>
             </CardHeader>
             <div className="flex-1 overflow-auto">
               <CardContent className="overflow-auto mt-100">

@@ -9,6 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  CreditorInvoiceList,
+  InvoiceState,
+} from "@/types/invoice/creditorInvoice";
 import dateArrayToString from "@/utils/dateArrayToString";
 import { useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
@@ -20,17 +24,14 @@ const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
     nav(`/dashboard/invoice/view/creditor/${invoiceId}`);
   };
 
-  const calculateDueDate = (issuedTime, maxDueWeeks) => {
-    const issuedDate = new Date(
-      issuedTime[0],
-      issuedTime[1] - 1,
-      issuedTime[2],
-    );
+  const calculateDueDate = (issuedTime: number[], maxDueWeeks: number) => {
+    const issuedDate = new Date(issuedTime[0], issuedTime[1], issuedTime[2]);
     const dueDate = new Date(issuedDate);
     dueDate.setDate(dueDate.getDate() + maxDueWeeks * 7);
+    // turninto array
     const dateArray = [
       dueDate.getFullYear(),
-      dueDate.getMonth() + 1,
+      dueDate.getMonth(),
       dueDate.getDate(),
       issuedTime[3],
       issuedTime[4],
@@ -39,7 +40,15 @@ const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
     return dateArray;
   };
 
-  const getDueStatus = (issuedTime, maxDueWeeks) => {
+  const getDueStatus = (
+    issuedTime: number[],
+    maxDueWeeks: number,
+    isSettled: boolean,
+  ) => {
+    if (isSettled) {
+      return "SETTLED";
+    }
+
     const issuedDate = new Date(
       issuedTime[0],
       issuedTime[1] - 1,
@@ -49,29 +58,47 @@ const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
       issuedTime[5],
     );
     const currentDate = new Date();
-    const diff = currentDate.getTime() - issuedDate.getTime();
-    return diff > maxDueWeeks * 7 * 24 * 60 * 60 * 1000 ? "OVERDUE" : "DUE";
+    let diff = currentDate.getTime() - issuedDate.getTime();
+    // convert diff to weeks
+    diff = diff / (1000 * 60 * 60 * 24 * 7);
+    if (diff < maxDueWeeks) {
+      return "DUE";
+    } else {
+      return "OVERDUE";
+    }
   };
+  const generateStatusBadge = (invoice: InvoiceState) => {
+    console.log("HEREEEE", invoice);
+    const status = getDueStatus(
+      invoice.issuedTime,
+      Number(invoice.creditor.maxDuePeriod) as number,
+      invoice.settled,
+    );
+    let className = "";
+    let statusText = "";
 
-  const generateStatusBadge = (issuedTime, maxDueWeeks) => {
-    const status = getDueStatus(issuedTime, maxDueWeeks);
+    switch (status) {
+      case "SETTLED":
+        className = "text-white bg-green-400 rounded-sm p-1 hover:bg-green-500";
+        statusText = "COMPLETED";
+        break;
+      case "DUE":
+        className =
+          "text-white bg-yellow-400 rounded-sm p-1 hover:bg-yellow-500";
+        statusText = "DUE";
+        break;
+      case "OVERDUE":
+        className = "text-white bg-red-400 rounded-sm p-1 hover:bg-red-500";
+        statusText = "OVERDUE";
+        break;
+    }
+
     return (
-      <Badge
-        variant="secondary"
-        className={`text-white ${
-          status === "DUE" ? "bg-yellow-400" : "bg-red-400"
-        } rounded-sm p-1`}
-      >
-        {status}
+      <Badge variant="secondary" className={className}>
+        {statusText}
       </Badge>
     );
   };
-
-  const overdueInvoices = invoices?.filter(
-    (invoice) =>
-      getDueStatus(invoice.issuedTime, invoice.creditor.maxDuePeriod) ===
-      "OVERDUE",
-  );
 
   return (
     <Fragment>
@@ -91,7 +118,7 @@ const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
         </TableHeader>
         {isLoading ? (
           <TableBodySkeleton cols={8} rows={10} noHeader={true} />
-        ) : !overdueInvoices || overdueInvoices.length === 0 ? (
+        ) : !invoices || invoices.length === 0 ? (
           <TableBody>
             <TableRow>
               <TableCell colSpan={8}>
@@ -105,7 +132,7 @@ const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
           </TableBody>
         ) : (
           <TableBody>
-            {overdueInvoices.map((invoice) => (
+            {invoices.map((invoice) => (
               <TableRow key={invoice.invoiceId}>
                 <TableCell>{invoice.invoiceId}</TableCell>
                 <TableCell className="w-40 truncate">
@@ -124,12 +151,7 @@ const CreditorInvoiceTable = ({ invoices, isLoading, err }) => {
                   )}
                 </TableCell>
                 <TableCell>Rs. {invoice.totalPrice}</TableCell>
-                <TableCell>
-                  {generateStatusBadge(
-                    invoice.issuedTime,
-                    invoice.creditor.maxDuePeriod,
-                  )}
-                </TableCell>
+                <TableCell>{generateStatusBadge(invoice)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-center">
                     <Button

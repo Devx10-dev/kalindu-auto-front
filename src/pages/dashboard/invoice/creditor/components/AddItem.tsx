@@ -48,7 +48,7 @@ const AddItem: React.FC<{
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      price: 1,
+      price: "",
       quantity: 1,
       code: "",
       description: "",
@@ -119,143 +119,136 @@ const AddItem: React.FC<{
   };
 
   return (
-    <Card className="p-4">
-      <CardContent className="p-3 shadow-sm">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            <div className="grid grid-cols-2 gap-5">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <RequiredLabel label="Item name" />
-                    <CreatableSelect
-                      options={sparePartsOptions}
-                      onInputChange={handleInputChange}
-                      ref={nameRef}
-                      onKeyDown={(e) => handleKeyDown(e, priceRef)}
-                      isClearable
-                      onChange={handleSelectChange}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <RequiredLabel label="Price" />
-                    <FormControl ref={priceRef}>
-                      <Input
-                        type="number"
-                        placeholder="Price"
-                        min={0}
-                        step="0.01"
-                        {...field}
-                        onKeyDown={(e) => handleKeyDown(e, quantityRef)}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="quantity"
-                render={({ field }) => (
-                  <FormItem>
-                    <RequiredLabel label="Quantity" />
-                    <FormControl ref={quantityRef}>
-                      <Input
-                        type="number"
-                        placeholder="Quantity"
-                        min={0}
-                        step="1"
-                        {...field}
-                        onKeyDown={(e) => handleKeyDown(e, codeRef)}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Code</FormLabel>
-                    <FormControl ref={codeRef}>
-                      <Input
-                        type="text"
-                        placeholder="Code"
-                        {...field}
-                        onKeyDown={(e) => handleKeyDown(e, descriptionRef)}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl ref={descriptionRef}>
-                      <Textarea
-                        placeholder="Description"
-                        {...field}
-                        onKeyDown={(e) => handleKeyDown(e, discountRef)}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="discount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Discount</FormLabel>
-                    <FormControl ref={discountRef}>
-                      <Input
-                        type="number"
-                        placeholder="Discount"
-                        min={0}
-                        step="0.01"
-                        {...field}
-                        onKeyDown={(e) => handleKeyDown(e, submitBtnRef)}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex justify-end gap-4 mt-12">
-              <Button onClick={handleCancel} variant={"outline"}>
-                Cancel
-              </Button>
-              <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
-              <Button type="submit" className="" ref={submitBtnRef}>
-                <PlusCircle className="mr-2" /> Add Item
-              </Button>
-              <Button type="reset" onClick={onReset} className="bg-slate-500">
-                <XCircle className="mr-2" /> Clear
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+        <div className="grid grid-cols-2 gap-5">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <RequiredLabel label="Item name" />
+                <CreatableSelect
+                  options={sparePartsOptions}
+                  onInputChange={handleInputChange}
+                  ref={nameRef}
+                  onKeyDown={(e) => handleKeyDown(e, priceRef)}
+                  isClearable
+                  onChange={handleSelectChange}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <RequiredLabel label="Price" />
+                <FormControl ref={priceRef}>
+                  <Input
+                    type="number"
+                    placeholder="Enter current Price of an item"
+                    min={0}
+                    step="0.01"
+                    {...field}
+                    onKeyDown={(e) => handleKeyDown(e, quantityRef)}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="quantity"
+            render={({ field }) => (
+              <FormItem>
+                <RequiredLabel label="Quantity" />
+                <FormControl ref={quantityRef}>
+                  <Input
+                    type="number"
+                    placeholder="Enter the Quantity"
+                    {...field}
+                    onKeyDown={(e) => handleKeyDown(e, codeRef)}
+                    min={0}
+                    step="1"
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Code</FormLabel>
+                <FormControl ref={codeRef}>
+                  <Input type="text" placeholder="Code" {...field}
+                    onKeyDown={(e) => handleKeyDown(e, descriptionRef)} 
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl ref={descriptionRef}>
+                  <Textarea
+                    placeholder="Enter description for the item"
+                    {...field}
+                    onKeyDown={(e) => handleKeyDown(e, discountRef)}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="discount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Discount</FormLabel>
+                <FormControl  ref={discountRef}>
+                  <Input
+                    type="number"
+                    placeholder="Enter discount for an item"
+                    min={0}
+                    step="0.01"
+                    {...field}
+                    onKeyDown={(e) => handleKeyDown(e, submitBtnRef)}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex justify-end gap-4 mt-12">
+          <Button onClick={handleCancel} variant={"outline"}>
+            Cancel
+          </Button>
+          <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
+          <Button type="submit" className="" ref={submitBtnRef}>
+            <PlusCircle className="mr-2" /> Add Item
+          </Button>
+          <Button type="reset" onClick={onReset} className="bg-slate-500">
+            <XCircle className="mr-2" /> Clear
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

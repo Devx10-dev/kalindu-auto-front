@@ -1,7 +1,7 @@
-import React,{useRef} from "react";
+import React from "react";
 import { z } from "zod";
 import { InvoiceItem } from "@/types/invoice/cashInvoice";
-import useCashInvoiceStore from "@/pages/dashboard/invoice/cash/context/useCashInvoiceStore.tsx";
+import useCreditorInvoiceStore from "@/pages/dashboard/invoice/creditor/context/useCreditorInvoiceStore.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent } from "@/components/ui/card.tsx";
@@ -32,25 +32,8 @@ interface EditItemProps {
 }
 
 const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
-  const { updateInvoiceItem } = useCashInvoiceStore();
-  //================ feild navigaton ==================//
-  const itemNameRef = useRef(null);
-  const priceRef = useRef(null);
-  const quantityRef = useRef(null);
-  const codeRef = useRef(null);
-  const descriptionRef = useRef(null);
-  const discountRef = useRef(null);
-  const updateItemBtn = useRef(null);
+  const { updateInvoiceItem } = useCreditorInvoiceStore();
 
-  const handleKeyDown = (e, nextRef) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (nextRef.current) {
-        nextRef.current.focus();
-      }
-    }
-  };
-  //================ feild navigaton ==================//
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,11 +75,10 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Price</FormLabel>
-                  <FormControl ref={priceRef}>
+                  <FormControl>
                     <Input
                       type="number"
                       {...field}
-                      onKeyDown={(e) => handleKeyDown(e, quantityRef)}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value))
                       }
@@ -111,11 +93,10 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Quantity</FormLabel>
-                  <FormControl ref={quantityRef}>
+                  <FormControl>
                     <Input
                       type="number"
                       {...field}
-                      onKeyDown={(e) => handleKeyDown(e, codeRef)}
                       onChange={(e) =>
                         field.onChange(parseInt(e.target.value, 10))
                       }
@@ -130,10 +111,8 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Code</FormLabel>
-                  <FormControl ref={codeRef}>
-                    <Input {...field} 
-                      onKeyDown={(e) => handleKeyDown(e, descriptionRef)}
-                    />
+                  <FormControl>
+                    <Input {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -144,10 +123,8 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
-                  <FormControl ref={descriptionRef}>
-                    <Textarea {...field} 
-                      onKeyDown={(e) => handleKeyDown(e, discountRef)}
-                    />
+                  <FormControl>
+                    <Textarea {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -158,11 +135,10 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Discount</FormLabel>
-                  <FormControl ref={discountRef}>
+                  <FormControl>
                     <Input
                       type="number"
                       {...field}
-                      onKeyDown={(e) => handleKeyDown(e, updateItemBtn)}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value))
                       }
@@ -177,7 +153,7 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
             <Button onClick={onClose} variant="outline">
               Cancel
             </Button>
-            <Button ref={updateItemBtn} type="submit">Update Item</Button>
+            <Button type="submit">Update Item</Button>
           </div>
         </form>
       </Form>
