@@ -191,7 +191,7 @@ function CreditorDetailsCard({
                             borderRadius: 5,
                           }}
                         >
-                          Rs {invoice?.settledAmount ?? 0}
+                          Rs {invoice?.settledAmount}
                         </span>
                       </li>
                       <li className="flex items-center justify-between">
