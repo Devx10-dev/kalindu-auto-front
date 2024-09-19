@@ -12,18 +12,20 @@ import {
 } from "@/components/ui/table";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { InvoiceItem, InvoiceState } from "@/types/invoice/cashInvoice";
+import { InvoiceItem as CreditInvoiceItem, InvoiceState as CreditInvoiceState } from "@/types/invoice/creditorInvoice";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { useEffect, useState } from "react";
 import { TableBodySkeleton } from "../../view-invoices/components/TableSkeleton";
+import { LibraryBig, PackageOpen } from "lucide-react";
 
 function OutsourceItemsGrid({
   invoiceDetails,
   invoiceLoading,
 }: {
-  invoiceDetails: InvoiceState | null;
+  invoiceDetails: InvoiceState | CreditInvoiceState | null;
   invoiceLoading: boolean;
 }) {
-  const [outsourcedItems, setOutsourcedItems] = useState<InvoiceItem[]>([]);
+  const [outsourcedItems, setOutsourcedItems] = useState<InvoiceItem[] | CreditInvoiceItem[]>([]);
 
   useEffect(() => {
     if (invoiceDetails) {
@@ -34,7 +36,7 @@ function OutsourceItemsGrid({
   }, [invoiceDetails]);
 
   return (
-    <Table className="border rounded-md text-md mb-5 table-responsive">
+    <Table className="border rounded-md text-md my-0 table-responsive">
       <TableHeader>
         <TableRow style={{ height: "36px" }}>
           <TableHead style={{ height: "36px" }}>Item</TableHead>
@@ -53,6 +55,17 @@ function OutsourceItemsGrid({
 
       {invoiceLoading ? (
         <TableBodySkeleton noHeader={true} cols={5} rows={5} />
+      ) : outsourcedItems.length === 0 ? (
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={5} className="text-center">
+              <div className="flex justify-center items-center gap-2 my-4">
+                <LibraryBig size={20} className="text-muted-foreground" />
+                <p className="text-sm ml-2 text-muted-foreground"> No Items are outsourced for this invoice</p>
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableBody>
       ) : (
         <TableBody>
           {outsourcedItems.map((item, index) => (

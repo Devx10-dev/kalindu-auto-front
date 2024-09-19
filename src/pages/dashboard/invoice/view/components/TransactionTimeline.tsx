@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
+import { InvoiceState as CreditInvoiceState } from "@/types/invoice/creditorInvoice";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import {
   Calendar,
@@ -33,13 +34,13 @@ function TransactionTimeLine({
   invoiceDetails,
   invoiceLoading,
 }: {
-  invoiceDetails?: InvoiceState | null;
+  invoiceDetails?: InvoiceState | CreditInvoiceState | null;
   invoiceLoading?: boolean;
 }) {
   const invoiceCreatedCard = ({
     invoiceDetails,
   }: {
-    invoiceDetails?: InvoiceState | null;
+    invoiceDetails?: InvoiceState | CreditInvoiceState | null;
   }) => {
     return (
       <TransactionCard

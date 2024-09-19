@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import TimeLine from "./TransactionTimeline";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
+import { InvoiceState as CreditInvoiceState } from "@/types/invoice/creditorInvoice";
 import dateToString from "@/utils/dateToString";
 import Loading from "@/components/Loading";
 import dateArrayToString from "@/utils/dateArrayToString";
@@ -25,7 +26,7 @@ export function TransactionDrawer({
   invoiceDetails,
   invoiceLoading,
 }: {
-  invoiceDetails: InvoiceState | null;
+  invoiceDetails: InvoiceState | CreditInvoiceState | null;
   invoiceLoading: boolean;
 }) {
   const [goal, setGoal] = React.useState(350);

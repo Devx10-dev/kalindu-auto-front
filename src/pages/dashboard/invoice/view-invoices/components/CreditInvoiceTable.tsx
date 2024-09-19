@@ -150,7 +150,7 @@ export default function CreditInvoiceTable({
           </TableRow>
         </TableHeader>
         {isLoading ? (
-          <TableBodySkeleton cols={7} rows={10} noHeader={true} />
+          <TableBodySkeleton cols={8} rows={10} noHeader={true} />
         ) : invoices?.invoices.length === 0 ? (
           <TableBody>
             <TableRow>

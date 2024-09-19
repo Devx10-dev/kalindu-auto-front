@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 function StatusCard({
   icon,
@@ -7,6 +8,7 @@ function StatusCard({
   statusText,
   type,
   className,
+  iconWrapperClassName,
 }: {
   icon: React.ReactNode;
   status: string;
@@ -14,12 +16,13 @@ function StatusCard({
   statusText: string;
   type: string;
   className?: string;
+  iconWrapperClassName?: string;
 }) {
   return (
     <>
-      <Card className={`p-4 shadow-sm bg-green-50 ${className}`}>
+      <Card className={cn("p-4 shadow-sm bg-green-50",className)}>
         <div className="flex items-center">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green">
+          <div className={cn("flex items-center justify-center w-12 h-12 rounded-full bg-green",iconWrapperClassName)}>
             {icon}
           </div>
           <div className="ml-4">

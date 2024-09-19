@@ -25,6 +25,8 @@ import {
   useCreditInvoiceListStore,
   useInvoiceListStore,
 } from "./context/InvoiceListState";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
 export function ViewAllInvoices() {
   // active tab state
@@ -199,11 +201,11 @@ export function ViewAllInvoices() {
               icon={<InvoiceIcon height="30" width="28" color="#162a3b" />}
             />
           </CardHeader>
-          <TabsList className="grid w-[40%] grid-cols-3">
+          <TabsList className="grid w-[40%] grid-cols-2">
             {/* <TabsTrigger value="all">All</TabsTrigger> */}
             <TabsTrigger value="cash">Cash</TabsTrigger>
-            <TabsTrigger value="creditor">Creditor</TabsTrigger>
-            <TabsTrigger value="dummy">Dummy</TabsTrigger>
+            <TabsTrigger value="creditor">Credit</TabsTrigger>
+            {/* <TabsTrigger value="dummy">Dummy</TabsTrigger> */}
           </TabsList>
         </div>
         <div
@@ -270,7 +272,7 @@ export function ViewAllInvoices() {
             />
           )}
         </TabsContent>
-        <TabsContent value="dummy">
+        {/* <TabsContent value="dummy">
           {dummyInvoiceError ? (
             <ErrorPage
               errorHeading="Uh oh! Something went wrong"
@@ -287,8 +289,9 @@ export function ViewAllInvoices() {
               err={dummyInvoiceError}
             />
           )}
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </Fragment>
   );
 }
+
