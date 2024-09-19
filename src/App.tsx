@@ -17,6 +17,7 @@ import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAll
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
 import PrintPage from "./pages/dashboard/reports/daily-sales-expenses/Print";
+import HandlingReturn from "./pages/dashboard/returns/HandlingReturn";
 import EditUser from "./pages/dashboard/user-management/EditUser";
 import RegisterUser from "./pages/dashboard/user-management/RegisterUser";
 import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
@@ -75,6 +76,8 @@ function App() {
           </Route>
 
           <Route path="cheque" element={<ChequeManagement />} />
+
+          <Route path="return" element={<HandlingReturn />} />
 
           <Route path="log">
             <Route path="activity" element={<ActivityLog />} />

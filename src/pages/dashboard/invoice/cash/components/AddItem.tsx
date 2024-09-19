@@ -58,24 +58,24 @@ const AddItem: React.FC<{
   });
   const [searchTerm, setSearchTerm] = useState("");
 
-//================ feild navigaton ==================//
-const itemNameRef = useRef(null);
-const priceRef = useRef(null);
-const quantityRef = useRef(null);
-const codeRef = useRef(null);
-const descriptionRef = useRef(null);
-const discountRef = useRef(null);
-const addItemBtn = useRef(null);
+  //================ feild navigaton ==================//
+  const itemNameRef = useRef(null);
+  const priceRef = useRef(null);
+  const quantityRef = useRef(null);
+  const codeRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const discountRef = useRef(null);
+  const addItemBtn = useRef(null);
 
-const handleKeyDown = (e, nextRef) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    if (nextRef.current) {
-      nextRef.current.focus();
+  const handleKeyDown = (e, nextRef) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (nextRef.current) {
+        nextRef.current.focus();
+      }
     }
-  }
-};
-//================ feild navigaton ==================//
+  };
+  //================ feild navigaton ==================//
 
   const { data: spareParts } = useQuery({
     queryKey: ["spareParts", searchTerm],
@@ -132,7 +132,7 @@ const handleKeyDown = (e, nextRef) => {
                   options={sparePartsOptions}
                   onInputChange={handleInputChange}
                   ref={itemNameRef}
-                  onKeyDown={(e) => handleKeyDown(e,priceRef)}
+                  onKeyDown={(e) => handleKeyDown(e, priceRef)}
                   isClearable
                   onChange={handleSelectChange}
                 />
@@ -146,9 +146,7 @@ const handleKeyDown = (e, nextRef) => {
             render={({ field }) => (
               <FormItem>
                 <RequiredLabel label="Price" />
-                <FormControl
-                  ref={priceRef}
-                >
+                <FormControl ref={priceRef}>
                   <Input
                     type="number"
                     placeholder="Enter current price for a item"
@@ -169,9 +167,7 @@ const handleKeyDown = (e, nextRef) => {
             render={({ field }) => (
               <FormItem>
                 <RequiredLabel label="Quantity" />
-                <FormControl
-                  ref={quantityRef}
-                >
+                <FormControl ref={quantityRef}>
                   <Input
                     type="number"
                     placeholder="Quantity"
@@ -192,11 +188,12 @@ const handleKeyDown = (e, nextRef) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Code</FormLabel>
-                <FormControl
-                    ref={codeRef}
-                >
-                  <Input type="text" placeholder="Code" {...field}
-                    onKeyDown={(e) => handleKeyDown(e, descriptionRef)} 
+                <FormControl ref={codeRef}>
+                  <Input
+                    type="text"
+                    placeholder="Code"
+                    {...field}
+                    onKeyDown={(e) => handleKeyDown(e, descriptionRef)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -211,9 +208,7 @@ const handleKeyDown = (e, nextRef) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
-                <FormControl
-                  ref={descriptionRef}
-                >
+                <FormControl ref={descriptionRef}>
                   <Textarea
                     placeholder="Enter Description for the item"
                     {...field}
@@ -229,13 +224,11 @@ const handleKeyDown = (e, nextRef) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Discount</FormLabel>
-                <FormControl
-                  ref={discountRef} 
-                >
+                <FormControl ref={discountRef}>
                   <Input
                     type="number"
                     placeholder="Enter Discount for a item"
-                    onKeyDown={(e) => handleKeyDown(e,addItemBtn)}
+                    onKeyDown={(e) => handleKeyDown(e, addItemBtn)}
                     min={0}
                     step="0.01"
                     {...field}

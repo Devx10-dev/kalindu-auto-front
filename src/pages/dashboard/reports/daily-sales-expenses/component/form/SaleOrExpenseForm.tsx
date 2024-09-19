@@ -178,7 +178,10 @@ function SaleOrExpenseForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Field" />
-                <FormControl onKeyDown={(e) => handleKeyDown(e, 1)} ref={(el) => (inputRefs.current[1] = el)}>
+                <FormControl
+                  onKeyDown={(e) => handleKeyDown(e, 1)}
+                  ref={(el) => (inputRefs.current[1] = el)}
+                >
                   <Select
                     className="select-place-holder"
                     placeholder={"Select field"}
@@ -201,7 +204,7 @@ function SaleOrExpenseForm({
                 <RequiredLabel label="Amount" />
                 <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                   <Input
-                    onKeyDown={(e) => handleKeyDown(e, 2)} 
+                    onKeyDown={(e) => handleKeyDown(e, 2)}
                     type="number"
                     min={0}
                     {...field}
@@ -219,13 +222,16 @@ function SaleOrExpenseForm({
             control={form.control}
             name="type"
             render={({ field }) => (
-              <FormItem  >
+              <FormItem>
                 <OptionalLabel label="Record Type" />
                 <SelectComponent
                   onValueChange={field.onChange}
                   value={field.value}
                 >
-                  <FormControl onKeyDown={(e) => handleKeyDown(e, 3)} ref={(el) => (inputRefs.current[3] = el)} >
+                  <FormControl
+                    onKeyDown={(e) => handleKeyDown(e, 3)}
+                    ref={(el) => (inputRefs.current[3] = el)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select the record type" />
                     </SelectTrigger>
@@ -279,7 +285,11 @@ function SaleOrExpenseForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div>
-            <Button ref={(el) => (inputRefs.current[5] = el)} onClick={form.handleSubmit(handleSubmit)} className="mr-2">
+            <Button
+              ref={(el) => (inputRefs.current[5] = el)}
+              onClick={form.handleSubmit(handleSubmit)}
+              className="mr-2"
+            >
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

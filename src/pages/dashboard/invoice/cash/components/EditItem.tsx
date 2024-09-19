@@ -1,4 +1,4 @@
-import React,{useRef} from "react";
+import React, { useRef } from "react";
 import { z } from "zod";
 import { InvoiceItem } from "@/types/invoice/cashInvoice";
 import useCashInvoiceStore from "@/pages/dashboard/invoice/cash/context/useCashInvoiceStore.tsx";
@@ -43,7 +43,7 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
   const updateItemBtn = useRef(null);
 
   const handleKeyDown = (e, nextRef) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       if (nextRef.current) {
         nextRef.current.focus();
@@ -131,7 +131,8 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
                 <FormItem>
                   <FormLabel>Code</FormLabel>
                   <FormControl ref={codeRef}>
-                    <Input {...field} 
+                    <Input
+                      {...field}
                       onKeyDown={(e) => handleKeyDown(e, descriptionRef)}
                     />
                   </FormControl>
@@ -145,7 +146,8 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl ref={descriptionRef}>
-                    <Textarea {...field} 
+                    <Textarea
+                      {...field}
                       onKeyDown={(e) => handleKeyDown(e, discountRef)}
                     />
                   </FormControl>
@@ -177,7 +179,9 @@ const EditItem: React.FC<EditItemProps> = ({ item, onClose }) => {
             <Button onClick={onClose} variant="outline">
               Cancel
             </Button>
-            <Button ref={updateItemBtn} type="submit">Update Item</Button>
+            <Button ref={updateItemBtn} type="submit">
+              Update Item
+            </Button>
           </div>
         </form>
       </Form>

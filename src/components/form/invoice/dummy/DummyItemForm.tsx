@@ -43,7 +43,7 @@ export default function DummyItemForm({
   sparePartService: SparePartService;
   onClose: () => void;
   setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
-  item: DummyInvoiceItem | null;
+  item?: DummyInvoiceItem | null;
   items: DummyInvoiceItem[];
   setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
   outsourcedItems: OutsourcedItem[];
@@ -420,7 +420,7 @@ export default function DummyItemForm({
               )}
             />
           </div>
-          
+
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button onClick={handleCancel} variant={"outline"}>
               Cancel

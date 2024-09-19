@@ -69,7 +69,7 @@ const AddItem: React.FC<{
 
   // Handle navigation with Enter key
   const handleKeyDown = (e, nextRef) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       if (nextRef.current) {
         nextRef.current.focus();
@@ -189,8 +189,11 @@ const AddItem: React.FC<{
               <FormItem>
                 <FormLabel>Code</FormLabel>
                 <FormControl ref={codeRef}>
-                  <Input type="text" placeholder="Code" {...field}
-                    onKeyDown={(e) => handleKeyDown(e, descriptionRef)} 
+                  <Input
+                    type="text"
+                    placeholder="Code"
+                    {...field}
+                    onKeyDown={(e) => handleKeyDown(e, descriptionRef)}
                   />
                 </FormControl>
               </FormItem>
@@ -220,7 +223,7 @@ const AddItem: React.FC<{
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Discount</FormLabel>
-                <FormControl  ref={discountRef}>
+                <FormControl ref={discountRef}>
                   <Input
                     type="number"
                     placeholder="Enter discount for an item"

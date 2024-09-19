@@ -102,7 +102,7 @@ function CategoryForm({
                 <RequiredLabel label="Category Name" />
                 <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                   <Input
-                  onKeyDown={(e) => handleKeyDown(e, 1)} 
+                    onKeyDown={(e) => handleKeyDown(e, 1)}
                     {...field}
                     className="w-full"
                     placeholder="Please enter category name"
@@ -121,7 +121,11 @@ function CategoryForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div>
-            <Button ref={(el) => (inputRefs.current[2] = el)} onClick={form.handleSubmit(handleSubmit)} className="mr-2">
+            <Button
+              ref={(el) => (inputRefs.current[2] = el)}
+              onClick={form.handleSubmit(handleSubmit)}
+              className="mr-2"
+            >
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

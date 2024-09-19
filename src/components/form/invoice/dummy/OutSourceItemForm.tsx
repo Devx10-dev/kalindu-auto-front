@@ -79,7 +79,6 @@ function OutSourceItemForm({
           ref={(el) => (inputRefs.current[1] = el)}
           onKeyDown={(e) => handleKeyDown(e, 1)}
           onChange={(e) => setCompanyName(e.target.value)}
-
         />
         <Input
           type="number"

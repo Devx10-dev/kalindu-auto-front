@@ -249,7 +249,7 @@ export default function VehicleForm({
             render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Type" />
-                <FormControl >
+                <FormControl>
                   <CreatableSelect
                     className="select-place-holder"
                     placeholder={"Select or add new vehicle type"}
@@ -275,7 +275,7 @@ export default function VehicleForm({
             render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Brand" />
-                <FormControl >
+                <FormControl>
                   <CreatableSelect
                     className="select-place-holder"
                     placeholder={"Select or add new vehicle brand"}
@@ -303,7 +303,7 @@ export default function VehicleForm({
                 <RequiredLabel label="Vehicle Model" />
                 <FormControl ref={(el) => (inputRefs.current[3] = el)}>
                   <Input
-                    onKeyDown={(e) => handleKeyDown(e,3)}
+                    onKeyDown={(e) => handleKeyDown(e, 3)}
                     {...field}
                     className="w-full"
                     placeholder="Please enter vehicle model"
@@ -323,7 +323,7 @@ export default function VehicleForm({
             render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Chassis No" />
-                <FormControl >
+                <FormControl>
                   <CreatableSelect
                     className="select-place-holder"
                     placeholder={"Select or add new chassis no"}
@@ -351,7 +351,7 @@ export default function VehicleForm({
                 <OptionalLabel label="Remark" />
                 <FormControl ref={(el) => (inputRefs.current[5] = el)}>
                   <Textarea
-                    onKeyDown={(e) => handleKeyDown(e,5)}
+                    onKeyDown={(e) => handleKeyDown(e, 5)}
                     className="w-full"
                     {...field}
                     placeholder="Add a remark"
@@ -372,7 +372,11 @@ export default function VehicleForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div style={{ gap: "8px" }}>
-            <Button ref={(el) => (inputRefs.current[6] = el)} type="submit" onClick={form.handleSubmit(handleSubmit)}>
+            <Button
+              ref={(el) => (inputRefs.current[6] = el)}
+              type="submit"
+              onClick={form.handleSubmit(handleSubmit)}
+            >
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

@@ -120,7 +120,10 @@ function FieldForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Category" />
-                <FormControl onKeyDown={(e) => handleKeyDown(e, 1)} ref={(el) => (inputRefs.current[1] = el)}>
+                <FormControl
+                  onKeyDown={(e) => handleKeyDown(e, 1)}
+                  ref={(el) => (inputRefs.current[1] = el)}
+                >
                   <Select
                     className="select-place-holder"
                     placeholder={"Select category"}
@@ -143,7 +146,7 @@ function FieldForm({
                 <RequiredLabel label="Field Name" />
                 <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                   <Input
-                    onKeyDown={(e) => handleKeyDown(e, 2)} 
+                    onKeyDown={(e) => handleKeyDown(e, 2)}
                     {...field}
                     className="w-full"
                     placeholder="Please enter field name"
@@ -162,7 +165,11 @@ function FieldForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div>
-            <Button ref={(el) => (inputRefs.current[3] = el)} onClick={form.handleSubmit(handleSubmit)} className="mr-2">
+            <Button
+              ref={(el) => (inputRefs.current[3] = el)}
+              onClick={form.handleSubmit(handleSubmit)}
+              className="mr-2"
+            >
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

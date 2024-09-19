@@ -29,7 +29,7 @@ import { z } from "zod";
 import CreditorAPI from "../api/CreditorAPI";
 import { creditorFormSchema } from "./formScheme";
 import { RequiredLabel } from "@/components/formElements/FormLabel";
-import {useRef} from "react";
+import { useRef } from "react";
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export function RegisterForm(props: {

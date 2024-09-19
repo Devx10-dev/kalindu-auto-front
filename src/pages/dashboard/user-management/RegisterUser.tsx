@@ -34,7 +34,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import ReactSelect from "react-select";
 import { z } from "zod";
-import {useRef} from "react";
+import { useRef } from "react";
 
 function RegisterUser() {
   const axiosPrivate = useAxiosPrivate();
@@ -174,7 +174,7 @@ function RegisterUser() {
                     <RequiredLabel label="Username" />
                     <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                       <Input
-                        onKeyDown={(e) => handleKeyDown(e, 1)} 
+                        onKeyDown={(e) => handleKeyDown(e, 1)}
                         placeholder="Please enter the username"
                         {...field}
                       />
@@ -226,7 +226,10 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem className="w-full col-span-1 row-span-1">
                     <RequiredLabel label="Roles" />
-                    <FormControl onKeyDown={(e) => handleKeyDown(e, 4)} ref={(el) => (inputRefs.current[4] = el)}>
+                    <FormControl
+                      onKeyDown={(e) => handleKeyDown(e, 4)}
+                      ref={(el) => (inputRefs.current[4] = el)}
+                    >
                       <ReactSelect
                         isMulti
                         options={roleOptions}
@@ -274,7 +277,7 @@ function RegisterUser() {
                     <RequiredLabel label="Verify Password" />
                     <FormControl ref={(el) => (inputRefs.current[6] = el)}>
                       <Input
-                       onKeyDown={(e) => handleKeyDown(e, 6)}
+                        onKeyDown={(e) => handleKeyDown(e, 6)}
                         type="password"
                         placeholder="Please verify the password"
                         {...field}
@@ -292,7 +295,10 @@ function RegisterUser() {
                   <FormItem>
                     <OptionalLabel label="Designation" />
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl onKeyDown={(e) => handleKeyDown(e, 7)} ref={(el) => (inputRefs.current[7] = el)}>
+                      <FormControl
+                        onKeyDown={(e) => handleKeyDown(e, 7)}
+                        ref={(el) => (inputRefs.current[7] = el)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select the Designation" />
                         </SelectTrigger>
@@ -335,7 +341,11 @@ function RegisterUser() {
                   <FormItem>
                     <OptionalLabel label="Home Number" />
                     <FormControl ref={(el) => (inputRefs.current[9] = el)}>
-                      <Input onKeyDown={(e) => handleKeyDown(e, 9)} placeholder="Enter the home number" {...field} />
+                      <Input
+                        onKeyDown={(e) => handleKeyDown(e, 9)}
+                        placeholder="Enter the home number"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -349,7 +359,10 @@ function RegisterUser() {
                   <FormItem>
                     <RequiredLabel label="Gender" />
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl onKeyDown={(e) => handleKeyDown(e, 10)} ref={(el) => (inputRefs.current[10] = el)}>
+                      <FormControl
+                        onKeyDown={(e) => handleKeyDown(e, 10)}
+                        ref={(el) => (inputRefs.current[10] = el)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select the Designation" />
                         </SelectTrigger>
@@ -396,7 +409,10 @@ function RegisterUser() {
                   <FormItem>
                     <div className="space-y-0.5 d-flex gap-4">
                       <OptionalLabel label="Active" />
-                      <FormControl onKeyDown={(e) => handleKeyDown(e, 12)} ref={(el) => (inputRefs.current[12] = el)}>
+                      <FormControl
+                        onKeyDown={(e) => handleKeyDown(e, 12)}
+                        ref={(el) => (inputRefs.current[12] = el)}
+                      >
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
@@ -408,7 +424,9 @@ function RegisterUser() {
               />
             </div>
             <div className="flex justify-start gap-3">
-              <Button ref={(el) => (inputRefs.current[13] = el)} type="submit">Submit</Button>
+              <Button ref={(el) => (inputRefs.current[13] = el)} type="submit">
+                Submit
+              </Button>
               <Button type="reset" variant="destructive">
                 Reset
               </Button>

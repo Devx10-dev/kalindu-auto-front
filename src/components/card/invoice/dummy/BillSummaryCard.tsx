@@ -53,7 +53,7 @@ function BillSummaryCard({
       }
     }
   };
-//================ feild navigaton ==================//
+  //================ feild navigaton ==================//
 
   const [finalPrice, setFinalPrice] = useState(total);
 
@@ -91,7 +91,7 @@ function BillSummaryCard({
     setCustomerName("");
     setVehicleNo("");
   };
-  
+
   return (
     <Card>
       <CardContent className="p-5 shadow-sm pt-0">

@@ -71,6 +71,22 @@ export type InvoiceState = {
   resetState: () => void;
 };
 
+export type InvoiceItem = {
+  name?: string;
+  code?: string;
+  price?: number;
+  discount?: number;
+  sparePartId?: number;
+  quantity?: number;
+  outsourced?: boolean;
+  outsourceItem?: {
+    companyName?: string;
+    buyingPrice?: number;
+  };
+  description: string;
+  outsourcedStatus: boolean;
+};
+
 export type CreditorInvoiceList = {
   invoices: InvoiceState[];
   currentPage: number;
