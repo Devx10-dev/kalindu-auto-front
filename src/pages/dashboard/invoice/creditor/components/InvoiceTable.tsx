@@ -107,6 +107,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
         price: Number(newItem.price),
         discount: Number(newItem.discount),
         description: "",
+        outsourcedStatus: false,
       });
       setNewItem({
         name: "",

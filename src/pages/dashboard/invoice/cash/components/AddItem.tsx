@@ -184,7 +184,7 @@ const AddItem: React.FC<{
           />
           <FormField
             control={form.control}
-            name="Code"
+            name="code"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Code</FormLabel>

@@ -2,6 +2,7 @@ import { Creditor } from "../creditor/creditorTypes";
 import { Commission } from "./cashInvoice";
 
 export type InvoiceItem = {
+  outsourcedStatus: boolean;
   name?: string;
   code?: string;
   price?: number;
