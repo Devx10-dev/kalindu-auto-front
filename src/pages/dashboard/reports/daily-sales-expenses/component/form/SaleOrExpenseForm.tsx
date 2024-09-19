@@ -33,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Select from "react-select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRef } from "react";
 
 function SaleOrExpenseForm({
   onClose,
@@ -44,6 +45,17 @@ function SaleOrExpenseForm({
   salesAndExpenseService: SaleAndExpenseService;
 }) {
   const queryClient = useQueryClient();
+
+  const inputRefs = useRef<any[]>([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
 
   type SaleOrExpenseValues = z.infer<typeof saleOrExpenseSchema>;
   const defaultValues: Partial<SaleOrExpenseValues> = {};
@@ -166,7 +178,7 @@ function SaleOrExpenseForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Field" />
-                <FormControl>
+                <FormControl onKeyDown={(e) => handleKeyDown(e, 1)} ref={(el) => (inputRefs.current[1] = el)}>
                   <Select
                     className="select-place-holder"
                     placeholder={"Select field"}
@@ -187,8 +199,9 @@ function SaleOrExpenseForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Amount" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 2)} 
                     type="number"
                     min={0}
                     {...field}
@@ -206,13 +219,13 @@ function SaleOrExpenseForm({
             control={form.control}
             name="type"
             render={({ field }) => (
-              <FormItem>
+              <FormItem  >
                 <OptionalLabel label="Record Type" />
                 <SelectComponent
                   onValueChange={field.onChange}
                   value={field.value}
                 >
-                  <FormControl>
+                  <FormControl onKeyDown={(e) => handleKeyDown(e, 3)} ref={(el) => (inputRefs.current[3] = el)} >
                     <SelectTrigger>
                       <SelectValue placeholder="Select the record type" />
                     </SelectTrigger>
@@ -245,10 +258,11 @@ function SaleOrExpenseForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <OptionalLabel label="Reason" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[4] = el)}>
                   <Textarea
                     {...field}
                     className="w-full"
+                    onKeyDown={(e) => handleKeyDown(e, 4)}
                     placeholder="Please enter the reason"
                     value={field.value || ""}
                   />
@@ -265,7 +279,7 @@ function SaleOrExpenseForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div>
-            <Button onClick={form.handleSubmit(handleSubmit)} className="mr-2">
+            <Button ref={(el) => (inputRefs.current[5] = el)} onClick={form.handleSubmit(handleSubmit)} className="mr-2">
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

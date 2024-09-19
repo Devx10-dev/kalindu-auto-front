@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { CheckIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 function OutSourceItemForm({
   outsourceItems,
@@ -18,11 +18,22 @@ function OutSourceItemForm({
   const [companyName, setCompanyName] = useState(outsourceItem.companyName);
   const [buyingPrice, setBuyingPrice] = useState(outsourceItem.buyingPrice);
 
+  const inputRefs = useRef<any[]>([]);
+
   useEffect(() => {
     setCompanyName(outsourceItem.companyName);
     setBuyingPrice(outsourceItem.buyingPrice);
   }, [outsourceItem]);
 
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
   const onSave = () => {
     if (
       companyName === undefined ||
@@ -65,11 +76,16 @@ function OutSourceItemForm({
         <Input
           type="text"
           value={companyName}
+          ref={(el) => (inputRefs.current[1] = el)}
+          onKeyDown={(e) => handleKeyDown(e, 1)}
           onChange={(e) => setCompanyName(e.target.value)}
+
         />
         <Input
           type="number"
           value={buyingPrice}
+          ref={(el) => (inputRefs.current[2] = el)}
+          onKeyDown={(e) => handleKeyDown(e, 2)}
           onChange={(e) => setBuyingPrice(parseFloat(e.target.value))}
         />
       </div>
