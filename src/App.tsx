@@ -43,7 +43,7 @@ function App() {
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />
-            <Route path="dummy" element={<DummyInvoice />} />
+            <Route path="quotation" element={<DummyInvoice />} />
             <Route path="all" element={<ViewAllInvoices />} />
             {/* single invoice using id */}
             <Route path="cash/:id" element={<SingleInvoice />} />

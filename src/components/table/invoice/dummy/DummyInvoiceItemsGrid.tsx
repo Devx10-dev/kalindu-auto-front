@@ -1,9 +1,5 @@
 import IconButton from "@/components/button/IconButton";
-import DummyItemForm from "@/components/form/invoice/dummy/DummyItemForm";
-import CancelIcon from "@/components/icon/CancelIcon";
-import EditIcon from "@/components/icon/EditIcon";
-import { FormModal } from "@/components/modal/FormModal";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -13,114 +9,80 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
+import { Item } from "@/pages/dashboard/invoice/dummy/DummyInvoice";
 import { SparePartService } from "@/service/sparePartInventory/sparePartService";
-import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
-import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { CirclePlus, Trash2 } from "lucide-react";
+import { useCallback, useState } from "react";
+import Select from "react-select";
 import { Fragment } from "react/jsx-runtime";
 
 function DummyInvoiceItemsGrid({
   items,
   setItems,
-  outsourcedItems,
-  setOutsourcedItems,
 }: {
-  items: DummyInvoiceItem[];
-  outsourcedItems: OutsourcedItem[];
-  setItems: React.Dispatch<React.SetStateAction<DummyInvoiceItem[]>>;
-  setOutsourcedItems: React.Dispatch<React.SetStateAction<OutsourcedItem[]>>;
+  items: Item[];
+  setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 }) {
   const axiosPrivate = useAxiosPrivate();
   const sparePartService = new SparePartService(axiosPrivate);
 
-  const [show, setShow] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<DummyInvoiceItem | null>(
-    null,
-  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectKey, setSelectKey] = useState(0);
+  const [newItem, setNewItem] = useState({
+    id: Math.random() * 100,
+    name: "",
+    quantity: 1,
+    price: undefined,
+  });
 
-  const onChangeCheckHandle = (item: DummyInvoiceItem) => {
-    if (item.outsourced) {
-      setOutsourcedItems(
-        outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.sparePartId,
-        ),
-      );
-      setItems(
-        items.map((dummyItem) =>
-          dummyItem.sparePartId === item.sparePartId
-            ? { ...dummyItem, outsourced: false }
-            : dummyItem,
-        ),
-      );
-    } else {
-      setItems(
-        items.map((dummyItem) =>
-          dummyItem.sparePartId === item.sparePartId
-            ? { ...dummyItem, outsourced: true }
-            : dummyItem,
-        ),
-      );
-      setOutsourcedItems([
-        {
-          index: item.sparePartId,
-          buyingPrice: undefined,
-          companyName: undefined,
-          itemCode: item.code,
-          itemName: item.name,
-          quantity: item.quantity,
-        },
-        ...outsourcedItems,
-      ]);
+  const { data: spareParts } = useQuery({
+    queryKey: [`spareParts-${searchTerm}`, searchTerm],
+    queryFn: () => sparePartService.fetchSpaerPartsByNameOrCode(searchTerm),
+    retry: 1,
+  });
+
+  const sparePartOptions =
+    spareParts?.map((sparePart) => ({
+      value: sparePart.partName,
+      label: sparePart.partName,
+    })) || [];
+
+  const removeItem = (item: Item) => {
+    setItems(items.filter((dummyItem) => dummyItem.id !== item.id));
+  };
+
+  const isFormValid = useCallback(() => {
+    return newItem.name !== "" && newItem.price > 0 && newItem.quantity > 0;
+  }, [newItem]);
+
+  const handleAddItem = () => {
+    if (isFormValid()) {
+      setItems([newItem, ...items]);
+
+      // Clear the form by resetting newItem to default values
+      setNewItem({
+        id: Math.random() * 100,
+        name: "",
+        quantity: 1,
+        price: 0,
+      });
+
+      setSelectKey((prevKey) => prevKey + 1);
     }
-  };
-
-  const removeItem = (item: DummyInvoiceItem) => {
-    if (item.outsourced) {
-      setOutsourcedItems(
-        outsourcedItems.filter(
-          (outsourcedItem) => outsourcedItem.index !== item.sparePartId,
-        ),
-      );
-    }
-    setItems(
-      items.filter((dummyItem) => dummyItem.sparePartId !== item.sparePartId),
-    );
-  };
-
-  const handleEditBtn = (item: DummyInvoiceItem) => {
-    setSelectedItem(item);
-    setShow(true);
-  };
-
-  const handleCancelBtn = () => {
-    setSelectedItem(null);
-    setShow(false);
   };
 
   return (
     <Fragment>
-      <Table className="border rounded-md text-md mb-5 table-responsive">
-        <TableCaption>Dummy Invoice items</TableCaption>
+      <Table className="border rounded-md text-md mb-5">
+        <TableCaption>Quotation items</TableCaption>
         <TableBody>
-          <TableRow style={{ height: "36px" }}>
-            <TableHead style={{ height: "36px" }}>Item</TableHead>
-            <TableHead style={{ height: "36px" }} align="right">
-              Quantity
-            </TableHead>
-            <TableHead style={{ height: "36px" }} align="right">
-              Price
-            </TableHead>
-            <TableHead style={{ height: "36px" }} align="right">
-              Dummy Price
-            </TableHead>
-            <TableHead style={{ height: "36px" }} align="right">
-              Discount
-            </TableHead>
-            <TableHead style={{ height: "36px" }} align="right">
-              Total
-            </TableHead>
-            <TableHead style={{ height: "36px" }}>Outsource</TableHead>
-            <TableHead style={{ height: "36px" }}>Action</TableHead>
+          <TableRow>
+            <TableHead>Item</TableHead>
+            <TableHead style={{ textAlign: "end" }}>Quantity</TableHead>
+            <TableHead style={{ textAlign: "end" }}>Price</TableHead>
+            <TableHead style={{ textAlign: "end" }}>Total</TableHead>
+            <TableHead style={{ textAlign: "center" }}>Action</TableHead>
           </TableRow>
           {items.map((item, index) => (
             <TableRow key={index}>
@@ -131,62 +93,85 @@ function DummyInvoiceItemsGrid({
               <TableCell className="p-0" align="right">
                 {item.price}
               </TableCell>
+
               <TableCell className="p-0" align="right">
-                {item.dummyPrice}
+                {(item.price * item.quantity).toFixed(2)}
               </TableCell>
-              <TableCell className="p-0" align="right">
-                {item.discount}
-              </TableCell>
-              <TableCell className="p-0" align="right">
-                {item.discount !== undefined
-                  ? (item.price * item.quantity - item.discount).toFixed(2)
-                  : (item.price * item.quantity).toFixed(2)}
-              </TableCell>
-              <TableCell className="p-0" align="center">
-                <Checkbox
-                  defaultChecked={false}
-                  checked={item.outsourced}
-                  onCheckedChange={() => onChangeCheckHandle(item)}
-                />
-              </TableCell>
+
               <TableCell
                 className="p-0"
                 // style={{ height: "36px", padding: 0, margin: 0 }}
+                align="center"
               >
-                <IconButton
-                  handleOnClick={() => removeItem(item)}
-                  icon={<CancelIcon height="25" width="25" />}
-                  tooltipMsg="Remove Item"
-                  variant="ghost"
-                />
-                <IconButton
-                  handleOnClick={() => handleEditBtn(item)}
-                  icon={<EditIcon height="25" width="25" />}
-                  tooltipMsg="Edit Item"
-                  variant="ghost"
-                />
+                <div
+                  onClick={() => removeItem(item)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Trash2 width={22} height={18} color="#C7253E" />
+                </div>
               </TableCell>
             </TableRow>
           ))}
+          <TableRow className="bg-slate-100">
+            <TableCell className="w-4/12">
+              <Select
+                key={selectKey}
+                options={sparePartOptions}
+                onChange={(selectedOption) =>
+                  setNewItem({ ...newItem, name: selectedOption.value })
+                }
+                onInputChange={(e) => setSearchTerm(e)}
+                // value={{ label: newItem.name, value: newItem.name }}
+                placeholder="Select Spare part"
+              />
+            </TableCell>
+
+            <TableCell className="w-2/12">
+              <Input
+                type="number"
+                value={newItem?.quantity ?? 1}
+                onChange={(e) =>
+                  setNewItem((prev) => ({
+                    ...prev,
+                    quantity: Number(e.target.value),
+                  }))
+                }
+                placeholder="Enter Quantity"
+                min={1}
+                style={{ textAlign: "right" }}
+              />
+            </TableCell>
+            <TableCell className="w-2/12">
+              <Input
+                type="number"
+                value={newItem?.price ?? 0}
+                onChange={(e) =>
+                  setNewItem((prev) => ({
+                    ...prev,
+                    price: e.target.value ? parseFloat(e.target.value) : 0,
+                  }))
+                }
+                placeholder="Enter Price"
+                min={0}
+                style={{ textAlign: "right" }}
+              />
+            </TableCell>
+            <TableCell className="w-2/12 p-0" align="right">
+              {(newItem.price * newItem.quantity).toFixed(2) === "NaN"
+                ? 0
+                : (newItem.price * newItem.quantity).toFixed(2)}
+            </TableCell>
+            <TableCell align="center" className="w-2/12">
+              <IconButton
+                icon={<CirclePlus height="20" width="20" />}
+                tooltipMsg="Add item"
+                handleOnClick={handleAddItem}
+                disabled={!isFormValid()}
+              />
+            </TableCell>
+          </TableRow>
         </TableBody>
       </Table>
-      <FormModal
-        title="Update Spare Part Item"
-        titleDescription="Update spare part item in the invoice"
-        show={show}
-        onClose={handleCancelBtn}
-        component={
-          <DummyItemForm
-            item={selectedItem}
-            onClose={handleCancelBtn}
-            sparePartService={sparePartService}
-            items={items}
-            setItems={setItems}
-            outsourcedItems={outsourcedItems}
-            setOutsourcedItems={setOutsourcedItems}
-          />
-        }
-      />
     </Fragment>
   );
 }
