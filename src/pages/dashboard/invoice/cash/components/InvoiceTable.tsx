@@ -186,12 +186,6 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-
-                    {/*<IconButton*/}
-                    {/*    icon={<EditIcon height="15" width="15"/>}*/}
-                    {/*    tooltipMsg="Edit Spare Part"*/}
-                    {/*    handleOnClick={() => setEditingItem(item)}*/}
-                    {/*/>*/}
                   </div>
                 </TableCell>
               </TableRow>

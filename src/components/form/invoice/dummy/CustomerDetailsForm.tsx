@@ -3,7 +3,7 @@ import {
   RequiredLabel,
 } from "@/components/formElements/FormLabel";
 import { Input } from "@/components/ui/input";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 
 function CustomerDetailsForm({
   vehicleNo,

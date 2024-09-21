@@ -142,3 +142,7 @@ body > div {
     display: none;
   }
 }
+
+.data-cell {
+  padding: 0px !important;
+}
