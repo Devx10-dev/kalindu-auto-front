@@ -99,6 +99,7 @@ export type InvoiceState = {
   setCommissionAmount: (amount?: number) => void;
 
   getRequestData: () => any;
+  resetExchangeItemTable: () => void;
 };
 
 export type InvoiceItem = {
