@@ -60,6 +60,7 @@ function HandlingReturn() {
     setReturnAmount,
     setPurchaseDate,
     returnType,
+    resetExchangeItemTable,
   } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
@@ -118,7 +119,6 @@ function HandlingReturn() {
     value: invoice,
   }));
 
-  console.log(selectedInvoice);
 
   const createDummyInvoiceMutation = useMutation({
     mutationFn: () => {
@@ -243,16 +243,16 @@ function HandlingReturn() {
     addReturnItem({ id: id, returnedQuantity: quantity });
     setReturnedQuantities((prev) => ({
       ...prev,
-      [itemCode]: quantity,
+      [id]: quantity,
     }));
   };
 
   useEffect(() => {
     const totalValue = Object.keys(returnedQuantities).reduce(
-      (acc, itemCode) => {
-        const quantity = returnedQuantities[itemCode];
+      (acc, id) => {
+        const quantity = returnedQuantities[id];
         const item = selectedInvoice?.items.find(
-          (item) => item.code === itemCode,
+          (item) => item.id === Number(id),
         );
         return acc + (item ? quantity * item.price : 0);
       },
@@ -267,12 +267,12 @@ function HandlingReturn() {
   };
 
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
+    setSelectedInvoice(baseInvoice);
     setCustomer(baseInvoice.customer);
     setPurchaseDate(baseInvoice.date);
     setReturnType(findReturnType(baseInvoice.invoiceId));
     setSourceInvoiceId(baseInvoice.invoiceId);
-    setSelectedInvoice(baseInvoice);
-    // setTotalPrice(baseInvoice.totalPrice);
+    resetExchangeItemTable();
   };
 
   const findReturnType = (invoiceId: string): string => {
@@ -365,7 +365,7 @@ function HandlingReturn() {
                                       type="number"
                                       max={item.quantity}
                                       min={0}
-                                      value={returnedQuantities[item.code] || 0}
+                                      value={returnedQuantities[item.id] || 0}
                                       onChange={(e) =>
                                         handleReturnedQuantityChange(
                                           item.code,
@@ -383,7 +383,7 @@ function HandlingReturn() {
                       </CardContent>
                       <div className="mb-2 ml-2" style={{ paddingLeft: 10 }}>
                         <h3 className="text-xl font-semibold leading-none tracking-tight">
-                          Total Return Value: Rs. {totalReturnValue.toFixed(2)}
+                          Total Return Value: Rs. {totalReturnValue? totalReturnValue.toFixed(2):0}
                         </h3>
                       </div>
                     </Card>
@@ -434,7 +434,7 @@ function HandlingReturn() {
                           className="w-[100%]"
                           onValueChange={handleTabChange}
                         >
-                          {returnType === "CREDIT" && (
+                          {returnType === "CRE" && (
                             <div>
                               <div className="flex justify-between items-center">
                                 <TabsList className="grid w-[100%] grid-cols-2 bg-blue-600 text-slate-50">
@@ -450,8 +450,8 @@ function HandlingReturn() {
                                 <CashInvoiceBase />
                               </TabsContent>
                               <TabsContent value="creditor">
-                                <CashInvoiceBase />
-                                {/* <CreditorInvoiceBase /> */}
+                                {/* <CashInvoiceBase /> */}
+                                <CreditorInvoiceBase />
                               </TabsContent>
                             </div>
                           )}

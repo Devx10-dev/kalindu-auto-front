@@ -163,13 +163,13 @@ const Summary = () => {
             <div className="d-flex align justify-between">
               <p className="text-sm text-gray-500">Return Amount: </p>
               <p className="text-sm text-gray-800">
-                LKR {returnAmount && returnAmount.toFixed(2)}
+                LKR {returnAmount ? returnAmount.toFixed(2):0}
               </p>
             </div>
             <div className="d-flex align justify-between">
               <p className="text-sm text-gray-500">Purchase Amount: </p>
               <p className="text-sm text-gray-800">
-                LKR {returnAmount && totalWithVat.toFixed(2)}
+                LKR {returnAmount ? totalWithVat.toFixed(2):0}
               </p>
             </div>
           </div>
@@ -241,7 +241,7 @@ const Summary = () => {
         <div className="flex justify-start text-left mt-10">
           <div className="text-left">
             <p className="text-lg font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-              NET PAID : LKR {netPaidAmount.toFixed(2)}
+              NET PAID : LKR {netPaidAmount? netPaidAmount.toFixed(2):0}
             </p>
             <div className="d-flex">
               <Button

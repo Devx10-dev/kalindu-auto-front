@@ -19,7 +19,8 @@ const InvoiceTable: React.FC = () => {
 
   return (
     <div>
-      <Table className="border rounded-md text-md mb-5 mt-10 shadow-sm">
+      <Table className="border rounded-md text-md mb-5 mt-5 shadow-sm">
+        <h2 className="text-xl font-bold mt-2 ml-3">Item List</h2>
         <TableBody>
           <TableRow>
             <TableHead>Item</TableHead>

@@ -77,10 +77,6 @@ const AddItem: React.FC<{
     console.log("add button Pressed");
     addInvoiceItem(data);
     form.reset();
-    console.log(
-      "////////////////////////// invoiceItemDTOList",
-      invoiceItemDTOList,
-    );
     onClose();
   };
 
