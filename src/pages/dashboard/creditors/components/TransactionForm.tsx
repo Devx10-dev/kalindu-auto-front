@@ -113,8 +113,6 @@ function TransactionForm({
     retry: 1,
   });
 
-  console.log(selectedCreditor);
-
   const [creditorSelectKey, setCreditorSelectKey] = useState(0);
   const [creditInvoiceSelectKey, setCreditInvoiceSelectKey] = useState(0);
 
@@ -144,7 +142,7 @@ function TransactionForm({
   const creditorOptions =
     creditors?.map((creditor) => ({
       value: parseInt(creditor.creditorID),
-      label: creditor.contactPersonName,
+      label: creditor?.shopName ?? "-",
     })) || [];
 
   const creditInvoiceOptions =

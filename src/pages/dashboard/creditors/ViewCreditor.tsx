@@ -60,8 +60,7 @@ const ViewCreditor = () => {
           description="View full creditor data and the transactions. You can add new transactions here."
           icon={<CreditCard height="30" width="28" color="#162a3b" />}
         />
-        <AddNewTransaction />
-        <div className="grid gap-10 grid-cols-4 h-full mt-0">
+        <div className="grid gap-10 grid-cols-4 h-full mt-8">
           <Card className="shadow-md bg-slate-50 h-full col-span-3 flex flex-col">
             <div className="flex-1 max-h-80">
               <CardHeader>
