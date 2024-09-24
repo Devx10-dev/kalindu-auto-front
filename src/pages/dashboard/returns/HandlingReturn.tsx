@@ -119,7 +119,6 @@ function HandlingReturn() {
     value: invoice,
   }));
 
-
   const createDummyInvoiceMutation = useMutation({
     mutationFn: () => {
       const isValid = validateAndRefactoringData();
@@ -248,16 +247,13 @@ function HandlingReturn() {
   };
 
   useEffect(() => {
-    const totalValue = Object.keys(returnedQuantities).reduce(
-      (acc, id) => {
-        const quantity = returnedQuantities[id];
-        const item = selectedInvoice?.items.find(
-          (item) => item.id === Number(id),
-        );
-        return acc + (item ? quantity * item.price : 0);
-      },
-      0,
-    );
+    const totalValue = Object.keys(returnedQuantities).reduce((acc, id) => {
+      const quantity = returnedQuantities[id];
+      const item = selectedInvoice?.items.find(
+        (item) => item.id === Number(id),
+      );
+      return acc + (item ? quantity * item.price : 0);
+    }, 0);
     setTotalReturnValue(totalValue);
     setReturnAmount(totalValue);
   }, [returnedQuantities, selectedInvoice]);
@@ -383,7 +379,8 @@ function HandlingReturn() {
                       </CardContent>
                       <div className="mb-2 ml-2" style={{ paddingLeft: 10 }}>
                         <h3 className="text-xl font-semibold leading-none tracking-tight">
-                          Total Return Value: Rs. {totalReturnValue? totalReturnValue.toFixed(2):0}
+                          Total Return Value: Rs.{" "}
+                          {totalReturnValue ? totalReturnValue.toFixed(2) : 0}
                         </h3>
                       </div>
                     </Card>
