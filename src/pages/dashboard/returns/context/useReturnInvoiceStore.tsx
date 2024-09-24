@@ -222,6 +222,12 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       commissionRemark: commissionRemark,
     })),
 
+    resetExchangeItemTable: () =>
+      set({
+        invoiceItemDTOList: [],
+        returnAmount: 0,
+      }),
+
   getRequestData: () => {
     const state = get();
 
