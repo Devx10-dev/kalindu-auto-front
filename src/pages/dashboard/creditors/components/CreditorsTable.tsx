@@ -30,8 +30,9 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
           <TableCaption>Creditor Details</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Creditor Name</TableHead>
-              <TableHead>Primary Contact</TableHead>
+              <TableHead>Shop Name</TableHead>
+              <TableHead>Contact Name</TableHead>
+              <TableHead>Contact No</TableHead>
               <TableHead>Due Balance</TableHead>
               <TableHead>Cheque Balance</TableHead>
               <TableHead>Credit Limit (LKR)</TableHead>
@@ -47,6 +48,9 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
               >
                 <TableCell className="font-medium">
                   {creditor.shopName}
+                </TableCell>
+                <TableCell className="font-medium">
+                  {creditor?.contactPersonName}
                 </TableCell>
                 <TableCell>{creditor.primaryContact}</TableCell>
                 <TableCell align="right">
