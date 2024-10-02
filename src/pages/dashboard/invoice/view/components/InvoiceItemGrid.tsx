@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/table";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { InvoiceItem, InvoiceState } from "@/types/invoice/cashInvoice";
-import { InvoiceItem as CreditInvoiceItem, InvoiceState as CreditInvoiceState } from "@/types/invoice/creditorInvoice";
+import {
+  InvoiceItem as CreditInvoiceItem,
+  InvoiceState as CreditInvoiceState,
+} from "@/types/invoice/creditorInvoice";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { TableBodySkeleton } from "../../view-invoices/components/TableSkeleton";
 import { useEffect, useState } from "react";

@@ -28,7 +28,9 @@ function CommissionDetailsGrid({
   invoiceDetails: InvoiceState | CreditorInvoiceState | null;
   invoiceLoading: boolean;
 }) {
-  const [commissionDetails, setCommissionDetails] = useState<Commission[] | CreditorCommission[]>([]);
+  const [commissionDetails, setCommissionDetails] = useState<
+    Commission[] | CreditorCommission[]
+  >([]);
 
   useEffect(() => {
     if (invoiceDetails) {
@@ -54,7 +56,10 @@ function CommissionDetailsGrid({
             <TableCell colSpan={5} className="text-center">
               <div className="flex justify-center items-center gap-2 my-4">
                 <Coins size={20} className="text-muted-foreground" />
-                <p className="text-sm ml-2 text-muted-foreground"> No Commissions were added for this invoice</p>
+                <p className="text-sm ml-2 text-muted-foreground">
+                  {" "}
+                  No Commissions were added for this invoice
+                </p>
               </div>
             </TableCell>
           </TableRow>

@@ -1,5 +1,11 @@
 import * as React from "react";
-import { ArrowDownUp, ArrowDownUpIcon, Minus, PenBox, Plus } from "lucide-react";
+import {
+  ArrowDownUp,
+  ArrowDownUpIcon,
+  Minus,
+  PenBox,
+  Plus,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,9 +44,9 @@ export function TransactionDrawer({
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>
-      <Button variant="outline" className="w-fit h-full p-5">
-        <ArrowDownUp size={20} />
-      </Button>
+        <Button variant="outline" className="w-fit h-full p-5">
+          <ArrowDownUp size={20} />
+        </Button>
       </DrawerTrigger>
       <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 w-[500px] rounded-none">
         <div className="mx-10 w-auto max-w-120">

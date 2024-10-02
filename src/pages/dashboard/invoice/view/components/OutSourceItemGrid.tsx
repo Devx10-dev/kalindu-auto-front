@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/table";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { InvoiceItem, InvoiceState } from "@/types/invoice/cashInvoice";
-import { InvoiceItem as CreditInvoiceItem, InvoiceState as CreditInvoiceState } from "@/types/invoice/creditorInvoice";
+import {
+  InvoiceItem as CreditInvoiceItem,
+  InvoiceState as CreditInvoiceState,
+} from "@/types/invoice/creditorInvoice";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { useEffect, useState } from "react";
 import { TableBodySkeleton } from "../../view-invoices/components/TableSkeleton";
@@ -25,7 +28,9 @@ function OutsourceItemsGrid({
   invoiceDetails: InvoiceState | CreditInvoiceState | null;
   invoiceLoading: boolean;
 }) {
-  const [outsourcedItems, setOutsourcedItems] = useState<InvoiceItem[] | CreditInvoiceItem[]>([]);
+  const [outsourcedItems, setOutsourcedItems] = useState<
+    InvoiceItem[] | CreditInvoiceItem[]
+  >([]);
 
   useEffect(() => {
     if (invoiceDetails) {
@@ -61,7 +66,10 @@ function OutsourceItemsGrid({
             <TableCell colSpan={5} className="text-center">
               <div className="flex justify-center items-center gap-2 my-4">
                 <LibraryBig size={20} className="text-muted-foreground" />
-                <p className="text-sm ml-2 text-muted-foreground"> No Items are outsourced for this invoice</p>
+                <p className="text-sm ml-2 text-muted-foreground">
+                  {" "}
+                  No Items are outsourced for this invoice
+                </p>
               </div>
             </TableCell>
           </TableRow>

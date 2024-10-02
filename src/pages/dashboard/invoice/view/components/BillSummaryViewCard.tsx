@@ -56,11 +56,12 @@ function BillSummaryViewCard({
   useEffect(() => {
     console.log("BillSummaryViewCard.tsx: total: ", total);
     console.log("BillSummaryViewCard.tsx: vatPercentage: ", vatPercentage);
-    console.log("BillSummaryViewCard.tsx: discountPercentage: ", discountPercentage);
+    console.log(
+      "BillSummaryViewCard.tsx: discountPercentage: ",
+      discountPercentage,
+    );
     console.log("BillSummaryViewCard.tsx: discountAmount: ", discountAmount);
-  }
-  , [total, vatPercentage, discountPercentage, discountAmount]);
-
+  }, [total, vatPercentage, discountPercentage, discountAmount]);
 
   return (
     <Card>
@@ -104,7 +105,11 @@ function BillSummaryViewCard({
             <div className="flex justify-between">
               <p className="text-3xl font-thin align-bottom">Rs.</p>
               {/* <p className="text-4xl font-semibold">{total}</p> */}
-              <CurrencyComponent amount={total} currency="LKR" withoutCurrency />
+              <CurrencyComponent
+                amount={total}
+                currency="LKR"
+                withoutCurrency
+              />
             </div>
           </div>
           <div className="flex-space-between w-full">

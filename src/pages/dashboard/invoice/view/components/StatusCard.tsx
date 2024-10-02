@@ -20,9 +20,14 @@ function StatusCard({
 }) {
   return (
     <>
-      <Card className={cn("p-4 shadow-sm bg-green-50",className)}>
+      <Card className={cn("p-4 shadow-sm bg-green-50", className)}>
         <div className="flex items-center">
-          <div className={cn("flex items-center justify-center w-12 h-12 rounded-full bg-green",iconWrapperClassName)}>
+          <div
+            className={cn(
+              "flex items-center justify-center w-12 h-12 rounded-full bg-green",
+              iconWrapperClassName,
+            )}
+          >
             {icon}
           </div>
           <div className="ml-4">

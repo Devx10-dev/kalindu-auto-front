@@ -25,7 +25,12 @@ import {
   useCreditInvoiceListStore,
   useInvoiceListStore,
 } from "./context/InvoiceListState";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 import { MultiSelect } from "@/components/ui/multi-select";
 
@@ -43,26 +48,22 @@ export function ViewAllInvoices() {
   const [pageNo, setPageNo] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
   const { cashInvoicesStore, setCashInvoicesStore } = useInvoiceListStore();
-  const { creditInvoicesStore, setCreditInvoicesStore } = useCreditInvoiceListStore();
+  const { creditInvoicesStore, setCreditInvoicesStore } =
+    useCreditInvoiceListStore();
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  const [statusList, setStatusList] = useState<{ label: string; value: string }[]>([
-    { label: "COMPLETED", value: "COMPLETED" }
-  ]);
+  const [statusList, setStatusList] = useState<
+    { label: string; value: string }[]
+  >([{ label: "COMPLETED", value: "COMPLETED" }]);
 
   useEffect(() => {
-    if(activeTab === "cash") {
+    if (activeTab === "cash") {
+      setStatusList([{ label: "COMPLETED", value: "COMPLETED" }]);
+    } else {
       setStatusList([
         { label: "COMPLETED", value: "COMPLETED" },
-
+        { label: "DUE", value: "DUE" },
+        { label: "OVERDUE", value: "OVERDUE" },
       ]);
-    } else {
-      setStatusList(
-        [
-          { label: "COMPLETED", value: "COMPLETED" },
-          { label: "DUE", value: "DUE" },
-          { label: "OVERDUE", value: "OVERDUE" },
-        ]
-      );
     }
   }, [activeTab]);
 
@@ -114,7 +115,6 @@ export function ViewAllInvoices() {
       ),
     enabled: activeTab === "cash",
   });
-
 
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
 
@@ -220,7 +220,7 @@ export function ViewAllInvoices() {
                 setSearch(e.target.value);
               }}
             />
-            {activeTab === "creditor" &&
+            {activeTab === "creditor" && (
               <MultiSelect
                 options={statusList}
                 onValueChange={setSelectedOption}
@@ -233,7 +233,7 @@ export function ViewAllInvoices() {
                 badgeInlineClose={false}
                 className="w-fit"
               />
-            }
+            )}
             <DateRangePicker
               dateRange={dateRange}
               setDateRange={setDateRange}
@@ -304,4 +304,3 @@ export function ViewAllInvoices() {
     </Fragment>
   );
 }
-
