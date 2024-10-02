@@ -89,7 +89,7 @@ export default function CreditInvoiceTable({
   };
 
   const generateStatusBadge = (invoice: InvoiceState) => {
-    console.log("HEREEEE", invoice);
+    console.log("HEREEEE");
     const status = getDueStatus(
       invoice.issuedTime,
       Number(invoice.creditor.maxDuePeriod) as number,

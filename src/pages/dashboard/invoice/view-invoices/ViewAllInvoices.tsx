@@ -27,6 +27,7 @@ import {
 } from "./context/InvoiceListState";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export function ViewAllInvoices() {
   // active tab state
@@ -42,8 +43,28 @@ export function ViewAllInvoices() {
   const [pageNo, setPageNo] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
   const { cashInvoicesStore, setCashInvoicesStore } = useInvoiceListStore();
-  const { creditInvoicesStore, setCreditInvoicesStore } =
-    useCreditInvoiceListStore();
+  const { creditInvoicesStore, setCreditInvoicesStore } = useCreditInvoiceListStore();
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
+  const [statusList, setStatusList] = useState<{ label: string; value: string }[]>([
+    { label: "COMPLETED", value: "COMPLETED" }
+  ]);
+
+  useEffect(() => {
+    if(activeTab === "cash") {
+      setStatusList([
+        { label: "COMPLETED", value: "COMPLETED" },
+
+      ]);
+    } else {
+      setStatusList(
+        [
+          { label: "COMPLETED", value: "COMPLETED" },
+          { label: "DUE", value: "DUE" },
+          { label: "OVERDUE", value: "OVERDUE" },
+        ]
+      );
+    }
+  }, [activeTab]);
 
   const handleFilterClick = () => {
     // set form date and to date
@@ -94,31 +115,6 @@ export function ViewAllInvoices() {
     enabled: activeTab === "cash",
   });
 
-  const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
-
-  const {
-    data: dummyInvoiceData,
-    isLoading: dummyInvoiceLoading,
-    error: dummyInvoiceError,
-  } = useQuery<InvoiceList>({
-    queryKey: [
-      "dummyInvoices",
-      debouncedSearch,
-      fromDate,
-      toDate,
-      pageNo,
-      pageSize,
-    ],
-    queryFn: () =>
-      dummyInvoiceService.fetchDummyInvoices(
-        debouncedSearch,
-        fromDate ? dateToString(fromDate) : undefined,
-        toDate ? dateToString(toDate) : undefined,
-        pageNo,
-        pageSize,
-      ),
-    enabled: activeTab === "dummy",
-  });
 
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
 
@@ -224,6 +220,20 @@ export function ViewAllInvoices() {
                 setSearch(e.target.value);
               }}
             />
+            {activeTab === "creditor" &&
+              <MultiSelect
+                options={statusList}
+                onValueChange={setSelectedOption}
+                defaultValue={selectedOption}
+                placeholder="Select Status"
+                variant="secondary"
+                animation={1}
+                maxCount={1}
+                modalPopover={true}
+                badgeInlineClose={false}
+                className="w-fit"
+              />
+            }
             <DateRangePicker
               dateRange={dateRange}
               setDateRange={setDateRange}

@@ -12,7 +12,7 @@ import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle, PackageOpen, TimerOff, TimerReset } from "lucide-react";
+import { ArrowDownUp, CheckCircle, PackageOpen, TimerOff, TimerReset } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
@@ -32,6 +32,8 @@ import dateArrayToString from "@/utils/dateArrayToString";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label, Pie, PieChart } from "recharts";
+import StatusCardCredit from "./components/StatusCardCredit";
+import { Button } from "@/components/ui/button";
 
 
 function PaymentStat(){
@@ -197,48 +199,48 @@ function SingleInvoiceCredit() {
   }
   , [total, vatPercentage, discountPercentage, discountAmount]);
 
-  function renderStatus(invoiceDetails: InvoiceState | null) {
-    switch (invoiceDetails?.dueStatus) {
-      case "COMPLETED":
-        return (
-          <StatusCard
-            icon={<CheckCircle size={30} color="green" />}
-            status="Completed"
-            statusColor="red"
-            statusText="This invoice has been completed"
-            type={"Cash"}
-            className="bg-green-50"
-          />
-        );
-      case "DUE":
-        return (
-          <StatusCard
-            icon={<PaymentStat />}
-            status={"DUE on " + dateArrayToString(invoiceDetails?.dueTime, true)}
-            statusColor="yellow"
-            statusText="This invoice is Due"
-            type={"Cash"}
-            className="bg-yellow-50"
-          />
-        );
-      case "OVERDUE":
-        return (
-          <StatusCard
-            icon={<TimerOff size={30} color="red" />}
-            status="Overdue"
-            statusColor="red"
-            statusText="This invoice is overdue"
-            type={"Cash"}
-            className="bg-red-50"
-          />
-        );
-    }
-  }
+  // function renderStatus(invoiceDetails: InvoiceState | null) {
+  //   switch (invoiceDetails?.dueStatus) {
+  //     case "COMPLETED":
+  //       return (
+  //         <StatusCard
+  //           icon={<CheckCircle size={30} color="green" />}
+  //           status="Completed"
+  //           statusColor="red"
+  //           statusText="This invoice has been completed"
+  //           type={"Cash"}
+  //           className="bg-green-50"
+  //         />
+  //       );
+  //     case "DUE":
+  //       return (
+  //         <StatusCard
+  //           icon={<PaymentStat />}
+  //           status={"DUE on " + dateArrayToString(invoiceDetails?.dueTime, true)}
+  //           statusColor="yellow"
+  //           statusText="This invoice is Due"
+  //           type={"Cash"}
+  //           className="bg-yellow-50"
+  //         />
+  //       );
+  //     case "OVERDUE":
+  //       return (
+  //         <StatusCard
+  //           icon={<TimerOff size={30} color="red" />}
+  //           status="Overdue"
+  //           statusColor="red"
+  //           statusText="This invoice is overdue"
+  //           type={"Cash"}
+  //           className="bg-red-50"
+  //         />
+  //       );
+  //   }
+  // }
 
   return (
     <Fragment>
       <div className="ml-2">
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <CardHeader>
             <PageHeader
               title={`Invoice No: ${invoiceDetails?.invoiceId}`}
@@ -257,15 +259,36 @@ function SingleInvoiceCredit() {
             }
             
           </div>
-        </div>
+        </div> */}
         <CardContent
           style={{
             display: "flex",
             gap: "10px",
           }}
         >
+          
           <div className="gap-5" style={{ flex: 9 }}>
             <div className="flex-col gap-5">
+              <div className="flex justify-between items-center">
+              <CardHeader className="px-0">
+                <PageHeader
+                  title={`Invoice No: ${invoiceDetails?.invoiceId}`}
+                  description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
+                  icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
+                  badge={
+                    <Badge className="bg-yellow-200 text-black rounded-md">
+                      Credit Invoice
+                    </Badge>
+                  }
+                />
+              </CardHeader>
+              {/* <div className="text-left pr-6 rounded-md color-slate-900">
+                {
+                  renderStatus(invoiceDetails)
+                }
+                
+              </div> */}
+            </div>
               <div className="grid grid-cols-3 gap-2 mb-5">
                 <div className="flex flex-col gap-1">
                   <p className="text-sm">Contact Person</p>
@@ -354,17 +377,25 @@ function SingleInvoiceCredit() {
               </Card>
             </div>
           </div>
-          <div style={{ flex: 3 }}>
+          <div style={{ flex: 3 }} >
+            <div className="flex justify-between items-center gap-3 py-5">
+              <div className="w-full">
+                <StatusCardCredit
+                  invoiceDetails={invoiceDetails}
+                />
+              </div>
+              <TransactionDrawer
+                invoiceDetails={invoiceDetails}
+                invoiceLoading={invoiceLoading}
+              />
+            </div>
             <BillSummaryViewCard
               total={total}
               vatPercentage={vatPercentage}
               discountPercentage={discountPercentage}
               discountAmount={discountAmount}
             />
-            <TransactionDrawer
-              invoiceDetails={invoiceDetails}
-              invoiceLoading={invoiceLoading}
-            />
+            
           </div>
         </CardContent>
       </div>
