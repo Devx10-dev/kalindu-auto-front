@@ -31,9 +31,11 @@ import TransactionTimeLine from "./TransactionTimeline";
 export function TransactionDrawer({
   invoiceDetails,
   invoiceLoading,
+  nonIcon = false,
 }: {
   invoiceDetails: InvoiceState | CreditInvoiceState | null;
   invoiceLoading: boolean;
+  nonIcon?: boolean;
 }) {
   const [goal, setGoal] = React.useState(350);
 
@@ -44,9 +46,15 @@ export function TransactionDrawer({
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-fit h-full p-5">
-          <ArrowDownUp size={20} />
-        </Button>
+        {nonIcon ? (
+          <Button variant="outline" className="w-full py-5 mt-5">
+            <ArrowDownUpIcon size={20} className="mr-2" /> Transactions
+          </Button>
+        ) : (
+          <Button variant="outline" className="w-fit h-full p-5">
+            <ArrowDownUpIcon size={20} />
+          </Button>
+        )}
       </DrawerTrigger>
       <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 w-[500px] rounded-none">
         <div className="mx-10 w-auto max-w-120">

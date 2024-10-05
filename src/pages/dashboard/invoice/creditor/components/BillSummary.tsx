@@ -140,6 +140,20 @@ const BillSummary: React.FC = () => {
     setVatPercentage((amount / discountedTotal) * 100);
   };
 
+  useEffect(() => {
+    // LOG getRequestData()
+    console.log(getRequestData());
+  }, [
+    getRequestData,
+    invoiceItemDTOList,
+    creditorID,
+    discountPercentage,
+    discountAmount,
+    vatPercentage,
+    vatAmount,
+    totalWithVat,
+  ]);
+
   return (
     <Card>
       <CardContent className="p-3 shadow-sm w-72">

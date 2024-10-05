@@ -14,8 +14,9 @@ import { UseMutationResult } from "@tanstack/react-query";
 import { Delete, Printer } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import CurrencyComponent from "./CurrencyComponent";
+import { round } from "@/utils/round";
 
-function BillSummaryViewCard({
+function BillSummaryViewCardCredit({
   total,
   vatPercentage,
   discountPercentage,
@@ -27,13 +28,19 @@ function BillSummaryViewCard({
   discountAmount: number;
 }) {
   useEffect(() => {
-    console.log("BillSummaryViewCard.tsx: total: ", total);
-    console.log("BillSummaryViewCard.tsx: vatPercentage: ", vatPercentage);
+    console.log("BillSummaryViewCardCredit.tsx: total: ", total);
     console.log(
-      "BillSummaryViewCard.tsx: discountPercentage: ",
+      "BillSummaryViewCardCredit.tsx: vatPercentage: ",
+      vatPercentage,
+    );
+    console.log(
+      "BillSummaryViewCardCredit.tsx: discountPercentage: ",
       discountPercentage,
     );
-    console.log("BillSummaryViewCard.tsx: discountAmount: ", discountAmount);
+    console.log(
+      "BillSummaryViewCardCredit.tsx: discountAmount: ",
+      discountAmount,
+    );
   }, [total, vatPercentage, discountPercentage, discountAmount]);
 
   return (
@@ -46,7 +53,8 @@ function BillSummaryViewCard({
           <div className="d-flex justify-between mb-2">
             <OptionalLabel label="Discount (%)" style={{ fontSize: 14 }} />
             <p className="text-right text-md font-regular">
-              {discountPercentage}%
+              {/* round the value of (discountAmount/(total - discountAmount) * 100)*/}
+              {round((discountAmount / (total - discountAmount)) * 100, 2)}%
             </p>
           </div>
           <div className="d-flex justify-between mb-2">
@@ -57,7 +65,7 @@ function BillSummaryViewCard({
           </div>
           <div className="d-flex justify-between mb-2">
             <OptionalLabel style={{ fontSize: 14 }} label="VAT (%)" />
-            <p className="text-right text-md font-regular">{vatPercentage}%</p>
+            <p className="text-right text-md font-regular">0%</p>
           </div>
           <div className="d-flex justify-between mb-2">
             <OptionalLabel style={{ fontSize: 14 }} label="VAT Amount" />
@@ -79,11 +87,7 @@ function BillSummaryViewCard({
               <p className="text-3xl font-thin align-bottom">Rs.</p>
               {/* <p className="text-4xl font-semibold">{total}</p> */}
               <CurrencyComponent
-                amount={
-                  total -
-                  discountAmount +
-                  (total - discountAmount) * (vatPercentage / 100)
-                }
+                amount={total}
                 currency="LKR"
                 withoutCurrency
               />
@@ -100,4 +104,4 @@ function BillSummaryViewCard({
   );
 }
 
-export default BillSummaryViewCard;
+export default BillSummaryViewCardCredit;

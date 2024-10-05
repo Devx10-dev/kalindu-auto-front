@@ -52,6 +52,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Label, Pie, PieChart } from "recharts";
 import StatusCardCredit from "./components/StatusCardCredit";
 import { Button } from "@/components/ui/button";
+import BillSummaryViewCardCredit from "./components/BillSummaryViewCardCredit";
 
 function PaymentStat() {
   const isLoading = false;
@@ -218,67 +219,9 @@ function SingleInvoiceCredit() {
     console.log(total, vatPercentage, discountPercentage, discountAmount);
   }, [total, vatPercentage, discountPercentage, discountAmount]);
 
-  // function renderStatus(invoiceDetails: InvoiceState | null) {
-  //   switch (invoiceDetails?.dueStatus) {
-  //     case "COMPLETED":
-  //       return (
-  //         <StatusCard
-  //           icon={<CheckCircle size={30} color="green" />}
-  //           status="Completed"
-  //           statusColor="red"
-  //           statusText="This invoice has been completed"
-  //           type={"Cash"}
-  //           className="bg-green-50"
-  //         />
-  //       );
-  //     case "DUE":
-  //       return (
-  //         <StatusCard
-  //           icon={<PaymentStat />}
-  //           status={"DUE on " + dateArrayToString(invoiceDetails?.dueTime, true)}
-  //           statusColor="yellow"
-  //           statusText="This invoice is Due"
-  //           type={"Cash"}
-  //           className="bg-yellow-50"
-  //         />
-  //       );
-  //     case "OVERDUE":
-  //       return (
-  //         <StatusCard
-  //           icon={<TimerOff size={30} color="red" />}
-  //           status="Overdue"
-  //           statusColor="red"
-  //           statusText="This invoice is overdue"
-  //           type={"Cash"}
-  //           className="bg-red-50"
-  //         />
-  //       );
-  //   }
-  // }
-
   return (
     <Fragment>
       <div className="ml-2">
-        {/* <div className="flex justify-between items-center">
-          <CardHeader>
-            <PageHeader
-              title={`Invoice No: ${invoiceDetails?.invoiceId}`}
-              description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
-              icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
-              badge={
-                <Badge className="bg-yellow-200 text-black rounded-md">
-                  Credit Invoice
-                </Badge>
-              }
-            />
-          </CardHeader>
-          <div className="text-left pr-6 rounded-md color-slate-900">
-            {
-              renderStatus(invoiceDetails)
-            }
-            
-          </div>
-        </div> */}
         <CardContent
           style={{
             display: "flex",
@@ -360,12 +303,24 @@ function SingleInvoiceCredit() {
                       <div className="flex items-center gap-2">
                         {invoiceDetails?.invoiceItems.filter(
                           (item) => item.outsourced,
-                        ).length === 0 && (
+                        ).length === 0 ? (
                           <Badge
                             variant="secondary"
                             className="w-fit p-2 w-full border-radius-5 "
                           >
                             No Items
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="secondary"
+                            className="w-fit p-2 w-full border-radius-5 "
+                          >
+                            {
+                              invoiceDetails?.invoiceItems.filter(
+                                (item) => item.outsourced,
+                              ).length
+                            }{" "}
+                            Outsourced
                           </Badge>
                         )}
                         <AccordionTrigger className="p-2 rounded-md bg-primary-500 border border-primary-500" />
@@ -387,7 +342,14 @@ function SingleInvoiceCredit() {
             </div>
             <div>
               <Card className="mt-4 ">
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion
+                  type="single"
+                  collapsible
+                  className="w-full"
+                  defaultValue={
+                    invoiceDetails?.commissions.length > 0 ? "1" : ""
+                  }
+                >
                   <AccordionItem value="1">
                     <CardHeader className="flex-row justify-between items-center">
                       <div>
@@ -399,12 +361,19 @@ function SingleInvoiceCredit() {
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2">
-                        {invoiceDetails?.commissions.length === 0 && (
+                        {invoiceDetails?.commissions.length === 0 ? (
                           <Badge
                             variant="secondary"
                             className="w-fit p-2 w-full border-radius-5 "
                           >
                             No Commissions
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="secondary"
+                            className="w-fit p-2 w-full border-radius-5 "
+                          >
+                            {invoiceDetails?.commissions.length} Commissions
                           </Badge>
                         )}
                         <AccordionTrigger className="p-2 rounded-md bg-primary-500 border border-primary-500" />
@@ -435,7 +404,7 @@ function SingleInvoiceCredit() {
                 invoiceLoading={invoiceLoading}
               />
             </div>
-            <BillSummaryViewCard
+            <BillSummaryViewCardCredit
               total={total}
               vatPercentage={vatPercentage}
               discountPercentage={discountPercentage}
