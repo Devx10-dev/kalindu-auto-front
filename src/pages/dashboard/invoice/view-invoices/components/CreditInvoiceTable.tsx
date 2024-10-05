@@ -89,7 +89,7 @@ export default function CreditInvoiceTable({
   };
 
   const generateStatusBadge = (invoice: InvoiceState) => {
-    console.log("HEREEEE", invoice);
+    console.log("HEREEEE");
     const status = getDueStatus(
       invoice.issuedTime,
       Number(invoice.creditor.maxDuePeriod) as number,
@@ -150,7 +150,7 @@ export default function CreditInvoiceTable({
           </TableRow>
         </TableHeader>
         {isLoading ? (
-          <TableBodySkeleton cols={7} rows={10} noHeader={true} />
+          <TableBodySkeleton cols={8} rows={10} noHeader={true} />
         ) : invoices?.invoices.length === 0 ? (
           <TableBody>
             <TableRow>

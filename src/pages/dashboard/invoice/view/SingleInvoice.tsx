@@ -182,13 +182,17 @@ function SingleInvoice() {
           <div style={{ flex: 3 }}>
             <BillSummaryViewCard
               total={invoiceDetails?.totalPrice}
-              vatPercentage={invoiceDetails?.vat}
+              vatPercentage={
+                (invoiceDetails?.vat * 100) /
+                (invoiceDetails?.totalPrice - invoiceDetails?.totalDiscount)
+              }
               discountPercentage={invoiceDetails?.discount}
               discountAmount={invoiceDetails?.totalDiscount}
             />
             <TransactionDrawer
               invoiceDetails={invoiceDetails}
               invoiceLoading={invoiceLoading}
+              nonIcon={true}
             />
           </div>
         </CardContent>
