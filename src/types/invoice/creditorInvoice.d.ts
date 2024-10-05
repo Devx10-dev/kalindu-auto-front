@@ -2,6 +2,7 @@ import { Creditor } from "../creditor/creditorTypes";
 import { Commission } from "./cashInvoice";
 
 export type InvoiceItem = {
+  outsourcedStatus: boolean;
   name?: string;
   code?: string;
   price?: number;
@@ -72,6 +73,22 @@ export type InvoiceState = {
 
   getRequestData: () => any;
   resetState: () => void;
+};
+
+export type InvoiceItem = {
+  name?: string;
+  code?: string;
+  price?: number;
+  discount?: number;
+  sparePartId?: number;
+  quantity?: number;
+  outsourced?: boolean;
+  outsourceItem?: {
+    companyName?: string;
+    buyingPrice?: number;
+  };
+  description: string;
+  outsourcedStatus: boolean;
 };
 
 export type CreditorInvoiceList = {

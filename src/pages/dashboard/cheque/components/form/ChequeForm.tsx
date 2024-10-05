@@ -18,6 +18,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { z } from "zod";
+import { useRef } from "react";
 
 function ChequeForm({
   onClose,
@@ -55,6 +56,17 @@ function ChequeForm({
       },
       label: creditor.contactPersonName,
     })) || [];
+
+  const inputRefs = useRef<any[]>([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
 
   const createChequeMutation = useMutation({
     mutationFn: (formData: Cheque) =>
@@ -111,8 +123,9 @@ function ChequeForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Cheque No" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 1)}
                     {...field}
                     className="w-full"
                     placeholder="Please enter cheque no"
@@ -129,7 +142,10 @@ function ChequeForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Creditor" />
-                <FormControl>
+                <FormControl
+                  onKeyDown={(e) => handleKeyDown(e, 2)}
+                  ref={(el) => (inputRefs.current[2] = el)}
+                >
                   <Select
                     className="select-place-holder"
                     placeholder={"Select Creditor"}
@@ -149,8 +165,9 @@ function ChequeForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Amount" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[3] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 3)}
                     type="number"
                     min={0}
                     {...field}
@@ -172,7 +189,11 @@ function ChequeForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div>
-            <Button onClick={form.handleSubmit(handleSubmit)} className="mr-2">
+            <Button
+              ref={(el) => (inputRefs.current[4] = el)}
+              onClick={form.handleSubmit(handleSubmit)}
+              className="mr-2"
+            >
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

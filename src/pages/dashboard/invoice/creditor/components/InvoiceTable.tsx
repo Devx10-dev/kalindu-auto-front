@@ -1,6 +1,7 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableRow,
@@ -106,6 +107,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
         price: Number(newItem.price),
         discount: Number(newItem.discount),
         description: "",
+        outsourcedStatus: false,
       });
       setNewItem({
         name: "",
@@ -251,7 +253,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
             <TableCell>
               <Input
                 type="number"
-                value={newItem.price}
+                value={newItem.price === null ? "" : newItem.price}
                 onChange={(e) =>
                   setNewItem((prev) => ({
                     ...prev,
@@ -282,6 +284,9 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
             </TableCell>
           </TableRow>
         </TableBody>
+        <TableCaption className="text-right italic m-2">
+          Required fields: Item name, Quantity and Price
+        </TableCaption>
       </Table>
       <FormModal
         title="Edit Item"

@@ -136,3 +136,13 @@ body > div {
 .color-40 {
   color: #505050;
 }
+
+@media print {
+  .no-print {
+    display: none;
+  }
+}
+
+.data-cell {
+  padding: 0px !important;
+}

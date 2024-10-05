@@ -1,6 +1,7 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableRow,
@@ -185,12 +186,6 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-
-                    {/*<IconButton*/}
-                    {/*    icon={<EditIcon height="15" width="15"/>}*/}
-                    {/*    tooltipMsg="Edit Spare Part"*/}
-                    {/*    handleOnClick={() => setEditingItem(item)}*/}
-                    {/*/>*/}
                   </div>
                 </TableCell>
               </TableRow>
@@ -246,7 +241,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
             <TableCell>
               <Input
                 type="number"
-                value={newItem.price}
+                value={newItem.price === null ? "" : newItem.price}
                 onChange={(e) =>
                   setNewItem((prev) => ({
                     ...prev,
@@ -277,6 +272,9 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
             </TableCell>
           </TableRow>
         </TableBody>
+        <TableCaption className="text-right italic m-2">
+          Required fields: Item name, Quantity and Price
+        </TableCaption>
       </Table>
 
       <FormModal

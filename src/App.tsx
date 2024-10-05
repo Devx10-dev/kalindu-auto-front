@@ -16,6 +16,8 @@ import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
+import PrintPage from "./pages/dashboard/reports/daily-sales-expenses/Print";
+import HandlingReturn from "./pages/dashboard/returns/HandlingReturn";
 import EditUser from "./pages/dashboard/user-management/EditUser";
 import RegisterUser from "./pages/dashboard/user-management/RegisterUser";
 import ViewUsers from "./pages/dashboard/user-management/view-user/ViewUsers";
@@ -42,7 +44,7 @@ function App() {
           <Route path="invoice">
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />
-            <Route path="dummy" element={<DummyInvoice />} />
+            <Route path="quotation" element={<DummyInvoice />} />
             <Route path="all" element={<ViewAllInvoices />} />
             <Route path="cash/:id" element={<SingleInvoice />} />
             <Route path="creditor/:id" element={<SingleInvoiceCredit />} />
@@ -64,6 +66,7 @@ function App() {
 
           <Route path="reports">
             <Route path="daily-sales" element={<DailySalesBase />} />
+            <Route path="daily-sales/print-page" element={<PrintPage />} />
           </Route>
 
           {/* Routes for user management */}
@@ -74,6 +77,8 @@ function App() {
           </Route>
 
           <Route path="cheque" element={<ChequeManagement />} />
+
+          <Route path="return" element={<HandlingReturn />} />
 
           <Route path="log">
             <Route path="activity" element={<ActivityLog />} />

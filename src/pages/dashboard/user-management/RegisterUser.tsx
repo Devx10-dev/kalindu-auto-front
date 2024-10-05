@@ -34,6 +34,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import ReactSelect from "react-select";
 import { z } from "zod";
+import { useRef } from "react";
 
 function RegisterUser() {
   const axiosPrivate = useAxiosPrivate();
@@ -59,6 +60,17 @@ function RegisterUser() {
   });
 
   const userService = new UserService(axiosPrivate);
+
+  const inputRefs = useRef<any[]>([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
 
   // Submit handler
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
@@ -160,8 +172,9 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Username" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                       <Input
+                        onKeyDown={(e) => handleKeyDown(e, 1)}
                         placeholder="Please enter the username"
                         {...field}
                       />
@@ -177,8 +190,9 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Full Name" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                       <Input
+                        onKeyDown={(e) => handleKeyDown(e, 2)}
                         placeholder="Please enter user's full name"
                         {...field}
                       />
@@ -194,8 +208,9 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <OptionalLabel label="Email Address" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[3] = el)}>
                       <Input
+                        onKeyDown={(e) => handleKeyDown(e, 3)}
                         placeholder="Please enter user's email address"
                         {...field}
                       />
@@ -211,7 +226,10 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem className="w-full col-span-1 row-span-1">
                     <RequiredLabel label="Roles" />
-                    <FormControl>
+                    <FormControl
+                      onKeyDown={(e) => handleKeyDown(e, 4)}
+                      ref={(el) => (inputRefs.current[4] = el)}
+                    >
                       <ReactSelect
                         isMulti
                         options={roleOptions}
@@ -239,8 +257,9 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Password" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[5] = el)}>
                       <Input
+                        onKeyDown={(e) => handleKeyDown(e, 5)}
                         type="password"
                         placeholder="Please enter the password"
                         {...field}
@@ -256,8 +275,9 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Verify Password" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[6] = el)}>
                       <Input
+                        onKeyDown={(e) => handleKeyDown(e, 6)}
                         type="password"
                         placeholder="Please verify the password"
                         {...field}
@@ -275,7 +295,10 @@ function RegisterUser() {
                   <FormItem>
                     <OptionalLabel label="Designation" />
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
+                      <FormControl
+                        onKeyDown={(e) => handleKeyDown(e, 7)}
+                        ref={(el) => (inputRefs.current[7] = el)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select the Designation" />
                         </SelectTrigger>
@@ -300,8 +323,9 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <OptionalLabel label="Mobile Number" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[8] = el)}>
                       <Input
+                        onKeyDown={(e) => handleKeyDown(e, 8)}
                         placeholder="Enter the contact number"
                         {...field}
                       />
@@ -316,8 +340,12 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <OptionalLabel label="Home Number" />
-                    <FormControl>
-                      <Input placeholder="Enter the home number" {...field} />
+                    <FormControl ref={(el) => (inputRefs.current[9] = el)}>
+                      <Input
+                        onKeyDown={(e) => handleKeyDown(e, 9)}
+                        placeholder="Enter the home number"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -331,7 +359,10 @@ function RegisterUser() {
                   <FormItem>
                     <RequiredLabel label="Gender" />
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
+                      <FormControl
+                        onKeyDown={(e) => handleKeyDown(e, 10)}
+                        ref={(el) => (inputRefs.current[10] = el)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select the Designation" />
                         </SelectTrigger>
@@ -359,8 +390,9 @@ function RegisterUser() {
                 render={({ field }) => (
                   <FormItem>
                     <OptionalLabel label="Address" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[11] = el)}>
                       <Textarea
+                        onKeyDown={(e) => handleKeyDown(e, 11)}
                         placeholder="Enter user's address"
                         className="resize-none h-24"
                         {...field}
@@ -377,7 +409,10 @@ function RegisterUser() {
                   <FormItem>
                     <div className="space-y-0.5 d-flex gap-4">
                       <OptionalLabel label="Active" />
-                      <FormControl>
+                      <FormControl
+                        onKeyDown={(e) => handleKeyDown(e, 12)}
+                        ref={(el) => (inputRefs.current[12] = el)}
+                      >
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
@@ -389,7 +424,9 @@ function RegisterUser() {
               />
             </div>
             <div className="flex justify-start gap-3">
-              <Button type="submit">Submit</Button>
+              <Button ref={(el) => (inputRefs.current[13] = el)} type="submit">
+                Submit
+              </Button>
               <Button type="reset" variant="destructive">
                 Reset
               </Button>

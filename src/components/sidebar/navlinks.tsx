@@ -39,12 +39,16 @@ const NavLinks: NavLink[] = [
         href: "/dashboard/invoice/creditor",
       },
       {
-        label: "Create Dummy Invoice",
-        href: "/dashboard/invoice/dummy",
+        label: "Create Quotation",
+        href: "/dashboard/invoice/quotation",
       },
       {
         label: "View Invoices",
         href: "/dashboard/invoice/all",
+      },
+      {
+        label: "Return Handling",
+        href: "/dashboard/return",
       },
     ],
   },

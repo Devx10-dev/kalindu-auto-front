@@ -14,7 +14,11 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import CreditorAPI from "@/pages/dashboard/creditors/api/CreditorAPI";
 import { ChequeService } from "@/service/cheque/ChequeService";
-import { Creditor } from "@/types/creditor/creditorTypes";
+import {
+  Creditor,
+  TransactionType,
+  TransactionTypes,
+} from "@/types/creditor/creditorTypes";
 import { transactionSchema } from "@/validation/schema/creditor/transaction/transactionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -31,10 +35,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { getRandomColor } from "@/utils/colors";
-import { useEffect, useState } from "react";
+import { getInitials, truncate } from "@/utils/string";
+import { useEffect, useState, useRef } from "react";
+import { Separator } from "@/components/ui/separator";
+import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
+import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "lucide-react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { Cheque } from "@/types/cheque/chequeTypes";
 
 const RANDOM_COLOR = getRandomColor();
 
@@ -54,8 +65,26 @@ function TransactionForm({
   const [selectedCreditor, setSelectedCreditor] = useState<Creditor | null>(
     null,
   );
-  const [selectedCreditInvoice, setSelectedCreditInvoice] =
-    useState<CreditInvoice | null>(null);
+
+  const inputRefs = useRef<any[]>([]);
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
+
+  const [selectedType, setSelectedType] = useState<TransactionTypes>("CASH");
+  const [selectedCreditInvoices, setSelectedCreditInvoices] = useState<
+    CreditInvoice[]
+  >([]);
+  const [selectedCreditInvoiceIDs, setSelectedCreditInvoiceIDs] = useState<
+    string[]
+  >([]);
 
   type transactionValues = z.infer<typeof transactionSchema>;
   const defaultValues: Partial<transactionValues> = {};
@@ -71,6 +100,17 @@ function TransactionForm({
       creditorService.fetchUnsettledCreditInvoicesByID(
         selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
       ),
+    retry: 1,
+  });
+
+  const { data: cheques } = useQuery({
+    queryKey: [`nonRedeemCheques-${selectedCreditor?.id}`, selectedCreditor],
+    queryFn: () =>
+      chequeService.fetchNonRedeemChequesOfCreditor(
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
+      ),
+    enabled: selectedCreditor !== null && selectedType === "CHEQUE",
+    retry: 1,
   });
 
   const [creditorSelectKey, setCreditorSelectKey] = useState(0);
@@ -78,19 +118,20 @@ function TransactionForm({
 
   const resetForm = () => {
     setSelectedCreditor(null);
-    setSelectedCreditInvoice(null);
+    setSelectedCreditInvoices([]);
+    setSelectedCreditInvoiceIDs([]);
 
     form.reset({
       id: undefined,
       amount: undefined,
-      creditInvoice: undefined,
+      creditInvoices: [],
       creditor: undefined,
       type: "CASH",
       remark: "",
     });
 
     form.setValue("creditor", null);
-    form.setValue("creditInvoice", null);
+    form.setValue("creditInvoices", []);
     form.setValue("remark", "");
     form.setValue("amount", undefined);
 
@@ -101,14 +142,20 @@ function TransactionForm({
   const creditorOptions =
     creditors?.map((creditor) => ({
       value: parseInt(creditor.creditorID),
-      label: creditor.contactPersonName,
+      label: creditor?.shopName ?? "-",
     })) || [];
 
   const creditInvoiceOptions =
     creditInvoices?.map((creditInvoice) => ({
-      value: creditInvoice.id,
+      value: creditInvoice.id.toString(),
       label: creditInvoice.invoiceId,
     })) || [];
+
+  console.log(cheques?.length);
+  const chequeOptions = cheques?.map((cheque) => ({
+    value: cheque.id.toString(),
+    label: cheque,
+  }));
 
   const createTransactionMutation = useMutation({
     mutationFn: (data: transactionValues) =>
@@ -160,13 +207,31 @@ function TransactionForm({
 
         return;
       }
+
+      const totalSelectedAmount = selectedCreditInvoices.reduce(
+        (total, invoice) =>
+          total + (invoice.totalPrice - invoice.settledAmount),
+        0,
+      );
+      if (transaction.amount > totalSelectedAmount) {
+        toast({
+          title: "Validation error",
+          description: "The entered amount exceeds the payable balance.",
+          variant: "destructive",
+          duration: 5000,
+        });
+
+        return;
+      }
+
       if (transaction) {
         const transactionData = {
           creditorID: transaction.creditor.value,
           transactionType: transaction.type.toUpperCase(),
-          invoiceNo: selectedCreditInvoice.invoiceId,
+          invoiceIDs: transaction.creditInvoices,
           totalPrice: transaction.amount,
           remark: transaction.remark,
+          chequeID: transaction.chequeNo,
         };
 
         await createTransactionMutation.mutateAsync(transactionData);
@@ -177,9 +242,10 @@ function TransactionForm({
   };
 
   useEffect(() => {
-    setSelectedCreditInvoice(null);
+    setSelectedCreditInvoices([]);
+    setSelectedCreditInvoiceIDs([]);
 
-    form.setValue("creditInvoice", null);
+    form.setValue("creditInvoices", [null]);
     form.setValue("remark", "");
     form.setValue("amount", undefined);
 
@@ -202,7 +268,7 @@ function TransactionForm({
         >
           <CreditorDetailsCard
             color={RANDOM_COLOR}
-            selectedCreditInvoice={selectedCreditInvoice}
+            selectedCreditInvoices={selectedCreditInvoices}
             selectedCreditor={selectedCreditor}
           />
         </Card>
@@ -222,12 +288,13 @@ function TransactionForm({
                 render={({ field, fieldState }) => (
                   <FormItem>
                     <RequiredLabel label="Creditor" />
-                    <FormControl>
+                    <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                       <Select
                         key={creditorSelectKey}
                         className="select-place-holder"
                         placeholder={"Please select creditor"}
                         options={creditorOptions}
+                        onKeyDown={(e) => handleKeyDown(e, 1)}
                         onChange={(selectedOption) => {
                           field.onChange(selectedOption);
                           const selectedCreditor = creditors.find(
@@ -253,34 +320,42 @@ function TransactionForm({
 
               <FormField
                 control={form.control}
-                name="creditInvoice"
+                name="creditInvoices"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <RequiredLabel label="Credit Invoice" />
-                    <FormControl>
-                      <Select
+                    <RequiredLabel label="Credit Invoices" />
+                    <FormControl ref={(el) => (inputRefs.current[2] = el)}>
+                      <MultiSelect
                         key={creditInvoiceSelectKey}
-                        className="select-place-holder"
-                        placeholder={`${selectedCreditor === null ? "Please select creditor first" : "Please select Credit invoice"}`}
                         options={creditInvoiceOptions}
-                        onChange={(selectedOption) => {
-                          field.onChange(selectedOption);
-                          const selectedCreditInvoice = creditInvoices.find(
+                        onKeyDown={(e) => handleKeyDown(e, 2)}
+                        onValueChange={(selectedOptions) => {
+                          field.onChange(selectedOptions);
+                          const selectedCreditInvoices = creditInvoices.filter(
                             (creditInvoice) =>
-                              creditInvoice.id === selectedOption.value,
+                              selectedOptions.includes(
+                                creditInvoice.id.toString(),
+                              ),
                           );
-                          setSelectedCreditInvoice(
-                            selectedCreditInvoice || null,
-                          );
+                          setSelectedCreditInvoices(selectedCreditInvoices);
+                          setSelectedCreditInvoiceIDs(selectedOptions);
                         }}
-                        isDisabled={selectedCreditor === null}
+                        defaultValue={[]}
+                        placeholder={`${selectedCreditor === null ? "Please select creditor first" : "Please select Credit invoices"}`}
+                        variant="default"
+                        animation={0}
+                        maxCount={1}
+                        modalPopover={true}
+                        badgeInlineClose={false}
+                        disabled={selectedCreditor === null}
+                        value={selectedCreditInvoiceIDs}
                       />
                     </FormControl>
 
                     {fieldState.error &&
                     (fieldState.error.message === "Required" ||
                       fieldState.error.message ===
-                        "Expected object, received null") ? (
+                        "Expected string, received null") ? (
                       <p className="error-msg">Credit invoice is required</p>
                     ) : (
                       <FormMessage />
@@ -296,10 +371,16 @@ function TransactionForm({
                   <FormItem>
                     <RequiredLabel label="Transaction Type" />
                     <SelectComponent
-                      onValueChange={field.onChange}
+                      onValueChange={(selectedType) => {
+                        field.onChange(selectedType);
+                        setSelectedType(selectedType as TransactionTypes);
+                      }}
                       value={field.value}
                     >
-                      <FormControl>
+                      <FormControl
+                        onKeyDown={(e) => handleKeyDown(e, 3)}
+                        ref={(el) => (inputRefs.current[3] = el)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Please select the transaction type" />
                         </SelectTrigger>
@@ -321,29 +402,66 @@ function TransactionForm({
                 )}
               />
 
+              {selectedType === "CHEQUE" && (
+                <FormField
+                  control={form.control}
+                  name="chequeNo"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <RequiredLabel label="Cheque" />
+                      <SelectComponent
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select the cheque - [Cheque No - Cheque Amount]" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {chequeOptions?.map((chequeOption) => (
+                            <SelectItem
+                              key={Math.random()}
+                              value={chequeOption.value}
+                            >
+                              {`${chequeOption.label.chequeNo} - ${chequeOption.label?.availableAmount} (available amount)`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectComponent>
+                      {fieldState.error &&
+                      (fieldState.error.message === "Required" ||
+                        fieldState.error.message ===
+                          "Expected number, received nan") ? (
+                        <p className="error-msg">Amount is required</p>
+                      ) : (
+                        <FormMessage />
+                      )}
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
                     <RequiredLabel label="Amount" />
-                    <FormControl>
+                    <FormControl
+                      onKeyDown={(e) => handleKeyDown(e, 3)}
+                      ref={(el) => (inputRefs.current[3] = el)}
+                    >
                       <Input
                         type="number"
                         {...field}
-                        placeholder={`${selectedCreditInvoice === null ? "Please select credit invoice first" : "Please enter amount"}`}
+                        placeholder={`${selectedCreditInvoices.length === 0 ? "Please select credit invoice first" : "Please enter amount"}`}
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value))
                         }
                         value={field.value ?? ""}
-                        max={
-                          selectedCreditInvoice === null
-                            ? 1000000
-                            : selectedCreditInvoice.totalPrice -
-                              selectedCreditInvoice.settledAmount
-                        }
                         min={0}
-                        disabled={selectedCreditInvoice === null}
+                        disabled={selectedCreditInvoices.length === 0}
                       />
                     </FormControl>
                     <FormMessage />
@@ -357,7 +475,10 @@ function TransactionForm({
                 render={({ field }) => (
                   <FormItem>
                     <OptionalLabel label="Remark" />
-                    <FormControl>
+                    <FormControl
+                      onKeyDown={(e) => handleKeyDown(e, 4)}
+                      ref={(el) => (inputRefs.current[4] = el)}
+                    >
                       <Textarea
                         placeholder="Add remark"
                         {...field}
@@ -372,6 +493,7 @@ function TransactionForm({
 
             <div className="flex justify-start gap-2 py-4">
               <Button
+                ref={(el) => (inputRefs.current[5] = el)}
                 onClick={form.handleSubmit(handleSubmit)}
                 className="px-6"
               >
@@ -394,7 +516,7 @@ function TransactionForm({
         <Card
           style={{
             opacity: selectedCreditor === null ? 0 : 1,
-            height: selectedCreditor === null ? "0" : "auto",
+            height: selectedCreditor === null ? "0" : "fit-content",
             transition: "opacity 0.5s ease, height 0.5s ease",
             overflow: "hidden",
             minWidth: "350px",
@@ -404,7 +526,7 @@ function TransactionForm({
         >
           <CreditorDetailsCard
             color={RANDOM_COLOR}
-            selectedCreditInvoice={selectedCreditInvoice}
+            selectedCreditInvoices={selectedCreditInvoices}
             selectedCreditor={selectedCreditor}
           />
         </Card>

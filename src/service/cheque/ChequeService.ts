@@ -56,6 +56,18 @@ class ChequeService extends Service {
       status: "REJECTED",
     });
   }
+
+  async fetchNonRedeemChequesOfCreditor(creditorId: number): Promise<Cheque[]> {
+    try {
+      const response = await this.api.get<Cheque[]>(
+        `${CHEQUE_URL}/${creditorId}`,
+      );
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch cheques");
+    }
+  }
 }
 
 export { ChequeService };

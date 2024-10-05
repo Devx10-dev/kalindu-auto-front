@@ -24,7 +24,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { isNumberObject } from "util/types";
@@ -49,6 +49,16 @@ export default function SparePartForm({
 }) {
   const queryClient = useQueryClient();
 
+  const inputRefs = useRef<any[]>([]);
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  };
   const { data: chassisNos } = useQuery({
     queryKey: ["chassisNos"],
     queryFn: () => vehicleService.fetchVehicleChassisNos(),
@@ -190,8 +200,9 @@ export default function SparePartForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Spare Part" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 1)}
                     {...field}
                     className="w-full"
                     placeholder="Please enter spare part"
@@ -209,8 +220,9 @@ export default function SparePartForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Spare Part Code" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 2)}
                     {...field}
                     className="w-full"
                     placeholder="Please enter spare part code"
@@ -227,8 +239,9 @@ export default function SparePartForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Quantity" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[3] = el)}>
                   <Input
+                    onKeyDown={(e) => handleKeyDown(e, 3)}
                     type="number"
                     min={0}
                     {...field}
@@ -273,8 +286,9 @@ export default function SparePartForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <OptionalLabel label="Remark" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[4] = el)}>
                   <Textarea
+                    onKeyDown={(e) => handleKeyDown(e, 4)}
                     className="w-full"
                     {...field}
                     placeholder="Add a remark"
@@ -293,7 +307,11 @@ export default function SparePartForm({
           </Button>
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div style={{ gap: "8px" }}>
-            <Button type="submit" onClick={form.handleSubmit(handleSubmit)}>
+            <Button
+              ref={(el) => (inputRefs.current[5] = el)}
+              type="submit"
+              onClick={form.handleSubmit(handleSubmit)}
+            >
               Save
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>

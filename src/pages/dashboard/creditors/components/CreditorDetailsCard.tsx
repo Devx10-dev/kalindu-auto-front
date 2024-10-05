@@ -17,11 +17,11 @@ import StatusCard from "../../invoice/view/components/StatusCard";
 
 function CreditorDetailsCard({
   selectedCreditor,
-  selectedCreditInvoice,
+  selectedCreditInvoices,
   color,
 }: {
   selectedCreditor: Creditor;
-  selectedCreditInvoice: CreditInvoice;
+  selectedCreditInvoices: CreditInvoice[];
   color: string;
 }) {
   const [show, setShow] = useState(false);
@@ -72,7 +72,7 @@ function CreditorDetailsCard({
         className={`p-6 text-sm sm:${show ? "block" : "hidden"} md:block`}
       >
         <div
-          className={`grid gap-6 grid-cols-1 lg:grid-cols-1 ${selectedCreditInvoice === null ? "" : "md:grid-cols-2"}`}
+          className={`grid gap-6 grid-cols-1 lg:grid-cols-1 ${selectedCreditInvoices.length === 0 ? "" : "md:grid-cols-2"}`}
         >
           <div className="md:col-span-1">
             <div className="font-semibold">Creditor Balance Details</div>
@@ -118,79 +118,107 @@ function CreditorDetailsCard({
             </ul>
           </div>
 
-          {selectedCreditInvoice !== null && (
+          {selectedCreditInvoices.length > 0 && (
             <div className="md:col-span-1">
               <Separator
                 className={`my-2 hidden lg:block sm:block md:hidden`}
               />
-              <div className="font-semibold">Credit Invoice Details</div>
-              <ul className="grid gap-3">
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Invoice ID</span>
-                  <span>{selectedCreditInvoice?.invoiceId ?? ""}</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Date</span>
-                  <span>
-                    {selectedCreditInvoice
-                      ? convertArrayToISOFormat(
-                          selectedCreditInvoice?.issuedTime,
-                        )
-                      : ""}
-                  </span>
-                </li>
-              </ul>
-
-              <ul className="grid gap-3">
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Total Amount</span>
-                  <span>{selectedCreditInvoice?.totalPrice ?? ""}</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Settled Amount</span>
-                  <span
-                    style={{
-                      background: "#B4E380",
-                      paddingLeft: 10,
-                      paddingRight: 10,
-                      borderRadius: 5,
-                    }}
-                  >
-                    Rs {selectedCreditInvoice?.settledAmount ?? 0}
-                  </span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Due Amount</span>
-                  <span
-                    style={{
-                      background: "#FFAAAA",
-                      paddingLeft: 10,
-                      paddingRight: 10,
-                      borderRadius: 5,
-                    }}
-                  >
-                    Rs{" "}
-                    {selectedCreditInvoice.totalPrice -
-                      selectedCreditInvoice.settledAmount ?? 0}
-                  </span>
-                </li>
-              </ul>
+              <div className="font-semibold">Credit Invoices Details</div>
+              <li className="flex items-center justify-between mt-1">
+                <span>Total Amount</span>
+                <span
+                  style={{
+                    background: "#FFAAAA",
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    borderRadius: 5,
+                  }}
+                >
+                  Rs{" "}
+                  {selectedCreditInvoices.reduce(
+                    (total, invoice) =>
+                      total + (invoice.totalPrice - invoice.settledAmount),
+                    0,
+                  )}
+                </span>
+              </li>
+              <Separator
+                className={`my-2 hidden lg:block sm:block md:hidden`}
+              />
+              <div
+                style={{
+                  height: "180px",
+                  overflowY: "scroll",
+                  paddingLeft: "15px",
+                  paddingRight: "15px",
+                  paddingTop: "5px",
+                  borderRadius: "5px",
+                }}
+                className="bg-muted/50"
+              >
+                {selectedCreditInvoices.map((invoice, index) => (
+                  <div key={index}>
+                    <ul className="grid gap-3 mt-2">
+                      <li className="flex items-center justify-between font-semibold">
+                        <span className="font-semibold">Invoice ID</span>
+                        <span>{invoice?.invoiceId ?? ""}</span>
+                      </li>
+                      <li className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Date</span>
+                        <span>
+                          {invoice
+                            ? convertArrayToISOFormat(invoice?.issuedTime)
+                            : ""}
+                        </span>
+                      </li>
+                    </ul>
+                    <ul className="grid gap-3">
+                      <li className="flex items-center justify-between">
+                        <span className="text-muted-foreground">
+                          Total Amount
+                        </span>
+                        <span>{invoice?.totalPrice ?? ""}</span>
+                      </li>
+                      <li className="flex items-center justify-between">
+                        <span className="text-muted-foreground">
+                          Settled Amount
+                        </span>
+                        <span
+                          style={{
+                            background: "#B4E380",
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 5,
+                          }}
+                        >
+                          Rs {invoice?.settledAmount}
+                        </span>
+                      </li>
+                      <li className="flex items-center justify-between">
+                        <span className="text-muted-foreground">
+                          Due Amount
+                        </span>
+                        <span
+                          style={{
+                            background: "#FFAAAA",
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            borderRadius: 5,
+                          }}
+                        >
+                          Rs {invoice.totalPrice - invoice.settledAmount ?? 0}
+                        </span>
+                      </li>
+                    </ul>
+                    <Separator
+                      className={`my-4 hidden lg:block sm:block md:hidden`}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
-        {selectedCreditInvoice &&
-          selectedCreditInvoice.totalPrice -
-            selectedCreditInvoice.settledAmount ===
-            0 && (
-            <StatusCard
-              className="p-2 mt-4"
-              icon={<CheckCircle size={30} color="green" />}
-              status="Completed"
-              statusColor="red"
-              statusText="This invoice has been completed"
-              type={"Cash"}
-            />
-          )}
       </CardContent>
     </>
   );
