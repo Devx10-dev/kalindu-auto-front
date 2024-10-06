@@ -35,6 +35,7 @@ export type InvoiceState = {
   returnedItems: ReturnItem[];
 
   returnType?: string;
+  newInvoiceType?: string, //Must be
   reason?: string;
 
   cashBackAmount?: number;
@@ -69,6 +70,7 @@ export type InvoiceState = {
 
   setSourceInvoiceId: (sourceInvoiceId?: string) => void;
   setReturnType: (returnType?: string) => void;
+  setNewInvoiceType: (newInvoiceType?: string) => void;
   setReason: (reason?: string) => void;
   setCashBackAmount: (cashBackAmount: number) => void;
   setCreditorCashBack: (creditorCashBack: number) => void;
