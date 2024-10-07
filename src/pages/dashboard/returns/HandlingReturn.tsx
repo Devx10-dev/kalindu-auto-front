@@ -63,7 +63,9 @@ function HandlingReturn() {
     returnType,
     resetExchangeItemTable,
     newInvoiceType,
-    invoiceItemDTOList
+    invoiceItemDTOList,
+    setSelectedInvoice,
+    selectedInvoice,
   } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
@@ -79,7 +81,6 @@ function HandlingReturn() {
   const [customerName, setCustomerName] = useState("");
   const [vehicleNo, setVehicleNo] = useState("");
   const [isValid, setIsValid] = useState(true);
-  const [selectedInvoice, setSelectedInvoice] = useState<BaseInvoice>();
 
   const [returnedQuantities, setReturnedQuantities] = useState<{
     [key: string]: number;

@@ -65,6 +65,7 @@ export type InvoiceState = {
   commissionName?: string;
   commissionRemark?: string;
   commissionAmount?: number;
+  selectedInvoice?:BaseInvoice;
 
   commissions?: Commission[];
 
@@ -102,6 +103,8 @@ export type InvoiceState = {
 
   getRequestData: () => any;
   resetExchangeItemTable: () => void;
+  resetState: () => void;
+  setSelectedInvoice:(invoice?: BaseInvoice)=> void;
 };
 
 export type InvoiceItem = {
