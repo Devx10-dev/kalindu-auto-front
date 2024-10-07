@@ -1,5 +1,11 @@
 import * as React from "react";
-import { ArrowDownUpIcon, Minus, PenBox, Plus } from "lucide-react";
+import {
+  ArrowDownUp,
+  ArrowDownUpIcon,
+  Minus,
+  PenBox,
+  Plus,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +20,7 @@ import {
 } from "@/components/ui/drawer";
 import TimeLine from "./TransactionTimeline";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
+import { InvoiceState as CreditInvoiceState } from "@/types/invoice/creditorInvoice";
 import dateToString from "@/utils/dateToString";
 import Loading from "@/components/Loading";
 import dateArrayToString from "@/utils/dateArrayToString";
@@ -24,9 +31,11 @@ import TransactionTimeLine from "./TransactionTimeline";
 export function TransactionDrawer({
   invoiceDetails,
   invoiceLoading,
+  nonIcon = false,
 }: {
-  invoiceDetails: InvoiceState | null;
+  invoiceDetails: InvoiceState | CreditInvoiceState | null;
   invoiceLoading: boolean;
+  nonIcon?: boolean;
 }) {
   const [goal, setGoal] = React.useState(350);
 
@@ -37,9 +46,15 @@ export function TransactionDrawer({
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>
-        <Button variant="outline" className="w-full mt-5">
-          View Transactions
-        </Button>
+        {nonIcon ? (
+          <Button variant="outline" className="w-full py-5 mt-5">
+            <ArrowDownUpIcon size={20} className="mr-2" /> Transactions
+          </Button>
+        ) : (
+          <Button variant="outline" className="w-fit h-full p-5">
+            <ArrowDownUpIcon size={20} />
+          </Button>
+        )}
       </DrawerTrigger>
       <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 w-[500px] rounded-none">
         <div className="mx-10 w-auto max-w-120">

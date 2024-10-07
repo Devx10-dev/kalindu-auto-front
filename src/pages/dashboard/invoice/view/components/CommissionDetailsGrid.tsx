@@ -12,17 +12,25 @@ import {
   InvoiceItem,
   InvoiceState,
 } from "@/types/invoice/cashInvoice";
+import {
+  Commission as CreditorCommission,
+  InvoiceItem as CreditorInvoiceItem,
+  InvoiceState as CreditorInvoiceState,
+} from "@/types/invoice/creditorInvoice";
 import { useEffect, useState } from "react";
 import { TableBodySkeleton } from "../../view-invoices/components/TableSkeleton";
+import { Coins } from "lucide-react";
 
 function CommissionDetailsGrid({
   invoiceDetails,
   invoiceLoading,
 }: {
-  invoiceDetails: InvoiceState | null;
+  invoiceDetails: InvoiceState | CreditorInvoiceState | null;
   invoiceLoading: boolean;
 }) {
-  const [commissionDetails, setCommissionDetails] = useState<Commission[]>([]);
+  const [commissionDetails, setCommissionDetails] = useState<
+    Commission[] | CreditorCommission[]
+  >([]);
 
   useEffect(() => {
     if (invoiceDetails) {
@@ -42,6 +50,20 @@ function CommissionDetailsGrid({
 
       {invoiceLoading ? (
         <TableBodySkeleton noHeader={true} cols={3} rows={5} />
+      ) : commissionDetails.length === 0 ? (
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={5} className="text-center">
+              <div className="flex justify-center items-center gap-2 my-4">
+                <Coins size={20} className="text-muted-foreground" />
+                <p className="text-sm ml-2 text-muted-foreground">
+                  {" "}
+                  No Commissions were added for this invoice
+                </p>
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableBody>
       ) : (
         <TableBody>
           {commissionDetails.map((item, index) => (

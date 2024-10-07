@@ -25,6 +25,7 @@ import Error500 from "./pages/error/500";
 import ActivityLog from "./pages/log/ActivityLog";
 import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
+import SingleInvoiceCredit from "./pages/dashboard/invoice/view/SingleInvoiceCredit";
 
 function App() {
   return (
@@ -45,8 +46,8 @@ function App() {
             <Route path="creditor" element={<CreditorInvoiceBase />} />
             <Route path="quotation" element={<DummyInvoice />} />
             <Route path="all" element={<ViewAllInvoices />} />
-            {/* single invoice using id */}
             <Route path="cash/:id" element={<SingleInvoice />} />
+            <Route path="creditor/:id" element={<SingleInvoiceCredit />} />
             <Route path="creditor/print" element={<PrintCreditor />} />
           </Route>
 

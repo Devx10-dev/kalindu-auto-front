@@ -15,11 +15,16 @@ import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { Label } from "@radix-ui/react-label";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreditCard, SquareGanttChart, User } from "lucide-react";
-import { Key, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CreditorAPI from "./api/CreditorAPI";
 import { AddNewTransaction } from "./components/AddNewTransaction";
 import CreditorInvoiceTable from "./components/CreditorInvoiceTable";
+import { currencyAmountString } from "@/utils/analyticsUtils";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import dateArrayToString from "@/utils/dateArrayToString";
+import { Header } from "@radix-ui/react-accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ViewCreditor = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -50,155 +55,165 @@ const ViewCreditor = () => {
 
   const hasData = transactionResponse.data?.creditorTransactions.length != 0;
 
+  useEffect(() => {
+    if (creditorDetails.data) {
+      console.log("creditorDetails.data", creditorDetails.data);
+    }
+  }, [creditorDetails.data]);
+
   if (creditorDetails.isLoading || transactionResponse.isLoading) {
     return <Loading />;
   } else
     return (
       <div className="w-full h-full p-10">
         <PageHeader
-          title={`View Creditor Data - ${creditorDetails.data.shopName || "-"}`}
-          description="View full creditor data and the transactions. You can add new transactions here."
+          title={`Creditor Information`}
+          description=""
           icon={<CreditCard height="30" width="28" color="#162a3b" />}
         />
-        <div className="grid gap-10 grid-cols-4 h-full mt-8">
-          <Card className="shadow-md bg-slate-50 h-full col-span-3 flex flex-col">
-            <div className="flex-1 max-h-80">
-              <CardHeader>
-                <h3 className="text-lg font-bold">Transaction History</h3>
-              </CardHeader>
-              <CardContent className="overflow-auto h-4/5">
-                <Table className="border bg-white">
-                  <TableHeader>
+        {/* <AddNewTransaction /> */}
+
+        <div className="mt-5">
+          <div className="p-4 border border-muted-gray bg-muted-background rounded-md">
+            <div className="grid grid-cols-4 gap-2">
+              <div className="col-span-4 row-span-1">
+                <div className="flex flex-row items-center justify-flex-start gap-3">
+                  <Avatar className="hidden h-8 w-8 sm:flex">
+                    <AvatarImage
+                      // seperate by space and add + sign to join
+                      src={
+                        "https://avatar.iran.liara.run/username?username=" +
+                        creditorDetails.data?.shopName.split(" ").join("+")
+                        // creditor.shopName.split(" ").join("+")
+                      }
+                      alt="Avatar"
+                    />
+                  </Avatar>
+                  <h2 className="text-lg font-semibold">
+                    {creditorDetails.data?.shopName}
+                  </h2>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">Contact Person</p>
+                <p>{creditorDetails.data?.contactPersonName}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">Primary Contact</p>
+                <p>{creditorDetails.data?.primaryContact}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">
+                  Secondary Contact
+                </p>
+                <p>{creditorDetails.data?.secondaryContact}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">Address</p>
+                <p>{creditorDetails.data?.address}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">Total Due</p>
+                {creditorDetails.data?.dueAmount ? (
+                  <Badge variant="secondary" className="w-fit">
+                    {currencyAmountString(creditorDetails.data?.dueAmount)}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="w-fit">
+                    No Due
+                  </Badge>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">Total Overdue</p>
+                {creditorDetails.data?.overdueAmount ? (
+                  <Badge variant="destructive" className="w-fit">
+                    {currencyAmountString(creditorDetails.data?.overdueAmount)}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="w-fit">
+                    No Overdue
+                  </Badge>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">Credit Limit</p>
+                {/* <p>{currencyAmountString(creditor?.creditLimit)}</p> */}
+                {creditorDetails.data?.creditLimit ? (
+                  <p>
+                    {currencyAmountString(creditorDetails.data?.creditLimit)}
+                  </p>
+                ) : (
+                  <Badge variant="outline" className="w-fit">
+                    No Limit
+                  </Badge>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-muted-foreground">
+                  Allowed Due Period
+                </p>
+                <Badge variant="default" className="w-fit">
+                  {creditorDetails.data?.maxDuePeriod} weeks
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-10 grid-cols-4 h-full mt-10">
+          <div className="relative overflow-y-auto w-full col-span-3">
+            <Tabs defaultValue="overdue" className="w-[100%]">
+              <TabsList className="grid w-[40%] grid-cols-2">
+                {/* <TabsTrigger value="all">All</TabsTrigger> */}
+                <TabsTrigger value="overdue">Overdue</TabsTrigger>
+                <TabsTrigger value="due">Due</TabsTrigger>
+                <TabsTrigger value="completed">Completed</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="overdue">
+                <Table className="border rounded-md text-md mb-5 overflow-y-auto max-w-full ">
+                  <TableHeader className="sticky top-0 z-10 bg-white">
                     <TableRow>
-                      <TableHead>Total Price</TableHead>
-                      <TableHead>Type</TableHead>
                       <TableHead>Invoice No</TableHead>
+                      <TableHead>Due Date</TableHead>
+                      <TableHead>Total Amount</TableHead>
+                      <TableHead>Settled</TableHead>
+                      <TableHead className="text-center">Status</TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
-                    {hasData &&
-                      transactionResponse.data.creditorTransactions.map(
-                        (transaction: any, index: Key | null | undefined) => (
-                          <TableRow key={index}>
-                            <TableCell> Rs. {transaction.totalPrice}</TableCell>
-                            <TableCell>{transaction.transactionType}</TableCell>
-                            <TableCell>{transaction.invoiceNo}</TableCell>
-                            <TableCell>
-                              {transaction.type === "Invoice" ? (
-                                <Button variant={"outline"} className="w-48">
-                                  View Invoice
-                                </Button>
-                              ) : null}
-                              {transaction.type === "Transaction" ? (
-                                <Button variant={"outline"} className="w-48">
-                                  View Transaction Details
-                                </Button>
-                              ) : null}
-                            </TableCell>
-                          </TableRow>
-                        ),
-                      )}
-                    {!hasData && (
-                      <TableRow className="flex p-5">
-                        <Label className="font-bold">
-                          Empty Transaction history
-                        </Label>
+                  <TableBody className="overflow-y-auto h-fit w-full">
+                    {creditorDetails.data?.creditInvoices.map((invoice) => (
+                      <TableRow key={invoice.id}>
+                        <TableCell>{invoice.invoiceId}</TableCell>
+                        <TableCell>
+                          {dateArrayToString(invoice.dueTime, true)}
+                        </TableCell>
+                        <TableCell>
+                          {currencyAmountString(invoice.totalPrice)}
+                        </TableCell>
+                        <TableCell>
+                          {invoice.settledAmount
+                            ? currencyAmountString(invoice.settledAmount)
+                            : currencyAmountString(0)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge
+                            variant={
+                              invoice.dueStatus === "DUE"
+                                ? "secondary"
+                                : "destructive"
+                            }
+                          >
+                            {invoice.dueStatus}
+                          </Badge>
+                        </TableCell>
                       </TableRow>
-                    )}
+                    ))}
                   </TableBody>
                 </Table>
-              </CardContent>
-            </div>
-            <CardHeader>
-              <h3 className="text-lg font-bold mt-5">Invoices</h3>
-            </CardHeader>
-            <div className="flex-1 overflow-auto">
-              <CardContent className="overflow-auto mt-100">
-                <CreditorInvoiceTable
-                  invoices={creditorInvoice.data}
-                  isLoading={creditorInvoice.isLoading}
-                  err={creditorInvoice.error}
-                />
-              </CardContent>
-            </div>
-          </Card>
-          <div className="h-full flex flex-col gap-5">
-            <Card className="shadow-md bg-white h-full">
-              <CardHeader className="border mb-10 flex flex-row gap-2 items-center">
-                <User />
-                <div>
-                  <h3 className="text-lg font-medium">
-                    {creditorDetails.data.shopName}
-                  </h3>
-                  <p className="fs-14">
-                    Primary Contact :{" "}
-                    {creditorDetails.data.primaryContact || "-"}
-                  </p>
-                </div>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-1 overflow-auto">
-                <Label className="fs-14 font-bold color-gray">
-                  Secondary Contact :{" "}
-                </Label>
-                <Badge
-                  className="rounded-md p-2 text-sm mb-2"
-                  variant={"secondary"}
-                >
-                  {creditorDetails.data.secondaryContact || "-"}
-                </Badge>
-                <Label className="fs-14 font-bold color-gray">
-                  Total Due :{" "}
-                </Label>
-                <Badge
-                  className="rounded-md p-2 text-sm mb-5"
-                  variant={"secondary"}
-                >
-                  {creditorDetails.data.totalDue || "-"}
-                </Badge>
-
-                <Label className="fs-14 font-bold color-gray">
-                  Contact Person Name :{" "}
-                </Label>
-                <Badge
-                  className="rounded-md p-2 text-sm mb-5"
-                  variant={"secondary"}
-                >
-                  {creditorDetails.data.contactPersonName || "-"}
-                </Badge>
-                <Label className="fs-14 font-bold color-gray">Email: </Label>
-                <Badge
-                  className="rounded-md p-2 text-sm mb-5"
-                  variant={"secondary"}
-                >
-                  {creditorDetails.data.email || "-"}
-                </Badge>
-                <Label className="fs-14 font-bold color-gray">Address : </Label>
-                <Badge
-                  className="rounded-md p-2 text-sm mb-5"
-                  variant={"secondary"}
-                >
-                  {creditorDetails.data.address || "-"}
-                </Badge>
-                <Label className="fs-14 font-bold color-gray">
-                  Due Period :{" "}
-                </Label>
-                <Badge
-                  className="rounded-md p-2 text-sm mb-5"
-                  variant={"secondary"}
-                >
-                  {creditorDetails.data.maxDuePeriod + " Weeks" || "-"}
-                </Badge>
-                <Label className="fs-14 font-bold color-gray">
-                  Credit Limit :{" "}
-                </Label>
-                <Badge
-                  className="rounded-md p-2 text-sm mb-5"
-                  variant={"secondary"}
-                >
-                  {creditorDetails.data.creditLimit || "-"}
-                </Badge>
-              </CardContent>
-            </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>

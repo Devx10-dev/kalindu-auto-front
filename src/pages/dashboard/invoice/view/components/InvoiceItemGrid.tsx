@@ -12,6 +12,10 @@ import {
 } from "@/components/ui/table";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { InvoiceItem, InvoiceState } from "@/types/invoice/cashInvoice";
+import {
+  InvoiceItem as CreditInvoiceItem,
+  InvoiceState as CreditInvoiceState,
+} from "@/types/invoice/creditorInvoice";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { TableBodySkeleton } from "../../view-invoices/components/TableSkeleton";
 import { useEffect, useState } from "react";
@@ -20,10 +24,10 @@ function InvoiceItemsGrid({
   invoiceDetails,
   invoiceLoading,
 }: {
-  invoiceDetails: InvoiceState;
+  invoiceDetails: InvoiceState | CreditInvoiceState | null;
   invoiceLoading: boolean;
 }) {
-  const [items, setItems] = useState<InvoiceItem[]>([]);
+  const [items, setItems] = useState<InvoiceItem[] | CreditInvoiceItem[]>([]);
 
   useEffect(() => {
     if (invoiceDetails) {
@@ -33,9 +37,9 @@ function InvoiceItemsGrid({
 
   return (
     <Table className="border rounded-md text-md mb-5 table-responsive">
-      <TableHeader>
+      <TableHeader className="bg-primary-foreground">
         <TableRow>
-          <TableHead>Item</TableHead>
+          <TableHead className="text-md">Item</TableHead>
           <TableHead>Quantity</TableHead>
           <TableHead>Price</TableHead>
           <TableHead>Discount</TableHead>
@@ -49,7 +53,7 @@ function InvoiceItemsGrid({
         <TableBody>
           {items &&
             items.map((item, index) => (
-              <TableRow key={index}>
+              <TableRow key={index} className="!text-xl">
                 <TableCell className="text-xl">{item.name}</TableCell>
                 <TableCell className="text-xl" align="left">
                   {item.quantity}

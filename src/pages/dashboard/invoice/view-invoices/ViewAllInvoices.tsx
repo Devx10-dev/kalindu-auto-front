@@ -25,6 +25,14 @@ import {
   useCreditInvoiceListStore,
   useInvoiceListStore,
 } from "./context/InvoiceListState";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export function ViewAllInvoices() {
   // active tab state
@@ -42,6 +50,22 @@ export function ViewAllInvoices() {
   const { cashInvoicesStore, setCashInvoicesStore } = useInvoiceListStore();
   const { creditInvoicesStore, setCreditInvoicesStore } =
     useCreditInvoiceListStore();
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
+  const [statusList, setStatusList] = useState<
+    { label: string; value: string }[]
+  >([{ label: "COMPLETED", value: "COMPLETED" }]);
+
+  useEffect(() => {
+    if (activeTab === "cash") {
+      setStatusList([{ label: "COMPLETED", value: "COMPLETED" }]);
+    } else {
+      setStatusList([
+        { label: "COMPLETED", value: "COMPLETED" },
+        { label: "DUE", value: "DUE" },
+        { label: "OVERDUE", value: "OVERDUE" },
+      ]);
+    }
+  }, [activeTab]);
 
   const handleFilterClick = () => {
     // set form date and to date
@@ -90,32 +114,6 @@ export function ViewAllInvoices() {
         pageSize,
       ),
     enabled: activeTab === "cash",
-  });
-
-  const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
-
-  const {
-    data: dummyInvoiceData,
-    isLoading: dummyInvoiceLoading,
-    error: dummyInvoiceError,
-  } = useQuery<InvoiceList>({
-    queryKey: [
-      "dummyInvoices",
-      debouncedSearch,
-      fromDate,
-      toDate,
-      pageNo,
-      pageSize,
-    ],
-    queryFn: () =>
-      dummyInvoiceService.fetchDummyInvoices(
-        debouncedSearch,
-        fromDate ? dateToString(fromDate) : undefined,
-        toDate ? dateToString(toDate) : undefined,
-        pageNo,
-        pageSize,
-      ),
-    enabled: activeTab === "dummy",
   });
 
   const creditInvoiceService = new CreditInvoiceService(axiosPrivate);
@@ -199,11 +197,11 @@ export function ViewAllInvoices() {
               icon={<InvoiceIcon height="30" width="28" color="#162a3b" />}
             />
           </CardHeader>
-          <TabsList className="grid w-[40%] grid-cols-3">
+          <TabsList className="grid w-[40%] grid-cols-2">
             {/* <TabsTrigger value="all">All</TabsTrigger> */}
             <TabsTrigger value="cash">Cash</TabsTrigger>
-            <TabsTrigger value="creditor">Creditor</TabsTrigger>
-            <TabsTrigger value="dummy">Dummy</TabsTrigger>
+            <TabsTrigger value="creditor">Credit</TabsTrigger>
+            {/* <TabsTrigger value="dummy">Dummy</TabsTrigger> */}
           </TabsList>
         </div>
         <div
@@ -222,6 +220,20 @@ export function ViewAllInvoices() {
                 setSearch(e.target.value);
               }}
             />
+            {activeTab === "creditor" && (
+              <MultiSelect
+                options={statusList}
+                onValueChange={setSelectedOption}
+                defaultValue={selectedOption}
+                placeholder="Select Status"
+                variant="secondary"
+                animation={1}
+                maxCount={1}
+                modalPopover={true}
+                badgeInlineClose={false}
+                className="w-fit"
+              />
+            )}
             <DateRangePicker
               dateRange={dateRange}
               setDateRange={setDateRange}
@@ -270,7 +282,7 @@ export function ViewAllInvoices() {
             />
           )}
         </TabsContent>
-        <TabsContent value="dummy">
+        {/* <TabsContent value="dummy">
           {dummyInvoiceError ? (
             <ErrorPage
               errorHeading="Uh oh! Something went wrong"
@@ -287,7 +299,7 @@ export function ViewAllInvoices() {
               err={dummyInvoiceError}
             />
           )}
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </Fragment>
   );
