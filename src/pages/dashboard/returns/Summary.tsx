@@ -34,6 +34,7 @@ const Summary = () => {
     returnAmount,
     purchaseDate,
     totalPrice,
+    resetState,
   } = useReturnInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
@@ -111,6 +112,7 @@ const Summary = () => {
         description: "The cash invoice has been created and printed.",
         variant: "default",
       });
+      resetState();
     } catch (error) {
       console.error("Error creating cash invoice:", error);
       // Handle error

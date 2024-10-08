@@ -35,6 +35,7 @@ export type InvoiceState = {
   returnedItems: ReturnItem[];
 
   returnType?: string;
+  newInvoiceType?: string, //Must be
   reason?: string;
 
   cashBackAmount?: number;
@@ -64,11 +65,13 @@ export type InvoiceState = {
   commissionName?: string;
   commissionRemark?: string;
   commissionAmount?: number;
+  selectedInvoice?:BaseInvoice;
 
   commissions?: Commission[];
 
   setSourceInvoiceId: (sourceInvoiceId?: string) => void;
   setReturnType: (returnType?: string) => void;
+  setNewInvoiceType: (newInvoiceType?: string) => void;
   setReason: (reason?: string) => void;
   setCashBackAmount: (cashBackAmount: number) => void;
   setCreditorCashBack: (creditorCashBack: number) => void;
@@ -100,6 +103,8 @@ export type InvoiceState = {
 
   getRequestData: () => any;
   resetExchangeItemTable: () => void;
+  resetState: () => void;
+  setSelectedInvoice:(invoice?: BaseInvoice)=> void;
 };
 
 export type InvoiceItem = {

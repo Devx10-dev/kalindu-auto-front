@@ -59,8 +59,13 @@ function HandlingReturn() {
     setCustomer,
     setReturnAmount,
     setPurchaseDate,
+    setNewInvoiceType,
     returnType,
     resetExchangeItemTable,
+    newInvoiceType,
+    invoiceItemDTOList,
+    setSelectedInvoice,
+    selectedInvoice,
   } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
@@ -76,7 +81,6 @@ function HandlingReturn() {
   const [customerName, setCustomerName] = useState("");
   const [vehicleNo, setVehicleNo] = useState("");
   const [isValid, setIsValid] = useState(true);
-  const [selectedInvoice, setSelectedInvoice] = useState<BaseInvoice>();
 
   const [returnedQuantities, setReturnedQuantities] = useState<{
     [key: string]: number;
@@ -90,6 +94,8 @@ function HandlingReturn() {
 
   const returnService = new ReturnService(axiosPrivate);
   const [activeTab, setActiveTab] = useState<string>("cash");
+  const [tabCredit, setTabCredit] = useState(false);
+  const [tabCash, setTabCash] = useState(false);
 
   const generateInvoiceId = () => {
     const now = new Date();
@@ -233,6 +239,22 @@ function HandlingReturn() {
     setSearchTerm(inputValue);
   };
 
+  useEffect(() => {
+    if(invoiceItemDTOList[0]){
+      if(newInvoiceType ==="CRE"){
+        setTabCash(true)
+      }else if (newInvoiceType ==="CASH"){
+        setTabCredit(true)
+      }else if (newInvoiceType == undefined){
+        setNewInvoiceType("CASH")
+        setTabCredit(true)
+      }
+    }else{
+      setTabCredit(false)
+      setTabCash(false)
+    }
+  }, [invoiceItemDTOList]);
+
   const handleReturnedQuantityChange = (
     itemCode: string,
     quantity: number,
@@ -262,6 +284,17 @@ function HandlingReturn() {
     console.log(tab);
   };
 
+  const handleTabChange2 = (tab: string) => {
+    if(!invoiceItemDTOList[0])
+      console.log("Tab changed 2",tab);
+      setActiveTab(tab);
+      if(tab ==="creditor"){
+        setNewInvoiceType("CRE")
+      }else{
+        setNewInvoiceType("CASH");
+      }
+      console.log(tab);
+  };
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
     setSelectedInvoice(baseInvoice);
     setCustomer(baseInvoice.customer);
@@ -356,20 +389,26 @@ function HandlingReturn() {
                                   <TableCell>LKR {item.price}</TableCell>
                                   <TableCell>{item.quantity}</TableCell>
                                   <TableCell>
-                                    <Input
+                                  <Input
                                       id={"" + item.id}
                                       type="number"
                                       max={item.quantity}
                                       min={0}
-                                      value={returnedQuantities[item.id] || 0}
-                                      onChange={(e) =>
-                                        handleReturnedQuantityChange(
-                                          item.code,
-                                          parseInt(e.target.value, 10),
-                                          item.price,
-                                          item.id,
-                                        )
-                                      }
+                                      value={returnedQuantities[item.id]}
+                                      onChange={(e) => {
+                                        const enteredValue = parseInt(e.target.value, 10);
+                                        if (enteredValue > item.quantity) {
+                                          // Prevent the input from going beyond the max value
+                                          e.target.value = item.quantity;
+                                        } else if (enteredValue >= 0) {
+                                          handleReturnedQuantityChange(
+                                            item.code,
+                                            enteredValue,
+                                            item.price,
+                                            item.id,
+                                          );
+                                        }
+                                      }}
                                     />
                                   </TableCell>
                                 </TableRow>
@@ -427,18 +466,19 @@ function HandlingReturn() {
                     <Fragment>
                       {selectedInvoice && (
                         <Tabs
-                          defaultValue="cash"
+                          // defaultValue="cash"
+                          defaultValue={!tabCash ? "cash" : "creditor"}
                           className="w-[100%]"
-                          onValueChange={handleTabChange}
+                          onValueChange={handleTabChange2}
                         >
                           {returnType === "CRE" && (
                             <div>
                               <div className="flex justify-between items-center">
                                 <TabsList className="grid w-[100%] grid-cols-2 bg-blue-600 text-slate-50">
-                                  <TabsTrigger value="cash">
+                                  <TabsTrigger value="cash" disabled={tabCash}>
                                     Cash Invoice
                                   </TabsTrigger>
-                                  <TabsTrigger value="creditor">
+                                  <TabsTrigger value="creditor" disabled={tabCredit}>
                                     Creditor Invoice
                                   </TabsTrigger>
                                 </TabsList>

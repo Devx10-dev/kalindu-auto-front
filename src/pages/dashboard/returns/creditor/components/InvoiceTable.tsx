@@ -9,10 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
 import { useEffect } from "react";
+import useReturnInvoiceStore from "../../context/useReturnInvoiceStore";
 
 const InvoiceTable: React.FC = () => {
   const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
-    useCreditorInvoiceStore();
+  useReturnInvoiceStore();
   useEffect(() => {
     console.log(invoiceItemDTOList);
   }, [invoiceItemDTOList]);
@@ -33,7 +34,7 @@ const InvoiceTable: React.FC = () => {
           </TableRow>
           {invoiceItemDTOList.map((item: any, index: any) => (
             <TableRow key={index}>
-              <TableCell>{item.itemName}</TableCell>
+              <TableCell>{item.name}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>LKR {item.price}</TableCell>
               <TableCell>LKR {item.discount}</TableCell>
