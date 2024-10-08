@@ -13,7 +13,7 @@ import useReturnInvoiceStore from "../../context/useReturnInvoiceStore";
 
 const InvoiceTable: React.FC = () => {
   const { invoiceItemDTOList, removeInvoiceItem, setOutsourcedStatus } =
-  useReturnInvoiceStore();
+    useReturnInvoiceStore();
   useEffect(() => {
     console.log(invoiceItemDTOList);
   }, [invoiceItemDTOList]);

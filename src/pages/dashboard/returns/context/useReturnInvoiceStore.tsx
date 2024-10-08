@@ -55,7 +55,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       ...state,
       newInvoiceType: newInvoiceType,
     })),
-  
+
   setReason: (reason?: string) =>
     set((state) => ({
       ...state,
@@ -124,8 +124,8 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       ...state,
       invoiceItemDTOList: [...state.invoiceItemDTOList, item],
     })),
-  
-    setSelectedInvoice: (invoice: BaseInvoice) =>
+
+  setSelectedInvoice: (invoice: BaseInvoice) =>
     set((state) => ({
       ...state,
       selectedInvoice: invoice,
@@ -241,7 +241,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       invoiceItemDTOList: [],
       returnAmount: 0,
     }),
-    
+
   resetState: () =>
     set({
       sourceInvoiceId: undefined, //Must be
@@ -291,7 +291,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       const uniqueNumber = (parseInt(hours + minutes, 10) % 10000)
         .toString()
         .padStart(4, "0");
-      const invoiceType = state.newInvoiceType=="CASH" ?"CASH": "CRE";
+      const invoiceType = state.newInvoiceType == "CASH" ? "CASH" : "CRE";
       return `INV-${invoiceType}-${year}${month}${day}${uniqueNumber}`;
     };
 
@@ -300,10 +300,10 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
     const requestData = {
       sourceInvoiceId: state.sourceInvoiceId,
       returnedItems: state.returnedItems,
-      creditInvoice: state.newInvoiceType=="CASH" ?false: true,
+      creditInvoice: state.newInvoiceType == "CASH" ? false : true,
       reason: state.reason,
       exchangeItems: state.invoiceItemDTOList,
-      newInvoiceId:invoiceId,
+      newInvoiceId: invoiceId,
     };
 
     return requestData;
