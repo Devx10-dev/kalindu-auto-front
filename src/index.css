@@ -146,3 +146,17 @@ body > div {
 .data-cell {
   padding: 0px !important;
 }
+
+td,
+th {
+  text-wrap: nowrap;
+}
+
+.p-badge {
+  padding: 2px 8px !important;
+  color: #fff;
+  border-radius: 5px;
+  max-width: max-content;
+  font-size: 12px;
+  font-weight: 400;
+}

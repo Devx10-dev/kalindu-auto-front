@@ -17,9 +17,6 @@ import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
-// import { useState } from "react";
-// import { useQuery } from "@tanstack/react-query";
-// import { VehicleService } from "@/service/sparePartInventory/vehicleServices";
 
 export default function InvoiceTable({
   invoices,

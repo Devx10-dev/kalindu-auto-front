@@ -33,18 +33,18 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
               <TableHead>Shop Name</TableHead>
               <TableHead>Contact Name</TableHead>
               <TableHead>Contact No</TableHead>
-              <TableHead>Due Balance</TableHead>
-              <TableHead>Cheque Balance</TableHead>
-              <TableHead>Credit Limit (LKR)</TableHead>
-              <TableHead>Expired Due Date</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead style={{ textAlign: "end" }}>Due Balance</TableHead>
+              <TableHead style={{ textAlign: "end" }}>Cheque Balance</TableHead>
+              <TableHead style={{ textAlign: "end" }}>Credit Limit</TableHead>
+              <TableHead style={{ textAlign: "center" }}>Is Overdue</TableHead>
+              <TableHead style={{ textAlign: "center" }}>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {props.creditorData?.map((creditor) => (
               <TableRow
                 key={creditor.creditorID}
-                className={`${creditor.isExpired ? "bg-orange-100" : null}`}
+                style={{ background: `${creditor.isExpired && "#fef9f0"}` }}
               >
                 <TableCell className="font-medium">
                   {creditor.shopName}
@@ -64,7 +64,19 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
                 </TableCell>
 
                 <TableCell align="center">
-                  {creditor.isExpired ? "Yes" : "No"}
+                  <p
+                    className="pl-2 pr-2"
+                    style={{
+                      background: creditor.isExpired ? "#dc3545" : "#198754",
+                      color: "#fff",
+                      borderRadius: 5,
+                      maxWidth: "max-content",
+                      fontSize: 12,
+                      fontWeight: 400,
+                    }}
+                  >
+                    {creditor.isExpired ? "Yes" : "No"}
+                  </p>
                 </TableCell>
                 <TableCell className="text-right flex">
                   <Link

@@ -1,5 +1,4 @@
 import TablePagination from "@/components/TablePagination";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -89,35 +88,38 @@ export default function CreditInvoiceTable({
   };
 
   const generateStatusBadge = (invoice: InvoiceState) => {
-    console.log("HEREEEE");
     const status = getDueStatus(
       invoice.issuedTime,
       Number(invoice.creditor.maxDuePeriod) as number,
       invoice.settled,
     );
-    let className = "";
+    let background = "";
     let statusText = "";
 
     switch (status) {
       case "SETTLED":
-        className = "text-white bg-green-400 rounded-sm p-1 hover:bg-green-500";
-        statusText = "COMPLETED";
+        background = "#198754";
+        statusText = "Settled";
         break;
       case "DUE":
-        className =
-          "text-white bg-yellow-400 rounded-sm p-1 hover:bg-yellow-500";
-        statusText = "DUE";
+        background = "#ffc107";
+        statusText = "Due";
         break;
       case "OVERDUE":
-        className = "text-white bg-red-400 rounded-sm p-1 hover:bg-red-500";
-        statusText = "OVERDUE";
+        background = "#dc3545";
+        statusText = "Overdue";
         break;
     }
 
     return (
-      <Badge variant="secondary" className={className}>
+      <p
+        className="p-badge"
+        style={{
+          background: background,
+        }}
+      >
         {statusText}
-      </Badge>
+      </p>
     );
   };
 
@@ -140,11 +142,10 @@ export default function CreditInvoiceTable({
         <TableHeader>
           <TableRow>
             <TableHead>Invoice No</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Contact Person</TableHead>
+            <TableHead>Shop Name</TableHead>
             <TableHead>Invoice Date</TableHead>
             <TableHead>Due Date</TableHead>
-            <TableHead>Total Amount</TableHead>
+            <TableHead className="text-end">Total Amount</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
@@ -173,9 +174,7 @@ export default function CreditInvoiceTable({
                   <TableCell className="w-40 turncate">
                     {invoice.creditor.shopName}
                   </TableCell>
-                  <TableCell className="w-40 turncate">
-                    {invoice.creditor.contactPersonName}
-                  </TableCell>
+
                   <TableCell>{dateArrayToString(invoice.issuedTime)}</TableCell>
                   <TableCell>
                     {dateArrayToString(
@@ -185,12 +184,12 @@ export default function CreditInvoiceTable({
                       ),
                     )}
                   </TableCell>
-                  <TableCell>Rs. {invoice.totalPrice}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell align="right">Rs. {invoice.totalPrice}</TableCell>
+                  <TableCell align="center">
                     {/* make background greem intag */}
                     {generateStatusBadge(invoice)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell align="center">
                     <div className="flex justify-center">
                       <Link
                         to={`/dashboard/invoice/${type}/${invoice.invoiceId}`}
