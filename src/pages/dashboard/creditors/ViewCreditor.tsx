@@ -183,8 +183,12 @@ const ViewCreditor = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody className="overflow-y-auto h-fit w-full">
-                    {creditorDetails.data?.creditInvoices &&
-                      creditorDetails.data?.creditInvoices?.map((invoice) => (
+                    {!creditorDetails.data ? (
+                      <div className="flex justify-center items-center">
+                        <p>No Invoices for the creditor</p>
+                      </div>
+                    ) : (
+                      creditorDetails.data?.creditInvoices.map((invoice) => (
                         <TableRow key={invoice.id}>
                           <TableCell>{invoice.invoiceId}</TableCell>
                           <TableCell>
@@ -210,7 +214,8 @@ const ViewCreditor = () => {
                             </Badge>
                           </TableCell>
                         </TableRow>
-                      ))}
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </TabsContent>
