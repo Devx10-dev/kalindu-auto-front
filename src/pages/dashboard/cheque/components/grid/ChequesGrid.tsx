@@ -50,7 +50,7 @@ function ChequesGrid({
   const queryClient = useQueryClient();
 
   const [pageNo, setPageNo] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10000);
   const [creditorId, setCreditorId] = useState(0);
 
   const [show, setShow] = useState(false);

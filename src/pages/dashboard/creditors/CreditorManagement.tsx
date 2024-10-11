@@ -90,8 +90,8 @@ export default function CreditorManagement() {
       </div>
 
       {/* creditor data table */}
-      
-        <CreditorsTable creditorData={data?.creditors} isLoading = {isLoading} />
+
+      <CreditorsTable creditorData={data?.creditors} isLoading={isLoading} />
 
       {/* pagination */}
       <div className="mt-10">

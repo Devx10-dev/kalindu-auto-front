@@ -54,7 +54,7 @@ function ChequeForm({
         id: parseInt(creditor.creditorID),
         contactPersonName: creditor.contactPersonName,
       },
-      label: creditor.contactPersonName,
+      label: creditor.shopName,
     })) || [];
 
   const inputRefs = useRef<any[]>([]);

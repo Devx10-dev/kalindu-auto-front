@@ -1,4 +1,5 @@
 import {
+  BaseInvoice,
   InvoiceItem,
   InvoiceState,
   ReturnItem,
@@ -10,6 +11,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   returnedItems: [], //Must be
 
   returnType: undefined, //Must be
+  newInvoiceType: undefined, //Must be
   reason: undefined, //Must be
 
   cashBackAmount: 0,
@@ -34,6 +36,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   commissionRemark: undefined,
   // exchange items
   invoiceItemDTOList: [],
+  selectedInvoice: undefined,
 
   setSourceInvoiceId: (sourceInvoiceId?: string) =>
     set((state) => ({
@@ -45,6 +48,12 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       returnType: returnType,
+    })),
+
+  setNewInvoiceType: (newInvoiceType?: string) =>
+    set((state) => ({
+      ...state,
+      newInvoiceType: newInvoiceType,
     })),
 
   setReason: (reason?: string) =>
@@ -116,6 +125,11 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       invoiceItemDTOList: [...state.invoiceItemDTOList, item],
     })),
 
+  setSelectedInvoice: (invoice: BaseInvoice) =>
+    set((state) => ({
+      ...state,
+      selectedInvoice: invoice,
+    })),
   removeInvoiceItem: (itemToRemove: InvoiceItem) =>
     set((state) => ({
       ...state,
@@ -228,6 +242,40 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       returnAmount: 0,
     }),
 
+  resetState: () =>
+    set({
+      sourceInvoiceId: undefined, //Must be
+      returnedItems: [], //Must be
+
+      returnType: undefined, //Must be
+      newInvoiceType: undefined, //Must be
+      reason: undefined, //Must be
+
+      cashBackAmount: 0,
+      creditorCashBack: 0,
+      creditInvoice: false,
+
+      invoiceID: undefined,
+      customerName: undefined,
+      vehicleNumber: undefined,
+
+      // final bill summary items
+      discountPercentage: 0,
+      discountAmount: 0,
+      vatPercentage: 0,
+      vatAmount: 0,
+      returnAmount: 0,
+      totalPrice: undefined,
+      purchaseDate: undefined,
+      //commissions details
+      commissionName: undefined,
+      commissionAmount: undefined,
+      commissionRemark: undefined,
+      // exchange items
+      invoiceItemDTOList: [],
+      selectedInvoice: undefined,
+    }),
+
   getRequestData: () => {
     const state = get();
 
@@ -243,38 +291,19 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       const uniqueNumber = (parseInt(hours + minutes, 10) % 10000)
         .toString()
         .padStart(4, "0");
-
-      return `INV-CASH-${year}${month}${day}${uniqueNumber}`;
+      const invoiceType = state.newInvoiceType == "CASH" ? "CASH" : "CRE";
+      return `INV-${invoiceType}-${year}${month}${day}${uniqueNumber}`;
     };
 
     const invoiceId = generateInvoiceId();
-    console.log(invoiceId);
 
     const requestData = {
       sourceInvoiceId: state.sourceInvoiceId,
       returnedItems: state.returnedItems,
-      returnType: state.returnType,
+      creditInvoice: state.newInvoiceType == "CASH" ? false : true,
       reason: state.reason,
       exchangeItems: state.invoiceItemDTOList,
-      // vat: state.vatPercentage,
-      // discount: state.discountPercentage,
-      // customerName: state.customerName,
-      // invoiceId: invoiceId,
-      // vehicleNo: state.vehicleNumber,
-      // totalPrice: state.totalPrice,
-      // totalDiscount: state.discountAmount, //TODO :: what is this
-      // invoiceItems: state.invoiceItemDTOList,
-
-      // commissions:
-      //   state.commissionName && state.commissionAmount
-      //     ? [
-      //         {
-      //           personName: state.commissionName,
-      //           amount: state.commissionAmount,
-      //           remark: state.commissionRemark,
-      //         },
-      //       ]
-      //     : [],
+      newInvoiceId: invoiceId,
     };
 
     return requestData;

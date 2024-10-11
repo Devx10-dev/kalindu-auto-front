@@ -154,9 +154,7 @@ function StatusCardCredit({
                 {status}
               </h3>
               <Badge variant="default" className={cn(statusTagClassname)}>
-                <div className="max-w-[100px] truncate">
-                  {statusTagText}
-                </div>
+                <div className="max-w-[100px] truncate">{statusTagText}</div>
               </Badge>
             </div>
           </div>

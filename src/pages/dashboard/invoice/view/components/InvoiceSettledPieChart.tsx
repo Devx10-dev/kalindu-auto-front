@@ -35,7 +35,7 @@ const chartConfig = {
   overdue: {
     label: "Unsettled",
     color: "#F44336",
-  }
+  },
 } satisfies ChartConfig;
 
 function contentRender(contentType: string, content: string) {
@@ -58,13 +58,11 @@ function contentRender(contentType: string, content: string) {
   }
 }
 
-export function InvoiceSettledPieChart(
-  {
-    invoiceDetails,
-  }: {
-    invoiceDetails: InvoiceState;
-  }
-) {
+export function InvoiceSettledPieChart({
+  invoiceDetails,
+}: {
+  invoiceDetails: InvoiceState;
+}) {
   const [chartData, setChartData] = React.useState<SettledPieChartData[]>([
     { status: "settled", amount: 1000, fill: "#4CAF50" },
     { status: "unsettled", amount: 2000, fill: "#FFD700" },
@@ -95,10 +93,7 @@ export function InvoiceSettledPieChart(
         ];
       });
     }
-  }
-  , [invoiceDetails]);
-
-
+  }, [invoiceDetails]);
 
   return (
     <Card className="flex flex-col h-200 w-full px-0">
@@ -107,45 +102,44 @@ export function InvoiceSettledPieChart(
           config={chartConfig}
           className="mx-0 aspect-square max-h-[100px] min-w-[100px] my-auto"
         >
-
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Pie
-                data={chartData}
-                dataKey="amount"
-                nameKey="status"
-                innerRadius={25}
-                outerRadius={35}
-                strokeWidth={1}
-              >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie
+              data={chartData}
+              dataKey="amount"
+              nameKey="status"
+              innerRadius={25}
+              outerRadius={35}
+              strokeWidth={1}
+            >
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
+                          className="fill-foreground text-lg font-bold"
                         >
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            className="fill-foreground text-lg font-bold"
-                          >
-                            {settledPercentage.toLocaleString()}<tspan className="text-xs">%</tspan>
-                          </tspan>
-                          
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
+                          {settledPercentage.toLocaleString()}
+                          <tspan className="text-xs">%</tspan>
+                        </tspan>
+                      </text>
+                    );
+                  }
+                }}
+              />
+            </Pie>
+          </PieChart>
         </ChartContainer>
         <div className="grid grid-cols-1 grid-rows-1 p-4 pl-0 gap-x-5 w-full">
           {/* <div className="flex col-span-1 row-span-1 justify-between">
@@ -158,20 +152,31 @@ export function InvoiceSettledPieChart(
           </div> */}
           <div className="flex col-span-1 row-span-1 justify-between w-full">
             <div className="flex flex-col justify-center">
-              <p className="text-md text-muted-foreground">
-                To be Settled
-              </p>
+              <p className="text-md text-muted-foreground">To be Settled</p>
               <span>
-              { invoiceDetails ? contentRender("currencyAmount", currencyAmountString(invoiceDetails.totalPrice - invoiceDetails.settledAmount)) : <Skeleton className="w-20 h-5" /> }
+                {invoiceDetails ? (
+                  contentRender(
+                    "currencyAmount",
+                    currencyAmountString(
+                      invoiceDetails.totalPrice - invoiceDetails.settledAmount,
+                    ),
+                  )
+                ) : (
+                  <Skeleton className="w-20 h-5" />
+                )}
               </span>
             </div>
             <div className="flex col-span-1 row-span-1 justify-between w-fit items-center">
-              <Button variant="outline" className="w-full h-full size-sm" size="sm">
+              <Button
+                variant="outline"
+                className="w-full h-full size-sm"
+                size="sm"
+              >
                 <ChevronRight size={16} />
               </Button>
             </div>
           </div>
-         
+
           {/* <div className="flex col-span-1 row-span-1 justify-between">
             <div>
               <p className="text-xs text-muted-foreground">
@@ -180,8 +185,7 @@ export function InvoiceSettledPieChart(
               {contentRender("currencyAmount", currencyAmountString(invoiceDetails.settledAmount))}
             </div>
           </div> */}
-          
-          
+
           {/* <div className="col-span-1 row-span-1">
             <p className="text-sm text-muted-foreground">Due Amount</p>
             <h1 className="text-xl font-bold text-black">

@@ -55,11 +55,10 @@ import { Button } from "@/components/ui/button";
 import BillSummaryViewCardCredit from "./components/BillSummaryViewCardCredit";
 import { InvoiceSettledPieChart } from "./components/InvoiceSettledPieChart";
 
-
 const dotSizeClasses = {
   sm: "h-2 w-2",
   md: "h-2.5 w-2.5",
-  lg: "h-3 w-3"
+  lg: "h-3 w-3",
 };
 
 function SingleInvoiceCredit() {
@@ -317,7 +316,9 @@ function SingleInvoiceCredit() {
                   invoiceDetails={invoiceDetails}
                   invoiceLoading={invoiceLoading}
                 />
-                <span className={`absolute top-[-5px] right-[-5px] block ${dotSizeClasses["lg"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`} />
+                <span
+                  className={`absolute top-[-5px] right-[-5px] block ${dotSizeClasses["lg"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`}
+                />
               </div>
             </div>
             <BillSummaryViewCardCredit
@@ -326,7 +327,7 @@ function SingleInvoiceCredit() {
               discountPercentage={discountPercentage}
               discountAmount={discountAmount}
             />
-            <div className="mt-5">  
+            <div className="mt-5">
               <InvoiceSettledPieChart invoiceDetails={invoiceDetails} />
             </div>
           </div>
