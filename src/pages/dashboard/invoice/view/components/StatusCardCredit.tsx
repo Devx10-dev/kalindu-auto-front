@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { InvoiceState } from "@/types/invoice/creditorInvoice";
+import dateArrayToString from "@/utils/dateArrayToString";
+import { set } from "date-fns";
 import { CheckCircle2, TimerOff, TimerReset } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -12,12 +14,11 @@ function StatusCardCredit({
   invoiceDetails: InvoiceState | null;
 }) {
   const [status, setStatus] = useState("COMPLETED");
-  const [statusTag, setStatusTag] = useState("green");
+  const [statusTagText, setStatusTagText] = useState("");
+  const [statusTagClassname, setStatusTagClassname] = useState("green");
   const [statusIcon, setStatusIcon] = useState(
     <CheckCircle2 size={20} color="green" />,
   );
-  const [overdueDays, setOverdueDays] = useState(0);
-  const [dueDays, setDueDays] = useState(0);
   const [className, setClassName] = useState("bg-green-100");
   const [progress, setProgress] = useState(0);
   const [iconWrapperClassName, setIconWrapperClassName] = useState("");
@@ -26,7 +27,6 @@ function StatusCardCredit({
 
   useEffect(() => {
     if (invoiceDetails) {
-      console.log(invoiceDetails.dueStatus);
       const { progress: calculatedProgress, remainingDays } = calculateProgress(
         invoiceDetails.dueTime,
         invoiceDetails.issuedTime,
@@ -53,20 +53,22 @@ function StatusCardCredit({
 
       if (invoiceDetails.dueStatus === "COMPLETED") {
         setStatus("COMPLETED");
-        setStatusTag("green");
+        setStatusTagClassname("bg-green-500");
         setStatusIcon(<CheckCircle2 size={20} color="green" />);
         setClassName("bg-green-100");
       } else if (invoiceDetails.dueStatus === "DUE") {
         setStatus("DUE");
-        setStatusTag("yellow");
+        setStatusTagClassname("bg-yellow-500 text-black");
         setStatusIcon(<TimerReset size={20} color="darkorange" />);
         setClassName("bg-yellow-100");
       } else {
         setStatus("OVERDUE");
-        setStatusTag("red");
+        setStatusTagClassname("bg-red-500");
         setStatusIcon(<TimerReset size={20} color="red" />);
         setClassName("bg-red-50");
       }
+
+      setStatusTagText(dateArrayToString(invoiceDetails.dueTime, true));
     }
   }, [invoiceDetails]);
 
@@ -151,8 +153,10 @@ function StatusCardCredit({
               <h3 className="text-lg font-semibold leading-none tracking-tight">
                 {status}
               </h3>
-              <Badge color="green" className="text" variant="outline">
-                2021NOV01
+              <Badge variant="default" className={cn(statusTagClassname)}>
+                <div className="max-w-[100px] truncate">
+                  {statusTagText}
+                </div>
               </Badge>
             </div>
           </div>

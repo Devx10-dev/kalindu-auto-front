@@ -11,6 +11,7 @@ import { Search, Settings2 } from "lucide-react";
 import { useState } from "react";
 import CreditorAPI from "./api/CreditorAPI";
 import CreditorsTable from "./components/CreditorsTable";
+import { TableSkeleton } from "./components/TableSkelton";
 
 export default function CreditorManagement() {
   const axiosPrivate = useAxiosPrivate();
@@ -89,11 +90,8 @@ export default function CreditorManagement() {
       </div>
 
       {/* creditor data table */}
-      {isLoading ? (
-        <SkeletonLoader />
-      ) : (
-        <CreditorsTable creditorData={data?.creditors} />
-      )}
+      
+        <CreditorsTable creditorData={data?.creditors} isLoading = {isLoading} />
 
       {/* pagination */}
       <div className="mt-10">

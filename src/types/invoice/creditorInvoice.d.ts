@@ -30,7 +30,7 @@ export type InvoiceState = {
   address?: string;
   contactNo?: string;
   settled?: boolean;
-  settled_amount?: number;
+  settledAmount?: number;
   invoiceItems?: InvoiceItem[];
 
   discountPercentage?: number;
@@ -127,4 +127,10 @@ export type Commission = {
   personName: string;
   amount: number;
   remark: string;
+};
+
+export type SettledPieChartData = {
+  status: string;
+  amount: number;
+  fill: string;
 };

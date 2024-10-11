@@ -53,101 +53,14 @@ import { Label, Pie, PieChart } from "recharts";
 import StatusCardCredit from "./components/StatusCardCredit";
 import { Button } from "@/components/ui/button";
 import BillSummaryViewCardCredit from "./components/BillSummaryViewCardCredit";
+import { InvoiceSettledPieChart } from "./components/InvoiceSettledPieChart";
 
-function PaymentStat() {
-  const isLoading = false;
 
-  const chartConfig = {
-    creditors: {
-      label: "Creditors",
-    },
-    due: {
-      label: "Due",
-      color: "#FFD700",
-    },
-  } satisfies ChartConfig;
-
-  const chartData = [
-    {
-      status: "Creditors",
-      creditors: 100,
-      fill: "#FFD700",
-    },
-    {
-      status: "Due",
-      creditors: 50,
-      fill: "#FFD700",
-    },
-    {
-      status: "Overdue",
-      creditors: 30,
-      fill: "#FFD700",
-    },
-    {
-      status: "Other",
-      creditors: 20,
-      fill: "#FFD700",
-    },
-  ] satisfies PieChartData[];
-
-  return (
-    <ChartContainer
-      config={chartConfig}
-      className="mx-0 aspect-square max-h-[100px] min-w-[100px]"
-    >
-      {isLoading ? (
-        <div className="h-[100px] w-[100px] flex items-center justify-center">
-          <Skeleton className="h-[110px] w-[110px] rounded-full" />
-        </div>
-      ) : (
-        <PieChart>
-          <ChartTooltip
-            cursor={false}
-            content={<ChartTooltipContent hideLabel />}
-          />
-          <Pie
-            data={chartData}
-            dataKey="creditors"
-            nameKey="status"
-            innerRadius={25}
-            outerRadius={30}
-            strokeWidth={5}
-          >
-            <Label
-              content={({ viewBox }) => {
-                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                  return (
-                    <text
-                      x={viewBox.cx}
-                      y={viewBox.cy}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                    >
-                      <tspan
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        className="fill-foreground text-2xl font-bold"
-                      >
-                        150
-                      </tspan>
-                      <tspan
-                        x={viewBox.cx}
-                        y={(viewBox.cy || 0) + 24}
-                        className="fill-muted-foreground"
-                      >
-                        Creditors
-                      </tspan>
-                    </text>
-                  );
-                }
-              }}
-            />
-          </Pie>
-        </PieChart>
-      )}
-    </ChartContainer>
-  );
-}
+const dotSizeClasses = {
+  sm: "h-2 w-2",
+  md: "h-2.5 w-2.5",
+  lg: "h-3 w-3"
+};
 
 function SingleInvoiceCredit() {
   const axiosPrivate = useAxiosPrivate();
@@ -399,10 +312,13 @@ function SingleInvoiceCredit() {
               <div className="w-full">
                 <StatusCardCredit invoiceDetails={invoiceDetails} />
               </div>
-              <TransactionDrawer
-                invoiceDetails={invoiceDetails}
-                invoiceLoading={invoiceLoading}
-              />
+              <div className="relative">
+                <TransactionDrawer
+                  invoiceDetails={invoiceDetails}
+                  invoiceLoading={invoiceLoading}
+                />
+                <span className={`absolute top-[-5px] right-[-5px] block ${dotSizeClasses["lg"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`} />
+              </div>
             </div>
             <BillSummaryViewCardCredit
               total={total}
@@ -410,6 +326,9 @@ function SingleInvoiceCredit() {
               discountPercentage={discountPercentage}
               discountAmount={discountAmount}
             />
+            <div className="mt-5">  
+              <InvoiceSettledPieChart invoiceDetails={invoiceDetails} />
+            </div>
           </div>
         </CardContent>
       </div>
