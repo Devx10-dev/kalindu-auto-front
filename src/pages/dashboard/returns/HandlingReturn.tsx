@@ -284,6 +284,7 @@ function HandlingReturn() {
     console.log(tab);
   };
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
+    setReturnedQuantities({})
     setSelectedInvoice(baseInvoice);
     setCustomer(baseInvoice.customer);
     setPurchaseDate(baseInvoice.date);
@@ -345,7 +346,7 @@ function HandlingReturn() {
               >
                 <div>
                   <div className="flex justify-between items-center">
-                    <TabsList className="grid w-[40%] grid-cols-2 bg-blue-600 text-slate-50">
+                    <TabsList className="grid w-[40%] grid-cols-2 bg-primary text-slate-50">
                       <TabsTrigger value="returnItems">
                         Return Items
                       </TabsTrigger>
