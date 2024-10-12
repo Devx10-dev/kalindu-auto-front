@@ -11,7 +11,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   returnedItems: [], //Must be
 
   returnType: undefined, //Must be
-  newInvoiceType: undefined, //Must be
+  newInvoiceType: "CRE", //Must be
   reason: undefined, //Must be
 
   cashBackAmount: 0,
@@ -248,7 +248,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       returnedItems: [], //Must be
 
       returnType: undefined, //Must be
-      newInvoiceType: undefined, //Must be
+      newInvoiceType: "CRE", //Must be
       reason: undefined, //Must be
 
       cashBackAmount: 0,

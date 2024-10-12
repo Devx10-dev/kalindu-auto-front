@@ -306,6 +306,7 @@ export function RegisterForm(props: {
                   <Input
                     className="w-full"
                     type="number"
+                    min={0}
                     {...field}
                     placeholder="please enter the credit limit"
                     onKeyDown={(e) => handleKeyDown(e, 7)}

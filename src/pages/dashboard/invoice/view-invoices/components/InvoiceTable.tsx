@@ -1,5 +1,4 @@
 import TablePagination from "@/components/TablePagination";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -110,12 +109,14 @@ export default function InvoiceTable({
                   <TableCell>Rs. {invoice.totalPrice}</TableCell>
                   <TableCell>
                     {/* make background greem intag */}
-                    <Badge
-                      variant="secondary"
-                      className="text-white bg-green-400 rounded-sm p-1"
+                    <p
+                      className="p-badge"
+                      style={{
+                        background: "#198754",
+                      }}
                     >
-                      COMPLETED
-                    </Badge>
+                      {"Settled"}
+                    </p>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-center">

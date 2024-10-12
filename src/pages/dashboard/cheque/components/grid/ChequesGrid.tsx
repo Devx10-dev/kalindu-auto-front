@@ -17,28 +17,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "@/components/ui/use-toast";
-import { ChequeService } from "@/service/cheque/ChequeService";
-import { Cheque, ChequeResponseData } from "@/types/cheque/chequeTypes";
-import { Creditor } from "@/types/creditor/creditorTypes";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  BadgeCheck,
-  CheckCheck,
-  Filter,
-  GalleryHorizontalEnd,
-  GalleryVerticalEnd,
-} from "lucide-react";
-import { Fragment, useState } from "react";
-import { SettlementModal } from "../modal/SettlementModal";
-import CreditInvoiceGrid from "./CreditInvoiceGrid";
-import { convertSnakeCaseToNormalCase, truncate } from "@/utils/string";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "@/components/ui/use-toast";
+import { ChequeService } from "@/service/cheque/ChequeService";
+import { Cheque, ChequeResponseData } from "@/types/cheque/chequeTypes";
+import { Creditor } from "@/types/creditor/creditorTypes";
+import { convertSnakeCaseToNormalCase, truncate } from "@/utils/string";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CheckCheck, Filter, GalleryHorizontalEnd } from "lucide-react";
+import { Fragment, useState } from "react";
+import { SettlementModal } from "../modal/SettlementModal";
+import CreditInvoiceGrid from "./CreditInvoiceGrid";
 
 function ChequesGrid({
   creditors = [],
@@ -158,7 +152,7 @@ function ChequesGrid({
   const handleViewBtnClick = (cheque: Cheque) => {
     setGridModalTitle(`Credit invoices of ${cheque.chequeNo}`);
     setGridModalDescription(
-      `Credit invoices those settled by ${cheque.chequeNo}`,
+      `Credit invoices those settled by ${cheque.chequeNo}`
     );
     setSelectedCheque(cheque);
     setGridModalShow(true);
@@ -200,90 +194,87 @@ function ChequesGrid({
         {isLoading ? (
           <SkeletonGrid noOfColumns={6} noOfItems={10} />
         ) : (
-          <Table className="border rounded-md text-md mb-5 table-responsive">
-            <TableCaption>Cheque Details</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cheque No</TableHead>
-                <TableHead>Creditor</TableHead>
-                <TableHead style={{ textAlign: "end" }}>Amount</TableHead>
-                <TableHead>Date & Time</TableHead>
-                <TableHead style={{ textAlign: "center" }}>Status</TableHead>
-                <TableHead style={{ textAlign: "center" }}>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {cheques.cheques !== undefined &&
-                cheques.cheques.map((cheque) => (
-                  <TableRow key={cheque.id}>
-                    <TableCell className="font-medium">
-                      {truncate(cheque.chequeNo, 20)}
-                    </TableCell>
-                    <TableCell>{cheque?.creditorName ?? "-"}</TableCell>
-                    <TableCell align="right">{cheque.amount}</TableCell>
-                    <TableCell>{`${cheque.dateTime[0]}-${cheque.dateTime[1]}-${cheque.dateTime[2]} ${cheque.dateTime[3]}:${cheque.dateTime[4]}:${cheque.dateTime[5]}`}</TableCell>
-                    <TableCell align="center">
-                      {
-                        <p
-                          className="pl-2 pr-2"
-                          style={{
-                            background:
-                              cheque.status === "REJECTED"
-                                ? "#dc3545"
-                                : cheque.status === "SETTLED"
-                                  ? "#198754"
-                                  : "#ffc107",
-                            color: "#fff",
-                            borderRadius: 5,
-                            maxWidth: "max-content",
-                            fontSize: 12,
-                            fontWeight: 400,
-                          }}
-                        >
-                          {convertSnakeCaseToNormalCase(cheque.status)}
-                        </p>
-                      }
-                    </TableCell>
-                    <TableCell align="center">
-                      {
-                        <>
-                          <Button
-                            className="mr-2"
-                            variant="outline"
-                            onClick={() => handleActionBtnClick(cheque)}
-                            disabled={cheque.status !== "PENDING"}
+          <div className="overflow-x-auto ">
+            <Table className="border rounded-md text-md mb-5 min-w-full table-auto">
+              <TableCaption>Cheque Details</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Cheque No</TableHead>
+                  <TableHead>Creditor</TableHead>
+                  <TableHead style={{ textAlign: "end" }}>Amount</TableHead>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead style={{ textAlign: "center" }}>Status</TableHead>
+                  <TableHead style={{ textAlign: "center" }}>Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {cheques.cheques !== undefined &&
+                  cheques.cheques.map((cheque) => (
+                    <TableRow key={cheque.id}>
+                      <TableCell className="font-medium">
+                        {truncate(cheque.chequeNo, 20)}
+                      </TableCell>
+                      <TableCell>{cheque?.creditorName ?? "-"}</TableCell>
+                      <TableCell align="right">{cheque.amount}</TableCell>
+                      <TableCell>{`${cheque.dateTime[0]}-${cheque.dateTime[1]}-${cheque.dateTime[2]} ${cheque.dateTime[3]}:${cheque.dateTime[4]}:${cheque.dateTime[5]}`}</TableCell>
+                      <TableCell align="center">
+                        {
+                          <p
+                            className="p-badge"
+                            style={{
+                              background:
+                                cheque.status === "REJECTED"
+                                  ? "#dc3545"
+                                  : cheque.status === "SETTLED"
+                                    ? "#198754"
+                                    : "#ffc107",
+                            }}
                           >
-                            <CheckCheck className="mr-2 h-4 w-4" />
-                            Settle
-                          </Button>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  className=""
-                                  variant="outline"
-                                  onClick={() => handleViewBtnClick(cheque)}
-                                  disabled={
-                                    cheque.status === "PENDING" ||
-                                    cheque.status === "REJECTED"
-                                  }
-                                >
-                                  <GalleryHorizontalEnd className="mr-2 h-4 w-4" />
-                                  View
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{"View settled invoices"}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </>
-                      }
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+                            {convertSnakeCaseToNormalCase(cheque.status)}
+                          </p>
+                        }
+                      </TableCell>
+                      <TableCell align="center">
+                        {
+                          <div className="d-flex gap-1">
+                            <Button
+                              className="mr-2 action-button"
+                              variant="outline"
+                              onClick={() => handleActionBtnClick(cheque)}
+                              disabled={cheque.status !== "PENDING"}
+                            >
+                              <CheckCheck className="mr-2 h-4 w-4" />
+                              <span className="button-text">Settle</span>
+                            </Button>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    className="action-button"
+                                    variant="outline"
+                                    onClick={() => handleViewBtnClick(cheque)}
+                                    disabled={
+                                      cheque.status === "PENDING" ||
+                                      cheque.status === "REJECTED"
+                                    }
+                                  >
+                                    <GalleryHorizontalEnd className="mr-2 h-4 w-4" />
+                                    <span className="button-text">View</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{"View settled invoices"}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                        }
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
         <SettlementModal
           onClose={onClose}

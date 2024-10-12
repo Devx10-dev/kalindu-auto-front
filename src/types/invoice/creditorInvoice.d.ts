@@ -30,7 +30,7 @@ export type InvoiceState = {
   address?: string;
   contactNo?: string;
   settled?: boolean;
-  settled_amount?: number;
+  settledAmount?: number;
   invoiceItems?: InvoiceItem[];
 
   discountPercentage?: number;

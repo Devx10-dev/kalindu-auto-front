@@ -16,8 +16,7 @@ import CreditorAPI from "@/pages/dashboard/creditors/api/CreditorAPI";
 import { ChequeService } from "@/service/cheque/ChequeService";
 import {
   Creditor,
-  TransactionType,
-  TransactionTypes,
+  TransactionTypes
 } from "@/types/creditor/creditorTypes";
 import { transactionSchema } from "@/validation/schema/creditor/transaction/transactionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +26,7 @@ import Select from "react-select";
 import { z } from "zod";
 
 import { Card } from "@/components/ui/card";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Select as SelectComponent,
   SelectContent,
@@ -35,17 +35,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { getRandomColor } from "@/utils/colors";
-import { getInitials, truncate } from "@/utils/string";
-import { useEffect, useState, useRef } from "react";
-import { Separator } from "@/components/ui/separator";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
-import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "lucide-react";
+import { getRandomColor } from "@/utils/colors";
+import { useEffect, useRef, useState } from "react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
-import { MultiSelect } from "@/components/ui/multi-select";
-import { Cheque } from "@/types/cheque/chequeTypes";
 
 const RANDOM_COLOR = getRandomColor();
 
@@ -63,7 +56,7 @@ function TransactionForm({
   const queryClient = useQueryClient();
 
   const [selectedCreditor, setSelectedCreditor] = useState<Creditor | null>(
-    null,
+    null
   );
 
   const inputRefs = useRef<any[]>([]);
@@ -98,7 +91,7 @@ function TransactionForm({
     queryKey: ["unsettledCreditorInvoices", selectedCreditor],
     queryFn: () =>
       creditorService.fetchUnsettledCreditInvoicesByID(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
       ),
     retry: 1,
   });
@@ -107,7 +100,7 @@ function TransactionForm({
     queryKey: [`nonRedeemCheques-${selectedCreditor?.id}`, selectedCreditor],
     queryFn: () =>
       chequeService.fetchNonRedeemChequesOfCreditor(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
       ),
     enabled: selectedCreditor !== null && selectedType === "CHEQUE",
     retry: 1,
@@ -211,7 +204,7 @@ function TransactionForm({
       const totalSelectedAmount = selectedCreditInvoices.reduce(
         (total, invoice) =>
           total + (invoice.totalPrice - invoice.settledAmount),
-        0,
+        0
       );
       if (transaction.amount > totalSelectedAmount) {
         toast({
@@ -300,7 +293,7 @@ function TransactionForm({
                           const selectedCreditor = creditors.find(
                             (creditor) =>
                               parseInt(creditor.creditorID) ===
-                              selectedOption.value,
+                              selectedOption.value
                           );
                           setSelectedCreditor(selectedCreditor);
                         }}
@@ -334,8 +327,8 @@ function TransactionForm({
                           const selectedCreditInvoices = creditInvoices.filter(
                             (creditInvoice) =>
                               selectedOptions.includes(
-                                creditInvoice.id.toString(),
-                              ),
+                                creditInvoice.id.toString()
+                              )
                           );
                           setSelectedCreditInvoices(selectedCreditInvoices);
                           setSelectedCreditInvoiceIDs(selectedOptions);

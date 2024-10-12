@@ -1,3 +1,4 @@
+import AmountCard from "@/components/card/AmountCard";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,13 +21,12 @@ import { Creditor } from "@/types/creditor/creditorTypes";
 import { ArrowLeftRight, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RegisterForm } from "./CreditorForm";
-import { ViewExpiredInvoices } from "./ViewExpiredInvoices";
 
 const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
   return (
     <>
-      <div className="flex flex-col justify-end mt-10">
-        <Table className="border rounded-md text-md mb-5">
+      <div className="overflow-x-auto ">
+        <Table className="border rounded-md text-md mb-5 min-w-full table-auto mt-4">
           <TableCaption>Creditor Details</TableCaption>
           <TableHeader>
             <TableRow>
@@ -54,25 +54,25 @@ const CreditorsTable = (props: { creditorData?: Creditor[] }) => {
                 </TableCell>
                 <TableCell>{creditor.primaryContact}</TableCell>
                 <TableCell align="right">
-                  {creditor.totalDue ? creditor.totalDue : 0}
+                  <AmountCard
+                    amount={parseFloat(creditor.totalDue)}
+                    color={`${parseFloat(creditor.totalDue) <= 0 ? "#B4E380" : "#FFAAAA"}`}
+                  />
                 </TableCell>
                 <TableCell align="right">
-                  {creditor.totalDue ? creditor.chequeBalance : 0}
+                  <AmountCard
+                    amount={parseFloat(creditor.chequeBalance)}
+                    color="#B4E380"
+                  />
                 </TableCell>
                 <TableCell align="right">
                   {creditor.creditLimit ? creditor.creditLimit : "-"}
                 </TableCell>
-
                 <TableCell align="center">
                   <p
-                    className="pl-2 pr-2"
+                    className="p-badge"
                     style={{
                       background: creditor.isExpired ? "#dc3545" : "#198754",
-                      color: "#fff",
-                      borderRadius: 5,
-                      maxWidth: "max-content",
-                      fontSize: 12,
-                      fontWeight: 400,
                     }}
                   >
                     {creditor.isExpired ? "Yes" : "No"}
