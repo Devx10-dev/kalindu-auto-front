@@ -209,13 +209,19 @@ const Summary = ({
                 color="#FFAAAA"
               />
             </div>
-            {sourceInvoiceId !== undefined &&
-              sourceInvoiceId.split("-")[1] === "CRE" && (
-                <div className="error-message fade-in mt-4">
-                  <span className="error-message-icon">⚠️</span>
-                  Cashback is not allowed for credit invoices.
-                </div>
-              )}
+            {((sourceInvoiceId !== undefined &&
+              sourceInvoiceId.split("-")[1] === "CRE") ||
+              returnAmount - totalWithVat < 0) && (
+              <div className="error-message fade-in mt-4">
+                <span className="error-message-icon">⚠️</span>
+                {`${
+                  sourceInvoiceId !== undefined &&
+                  sourceInvoiceId.split("-")[1] === "CRE"
+                    ? "Cashback is not allowed for credit invoices."
+                    : "Customer exchange exceeds cashback limit; do not issue cash back."
+                }`}
+              </div>
+            )}
 
             <hr className="mt-4 mb-4" />
             {sourceInvoiceId !== undefined &&
