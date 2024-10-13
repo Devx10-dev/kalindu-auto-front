@@ -1,4 +1,5 @@
 import PageHeader from "@/components/card/PageHeader";
+import { useNavigate } from "react-router-dom";
 import {
   OptionalLabel,
   RequiredLabel,
@@ -38,6 +39,7 @@ function DummyInvoice() {
   const [show, setShow] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
   const [customer, setCustomer] = useState<Customer | null>(null);
+  const navigate = useNavigate();
 
   const inputRefs = useRef<any[]>([]);
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -53,6 +55,32 @@ function DummyInvoice() {
   const description =
     "A quotation is an estimate provided to a customer, detailing the expected costs of goods or services before a transaction. " +
     "It serves as a formal price offer but is not the final bill.";
+
+  // const handlePrintBtn = () => {
+  //   let err = null;
+
+  //   if (customer === null) {
+  //     err = "Please enter customer details";
+  //   } else if (customer.name.length === 0) {
+  //     err = "Please enter customer name";
+  //   }
+
+  //   if (items.length === 0) {
+  //     err = "Please add at least one item";
+  //   }
+
+  //   if (err !== null) {
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Validation Error",
+  //       description: err,
+  //     });
+
+  //     return;
+  //   }
+
+  //   setShow(true);
+  // };
 
   const handlePrintBtn = () => {
     let err = null;
@@ -77,13 +105,9 @@ function DummyInvoice() {
       return;
     }
 
-    setShow(true);
-  };
-
-  const handleCancelBtn = () => {
-    setCustomer(null);
-    setItems([]);
-    setShow(false);
+    navigate("/dashboard/invoice/quotation/print-page", {
+      state: { items: items, customer: customer },
+    });
   };
 
   return (
@@ -163,19 +187,6 @@ function DummyInvoice() {
           </div>
         </CardContent>
       </div>
-      <GridModal
-        onClose={() => setShow(false)}
-        show={show}
-        title={""}
-        titleDescription={""}
-        component={
-          <QuotationInvoiceView
-            items={items}
-            customer={customer}
-            handleCancelBtn={handleCancelBtn}
-          />
-        }
-      />
     </Fragment>
   );
 }
