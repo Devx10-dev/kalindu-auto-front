@@ -82,8 +82,6 @@ function HandlingReturn() {
   const returnService = new ReturnService(axiosPrivate);
 
   const [activeTab, setActiveTab] = useState<string>("cash");
-  const [tabCredit, setTabCredit] = useState(false);
-  const [tabCash, setTabCash] = useState(false);
   const [creditorSelectKey, setCreditorSelectKey] = useState(0);
 
   const generateInvoiceId = () => {
@@ -228,21 +226,6 @@ function HandlingReturn() {
     setSearchTerm(inputValue);
   };
 
-  useEffect(() => {
-    if (invoiceItemDTOList[0]) {
-      if (newInvoiceType === "CRE") {
-        setTabCash(true);
-      } else if (newInvoiceType === "CASH") {
-        setTabCredit(true);
-      } else if (newInvoiceType == undefined) {
-        setNewInvoiceType("CASH");
-        setTabCredit(true);
-      }
-    } else {
-      setTabCredit(false);
-      setTabCash(false);
-    }
-  }, [invoiceItemDTOList]);
 
   const handleReturnedQuantityChange = (
     itemCode: string,
@@ -273,22 +256,13 @@ function HandlingReturn() {
     console.log(tab);
   };
 
-  const handleTabChange2 = (tab: string) => {
-    if (!invoiceItemDTOList[0]) console.log("Tab changed 2", tab);
-    setActiveTab(tab);
-    if (tab === "creditor") {
-      setNewInvoiceType("CRE");
-    } else {
-      setNewInvoiceType("CASH");
-    }
-    console.log(tab);
-  };
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
     setReturnedQuantities({})
     setSelectedInvoice(baseInvoice);
     setCustomer(baseInvoice.customer);
     setPurchaseDate(baseInvoice.date);
     setReturnType(findReturnType(baseInvoice.invoiceId));
+    setNewInvoiceType(findReturnType(baseInvoice.invoiceId));
     setSourceInvoiceId(baseInvoice.invoiceId);
     resetExchangeItemTable();
   };
@@ -400,40 +374,43 @@ function HandlingReturn() {
                                 />
                               </TableCell>
                               <TableCell align="right">
-                                <Input
-                                  id={"" + item.id}
-                                  type="number"
-                                  max={item.quantity}
-                                  min={0}
-                                  value={returnedQuantities[item.id]}
-                                  onChange={(e) => {
-                                    const enteredValue = parseInt(
-                                      e.target.value,
-                                      10
+                              <Input
+                                id={"" + item.id}
+                                type="number"
+                                max={item.quantity}
+                                min={0}
+                                value={returnedQuantities[item.id]}
+                                onChange={(e) => {
+                                  let enteredValue = e.target.value;
+                                  if (enteredValue === "") {
+                                    enteredValue = "";
+                                  } else {
+                                    // Parse the input value as an integer
+                                    enteredValue = parseInt(enteredValue, 10);
+                                  }
+                                  if (enteredValue > item.quantity) {
+                                    // Prevent the input from going beyond the max value
+                                    e.target.value = item.quantity;
+                                  } else if (enteredValue >= 0) {
+                                    handleReturnedQuantityChange(
+                                      item.code,
+                                      enteredValue,
+                                      item.price,
+                                      item.id
                                     );
-                                    if (enteredValue > item.quantity) {
-                                      // Prevent the input from going beyond the max value
-                                      e.target.value = item.quantity;
-                                    } else if (enteredValue >= 0) {
-                                      handleReturnedQuantityChange(
-                                        item.code,
-                                        enteredValue,
-                                        item.price,
-                                        item.id
-                                      );
-                                    }
-                                  }}
-                                  step={1}
-                                  style={{
-                                    textAlign: "right",
-                                    maxWidth: "140px",
-                                  }}
-                                  placeholder="Enter return qty"
-                                  disabled={
+                                  }
+                                }}
+                                step={1}
+                                style={{
+                                  textAlign: "right",
+                                  maxWidth: "140px",
+                                }}
+                                placeholder="Enter return qty"
+                                disabled={
                                     item.availableQuantity !== undefined &&
                                     item.availableQuantity === 0
-                                  }
-                                />
+                                }
+                              />
                               </TableCell>
                             </TableRow>
                           ))
