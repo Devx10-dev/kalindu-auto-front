@@ -19,6 +19,8 @@ import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
+import AmountCard from "@/components/card/AmountCard";
+import colors from "../../../../../assets/colors.json";
 
 export default function CreditInvoiceTable({
   invoices,
@@ -62,7 +64,7 @@ export default function CreditInvoiceTable({
   const getDueStatus = (
     issuedTime: number[],
     maxDueWeeks: number,
-    isSettled: boolean,
+    isSettled: boolean
   ) => {
     if (isSettled) {
       return "SETTLED";
@@ -74,7 +76,7 @@ export default function CreditInvoiceTable({
       issuedTime[2],
       issuedTime[3],
       issuedTime[4],
-      issuedTime[5],
+      issuedTime[5]
     );
     const currentDate = new Date();
     let diff = currentDate.getTime() - issuedDate.getTime();
@@ -91,7 +93,7 @@ export default function CreditInvoiceTable({
     const status = getDueStatus(
       invoice.issuedTime,
       Number(invoice.creditor.maxDuePeriod) as number,
-      invoice.settled,
+      invoice.settled
     );
     let background = "";
     let statusText = "";
@@ -146,6 +148,7 @@ export default function CreditInvoiceTable({
             <TableHead>Invoice Date</TableHead>
             <TableHead>Due Date</TableHead>
             <TableHead className="text-end">Total Amount</TableHead>
+            <TableHead className="text-end">Due Amount</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
@@ -180,11 +183,17 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(
                       calculateDueDate(
                         invoice.issuedTime,
-                        Number(invoice.creditor.maxDuePeriod) as number,
-                      ),
+                        Number(invoice.creditor.maxDuePeriod) as number
+                      )
                     )}
                   </TableCell>
                   <TableCell align="right">Rs. {invoice.totalPrice}</TableCell>
+                  <TableCell align="right">
+                    <AmountCard
+                      amount={invoice.totalPrice - invoice.settledAmount}
+                      color={colors["number-red"]}
+                    />
+                  </TableCell>
                   <TableCell align="center">
                     {/* make background greem intag */}
                     {generateStatusBadge(invoice)}

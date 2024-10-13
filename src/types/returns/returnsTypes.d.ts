@@ -15,6 +15,7 @@ export type InvoiceItem = {
   code?: string;
   price?: number;
   quantity?: number;
+  availableQuantity?: number;
   discount?: number;
   description?: string;
   outsourced?: boolean;

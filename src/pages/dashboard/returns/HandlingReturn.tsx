@@ -1,22 +1,10 @@
+import AmountCard from "@/components/card/AmountCard";
 import PageHeader from "@/components/card/PageHeader";
 import DummyItemForm from "@/components/form/invoice/dummy/DummyItemForm";
-import OutSourceItemForm from "@/components/form/invoice/dummy/OutSourceItemForm";
-import {
-  OptionalLabel,
-  RequiredLabel,
-} from "@/components/formElements/FormLabel";
+import { RequiredLabel } from "@/components/formElements/FormLabel";
 import LeftRightArrow from "@/components/icon/LeftRightArrow";
-import PlusIcon from "@/components/icon/PlusIcon";
 import { FormModal } from "@/components/modal/FormModal";
-import DummyInvoiceItemsGrid from "@/components/table/invoice/dummy/DummyInvoiceItemsGrid";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -28,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
+import useDebounce from "@/hooks/useDebounce";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { DummyInvoiceService } from "@/service/invoice/dummy/DummyInvoiceService";
 import { ReturnService } from "@/service/return/ReturnService";
@@ -35,16 +24,14 @@ import { SparePartService } from "@/service/sparePartInventory/sparePartService"
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { BaseInvoice, ReturnItem } from "@/types/returns/returnsTypes";
-import { convertArrayToISOFormat } from "@/utils/dateTime";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import { Fragment } from "react/jsx-runtime";
-import CashInvoiceBase from "./cash/CashInvoice";
-import CreditorInvoiceBase from "./creditor/CreditorInvoiceBase";
+import colors from "../../../assets/colors.json";
+import InvoiceTable from "../invoice/creditor/components/InvoiceTable";
 import useReturnInvoiceStore from "./context/useReturnInvoiceStore";
 import Summary from "./Summary";
-import useDebounce from "@/hooks/useDebounce";
 
 interface InvoiceOption {
   label: string;
@@ -66,6 +53,7 @@ function HandlingReturn() {
     invoiceItemDTOList,
     setSelectedInvoice,
     selectedInvoice,
+    resetState,
   } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
@@ -90,12 +78,13 @@ function HandlingReturn() {
   const [totalReturnValue, setTotalReturnValue] = useState(0);
 
   const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
-  const sparePartyService = new SparePartService(axiosPrivate);
-
+  const sparePartService = new SparePartService(axiosPrivate);
   const returnService = new ReturnService(axiosPrivate);
+
   const [activeTab, setActiveTab] = useState<string>("cash");
   const [tabCredit, setTabCredit] = useState(false);
   const [tabCash, setTabCash] = useState(false);
+  const [creditorSelectKey, setCreditorSelectKey] = useState(0);
 
   const generateInvoiceId = () => {
     const now = new Date();
@@ -187,7 +176,7 @@ function HandlingReturn() {
       items.forEach((item) => {
         if (item.outsourced) {
           const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
+            (outsourcedItem) => outsourcedItem.index === item.sparePartId
           )[0];
 
           if (
@@ -259,7 +248,7 @@ function HandlingReturn() {
     itemCode: string,
     quantity: number,
     price: number,
-    id: number,
+    id: number
   ) => {
     addReturnItem({ id: id, returnedQuantity: quantity });
     setReturnedQuantities((prev) => ({
@@ -272,7 +261,7 @@ function HandlingReturn() {
     const totalValue = Object.keys(returnedQuantities).reduce((acc, id) => {
       const quantity = returnedQuantities[id];
       const item = selectedInvoice?.items.find(
-        (item) => item.id === Number(id),
+        (item) => item.id === Number(id)
       );
       return acc + (item ? quantity * item.price : 0);
     }, 0);
@@ -295,6 +284,7 @@ function HandlingReturn() {
     console.log(tab);
   };
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
+    setReturnedQuantities({})
     setSelectedInvoice(baseInvoice);
     setCustomer(baseInvoice.customer);
     setPurchaseDate(baseInvoice.date);
@@ -338,6 +328,7 @@ function HandlingReturn() {
             >
               <RequiredLabel label="Returned Invoice" />
               <Select
+                key={creditorSelectKey}
                 className="select-place-holder"
                 placeholder={"Search and select returned invoice"}
                 options={invoiceOptions}
@@ -355,120 +346,117 @@ function HandlingReturn() {
               >
                 <div>
                   <div className="flex justify-between items-center">
-                    <TabsList className="grid w-[40%] grid-cols-2 bg-blue-600 text-slate-50">
+                    <TabsList className="grid w-[40%] grid-cols-2 bg-primary text-slate-50">
                       <TabsTrigger value="returnItems">
                         Return Items
                       </TabsTrigger>
-                      <TabsTrigger value="newItems">New Items</TabsTrigger>
+                      <TabsTrigger value="newItems">Exchange Items</TabsTrigger>
                     </TabsList>
                   </div>
                   {/* Return Item view section */}
                   <TabsContent value="returnItems">
-                    <Card x-chunk="dashboard-07-chunk-1">
-                      <CardHeader>
-                        <CardTitle>Returned Invoice</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Spare Part</TableHead>
-                              <TableHead>Item Code</TableHead>
-                              <TableHead>Unit Price</TableHead>
-                              <TableHead>Quantity</TableHead>
-                              <TableHead>Returned Qty</TableHead>
+                    <Table className="border rounded-md text-md mt-6 mb-5 table-responsive">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Spare Part</TableHead>
+                          <TableHead>Item Code</TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Unit Price
+                          </TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Quantity
+                          </TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Available Qty
+                          </TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Returned Qty
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedInvoice ? (
+                          selectedInvoice?.items.map((item) => (
+                            <TableRow key={item.id}>
+                              <TableCell>{item.name}</TableCell>
+                              <TableCell>
+                                {item?.code.length === 0 ? "-" : item.code}
+                              </TableCell>
+                              <TableCell align="right">{item.price}</TableCell>
+                              <TableCell align="right">
+                                {item.quantity}
+                              </TableCell>
+                              <TableCell align="right">
+                                <AmountCard
+                                  amount={
+                                    item?.availableQuantity ?? item?.quantity
+                                  }
+                                  color={
+                                    item.availableQuantity === undefined ||
+                                    item.availableQuantity > 0
+                                      ? colors["number-green"]
+                                      : colors["number-red"]
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell align="right">
+                                <Input
+                                  id={"" + item.id}
+                                  type="number"
+                                  max={item.quantity}
+                                  min={0}
+                                  value={returnedQuantities[item.id]}
+                                  onChange={(e) => {
+                                    const enteredValue = parseInt(
+                                      e.target.value,
+                                      10
+                                    );
+                                    if (enteredValue > item.quantity) {
+                                      // Prevent the input from going beyond the max value
+                                      e.target.value = item.quantity;
+                                    } else if (enteredValue >= 0) {
+                                      handleReturnedQuantityChange(
+                                        item.code,
+                                        enteredValue,
+                                        item.price,
+                                        item.id
+                                      );
+                                    }
+                                  }}
+                                  step={1}
+                                  style={{
+                                    textAlign: "right",
+                                    maxWidth: "140px",
+                                  }}
+                                  placeholder="Enter return qty"
+                                  disabled={
+                                    item.availableQuantity !== undefined &&
+                                    item.availableQuantity === 0
+                                  }
+                                />
+                              </TableCell>
                             </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {selectedInvoice &&
-                              selectedInvoice?.items.map((item) => (
-                                <TableRow key={item.id}>
-                                  <TableCell>{item.name}</TableCell>
-                                  <TableCell>{item.code}</TableCell>
-                                  <TableCell>LKR {item.price}</TableCell>
-                                  <TableCell>{item.quantity}</TableCell>
-                                  <TableCell>
-                                    <Input
-                                      id={"" + item.id}
-                                      type="number"
-                                      max={item.quantity}
-                                      min={0}
-                                      value={returnedQuantities[item.id]}
-                                      onChange={(e) => {
-                                        const enteredValue = parseInt(
-                                          e.target.value,
-                                          10,
-                                        );
-                                        if (enteredValue > item.quantity) {
-                                          // Prevent the input from going beyond the max value
-                                          e.target.value = item.quantity;
-                                        } else if (enteredValue >= 0) {
-                                          handleReturnedQuantityChange(
-                                            item.code,
-                                            enteredValue,
-                                            item.price,
-                                            item.id,
-                                          );
-                                        }
-                                      }}
-                                    />
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </CardContent>
-                      <div className="mb-2 ml-2" style={{ paddingLeft: 10 }}>
-                        <h3 className="text-xl font-semibold leading-none tracking-tight">
-                          Total Return Value: Rs.{" "}
-                          {totalReturnValue ? totalReturnValue.toFixed(2) : 0}
-                        </h3>
-                      </div>
-                    </Card>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center py-4">
+                              Please select the invoice first.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
                   </TabsContent>
-                  {/* <div className = "mb-4">
-                  {outsourcedItems.length > 0 && (
-                    <Card className="mt-4 bg-slate-200">
-                      <CardContent className="pl-6 pr-2 pt-4 shadow-sm">
-                        <div>
-                          <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">
-                            Outsourced Item Details
-                          </h3>
-                          <div key={Math.random()}>
-                            <div className="d-flex gap-8">
-                              <div
-                                className="grid grid-cols-5 gap-4 w-full"
-                                key={Math.random()}
-                              >
-                                <OptionalLabel label="Item Name" />
-                                <OptionalLabel label="Item Code" />
-                                <OptionalLabel label="Quantity" />
-                                <RequiredLabel label="Company Name" />
-                                <RequiredLabel label="Buying Price" />
-                              </div>
-                              <div className="w-10"></div>
-                            </div>
-                            {outsourcedItems.map((item, index) => (
-                              <OutSourceItemForm
-                                outsourceItem={item}
-                                outsourceItems={outsourcedItems}
-                                setOutsourcedItems={setOutsourcedItems}
-                                key={Math.random()}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div> */}
 
                   {/* New invoice section */}
                   <TabsContent value="newItems">
-                    <Fragment>
-                      {selectedInvoice && (
+                    <InvoiceTable
+                      sparePartService={sparePartService}
+                      type="RETURN"
+                    />
+                    {/* <Fragment>
+                      {selectedInvoice ? (
                         <Tabs
-                          // defaultValue="cash"
                           defaultValue={!tabCash ? "cash" : "creditor"}
                           className="w-[100%]"
                           onValueChange={handleTabChange2}
@@ -492,7 +480,6 @@ function HandlingReturn() {
                                 <CashInvoiceBase />
                               </TabsContent>
                               <TabsContent value="creditor">
-                                {/* <CashInvoiceBase /> */}
                                 <CreditorInvoiceBase />
                               </TabsContent>
                             </div>
@@ -512,8 +499,14 @@ function HandlingReturn() {
                             </div>
                           )}
                         </Tabs>
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-4">
+                            Please select the invoice first.
+                          </TableCell>
+                        </TableRow>
                       )}
-                    </Fragment>
+                    </Fragment> */}
                   </TabsContent>
                 </div>
               </Tabs>
@@ -521,7 +514,10 @@ function HandlingReturn() {
           </div>
 
           <div style={{ flex: 3 }}>
-            <Summary />
+            <Summary
+              creditorSelectKey={creditorSelectKey}
+              setCreditorSelectKey={setCreditorSelectKey}
+            />
           </div>
         </CardContent>
       </div>
@@ -533,7 +529,7 @@ function HandlingReturn() {
         component={
           <DummyItemForm
             onClose={() => setShow(false)}
-            sparePartService={sparePartyService}
+            sparePartService={sparePartService}
             items={items}
             setItems={setItems}
             outsourcedItems={outsourcedItems}

@@ -77,14 +77,23 @@ export default function CreditorManagement() {
           value={searchInput}
           onChange={handleSearchChange}
           placeholder="Search creditor name"
+          style={{ minWidth: "200px" }}
         />
-        <Button variant={"secondary"} onClick={() => refetch()}>
+        <Button
+          className="action-button"
+          variant={"secondary"}
+          onClick={() => refetch()}
+        >
           <Search className="mr-2 h-4 w-4" />
-          Search
+          <span className="button-text">Search</span>
         </Button>
-        <Button variant={"secondary"} onClick={handleReset}>
+        <Button
+          className="action-button"
+          variant={"secondary"}
+          onClick={handleReset}
+        >
           <ResetIcon className="mr-2 h-4 w-4" />
-          Reset
+          <span className="button-text">Reset</span>
         </Button>
       </div>
 
