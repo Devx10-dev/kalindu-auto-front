@@ -43,6 +43,7 @@ const InvoiceTable: React.FC<{
   const {
     addInvoiceItem: addItemsToReturnInvoice,
     invoiceItemDTOList: exchangeItems,
+    removeInvoiceItem: removeExchangeItem,
   } = useReturnInvoiceStore();
 
   useEffect(() => {}, [invoiceItemDTOList]);
@@ -181,7 +182,11 @@ const InvoiceTable: React.FC<{
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div
-                            onClick={() => removeInvoiceItem(item)}
+                            onClick={() => {
+                              type === "RETURN"
+                                ? removeExchangeItem(item)
+                                : removeInvoiceItem(item);
+                            }}
                             style={{ cursor: "pointer" }}
                           >
                             <Trash2 color="#C7253E" height={22} width={18} />
