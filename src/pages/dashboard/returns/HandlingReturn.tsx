@@ -1,9 +1,7 @@
 import AmountCard from "@/components/card/AmountCard";
 import PageHeader from "@/components/card/PageHeader";
-import DummyItemForm from "@/components/form/invoice/dummy/DummyItemForm";
 import { RequiredLabel } from "@/components/formElements/FormLabel";
 import LeftRightArrow from "@/components/icon/LeftRightArrow";
-import { FormModal } from "@/components/modal/FormModal";
 import { CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,7 +21,7 @@ import { ReturnService } from "@/service/return/ReturnService";
 import { SparePartService } from "@/service/sparePartInventory/sparePartService";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
-import { BaseInvoice, ReturnItem } from "@/types/returns/returnsTypes";
+import { BaseInvoice } from "@/types/returns/returnsTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Select from "react-select";
@@ -40,6 +38,7 @@ interface InvoiceOption {
 
 function HandlingReturn() {
   const {
+    sourceInvoiceId,
     setSourceInvoiceId,
     addReturnItem,
     setReturnType,
@@ -58,7 +57,6 @@ function HandlingReturn() {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
 
-  const [show, setShow] = useState(false);
   const [items, setItems] = useState<DummyInvoiceItem[]>([]);
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -73,7 +71,6 @@ function HandlingReturn() {
   const [returnedQuantities, setReturnedQuantities] = useState<{
     [key: string]: number;
   }>({});
-  const [selectedReturnItems, setSelectedReturnItems] = useState<ReturnItem>();
 
   const [totalReturnValue, setTotalReturnValue] = useState(0);
 
@@ -273,24 +270,15 @@ function HandlingReturn() {
     console.log(tab);
   };
 
-  const handleTabChange2 = (tab: string) => {
-    if (!invoiceItemDTOList[0]) console.log("Tab changed 2", tab);
-    setActiveTab(tab);
-    if (tab === "creditor") {
-      setNewInvoiceType("CRE");
-    } else {
-      setNewInvoiceType("CASH");
-    }
-    console.log(tab);
-  };
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
-    setReturnedQuantities({})
+    setReturnedQuantities({});
     setSelectedInvoice(baseInvoice);
     setCustomer(baseInvoice.customer);
     setPurchaseDate(baseInvoice.date);
     setReturnType(findReturnType(baseInvoice.invoiceId));
     setSourceInvoiceId(baseInvoice.invoiceId);
     resetExchangeItemTable();
+    setNewInvoiceType(baseInvoice.invoiceId.split("-")[1]);
   };
 
   const findReturnType = (invoiceId: string): string => {
@@ -454,59 +442,6 @@ function HandlingReturn() {
                       sparePartService={sparePartService}
                       type="RETURN"
                     />
-                    {/* <Fragment>
-                      {selectedInvoice ? (
-                        <Tabs
-                          defaultValue={!tabCash ? "cash" : "creditor"}
-                          className="w-[100%]"
-                          onValueChange={handleTabChange2}
-                        >
-                          {returnType === "CRE" && (
-                            <div>
-                              <div className="flex justify-between items-center">
-                                <TabsList className="grid w-[100%] grid-cols-2 bg-blue-600 text-slate-50">
-                                  <TabsTrigger value="cash" disabled={tabCash}>
-                                    Cash Invoice
-                                  </TabsTrigger>
-                                  <TabsTrigger
-                                    value="creditor"
-                                    disabled={tabCredit}
-                                  >
-                                    Creditor Invoice
-                                  </TabsTrigger>
-                                </TabsList>
-                              </div>
-                              <TabsContent value="cash">
-                                <CashInvoiceBase />
-                              </TabsContent>
-                              <TabsContent value="creditor">
-                                <CreditorInvoiceBase />
-                              </TabsContent>
-                            </div>
-                          )}
-                          {returnType === "CASH" && (
-                            <div>
-                              <div className="flex justify-between items-center">
-                                <TabsList className="grid w-[40%] grid-cols-1 bg-blue-600 text-slate-50">
-                                  <TabsTrigger value="cash">
-                                    Cash Invoice
-                                  </TabsTrigger>
-                                </TabsList>
-                              </div>
-                              <TabsContent value="cash">
-                                <CashInvoiceBase />
-                              </TabsContent>
-                            </div>
-                          )}
-                        </Tabs>
-                      ) : (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center py-4">
-                            Please select the invoice first.
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </Fragment> */}
                   </TabsContent>
                 </div>
               </Tabs>
@@ -521,22 +456,6 @@ function HandlingReturn() {
           </div>
         </CardContent>
       </div>
-      <FormModal
-        title="Add new Spare Part Item"
-        titleDescription="Add new spare part item to the invoice"
-        show={show}
-        onClose={() => setShow(false)}
-        component={
-          <DummyItemForm
-            onClose={() => setShow(false)}
-            sparePartService={sparePartService}
-            items={items}
-            setItems={setItems}
-            outsourcedItems={outsourcedItems}
-            setOutsourcedItems={setOutsourcedItems}
-          />
-        }
-      />
     </Fragment>
   );
 }
