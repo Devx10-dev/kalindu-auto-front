@@ -7,8 +7,8 @@ export type Creditor = {
   primaryContact?: string;
   secondaryContact?: string;
   address?: string;
-  totalDue?: string;
-  chequeBalance?: string;
+  totalDue?: number;
+  chequeBalance?: number;
   creditLimit?: number;
   status?: string;
   dueDate?: string;

@@ -17,6 +17,30 @@ import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
+import useQueryParams from "@/hooks/getQueryParams";
+import { currencyAmountString } from "@/utils/analyticsUtils";
+import dateArrayToString from "@/utils/dateArrayToString";
+
+function priceRender(contentType: string, content: string) {
+  // split from firdst dot from the right
+  switch (contentType) {
+    case "currencyAmount": {
+      // this comes as strig "Rs. 180,666.00" i want to render the decimal part in a smaller font size
+      const [currency, amount] = content.split(/(?<=\..*)\./);
+      return (
+        <div className="text-md font-bold">
+          {/* remove Rs. from begininh */}
+          <span>{currency}</span>
+          <span className="text-xs font-bold color-muted-foreground">
+            .{amount}
+          </span>
+        </div>
+      );
+    }
+    default:
+      return <div className="text-2xl font-bold">{content}</div>;
+  }
+}
 
 export default function InvoiceTable({
   invoices,
@@ -41,6 +65,8 @@ export default function InvoiceTable({
     nav(`/dashboard/invoice/view/${type}/${invoiceId}`);
   };
 
+  const { setQueryParam } = useQueryParams();
+
   return (
     <Fragment>
       <Table className="border rounded-md text-md mb-5 table-responsive">
@@ -53,6 +79,7 @@ export default function InvoiceTable({
               totalPages={invoices?.totalPages}
               onPageChange={(page) => {
                 setPageNo(page - 1);
+                setQueryParam("pageNo", page - 1);
               }}
             />
           )}
@@ -63,8 +90,8 @@ export default function InvoiceTable({
             <TableHead>Customer Name</TableHead>
             <TableHead>Vehicle No</TableHead>
             <TableHead>Invoice Date</TableHead>
-            <TableHead>Total Amount</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Total Amount</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -90,7 +117,9 @@ export default function InvoiceTable({
                 <TableRow key={invoice.id}>
                   <TableCell>{invoice.invoiceId}</TableCell>
                   <TableCell className="w-40 turncate">
-                    {invoice.customerName}
+                    {invoice.customerName === null
+                      ? "N/A"
+                      : invoice.customerName}
                   </TableCell>
                   <TableCell>
                     {invoice.vehicleNo
@@ -98,24 +127,24 @@ export default function InvoiceTable({
                       : "N/A"}
                   </TableCell>
                   <TableCell>
-                    {invoice.issuedTime[0] +
-                      "-" +
-                      invoice.issuedTime[1] +
-                      "-" +
-                      invoice.issuedTime[2]}{" "}
-                    {addLeadingZero(invoice.issuedTime[3])}:
-                    {addLeadingZero(invoice.issuedTime[4])}:
-                    {addLeadingZero(invoice.issuedTime[5])}
+                    {dateArrayToString(invoice.issuedTime, false, true)}
                   </TableCell>
-                  <TableCell>Rs. {invoice.totalPrice}</TableCell>
-                  <TableCell>
+                  <TableCell align="right">
+                    {priceRender(
+                      "currencyAmount",
+                      currencyAmountString(invoice.totalPrice),
+                    )}
+                  </TableCell>
+                  <TableCell align="center">
                     {/* make background greem intag */}
-                    <Badge
-                      variant="secondary"
-                      className="text-white bg-green-400 rounded-sm p-1"
+                    <p
+                      className="p-badge"
+                      style={{
+                        background: "#198754",
+                      }}
                     >
                       COMPLETED
-                    </Badge>
+                    </p>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-center">

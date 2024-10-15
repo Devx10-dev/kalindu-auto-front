@@ -39,30 +39,6 @@ export default function CreditorManagement() {
     setPageNo(newPageNo);
   };
 
-  const SkeletonLoader = () => (
-    <div className="space-y-4">
-      {[...Array(10)].map((_, index) => (
-        <div key={index} className="flex items-center space-x-4">
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <div className="p-10">
       <PageHeader

@@ -41,6 +41,28 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import { currencyAmountString } from "@/utils/analyticsUtils";
+
+function priceRender(contentType: string, content: string) {
+  // split from firdst dot from the right
+  switch (contentType) {
+    case "currencyAmount": {
+      // this comes as strig "Rs. 180,666.00" i want to render the decimal part in a smaller font size
+      const [currency, amount] = content.split(/(?<=\..*)\./);
+      return (
+        <div className="text-md font-bold">
+          {/* remove Rs. from begininh */}
+          <span>{currency.slice(4)}</span>
+          <span className="text-xs font-bold color-muted-foreground">
+            .{amount}
+          </span>
+        </div>
+      );
+    }
+    default:
+      return <div className="text-2xl font-bold">{content}</div>;
+  }
+}
 
 const CreditorsTable = (props: {
   creditorData?: Creditor[];
@@ -54,6 +76,8 @@ const CreditorsTable = (props: {
     } else {
       setIsContentLoading(props.isLoading);
     }
+    console.log("isLoading", props.creditorData);
+    // console.log((props.creditorData[0]?.totalDue))
   }, [props.isLoading]);
 
   return (
@@ -65,9 +89,9 @@ const CreditorsTable = (props: {
               <TableHead>Shop Name</TableHead>
               <TableHead>Contact Name</TableHead>
               <TableHead>Contact No</TableHead>
-              <TableHead>Due Balance</TableHead>
-              <TableHead>Cheque Balance</TableHead>
-              <TableHead>Credit Limit (LKR)</TableHead>
+              <TableHead className="text-right">Due Balance(Rs)</TableHead>
+              <TableHead className="text-right">Cheque Balance(Rs)</TableHead>
+              <TableHead className="text-right">Credit Limit(Rs)</TableHead>
               <TableHead>Due/Overdue</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
@@ -80,7 +104,7 @@ const CreditorsTable = (props: {
               {props.creditorData?.map((creditor) => (
                 <TableRow
                   key={creditor.creditorID}
-                  className={`${creditor.dueStatus === "OVERDUE" ? "bg-orange-100" : null}`}
+                  className={`${creditor.dueStatus === "OVERDUE" ? "bg-orange-50" : null}`}
                 >
                   <TableCell className="font-medium">
                     {creditor.shopName}
@@ -90,13 +114,48 @@ const CreditorsTable = (props: {
                   </TableCell>
                   <TableCell>{creditor.primaryContact}</TableCell>
                   <TableCell align="right">
-                    {creditor.totalDue ? creditor.totalDue : 0}
+                    {creditor.totalDue ? (
+                      priceRender(
+                        "currencyAmount",
+                        currencyAmountString(creditor.totalDue),
+                      )
+                    ) : (
+                      <div className="flex gap-1 items-right justify-end">
+                        <Badge className="w-fit" variant="secondary">
+                          No Due
+                        </Badge>
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell align="right">
-                    {creditor.totalDue ? creditor.chequeBalance : 0}
+                    {/* {creditor.totalDue ? creditor.chequeBalance : 0} */}
+                    {creditor.chequeBalance ? (
+                      priceRender(
+                        "currencyAmount",
+                        currencyAmountString(creditor.chequeBalance),
+                      )
+                    ) : (
+                      <div className="flex gap-1 items-right justify-end">
+                        <Badge className="w-fit" variant="secondary">
+                          No Cheques
+                        </Badge>
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell align="right">
-                    {creditor.creditLimit ? creditor.creditLimit : "-"}
+                    {/* {creditor.creditLimit ? creditor.creditLimit : "-"} */}
+                    {creditor.creditLimit ? (
+                      priceRender(
+                        "currencyAmount",
+                        currencyAmountString(creditor.creditLimit),
+                      )
+                    ) : (
+                      <div className="flex gap-1 items-right justify-end">
+                        <Badge className="w-fit" variant="destructive">
+                          Not Set
+                        </Badge>
+                      </div>
+                    )}
                   </TableCell>
 
                   <TableCell align="center">
@@ -162,37 +221,33 @@ const CreditorsTable = (props: {
                       invoiceList={creditor.expiredInvoiceList}
                     />
                   )} */}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Dialog>
+                    <Dialog>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
                             <DialogTrigger asChild>
                               <Button variant={"outline"} className="w-fit p-2">
                                 <UserRoundCog className="h-5 w-5" />
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[1000px]">
-                              <DialogHeader>
-                                <DialogTitle>Edit Creditor</DialogTitle>
-                                <DialogDescription>
-                                  Edit the necessary creditor details and hit
-                                  save
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="grid gap-4 py-4">
-                                <RegisterForm
-                                  isEditMode={true}
-                                  creditor={creditor}
-                                />
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Edit Creditor</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit Creditor</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <DialogContent className="sm:max-w-[1000px]">
+                        <DialogHeader>
+                          <DialogTitle>Edit Creditor</DialogTitle>
+                          <DialogDescription>
+                            Edit the necessary creditor details and hit save
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <RegisterForm isEditMode={true} creditor={creditor} />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               ))}

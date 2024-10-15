@@ -19,6 +19,35 @@ import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
+import useQueryParams from "@/hooks/getQueryParams";
+import { currencyAmountString } from "@/utils/analyticsUtils";
+
+function priceRender(contentType: string, content: string) {
+  // split from firdst dot from the right
+  switch (contentType) {
+    case "currencyAmount": {
+      // this comes as strig "Rs. 180,666.00" i want to render the decimal part in a smaller font size
+      const [currency, amount] = content.split(/(?<=\..*)\./);
+      return (
+        <div className="text-md font-bold">
+          {/* remove Rs. from begininh */}
+          <span>{currency.slice(4)}</span>
+          <span className="text-xs font-bold color-muted-foreground">
+            .{amount}
+          </span>
+        </div>
+      );
+    }
+    default:
+      return <div className="text-2xl font-bold">{content}</div>;
+  }
+}
+
+const dotSizeClasses = {
+  sm: "h-2 w-2",
+  md: "h-2.5 w-2.5",
+  lg: "h-3 w-3",
+};
 
 export default function CreditInvoiceTable({
   invoices,
@@ -123,6 +152,8 @@ export default function CreditInvoiceTable({
     );
   };
 
+  const { setQueryParam } = useQueryParams();
+
   return (
     <Fragment>
       <Table className="border rounded-md text-md mb-5 table-responsive">
@@ -135,6 +166,7 @@ export default function CreditInvoiceTable({
               totalPages={invoices?.totalPages}
               onPageChange={(page) => {
                 setPageNo(page - 1);
+                setQueryParam("pageNo", page - 1);
               }}
             />
           )}
@@ -146,6 +178,7 @@ export default function CreditInvoiceTable({
             <TableHead>Invoice Date</TableHead>
             <TableHead>Due Date</TableHead>
             <TableHead className="text-end">Total Amount</TableHead>
+            <TableHead className="text-end">Due Amount</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
@@ -184,7 +217,27 @@ export default function CreditInvoiceTable({
                       ),
                     )}
                   </TableCell>
-                  <TableCell align="right">Rs. {invoice.totalPrice}</TableCell>
+                  <TableCell align="right">
+                    {priceRender(
+                      "currencyAmount",
+                      currencyAmountString(invoice.totalPrice),
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    <div className="flex items-center justify-end gap-2 relative">
+                      {!invoice.settled && (
+                        <span
+                          className={`block ${dotSizeClasses["sm"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`}
+                        />
+                      )}
+                      {priceRender(
+                        "currencyAmount",
+                        currencyAmountString(
+                          invoice.totalPrice - invoice.settledAmount,
+                        ),
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell align="center">
                     {/* make background greem intag */}
                     {generateStatusBadge(invoice)}
