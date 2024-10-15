@@ -91,7 +91,7 @@ export default function CreditInvoiceTable({
   const getDueStatus = (
     issuedTime: number[],
     maxDueWeeks: number,
-    isSettled: boolean,
+    isSettled: boolean
   ) => {
     if (isSettled) {
       return "SETTLED";
@@ -103,7 +103,7 @@ export default function CreditInvoiceTable({
       issuedTime[2],
       issuedTime[3],
       issuedTime[4],
-      issuedTime[5],
+      issuedTime[5]
     );
     const currentDate = new Date();
     let diff = currentDate.getTime() - issuedDate.getTime();
@@ -120,7 +120,7 @@ export default function CreditInvoiceTable({
     const status = getDueStatus(
       invoice.issuedTime,
       Number(invoice.creditor.maxDuePeriod) as number,
-      invoice.settled,
+      invoice.settled
     );
     let background = "";
     let statusText = "";
@@ -213,8 +213,8 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(
                       calculateDueDate(
                         invoice.issuedTime,
-                        Number(invoice.creditor.maxDuePeriod) as number,
-                      ),
+                        Number(invoice.creditor.maxDuePeriod) as number
+                      )
                     )}
                   </TableCell>
                   <TableCell align="right">

@@ -160,3 +160,86 @@ th {
   font-size: 12px;
   font-weight: 400;
 }
+
+/* For WebKit-based browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the scrollbar track */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Color of the scrollbar handle */
+  border-radius: 10px; /* Rounded corners for the scrollbar handle */
+  border: 3px solid #f1f1f1; /* Padding around the handle */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Color when hovered */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin; /* Makes the scrollbar thinner */
+  scrollbar-color: #888 #f1f1f1; /* Handle and track colors */
+}
+
+/* Hide text on small screens (below 600px) */
+@media (max-width: 600px) {
+  .action-button .button-text {
+    display: none;
+  }
+
+  .action-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 40px;
+    padding: 0 4px;
+  }
+}
+
+@media (max-width: 800px) {
+  .grid-modal {
+    max-width: 50% !important;
+  }
+}
+
+
+.error-message {
+  color: #C7253E; /* Red color for error */
+  background-color: #f9d6d5; /* Light red background */
+  border: 1px solid #C7253E; /* Red border to emphasize the error */
+  padding: 10px 15px; /* Add padding for better readability */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 14px; /* Adjust font size as per your design */
+  font-weight: 600; /* Slightly bolder font */
+  margin-top: 15px; /* Add space above */
+  display: inline-block; /* Keeps it from spreading across the full width */
+}
+
+.error-message-icon {
+  margin-right: 8px; /* Spacing between the icon and text */
+  vertical-align: middle; /* Align icon with text */
+}
+
+.error-message a {
+  color: #C7253E; /* Error color for links */
+  text-decoration: underline; /* Underline the link */
+}
+
+.error-message a:hover {
+  text-decoration: none; /* Remove underline on hover */
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out; /* Add a smooth fade-in effect */
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
