@@ -3,6 +3,7 @@ import addLeadingZero from "./addLeadingZero";
 export default function dateArrayToString(
   dateArray: number[],
   withoutTime?: boolean,
+  textual?: boolean,
 ): string {
   let dateStr = "";
   const months = [
@@ -27,6 +28,9 @@ export default function dateArrayToString(
     !withoutTime
   ) {
     dateStr = `${dateArray[0]}-${dateArray[1]}-${dateArray[2]} ${addLeadingZero(dateArray[3])}:${addLeadingZero(dateArray[4])}:${addLeadingZero(dateArray[5])}`;
+    if (textual) {
+      dateStr = `${dateArray[2]} ${months[dateArray[1] - 1].substring(0, 3)} ${dateArray[0]} ${addLeadingZero(dateArray[3])}:${addLeadingZero(dateArray[4])}:${addLeadingZero(dateArray[5])}`;
+    }
   } else {
     // dateStr = `${dateArray[0]}-${dateArray[1]}-${dateArray[2]}`;
     // FORMAT: DAY [Month with 3 letters] YEAR

@@ -128,3 +128,9 @@ export type Commission = {
   amount: number;
   remark: string;
 };
+
+export type SettledPieChartData = {
+  status: string;
+  amount: number;
+  fill: string;
+};

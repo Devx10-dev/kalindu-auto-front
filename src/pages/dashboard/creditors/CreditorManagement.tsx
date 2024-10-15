@@ -11,6 +11,7 @@ import { Search, Settings2 } from "lucide-react";
 import { useState } from "react";
 import CreditorAPI from "./api/CreditorAPI";
 import CreditorsTable from "./components/CreditorsTable";
+import { TableSkeleton } from "./components/TableSkelton";
 
 export default function CreditorManagement() {
   const axiosPrivate = useAxiosPrivate();
@@ -37,30 +38,6 @@ export default function CreditorManagement() {
   const onPageChange = (newPageNo) => {
     setPageNo(newPageNo);
   };
-
-  const SkeletonLoader = () => (
-    <div className="space-y-4">
-      {[...Array(10)].map((_, index) => (
-        <div key={index} className="flex items-center space-x-4">
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 
   return (
     <div className="p-10">
@@ -98,11 +75,8 @@ export default function CreditorManagement() {
       </div>
 
       {/* creditor data table */}
-      {isLoading ? (
-        <SkeletonLoader />
-      ) : (
-        <CreditorsTable creditorData={data?.creditors} />
-      )}
+
+      <CreditorsTable creditorData={data?.creditors} isLoading={isLoading} />
 
       {/* pagination */}
       <div className="mt-10">
