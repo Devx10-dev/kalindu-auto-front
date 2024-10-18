@@ -2,7 +2,6 @@ import Loading from "@/components/Loading";
 import PageHeader from "@/components/card/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,24 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import { Label } from "@radix-ui/react-label";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowUpDown,
-  CreditCard,
-  LibraryBig,
-  SquareGanttChart,
-  User,
-} from "lucide-react";
-import { Key, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { CreditCard } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CreditorAPI from "./api/CreditorAPI";
-import { AddNewTransaction } from "./components/AddNewTransaction";
-import CreditorInvoiceTable from "./components/CreditorInvoiceTable";
 import { currencyAmountString } from "@/utils/analyticsUtils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import dateArrayToString from "@/utils/dateArrayToString";
-import { Header } from "@radix-ui/react-accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
@@ -39,16 +28,13 @@ import { InvoiceState } from "@/types/invoice/creditorInvoice";
 import NoInvoices from "./components/NoInvoices";
 import { ChequeService } from "@/service/cheque/ChequeService";
 import ChequesGridCreditorView from "../cheque/components/grid/ChequesGridCreditorView";
-import TransactionTimeLine from "./components/TransactionTimeline";
-import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import TransactionService from "@/service/creditor/TransactionService";
+
+import TransactionCard from "./components/TransactionCard";
+import { SingleCreditorStatPieChart } from "./components/SingleCreditorStatPieChart";
+import EmblaCarousel from "@/components/carousel/EmblaCarousel";
+import { EmblaOptionsType } from "embla-carousel";
+import "../../../assets/css/embla.css";
+import "../../../assets/css/base.css";
 
 function priceRender(contentType: string, content: string) {
   // split from firdst dot from the right
@@ -71,13 +57,15 @@ function priceRender(contentType: string, content: string) {
   }
 }
 
+const OPTIONS: EmblaOptionsType = {};
+const SLIDE_COUNT = 5;
+const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
+
 const ViewCreditor = () => {
   const axiosPrivate = useAxiosPrivate();
   const creditorAPI = new CreditorAPI(axiosPrivate);
-  const queryClient = useQueryClient();
-  const transactionService = new TransactionService(axiosPrivate);
-  const [pageNo, setPageNo] = useState(0);
   const { id } = useParams();
+  const [creditor, setCreditor] = useState<any>();
 
   const [invoiceSearch, setInvoiceSearch] = useState("");
   const [chequeSearch, setChequeSearch] = useState("");
@@ -113,11 +101,6 @@ const ViewCreditor = () => {
     });
   };
 
-  const transactionResponse = useQuery({
-    queryKey: ["creditorTransactions"],
-    queryFn: () => creditorAPI.getCreditorTransactions(id),
-  });
-
   const creditorDetails = useQuery({
     queryKey: ["creditor", id],
     queryFn: () => creditorAPI.fetchSingleCreditor(id),
@@ -130,7 +113,13 @@ const ViewCreditor = () => {
     console.log("filteredInvoices", filteredInvoices);
   }, [invoiceSearch, selectedOption, creditorDetails.data]);
 
-  if (creditorDetails.isLoading || transactionResponse.isLoading) {
+  useEffect(() => {
+    if (creditorDetails.data) {
+      setCreditor(creditorDetails.data);
+    }
+  }, [creditorDetails.data]);
+
+  if (creditorDetails.isLoading) {
     return <Loading />;
   } else
     return (
@@ -142,10 +131,10 @@ const ViewCreditor = () => {
         />
         {/* <AddNewTransaction /> */}
 
-        <div className="mt-5">
-          <div className="p-4 border border-muted-gray bg-muted-background rounded-md">
-            <div className="grid grid-cols-4 gap-2">
-              <div className="col-span-4 row-span-1">
+        <div className="flex mt-5 gap-3 justify-between items-top">
+          <div className="flex p-4 border border-muted-gray bg-muted-background rounded-md w-full">
+            <div className="grid grid-cols-3 gap-2 w-full h-full">
+              <div className="col-span-3 row-span-1">
                 <div className="flex flex-row items-center justify-flex-start gap-3">
                   <Avatar className="hidden h-8 w-8 sm:flex">
                     <AvatarImage
@@ -179,9 +168,13 @@ const ViewCreditor = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">Address</p>
-                <p>{creditorDetails.data?.address}</p>
+                <p>
+                  {creditorDetails.data?.address
+                    ? creditorDetails.data?.address
+                    : "Not Provided"}
+                </p>
               </div>
-              <div className="flex flex-col gap-1">
+              {/* <div className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">Total Due</p>
                 {creditorDetails.data?.dueAmount ? (
                   <Badge variant="secondary" className="w-fit">
@@ -192,8 +185,8 @@ const ViewCreditor = () => {
                     No Due
                   </Badge>
                 )}
-              </div>
-              <div className="flex flex-col gap-1">
+              </div> */}
+              {/* <div className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">Total Overdue</p>
                 {creditorDetails.data?.overdueAmount ? (
                   <Badge variant="destructive" className="w-fit">
@@ -204,7 +197,7 @@ const ViewCreditor = () => {
                     No Overdue
                   </Badge>
                 )}
-              </div>
+              </div> */}
               <div className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">Credit Limit</p>
                 {/* <p>{currencyAmountString(creditor?.creditLimit)}</p> */}
@@ -227,6 +220,12 @@ const ViewCreditor = () => {
                 </Badge>
               </div>
             </div>
+          </div>
+          <div className="h-full w-full">
+            <SingleCreditorStatPieChart
+              creditorDetails={creditor}
+              creditorDetailsLoading={creditorDetails.isLoading}
+            />
           </div>
         </div>
 
@@ -347,29 +346,10 @@ const ViewCreditor = () => {
             </Tabs>
           </div>
           <div className="col-span-2 w-[30%]">
-            <Card className="h-full">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold">Recent Transactions</h2>
-                  <Button variant="outline" className="text-sm" size="sm">
-                    View All
-                  </Button>
-                </div>
-              </CardHeader>
-              <div className="pt-0 px-3">
-                <Separator className="w-[100%] items-center" />
-              </div>
-              <CardContent>
-                <div className="p-5 pt-0 mt-5 h-full">
-                  <TransactionTimeLine
-                    creditorId={id}
-                    transactionService={transactionService}
-                    invoiceDetails={filterInvoices[0]}
-                    invoiceLoading={creditorDetails.isLoading}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <TransactionCard
+              creditorId={id}
+              creditorName={creditorDetails.data?.shopName}
+            />
           </div>
         </div>
       </div>

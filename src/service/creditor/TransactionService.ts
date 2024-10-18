@@ -21,12 +21,16 @@ class TransactionService {
     creditorID?: string,
     pageNo = 0,
     pageSize = DEFAULT_PAGE_SIZE,
+    type?: string,
+    date?: string,
   ): Promise<TransactionList> {
     const response = await this.api.get(
       GET_CREDITOR_TRANSACTIONS_URL +
         "/" +
         creditorID +
-        `?pageNo=${pageNo}&pageSize=${pageSize}`,
+        `?pageNo=${pageNo}&pageSize=${pageSize}` +
+        (type && type != "ALL" ? `&type=${type}` : "") +
+        (date ? `&date=${date}` : ""),
     );
     return response.data;
   }
