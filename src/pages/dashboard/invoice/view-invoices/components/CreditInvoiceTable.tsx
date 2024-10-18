@@ -179,16 +179,17 @@ export default function CreditInvoiceTable({
             <TableHead>Due Date</TableHead>
             <TableHead className="text-end">Total Amount</TableHead>
             <TableHead className="text-end">Due Amount</TableHead>
+            <TableHead className="text-end">Pending</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         {isLoading ? (
-          <TableBodySkeleton cols={8} rows={10} noHeader={true} />
+          <TableBodySkeleton cols={9} rows={10} noHeader={true} />
         ) : invoices?.invoices.length === 0 ? (
           <TableBody>
             <TableRow>
-              <TableCell colSpan={6}>
+              <TableCell colSpan={9}>
                 <div className="flex items-center justify-center">
                   <p className="text-red-500 text-lg font-semibold">
                     No Invoices Found
@@ -208,13 +209,17 @@ export default function CreditInvoiceTable({
                     {invoice.creditor.shopName}
                   </TableCell>
 
-                  <TableCell>{dateArrayToString(invoice.issuedTime)}</TableCell>
+                  <TableCell>
+                    {dateArrayToString(invoice.issuedTime, false, true)}
+                  </TableCell>
                   <TableCell>
                     {dateArrayToString(
                       calculateDueDate(
                         invoice.issuedTime,
-                        Number(invoice.creditor.maxDuePeriod) as number
-                      )
+                        Number(invoice.creditor.maxDuePeriod) as number,
+                      ),
+                      true,
+                      true,
                     )}
                   </TableCell>
                   <TableCell align="right">
@@ -234,6 +239,23 @@ export default function CreditInvoiceTable({
                         "currencyAmount",
                         currencyAmountString(
                           invoice.totalPrice - invoice.settledAmount,
+                        ),
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell align="right">
+                    <div className="flex items-center justify-end gap-2 relative">
+                      {!invoice.pendingPayment && (
+                        <span
+                          className={`block ${dotSizeClasses["sm"]} rounded-full bg-yellow-500 ring-2 ring-white shadow-md`}
+                        />
+                      )}
+                      {priceRender(
+                        "currencyAmount",
+                        currencyAmountString(
+                          invoice.pendingPayment == null
+                            ? 0
+                            : invoice.pendingPayment,
                         ),
                       )}
                     </div>

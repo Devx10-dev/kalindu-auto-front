@@ -1,31 +1,7 @@
+import { Badge } from "@/components/ui/badge";
 import { Cheque } from "@/types/cheque/chequeTypes";
 import { InvoiceState } from "@/types/invoice/creditorInvoice";
 import { useEffect } from "react";
-
-const getDueStatus = (dueTime: number[], isSettled: boolean) => {
-  if (isSettled) {
-    return "SETTLED";
-  }
-
-  const dueDate = new Date(
-    dueTime[0],
-    dueTime[1] - 1,
-    dueTime[2],
-    dueTime[3],
-    dueTime[4],
-    dueTime[5],
-  );
-
-  const currentDate = new Date();
-
-  const diff = dueDate.getTime() - currentDate.getTime();
-
-  if (diff < 0) {
-    return "OVERDUE";
-  } else {
-    return "DUE";
-  }
-};
 
 function ChequeStatusBadge({ cheque }: { cheque: Cheque }) {
   const status = cheque.status;
@@ -34,33 +10,30 @@ function ChequeStatusBadge({ cheque }: { cheque: Cheque }) {
 
   switch (status) {
     case "SETTLED":
-      background = "#198754";
+      background = "green";
       statusText = "Settled";
       break;
     case "REDEEMED":
-      background = "#198754";
+      background = "green";
       statusText = "Settled";
       break;
     case "PENDING":
-      background = "#ffc107";
-      statusText = "Due";
+      background = "yellow";
+      statusText = "Pending";
       break;
     case "REJECTED":
-      background = "#dc3545";
+      background = "red";
       statusText = "Overdue";
       break;
   }
 
   return (
     <div className="flex w-fit h-fit justify-center items-center">
-      <p
-        className="p-badge"
-        style={{
-          background: background,
-        }}
+      <Badge
+        className={`text-xs bg-${background}-500 dark:bg-${background}-900 text-white dark:text-${background}-300 rounded-sm`}
       >
         {statusText}
-      </p>
+      </Badge>
     </div>
   );
 }

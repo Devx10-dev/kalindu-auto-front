@@ -25,9 +25,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BadgeCheck,
   CheckCheck,
+  Eye,
   Filter,
   GalleryHorizontalEnd,
   GalleryVerticalEnd,
+  View,
 } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { SettlementModal } from "../modal/SettlementModal";
@@ -45,6 +47,8 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import dateArrayToString from "@/utils/dateArrayToString";
 import { currencyAmountString } from "@/utils/analyticsUtils";
 import TablePagination from "@/components/TablePagination";
+import NoInvoices from "@/pages/dashboard/creditors/components/NoInvoices";
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 
 function priceRender(contentType: string, content: string) {
   // split from firdst dot from the right
@@ -216,7 +220,7 @@ function ChequesGridCreditorView({
           <div className="d-flex gap-4">
             <Input
               type="text"
-              placeholder="Search for Invoices"
+              placeholder="Search for Cheques"
               onChange={(e) => {
                 setSearch(e.target.value);
               }}
@@ -250,6 +254,7 @@ function ChequesGridCreditorView({
             <TableRow>
               <TableHead>Cheque No</TableHead>
               <TableHead style={{ textAlign: "end" }}>Amount</TableHead>
+              <TableHead>Available</TableHead>
               <TableHead>Added on</TableHead>
               <TableHead style={{ textAlign: "center" }}>Status</TableHead>
               <TableHead style={{ textAlign: "center" }}>Action</TableHead>
@@ -259,7 +264,13 @@ function ChequesGridCreditorView({
             <TableBodySkeleton cols={6} rows={10} />
           ) : (
             <TableBody>
-              {cheques.cheques !== undefined &&
+              {cheques === undefined || cheques.cheques.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <NoInvoices message="No cheques Available for the selected criteria." />
+                  </TableCell>
+                </TableRow>
+              ) : (
                 cheques.cheques.map((cheque) => (
                   <TableRow key={cheque.id}>
                     <TableCell className="font-medium">
@@ -269,6 +280,14 @@ function ChequesGridCreditorView({
                       {priceRender(
                         "currencyAmount",
                         currencyAmountString(cheque.amount),
+                      )}
+                    </TableCell>
+                    <TableCell align="right">
+                      {priceRender(
+                        "currencyAmount",
+                        currencyAmountString(
+                          cheque.availableAmount ? cheque.availableAmount : 0,
+                        ),
                       )}
                     </TableCell>
                     <TableCell>{dateArrayToString(cheque.dateTime)}</TableCell>
@@ -303,8 +322,7 @@ function ChequesGridCreditorView({
                             onClick={() => handleActionBtnClick(cheque)}
                             disabled={cheque.status !== "PENDING"}
                           >
-                            <CheckCheck className="mr-2 h-4 w-4" />
-                            Settle
+                            <CheckCheck className="h-4 w-4" />
                           </Button>
                           <TooltipProvider>
                             <Tooltip>
@@ -318,8 +336,7 @@ function ChequesGridCreditorView({
                                     cheque.status === "REJECTED"
                                   }
                                 >
-                                  <GalleryHorizontalEnd className="mr-2 h-4 w-4" />
-                                  View
+                                  <OpenInNewWindowIcon className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -331,7 +348,8 @@ function ChequesGridCreditorView({
                       }
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              )}
             </TableBody>
           )}
         </Table>

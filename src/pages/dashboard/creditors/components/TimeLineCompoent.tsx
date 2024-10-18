@@ -27,15 +27,19 @@ function TimeLineComponent({
   icon,
   subTitle,
   body,
+  iconColor = "bg-blue-100 text-blue-800",
 }: {
   title: string | JSX.Element;
   icon: JSX.Element;
   subTitle?: string | JSX.Element;
   body?: string | JSX.Element;
+  iconColor?: string;
 }) {
   return (
     <div className="flex-col gap-2 mb-10 ms-6">
-      <span className="absolute flex items-center justify-center w-8 h-8 bg-blue-300 rounded-full -start-4 ring-6 ring-white ">
+      <span
+        className={`absolute flex items-center justify-center w-8 h-8 rounded-full -start-4 ring-6 ring-white ${iconColor}`}
+      >
         {icon}
       </span>
       {typeof title === "string" ? (

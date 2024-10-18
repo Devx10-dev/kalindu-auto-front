@@ -32,6 +32,7 @@ export type InvoiceState = {
   settled?: boolean;
   settledAmount?: number;
   invoiceItems?: InvoiceItem[];
+  pendingPayment?: number;
 
   discountPercentage?: number;
   discountAmount?: number;
