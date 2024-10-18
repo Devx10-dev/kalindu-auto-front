@@ -3,5 +3,7 @@
   "light-yellow": "#FFEEAD",
   "light-blue": "#9DBDFF",
   "light-pink": "#E68369",
-  "light-purple": "#E59BE9"
+  "light-purple": "#E59BE9",
+  "number-red": "#FFAAAA",
+  "number-green": "#B4E380"
 }

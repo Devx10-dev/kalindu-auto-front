@@ -1,5 +1,4 @@
 import TablePagination from "@/components/TablePagination";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {

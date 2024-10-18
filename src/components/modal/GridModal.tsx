@@ -15,7 +15,7 @@ function GridModal({
 }: FormModalProps) {
   return (
     <Dialog open={show}>
-      <DialogContent className="sm:max-w-[75%] p-5 remove-close">
+      <DialogContent className="grid-modal sm:max-w-[60%] p-5 remove-close">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="fs-15">

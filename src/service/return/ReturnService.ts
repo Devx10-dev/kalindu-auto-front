@@ -2,7 +2,6 @@ import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
 import { BaseInvoice, InvoiceState } from "@/types/returns/returnsTypes";
 
-const INVOICE_URL = "invoice";
 const RETURN_INVOICE_URL = "return";
 
 class ReturnService extends Service {
@@ -13,7 +12,7 @@ class ReturnService extends Service {
   async fetchAllInvoiceByGivenTerm(term: string): Promise<BaseInvoice[]> {
     try {
       const response = await this.api.get<BaseInvoice[]>(
-        `${INVOICE_URL}/search/${term}`,
+        `${RETURN_INVOICE_URL}/search/${term}`,
       );
       return response.data;
     } catch (error) {

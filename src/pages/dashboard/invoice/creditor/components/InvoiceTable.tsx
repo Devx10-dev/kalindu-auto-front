@@ -27,16 +27,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
+import useReturnInvoiceStore from "@/pages/dashboard/returns/context/useReturnInvoiceStore";
 
-const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
-  sparePartService,
-}) => {
+const InvoiceTable: React.FC<{
+  sparePartService: SparePartService;
+  type?: "RETURN";
+}> = ({ sparePartService, type }) => {
   const {
     invoiceItemDTOList,
     removeInvoiceItem,
     setOutsourcedStatus,
     addInvoiceItem,
   } = useCreditorInvoiceStore();
+
+  const {
+    addInvoiceItem: addItemsToReturnInvoice,
+    invoiceItemDTOList: exchangeItems,
+    removeInvoiceItem: removeExchangeItem,
+  } = useReturnInvoiceStore();
 
   useEffect(() => {}, [invoiceItemDTOList]);
 
@@ -87,7 +95,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
       }));
     } else if (option) {
       const selectedSparePart = spareParts?.find(
-        (part) => part.id.toString() === option.value,
+        (part) => part.id.toString() === option.value
       );
       if (selectedSparePart) {
         setNewItem((prev) => ({
@@ -101,14 +109,18 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
 
   const handleAddItem = () => {
     if (isFormValid()) {
-      addInvoiceItem({
+      const item = {
         ...newItem,
         quantity: Number(newItem.quantity),
         price: Number(newItem.price),
         discount: Number(newItem.discount),
         description: "",
         outsourcedStatus: false,
-      });
+      };
+
+      if (type === "RETURN") addItemsToReturnInvoice(item);
+      else addInvoiceItem(item);
+
       setNewItem({
         name: "",
         quantity: 1,
@@ -120,10 +132,11 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
     }
   };
 
+  const itemsToDisplay = type === "RETURN" ? exchangeItems : invoiceItemDTOList;
+
   return (
     <div>
       <Table className="border rounded-md text-md mb-5 mt-5">
-        <h2 className="text-xl font-bold mt-2 ml-3">Item List</h2>
         <TableBody>
           <TableRow>
             <TableHead className="w-[300px]">Item</TableHead>
@@ -131,16 +144,18 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
             <TableHead className="text-right">Quantity</TableHead>
             <TableHead className="text-right">Price</TableHead>
             <TableHead className="text-right">Total</TableHead>
-            <TableHead>Outsource</TableHead>
+            {type !== "RETURN" && <TableHead>Outsource</TableHead>}
             <TableHead className="flex justify-end items-center">
               Action
             </TableHead>
           </TableRow>
-          {invoiceItemDTOList.length > 0 ? (
-            invoiceItemDTOList.map((item: any, index: any) => (
+          {itemsToDisplay.length > 0 ? (
+            itemsToDisplay.map((item: any, index: any) => (
               <TableRow key={index}>
                 <TableCell className="w-[300px]">{item.name}</TableCell>
-                <TableCell>{item.code}</TableCell>
+                <TableCell>
+                  {item.code.length === 0 ? "-" : item.code}
+                </TableCell>
                 <TableCell className="text-right w-[100px]">
                   {item.quantity}
                 </TableCell>
@@ -151,21 +166,27 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                     item.quantity * item.discount
                   ).toFixed(2)}
                 </TableCell>
+                {type !== "RETURN" && (
+                  <TableCell>
+                    <Switch
+                      checked={item.outsourced}
+                      onCheckedChange={(state) =>
+                        setOutsourcedStatus(item, state)
+                      }
+                    />
+                  </TableCell>
+                )}
                 <TableCell>
-                  <Switch
-                    checked={item.outsourced}
-                    onCheckedChange={(state) =>
-                      setOutsourcedStatus(item, state)
-                    }
-                  />
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-end items-center gap-4">
+                  <div className="flex justify-center items-center gap-4">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div
-                            onClick={() => removeInvoiceItem(item)}
+                            onClick={() => {
+                              type === "RETURN"
+                                ? removeExchangeItem(item)
+                                : removeInvoiceItem(item);
+                            }}
                             style={{ cursor: "pointer" }}
                           >
                             <Trash2 color="#C7253E" height={22} width={18} />
@@ -177,21 +198,23 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                       </Tooltip>
                     </TooltipProvider>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            onClick={() => setEditingItem(item)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <Pencil color="#E9C46A" height={22} width={18} />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{"Edit Item"}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    {type !== "RETURN" && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div
+                              onClick={() => setEditingItem(item)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <Pencil color="#E9C46A" height={22} width={18} />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{"Edit Item"}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
 
                     {/*<IconButton*/}
                     {/*    icon={<EditIcon height="15" width="15"/>}*/}
@@ -271,9 +294,11 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                 (newItem.discount || 0)
               ).toFixed(2)}
             </TableCell>
-            <TableCell>
-              <Switch disabled />
-            </TableCell>
+            {type !== "RETURN" && (
+              <TableCell>
+                <Switch disabled />
+              </TableCell>
+            )}
             <TableCell>
               <IconButton
                 icon={<CirclePlus height="20" width="20" />}
