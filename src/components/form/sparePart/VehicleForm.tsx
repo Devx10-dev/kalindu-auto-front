@@ -254,6 +254,7 @@ export default function VehicleForm({
                     className="select-place-holder"
                     placeholder={"Select or add new vehicle type"}
                     {...field}
+                    onKeyDown={form.getValues("type")?.value ? (e) => handleKeyDown(e, 1) : undefined}
                     isClearable
                     options={typeOptions}
                     value={field.value}
@@ -275,12 +276,13 @@ export default function VehicleForm({
             render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Vehicle Brand" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[2] = el)}>
                   <CreatableSelect
                     className="select-place-holder"
                     placeholder={"Select or add new vehicle brand"}
                     {...field}
                     isClearable
+                    onKeyDown={form.getValues("brand")?.value ? (e) => handleKeyDown(e, 2) : undefined}
                     options={brandOptions}
                     value={field.value}
                   />
@@ -323,10 +325,11 @@ export default function VehicleForm({
             render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Chassis No" />
-                <FormControl>
+                <FormControl ref={(el) => (inputRefs.current[4] = el)}>
                   <CreatableSelect
                     className="select-place-holder"
                     placeholder={"Select or add new chassis no"}
+                    onKeyDown={form.getValues("chassisNo")?.value ? (e) => handleKeyDown(e, 4) : undefined}
                     {...field}
                     isClearable
                     options={chassisNoOptions}

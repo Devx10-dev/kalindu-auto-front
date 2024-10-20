@@ -227,7 +227,6 @@ function RegisterUser() {
                   <FormItem className="w-full col-span-1 row-span-1">
                     <RequiredLabel label="Roles" />
                     <FormControl
-                      onKeyDown={(e) => handleKeyDown(e, 4)}
                       ref={(el) => (inputRefs.current[4] = el)}
                     >
                       <ReactSelect
@@ -241,6 +240,12 @@ function RegisterUser() {
                         value={roleOptions.filter((option) =>
                           field.value.includes(option.value),
                         )}
+                        // onKeyDown={(e) => handleKeyDown(e, 4)}
+                        onKeyDown={(e) => {
+                          if (form.getValues().roles.length > 0) { {
+                            handleKeyDown(e, 4);
+                          }
+                        }}}
                         placeholder={"Select or add new roles"}
                         className="basic-multi-select select-place-holder"
                         classNamePrefix="select"

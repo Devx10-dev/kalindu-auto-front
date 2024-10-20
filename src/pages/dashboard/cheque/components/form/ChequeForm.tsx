@@ -143,15 +143,25 @@ function ChequeForm({
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Creditor" />
                 <FormControl
-                  onKeyDown={(e) => handleKeyDown(e, 2)}
-                  ref={(el) => (inputRefs.current[2] = el)}
+                 
                 >
                   <Select
                     className="select-place-holder"
                     placeholder={"Select Creditor"}
+                    ref={(el) => (inputRefs.current[2] = el)}
                     options={creditorOptions}
                     value={field.value || ""}
                     onChange={field.onChange}
+                    isSearchable={true}
+                    onKeyDown={(e) => {
+                      if (form.getValues().creditor) {
+                      //   e.preventDefault(); // Prevent any action when there's no value
+                      // } 
+                      // else if(e.key === "Enter" && form.getValues().creditor) {
+                        handleKeyDown(e, 2); // Move to the next field if a value exists
+                      }
+                    }
+                    }
                   />
                 </FormControl>
 

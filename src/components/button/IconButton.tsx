@@ -1,3 +1,4 @@
+import React, { forwardRef } from "react";
 import {
   TooltipProvider,
   Tooltip,
@@ -7,32 +8,33 @@ import {
 import { Button } from "../ui/button";
 import { IconButtonProps } from "@/types/component/propTypes";
 
-function IconButton({
-  icon,
-  tooltipMsg,
-  handleOnClick,
-  variant,
-  disabled,
-}: IconButtonProps) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            className="table-cell-btn"
-            variant={variant ?? "ghost"}
-            onClick={handleOnClick}
-            disabled={disabled}
-          >
-            {icon}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="tooltip-msg">{tooltipMsg}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
+// Use forwardRef with HTMLButtonElement type for ref
+const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+  function IconButton(
+    { icon, tooltipMsg, handleOnClick, variant, disabled }: IconButtonProps,
+    ref
+  ) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              ref={ref} // Pass ref here with correct typing
+              className="table-cell-btn"
+              variant={variant ?? "ghost"}
+              onClick={handleOnClick}
+              disabled={disabled}
+            >
+              {icon}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="tooltip-msg">{tooltipMsg}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+);
 
 export default IconButton;
