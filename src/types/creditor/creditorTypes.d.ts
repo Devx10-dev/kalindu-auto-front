@@ -1,5 +1,5 @@
 export type Creditor = {
-  creditorID?: string;
+  creditorID?: string | number;
   id?: number;
   shopName?: string;
   contactPersonName?: string;
