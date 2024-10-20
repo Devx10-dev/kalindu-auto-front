@@ -333,7 +333,7 @@ export function RegisterForm(props: {
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Credit due period" />
-                <FormControl ref={(el) => (inputRefs.current[8] = el)}>
+                <FormControl >
                   <Controller
                     name="maxDuePeriod"
                     control={form.control}
@@ -342,7 +342,7 @@ export function RegisterForm(props: {
                         onValueChange={field.onChange}
                         value={field.value}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger ref={(el) => (inputRefs.current[8] = el)}>
                           <SelectValue placeholder="Select credit due period" />
                         </SelectTrigger>
                         <SelectContent>

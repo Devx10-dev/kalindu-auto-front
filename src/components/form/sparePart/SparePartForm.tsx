@@ -156,8 +156,8 @@ export default function SparePartForm({
   const handleCancel = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    setSparePart(null);
     onClose(); // Close the form
+    setSparePart(null);
   };
 
   const handleSubmit = async () => {
@@ -261,11 +261,19 @@ export default function SparePartForm({
             render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Chassis No" />
-                <FormControl>
+                <FormControl >
                   <Select
                     className="select-place-holder"
                     placeholder={"Select Chassis No"}
                     options={chassisNoOptions}
+                    ref={(el) => (inputRefs.current[4] = el)}
+                    onKeyDown={(e) => {
+                      if (form.getValues().chassisNo) {
+                      //   e.preventDefault(); // Prevent any action when there's no value
+                      // } else {
+                        handleKeyDown(e, 4); // Move to the next field if a value exists
+                      }
+                    }}
                     value={field.value || ""}
                     onChange={field.onChange}
                   />
@@ -286,9 +294,9 @@ export default function SparePartForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <OptionalLabel label="Remark" />
-                <FormControl ref={(el) => (inputRefs.current[4] = el)}>
+                <FormControl ref={(el) => (inputRefs.current[5] = el)}>
                   <Textarea
-                    onKeyDown={(e) => handleKeyDown(e, 4)}
+                    onKeyDown={(e) => handleKeyDown(e, 5)}
                     className="w-full"
                     {...field}
                     placeholder="Add a remark"
@@ -308,7 +316,7 @@ export default function SparePartForm({
           <div className="m-2" style={{ borderLeft: "3px solid #555" }} />
           <div style={{ gap: "8px" }}>
             <Button
-              ref={(el) => (inputRefs.current[5] = el)}
+              ref={(el) => (inputRefs.current[6] = el)}
               type="submit"
               onClick={form.handleSubmit(handleSubmit)}
             >

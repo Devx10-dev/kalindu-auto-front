@@ -132,7 +132,13 @@ const AddItem: React.FC<{
                   options={sparePartsOptions}
                   onInputChange={handleInputChange}
                   ref={itemNameRef}
-                  onKeyDown={(e) => handleKeyDown(e, priceRef)}
+                  onKeyDown={(e) => {
+                    const nameValue = form.getValues("name");
+                    const selectValue = itemNameRef.current?.getValue();
+                    if (nameValue && selectValue.length > 0) {
+                      handleKeyDown(e, priceRef);
+                    }
+                  }}
                   isClearable
                   onChange={handleSelectChange}
                 />
