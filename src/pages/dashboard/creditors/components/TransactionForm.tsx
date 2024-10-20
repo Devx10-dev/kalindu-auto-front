@@ -14,10 +14,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import CreditorAPI from "@/pages/dashboard/creditors/api/CreditorAPI";
 import { ChequeService } from "@/service/cheque/ChequeService";
-import {
-  Creditor,
-  TransactionTypes
-} from "@/types/creditor/creditorTypes";
+import { Creditor, TransactionTypes } from "@/types/creditor/creditorTypes";
 import { transactionSchema } from "@/validation/schema/creditor/transaction/transactionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -39,6 +36,7 @@ import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { getRandomColor } from "@/utils/colors";
 import { useEffect, useRef, useState } from "react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
+import useQueryParams from "@/hooks/getQueryParams";
 
 const RANDOM_COLOR = getRandomColor();
 
@@ -56,7 +54,7 @@ function TransactionForm({
   const queryClient = useQueryClient();
 
   const [selectedCreditor, setSelectedCreditor] = useState<Creditor | null>(
-    null
+    null,
   );
 
   const inputRefs = useRef<any[]>([]);
@@ -91,7 +89,7 @@ function TransactionForm({
     queryKey: ["unsettledCreditorInvoices", selectedCreditor],
     queryFn: () =>
       creditorService.fetchUnsettledCreditInvoicesByID(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
       ),
     retry: 1,
   });
@@ -100,7 +98,7 @@ function TransactionForm({
     queryKey: [`nonRedeemCheques-${selectedCreditor?.id}`, selectedCreditor],
     queryFn: () =>
       chequeService.fetchNonRedeemChequesOfCreditor(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
       ),
     enabled: selectedCreditor !== null && selectedType === "CHEQUE",
     retry: 1,
@@ -189,7 +187,7 @@ function TransactionForm({
         transaction.amount >
           (selectedCreditor.chequeBalance === undefined
             ? 0
-            : parseFloat(selectedCreditor.chequeBalance))
+            : selectedCreditor.chequeBalance)
       ) {
         toast({
           title: "Validation error",
@@ -204,7 +202,7 @@ function TransactionForm({
       const totalSelectedAmount = selectedCreditInvoices.reduce(
         (total, invoice) =>
           total + (invoice.totalPrice - invoice.settledAmount),
-        0
+        0,
       );
       if (transaction.amount > totalSelectedAmount) {
         toast({
@@ -243,6 +241,42 @@ function TransactionForm({
     form.setValue("amount", undefined);
 
     setCreditInvoiceSelectKey((prevKey) => prevKey + 1);
+  }, [selectedCreditor]);
+
+  const { queryParams, setQueryParam } = useQueryParams();
+  useEffect(() => {
+    if (queryParams.creditor && creditors?.length > 0) {
+      const creditor = creditors.find(
+        (creditor) =>
+          creditor.creditorID === String(queryParams.creditor) ||
+          creditor.creditorID === queryParams.creditor,
+      );
+
+      if (creditor) {
+        // Create the option object that react-select expects
+        const creditorOption = {
+          value: parseInt(creditor.creditorID),
+          label: creditor?.shopName ?? "-",
+        };
+
+        setSelectedCreditor(creditor);
+        // Set both the form value and directly control the Select value
+        form.setValue("creditor", creditorOption, {
+          shouldValidate: true, // This will trigger validation
+          shouldDirty: true, // This will mark the field as dirty
+        });
+      }
+    }
+  }, [queryParams.creditor, creditors, form]);
+
+  useEffect(() => {
+    if (selectedCreditor) {
+      setQueryParam("creditor", selectedCreditor.creditorID);
+    }
+  }, [selectedCreditor, setQueryParam]);
+
+  useEffect(() => {
+    console.log(selectedCreditor);
   }, [selectedCreditor]);
 
   return (
@@ -293,10 +327,11 @@ function TransactionForm({
                           const selectedCreditor = creditors.find(
                             (creditor) =>
                               parseInt(creditor.creditorID) ===
-                              selectedOption.value
+                              selectedOption.value,
                           );
                           setSelectedCreditor(selectedCreditor);
                         }}
+                        value={field.value}
                       />
                     </FormControl>
                     {fieldState.error &&
@@ -327,8 +362,8 @@ function TransactionForm({
                           const selectedCreditInvoices = creditInvoices.filter(
                             (creditInvoice) =>
                               selectedOptions.includes(
-                                creditInvoice.id.toString()
-                              )
+                                creditInvoice.id.toString(),
+                              ),
                           );
                           setSelectedCreditInvoices(selectedCreditInvoices);
                           setSelectedCreditInvoiceIDs(selectedOptions);

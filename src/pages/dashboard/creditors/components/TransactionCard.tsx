@@ -24,6 +24,7 @@ import TransactionService from "@/service/creditor/TransactionService";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { TransactionList } from "@/types/creditor/creditorTransactions";
+import { Link } from "react-router-dom";
 
 function TransactionCard({
   creditorId,
@@ -56,10 +57,14 @@ function TransactionCard({
         <CardHeader>
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">Recent Transactions</h2>
-            <Button variant="outline" className="text-sm" size="sm">
-              <Plus className="h-5 w-5" />
-              Add
-            </Button>
+            <Link
+              to={`/dashboard/creditors/transaction?creditor=${creditorId}`}
+            >
+              <Button variant="outline" className="text-sm" size="sm">
+                <Plus className="h-5 w-5" />
+                Add
+              </Button>
+            </Link>
           </div>
         </CardHeader>
         <div className="pt-0 px-3">

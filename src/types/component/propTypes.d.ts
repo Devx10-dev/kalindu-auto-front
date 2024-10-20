@@ -32,12 +32,16 @@ export type FormSelectProps = {
 };
 
 export type FormModalProps = {
-  show: boolean;
-  onClose: () => void;
+  show?: boolean;
+  onClose?: () => void;
   title: string;
   titleDescription?: string;
   component: JSX.Element;
   service?: Service;
+  buttonIcon?: JSX.Element;
+  buttonTitle?: string;
+  dialogFooter?: JSX.Element;
+  setShow?: (show: boolean) => void;
 };
 
 export interface ToastFunction {

@@ -208,11 +208,10 @@ th {
   }
 }
 
-
 .error-message {
-  color: #C7253E; /* Red color for error */
+  color: #c7253e; /* Red color for error */
   background-color: #f9d6d5; /* Light red background */
-  border: 1px solid #C7253E; /* Red border to emphasize the error */
+  border: 1px solid #c7253e; /* Red border to emphasize the error */
   padding: 10px 15px; /* Add padding for better readability */
   border-radius: 5px; /* Rounded corners */
   font-size: 14px; /* Adjust font size as per your design */
@@ -227,7 +226,7 @@ th {
 }
 
 .error-message a {
-  color: #C7253E; /* Error color for links */
+  color: #c7253e; /* Error color for links */
   text-decoration: underline; /* Underline the link */
 }
 
@@ -240,6 +239,10 @@ th {
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
