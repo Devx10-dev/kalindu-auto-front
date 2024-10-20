@@ -287,7 +287,11 @@ function TransactionForm({
                         className="select-place-holder"
                         placeholder={"Please select creditor"}
                         options={creditorOptions}
-                        onKeyDown={(e) => handleKeyDown(e, 1)}
+                        onKeyDown={(e) => {
+                          if (form.getValues().creditor) {
+                            handleKeyDown(e, 1); // Move to the next field if a value exists
+                          }
+                        }}
                         onChange={(selectedOption) => {
                           field.onChange(selectedOption);
                           const selectedCreditor = creditors.find(
@@ -372,9 +376,8 @@ function TransactionForm({
                     >
                       <FormControl
                         onKeyDown={(e) => handleKeyDown(e, 3)}
-                        ref={(el) => (inputRefs.current[3] = el)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger ref={(el) => (inputRefs.current[3] = el)}>
                           <SelectValue placeholder="Please select the transaction type" />
                         </SelectTrigger>
                       </FormControl>
@@ -442,8 +445,8 @@ function TransactionForm({
                   <FormItem>
                     <RequiredLabel label="Amount" />
                     <FormControl
-                      onKeyDown={(e) => handleKeyDown(e, 3)}
-                      ref={(el) => (inputRefs.current[3] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 4)}
+                      ref={(el) => (inputRefs.current[4] = el)}
                     >
                       <Input
                         type="number"
@@ -469,8 +472,8 @@ function TransactionForm({
                   <FormItem>
                     <OptionalLabel label="Remark" />
                     <FormControl
-                      onKeyDown={(e) => handleKeyDown(e, 4)}
-                      ref={(el) => (inputRefs.current[4] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 5)}
+                      ref={(el) => (inputRefs.current[5] = el)}
                     >
                       <Textarea
                         placeholder="Add remark"
@@ -486,7 +489,7 @@ function TransactionForm({
 
             <div className="flex justify-start gap-2 py-4">
               <Button
-                ref={(el) => (inputRefs.current[5] = el)}
+                ref={(el) => (inputRefs.current[6] = el)}
                 onClick={form.handleSubmit(handleSubmit)}
                 className="px-6"
               >
