@@ -122,7 +122,7 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
                   Cheque No:
                 </p>
                 <p className="text-gray-500 dark:text-gray-400 max-w-xs truncate text-sm">
-                  {transaction.cheque.chequeNo}
+                  {transaction.cheque.chequeNo ? transaction.cheque.chequeNo : (<Badge className="text-xs rounded-sm" variant="destructive">Missing</Badge>)}
                 </p>
               </div>
             </div>
