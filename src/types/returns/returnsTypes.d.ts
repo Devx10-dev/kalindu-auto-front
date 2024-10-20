@@ -34,6 +34,7 @@ export type ReturnItem = {
 export type InvoiceState = {
   sourceInvoiceId?: string;
   returnedItems: ReturnItem[];
+  invoiceID: string;
 
   returnType?: string;
   newInvoiceType?: string; //Must be

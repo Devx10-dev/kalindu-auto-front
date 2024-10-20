@@ -152,7 +152,7 @@ function ChequesGrid({
   const handleViewBtnClick = (cheque: Cheque) => {
     setGridModalTitle(`Credit invoices of ${cheque.chequeNo}`);
     setGridModalDescription(
-      `Credit invoices those settled by ${cheque.chequeNo}`
+      `Credit invoices those settled by ${cheque.chequeNo}`,
     );
     setSelectedCheque(cheque);
     setGridModalShow(true);

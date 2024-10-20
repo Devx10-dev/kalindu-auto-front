@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { useQuery } from "@tanstack/react-query";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CreditorAPI from "./api/CreditorAPI";
@@ -35,6 +35,9 @@ import EmblaCarousel from "@/components/carousel/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel";
 import "../../../assets/css/embla.css";
 import "../../../assets/css/base.css";
+import { NewFormModal } from "@/components/modal/NewFormModal";
+import CreditorChequeForm from "../cheque/components/form/CreditorChequeForm";
+import CreditorEditor from "./components/CreditorEditor";
 
 function priceRender(contentType: string, content: string) {
   // split from firdst dot from the right
@@ -86,6 +89,7 @@ const ViewCreditor = () => {
     { label: "Overdue", value: "OVERDUE" },
   ]);
   const chequeService = new ChequeService(axiosPrivate);
+  const [chequeModalShow, setChequeModalShow] = useState(false);
 
   useEffect(() => {
     console.log("selectedOption", selectedOption);
@@ -124,11 +128,16 @@ const ViewCreditor = () => {
   } else
     return (
       <div className="pt-5 px-0 pl-5">
-        <PageHeader
-          title={`Creditor Information`}
-          description=""
-          icon={<CreditCard height="30" width="28" color="#162a3b" />}
-        />
+        <div className="flex justify-between items-center">
+          <PageHeader
+            title={`Creditor Information`}
+            description=""
+            icon={<CreditCard height="30" width="28" color="#162a3b" />}
+          />
+          <div>
+            <CreditorEditor creditor={creditorDetails.data} />
+          </div>
+        </div>
         {/* <AddNewTransaction /> */}
 
         <div className="flex mt-5 gap-3 justify-between items-top">
@@ -168,11 +177,14 @@ const ViewCreditor = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">Address</p>
-                <p>
-                  {creditorDetails.data?.address
-                    ? creditorDetails.data?.address
-                    : "Not Provided"}
-                </p>
+
+                {creditorDetails.data?.address ? (
+                  <p>{creditorDetails.data?.address}</p>
+                ) : (
+                  <Badge variant="destructive" className="w-fit rounded-md">
+                    Not Set
+                  </Badge>
+                )}
               </div>
               {/* <div className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">Total Due</p>
@@ -206,7 +218,7 @@ const ViewCreditor = () => {
                     {currencyAmountString(creditorDetails.data?.creditLimit)}
                   </p>
                 ) : (
-                  <Badge variant="outline" className="w-fit">
+                  <Badge variant="outline" className="w-fit rounded-md">
                     No Limit
                   </Badge>
                 )}
@@ -215,7 +227,7 @@ const ViewCreditor = () => {
                 <p className="text-sm text-muted-foreground">
                   Allowed Due Period
                 </p>
-                <Badge variant="default" className="w-fit">
+                <Badge variant="default" className="w-fit rounded-md">
                   {creditorDetails.data?.maxDuePeriod} weeks
                 </Badge>
               </div>
@@ -238,6 +250,24 @@ const ViewCreditor = () => {
                   <TabsTrigger value="invoices">Invoices</TabsTrigger>
                   <TabsTrigger value="cheques">Cheques</TabsTrigger>
                 </TabsList>
+                <NewFormModal
+                  title="Add New Cheque"
+                  titleDescription={`Adding a new cheque for ${creditorDetails.data?.shopName}`}
+                  component={
+                    <CreditorChequeForm
+                      creditorService={creditorAPI}
+                      creditors={[creditorDetails.data]}
+                      chequeService={chequeService}
+                      onClose={() => setChequeModalShow(false)}
+                    />
+                  }
+                  buttonIcon={<Plus />}
+                  buttonTitle="Cheque"
+                  show={chequeModalShow}
+                  onClose={() => setChequeModalShow(false)}
+                  setShow={setChequeModalShow}
+                  // dialogFooter={<Button variant="default">Save</Button>}
+                />
               </div>
 
               <TabsContent value="invoices" className="mt-0">

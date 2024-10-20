@@ -137,7 +137,7 @@ function CreditorDetailsCard({
                   {selectedCreditInvoices.reduce(
                     (total, invoice) =>
                       total + (invoice.totalPrice - invoice.settledAmount),
-                    0
+                    0,
                   )}
                 </span>
               </li>

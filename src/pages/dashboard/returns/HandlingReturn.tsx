@@ -173,7 +173,7 @@ function HandlingReturn() {
       items.forEach((item) => {
         if (item.outsourced) {
           const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId
+            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
           )[0];
 
           if (
@@ -245,7 +245,7 @@ function HandlingReturn() {
     itemCode: string,
     quantity: number,
     price: number,
-    id: number
+    id: number,
   ) => {
     addReturnItem({ id: id, returnedQuantity: quantity });
     setReturnedQuantities((prev) => ({
@@ -258,7 +258,7 @@ function HandlingReturn() {
     const totalValue = Object.keys(returnedQuantities).reduce((acc, id) => {
       const quantity = returnedQuantities[id];
       const item = selectedInvoice?.items.find(
-        (item) => item.id === Number(id)
+        (item) => item.id === Number(id),
       );
       return acc + (item ? quantity * item.price : 0);
     }, 0);
@@ -389,43 +389,43 @@ function HandlingReturn() {
                                 />
                               </TableCell>
                               <TableCell align="right">
-                              <Input
-                                id={"" + item.id}
-                                type="number"
-                                max={item.quantity}
-                                min={0}
-                                value={returnedQuantities[item.id]}
-                                onChange={(e) => {
-                                  let enteredValue = e.target.value;
-                                  if (enteredValue === "") {
-                                    enteredValue = "";
-                                  } else {
-                                    // Parse the input value as an integer
-                                    enteredValue = parseInt(enteredValue, 10);
-                                  }
-                                  if (enteredValue > item.availableQuantity) {
-                                    // Prevent the input from going beyond the max value
-                                    e.target.value = item.availableQuantity;
-                                  } else if (enteredValue >= 0) {
-                                    handleReturnedQuantityChange(
-                                      item.code,
-                                      enteredValue,
-                                      item.price,
-                                      item.id
-                                    );
-                                  }
-                                }}
-                                step={1}
-                                style={{
-                                  textAlign: "right",
-                                  maxWidth: "140px",
-                                }}
-                                placeholder="Enter return qty"
-                                disabled={
+                                <Input
+                                  id={"" + item.id}
+                                  type="number"
+                                  max={item.quantity}
+                                  min={0}
+                                  value={returnedQuantities[item.id]}
+                                  onChange={(e) => {
+                                    let enteredValue = e.target.value;
+                                    if (enteredValue === "") {
+                                      enteredValue = "";
+                                    } else {
+                                      // Parse the input value as an integer
+                                      enteredValue = parseInt(enteredValue, 10);
+                                    }
+                                    if (enteredValue > item.availableQuantity) {
+                                      // Prevent the input from going beyond the max value
+                                      e.target.value = item.availableQuantity;
+                                    } else if (enteredValue >= 0) {
+                                      handleReturnedQuantityChange(
+                                        item.code,
+                                        enteredValue,
+                                        item.price,
+                                        item.id,
+                                      );
+                                    }
+                                  }}
+                                  step={1}
+                                  style={{
+                                    textAlign: "right",
+                                    maxWidth: "140px",
+                                  }}
+                                  placeholder="Enter return qty"
+                                  disabled={
                                     item.availableQuantity !== undefined &&
                                     item.availableQuantity === 0
-                                }
-                              />
+                                  }
+                                />
                               </TableCell>
                             </TableRow>
                           ))

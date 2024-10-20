@@ -95,7 +95,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   addReturnItem: (newItem: ReturnItem) =>
     set((state) => {
       const existingItemIndex = state.returnedItems.findIndex(
-        (item) => item.id === newItem.id
+        (item) => item.id === newItem.id,
       );
 
       if (existingItemIndex !== -1) {
@@ -103,7 +103,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
         const updatedReturnedItems = state.returnedItems.map((item, index) =>
           index === existingItemIndex
             ? { ...item, returnedQuantity: newItem.returnedQuantity }
-            : item
+            : item,
         );
 
         return {
@@ -134,7 +134,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.filter(
-        (item) => item !== itemToRemove
+        (item) => item !== itemToRemove,
       ),
     })),
 
@@ -154,13 +154,13 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, outsourced: status } : item
+        item === itemOutsourced ? { ...item, outsourced: status } : item,
       ),
     })),
 
   setOutsourcedCompanyName: (
     itemOutsourced: InvoiceItem,
-    companyName: string
+    companyName: string,
   ) =>
     set((state) => ({
       ...state,
@@ -173,13 +173,13 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
                 companyName: companyName,
               },
             }
-          : item
+          : item,
       ),
     })),
 
   setOutsourcedBuyingPrice: (
     itemOutsourced: InvoiceItem,
-    buyingPrice: number
+    buyingPrice: number,
   ) =>
     set((state) => ({
       ...state,
@@ -192,7 +192,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
                 buyingPrice: buyingPrice,
               },
             }
-          : item
+          : item,
       ),
     })),
 
