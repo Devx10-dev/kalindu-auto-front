@@ -46,7 +46,7 @@ function priceRender(contentType: string, content: string) {
       // this comes as strig "Rs. 180,666.00" i want to render the decimal part in a smaller font size
       const [currency, amount] = content.split(/(?<=\..*)\./);
       return (
-        <div className="text-md font-bold">
+        <div className="text-sm font-bold">
           {/* remove Rs. from begininh */}
           <span>{currency.slice(4)}</span>
           <span className="text-xs font-bold color-muted-foreground">
@@ -300,11 +300,12 @@ const ViewCreditor = () => {
                       <TableHead>Due Date</TableHead>
                       <TableHead className="text-right">Total Amount</TableHead>
                       <TableHead className="text-right">Settled</TableHead>
+                      <TableHead className="text-right">Pending</TableHead>
                       <TableHead className="text-center">Status</TableHead>
                       <TableHead className="text-center">Action</TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody className="overflow-y-auto h-fit w-full">
+                  <TableBody className="overflow-y-auto h-fit w-full text-xs">
                     {!creditorDetails.data ? (
                       <div className="flex justify-center items-center">
                         <p>No Invoices for the creditor</p>
@@ -342,6 +343,16 @@ const ViewCreditor = () => {
                                 )
                               : priceRender("currencyAmount", "Rs. 0.00")}
                           </TableCell>
+                          <TableCell align="right">
+                            {priceRender(
+                              "currencyAmount",
+                              currencyAmountString(
+                                invoice.pendingPayment
+                                  ? invoice.pendingPayment
+                                  : 0,
+                              ),
+                            )}
+                          </TableCell>
                           <TableCell className="text-center items-center justify-center h-full">
                             {invoice ? (
                               <InvoiceStatusBadge invoice={invoice} />
@@ -354,7 +365,11 @@ const ViewCreditor = () => {
                               <Link
                                 to={`/dashboard/invoice/creditor/${invoice.invoiceId}`}
                               >
-                                <Button variant="outline" className="mr-2">
+                                <Button
+                                  variant="outline"
+                                  className=""
+                                  size="sm"
+                                >
                                   <OpenInNewWindowIcon className="h-5 w-5" />
                                 </Button>
                               </Link>

@@ -14,10 +14,13 @@ class ChequeService extends Service {
     pageNo: number,
     pageSize: number,
     creditorId: number,
+    search: string = "",
+    status: string[] = [],
   ): Promise<ChequeResponseData> {
     try {
+      const bothProvided = search !== "" && status.length !== 0;
       const response = await this.api.get<ChequeResponseData>(
-        `${CHEQUE_URL}/${pageNo}/${pageSize}/${creditorId}`,
+        `${CHEQUE_URL}/${pageNo}/${pageSize}/${creditorId}${search != "" || status.length != 0 ? "?" : ""}${search !== "" ? `search=${search}` : ""}${bothProvided ? "&" : ""}${status.length != 0 ? `status=${status.join(",")}` : ""}`,
       );
       return response.data;
     } catch (error) {

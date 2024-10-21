@@ -1,4 +1,5 @@
 import { Service } from "@/service/apiService";
+import { UseMutationResult } from "@tanstack/react-query";
 
 export type IconProps = {
   width: string;
@@ -66,4 +67,5 @@ export type ChequeSettleModalProps = {
   title: string;
   onSettle: () => void;
   onReject: () => void;
+  settleCheckMutation?: UseMutationResult;
 };
