@@ -3,7 +3,13 @@ import { Cheque } from "@/types/cheque/chequeTypes";
 import { InvoiceState } from "@/types/invoice/creditorInvoice";
 import { useEffect } from "react";
 
-function ChequeStatusBadge({ cheque }: { cheque: Cheque }) {
+function ChequeStatusBadge({
+  cheque,
+  redeemStatus = false,
+}: {
+  cheque: Cheque;
+  redeemStatus?: boolean;
+}) {
   const status = cheque.status;
   let background = "";
   let statusText = "";
@@ -14,8 +20,8 @@ function ChequeStatusBadge({ cheque }: { cheque: Cheque }) {
       statusText = "Settled";
       break;
     case "REDEEMED":
-      background = "green";
-      statusText = "Settled";
+      background = redeemStatus ? "blue" : "green";
+      statusText = redeemStatus ? "Redeemed" : "Settled";
       break;
     case "PENDING":
       background = "yellow";

@@ -35,7 +35,7 @@ function ChequeManagement() {
             icon={<CashAndCoinIcon height="30" width="28" color="#162a3b" />}
           />
         </CardHeader>
-        <CardContent style={{ width: "98%" }}>
+        <CardContent style={{ width: "100%" }}>
           <div className="mb-3">
             <Button className="gap-1" onClick={() => setShow(true)}>
               <PlusIcon height="24" width="24" color="#fff" />

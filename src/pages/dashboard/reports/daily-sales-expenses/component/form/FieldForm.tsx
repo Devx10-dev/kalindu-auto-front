@@ -124,8 +124,8 @@ function FieldForm({
                   ref={(el) => (inputRefs.current[1] = el)}
                   onKeyDown={(e) => {
                     if (form.getValues().category) {
-                    //   e.preventDefault(); // Prevent any action when there's no value
-                    // } else {
+                      //   e.preventDefault(); // Prevent any action when there's no value
+                      // } else {
                       handleKeyDown(e, 1); // Move to the next field if a value exists
                     }
                   }}

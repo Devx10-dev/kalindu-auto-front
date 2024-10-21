@@ -158,7 +158,10 @@ function DummyInvoice() {
                   </div>
                 </div>
                 <div className="flex mt-4">
-                  <Button ref={(el) => (inputRefs.current[4] = el)} onClick={handlePrintBtn}>
+                  <Button
+                    ref={(el) => (inputRefs.current[4] = el)}
+                    onClick={handlePrintBtn}
+                  >
                     View Quotation
                   </Button>
                 </div>

@@ -30,9 +30,38 @@ import { Creditor } from "@/types/creditor/creditorTypes";
 import { convertSnakeCaseToNormalCase, truncate } from "@/utils/string";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCheck, Filter, GalleryHorizontalEnd } from "lucide-react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { SettlementModal } from "../modal/SettlementModal";
 import CreditInvoiceGrid from "./CreditInvoiceGrid";
+import TablePagination from "@/components/TablePagination";
+import dateArrayToString from "@/utils/dateArrayToString";
+import { currencyAmountString } from "@/utils/analyticsUtils";
+import ChequeStatusBadge from "@/pages/dashboard/invoice/view-invoices/components/ChequeStatusBadge";
+import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
+import useDebounce from "@/hooks/useDebounce";
+import { TableBodySkeleton } from "@/pages/dashboard/creditors/components/TableSkelton";
+
+function priceRender(contentType: string, content: string) {
+  // split from firdst dot from the right
+  switch (contentType) {
+    case "currencyAmount": {
+      // this comes as strig "Rs. 180,666.00" i want to render the decimal part in a smaller font size
+      const [currency, amount] = content.split(/(?<=\..*)\./);
+      return (
+        <div className="text-md font-bold">
+          {/* remove Rs. from begininh */}
+          <span>{currency.slice(4)}</span>
+          <span className="text-xs font-bold color-muted-foreground">
+            .{amount}
+          </span>
+        </div>
+      );
+    }
+    default:
+      return <div className="text-2xl font-bold">{content}</div>;
+  }
+}
 
 function ChequesGrid({
   creditors = [],
@@ -44,8 +73,9 @@ function ChequesGrid({
   const queryClient = useQueryClient();
 
   const [pageNo, setPageNo] = useState(0);
-  const [pageSize, setPageSize] = useState(10000);
+  const [pageSize, setPageSize] = useState(10);
   const [creditorId, setCreditorId] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
@@ -56,13 +86,33 @@ function ChequesGrid({
   const [gridModalTitle, setGridModalTitle] = useState("");
   const [gridModalDescription, setGridModalDescription] = useState("");
 
+  const [search, setSearch] = useState("");
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
+  const [statusList, setStatusList] = useState<
+    { label: string; value: string }[]
+  >([
+    { label: "Pending", value: "PENDING" },
+    { label: "Settled", value: "SETTLED" },
+    { label: "Redeemed", value: "REDEEMED" },
+    { label: "Rejected", value: "REJECTED" },
+  ]);
+
+  const debouncedSearch = useDebounce(search, 500);
+
   const {
     isLoading,
     data: cheques,
     refetch,
   } = useQuery<ChequeResponseData>({
-    queryKey: ["cheques"],
-    queryFn: () => chequeService.fetchCheques(pageNo, pageSize, creditorId),
+    queryKey: ["cheques", pageNo, creditorId, debouncedSearch, selectedOption],
+    queryFn: () =>
+      chequeService.fetchCheques(
+        pageNo,
+        pageSize,
+        creditorId,
+        debouncedSearch,
+        selectedOption,
+      ),
     retry: 2,
   });
 
@@ -158,16 +208,31 @@ function ChequesGrid({
     setGridModalShow(true);
   };
 
+  useEffect(() => {
+    if (cheques) {
+      setTotalPages(cheques.totalPages);
+    }
+  }, [cheques]);
+
   return (
     <Fragment>
       <>
         <div
-          className="mb-4 pt-2 pb-2 pr-2 w-1/2"
+          className="mb-4 pt-2 pb-2 pr-2 w-full"
           style={{
             borderRadius: "5px",
           }}
         >
-          <div className=" d-flex gap-4">
+          <div className=" flex gap-4 w-full">
+            <Input
+              type="text"
+              placeholder="Search for Cheques"
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              className="w-full"
+            />
+
             <Select onValueChange={(value) => setCreditorId(parseInt(value))}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Creditor" />
@@ -178,35 +243,59 @@ function ChequesGrid({
                     { creditorID: "0", contactPersonName: "All Creditors" },
                     ...creditors,
                   ]?.map((creditor) => (
-                    <SelectItem key={Math.random()} value={creditor.creditorID}>
+                    <SelectItem
+                      key={Math.random()}
+                      value={String(creditor.creditorID)}
+                    >
                       {creditor.contactPersonName}
                     </SelectItem>
                   ))}
               </SelectContent>
             </Select>
-
-            <Button variant={"secondary"} onClick={refetchCheques}>
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
+            <MultiSelect
+              options={statusList}
+              onValueChange={setSelectedOption}
+              defaultValue={selectedOption}
+              placeholder="Select Status"
+              variant="secondary"
+              animation={0}
+              maxCount={1}
+              modalPopover={true}
+              badgeInlineClose={false}
+              className="w-full"
+            />
           </div>
         </div>
-        {isLoading ? (
-          <SkeletonGrid noOfColumns={6} noOfItems={10} />
-        ) : (
-          <div className="overflow-x-auto ">
-            <Table className="border rounded-md text-md mb-5 min-w-full table-auto">
-              <TableCaption>Cheque Details</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Cheque No</TableHead>
-                  <TableHead>Creditor</TableHead>
-                  <TableHead style={{ textAlign: "end" }}>Amount</TableHead>
-                  <TableHead>Date & Time</TableHead>
-                  <TableHead style={{ textAlign: "center" }}>Status</TableHead>
-                  <TableHead style={{ textAlign: "center" }}>Action</TableHead>
-                </TableRow>
-              </TableHeader>
+
+        <div className="overflow-x-auto ">
+          <Table className="border rounded-md text-md mb-5 min-w-full table-auto">
+            <TableCaption>
+              <TablePagination
+                pageNo={pageNo + 1}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setPageNo(page - 1);
+                }}
+              />
+            </TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Cheque No</TableHead>
+                <TableHead>Creditor</TableHead>
+                <TableHead style={{ textAlign: "end" }}>Amount</TableHead>
+                <TableHead className="text-right" align="right">
+                  Available
+                </TableHead>
+                <TableHead>Date & Time</TableHead>
+                <TableHead style={{ textAlign: "center" }}>Status</TableHead>
+                <TableHead style={{ textAlign: "center" }} className="w-fit">
+                  Action
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            {isLoading ? (
+              <TableBodySkeleton cols={7} rows={10} />
+            ) : (
               <TableBody>
                 {cheques.cheques !== undefined &&
                   cheques.cheques.map((cheque) => (
@@ -215,28 +304,37 @@ function ChequesGrid({
                         {truncate(cheque.chequeNo, 20)}
                       </TableCell>
                       <TableCell>{cheque?.creditorName ?? "-"}</TableCell>
-                      <TableCell align="right">{cheque.amount}</TableCell>
-                      <TableCell>{`${cheque.dateTime[0]}-${cheque.dateTime[1]}-${cheque.dateTime[2]} ${cheque.dateTime[3]}:${cheque.dateTime[4]}:${cheque.dateTime[5]}`}</TableCell>
-                      <TableCell align="center">
-                        {
-                          <p
-                            className="p-badge"
-                            style={{
-                              background:
-                                cheque.status === "REJECTED"
-                                  ? "#dc3545"
-                                  : cheque.status === "SETTLED"
-                                    ? "#198754"
-                                    : "#ffc107",
-                            }}
-                          >
-                            {convertSnakeCaseToNormalCase(cheque.status)}
-                          </p>
-                        }
+                      <TableCell align="right">
+                        {priceRender(
+                          "currencyAmount",
+                          currencyAmountString(cheque.amount),
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        {cheque?.availableAmount
+                          ? priceRender(
+                              "currencyAmount",
+                              currencyAmountString(cheque.availableAmount),
+                            )
+                          : priceRender(
+                              "currencyAmount",
+                              currencyAmountString(0),
+                            )}
+                      </TableCell>
+                      <TableCell>
+                        {dateArrayToString(cheque?.dateTime, false, true)}
                       </TableCell>
                       <TableCell align="center">
                         {
-                          <div className="d-flex gap-1">
+                          <ChequeStatusBadge
+                            cheque={cheque}
+                            redeemStatus={true}
+                          />
+                        }
+                      </TableCell>
+                      <TableCell align="center" className="w-fit">
+                        {
+                          <div className="flex justify-center items-center">
                             <Button
                               className="mr-2 action-button"
                               variant="outline"
@@ -273,15 +371,17 @@ function ChequesGrid({
                     </TableRow>
                   ))}
               </TableBody>
-            </Table>
-          </div>
-        )}
+            )}
+          </Table>
+        </div>
+
         <SettlementModal
           onClose={onClose}
           show={show}
           onReject={rejectCheque}
           onSettle={settleCheque}
           title={title}
+          settleCheckMutation={settleChequeMutation}
         />
         <GridModal
           onClose={onGridModalClose}

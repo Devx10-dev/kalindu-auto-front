@@ -49,6 +49,7 @@ import { currencyAmountString } from "@/utils/analyticsUtils";
 import TablePagination from "@/components/TablePagination";
 import NoInvoices from "@/pages/dashboard/creditors/components/NoInvoices";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import useDebounce from "@/hooks/useDebounce";
 
 function priceRender(contentType: string, content: string) {
   // split from firdst dot from the right
@@ -99,18 +100,35 @@ function ChequesGridCreditorView({
   const [statusList, setStatusList] = useState<
     { label: string; value: string }[]
   >([
+    { label: "Pending", value: "PENDING" },
     { label: "Settled", value: "SETTLED" },
     { label: "Redeemed", value: "REDEEMED" },
     { label: "Rejected", value: "REJECTED" },
   ]);
+
+  const debouncedSearch = useDebounce(search, 500);
 
   const {
     isLoading,
     data: cheques,
     refetch,
   } = useQuery<ChequeResponseData>({
-    queryKey: ["cheques", pageNo, pageSize, creditorId],
-    queryFn: () => chequeService.fetchCheques(pageNo, pageSize, creditorId),
+    queryKey: [
+      "cheques",
+      pageNo,
+      pageSize,
+      creditorId,
+      debouncedSearch,
+      selectedOption,
+    ],
+    queryFn: () =>
+      chequeService.fetchCheques(
+        pageNo,
+        pageSize,
+        creditorId,
+        debouncedSearch,
+        selectedOption,
+      ),
     retry: 2,
   });
 
@@ -207,6 +225,10 @@ function ChequesGridCreditorView({
       setTotalPages(cheques.totalPages);
     }
   }, [cheques]);
+
+  useEffect(() => {
+    console.log(debouncedSearch);
+  }, [debouncedSearch]);
 
   return (
     <Fragment>
@@ -359,6 +381,7 @@ function ChequesGridCreditorView({
           onReject={rejectCheque}
           onSettle={settleCheque}
           title={title}
+          settleCheckMutation={settleChequeMutation}
         />
         <GridModal
           onClose={onGridModalClose}
