@@ -12,7 +12,7 @@ import { IconButtonProps } from "@/types/component/propTypes";
 const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   function IconButton(
     { icon, tooltipMsg, handleOnClick, variant, disabled }: IconButtonProps,
-    ref
+    ref,
   ) {
     return (
       <TooltipProvider>
@@ -34,7 +34,7 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         </Tooltip>
       </TooltipProvider>
     );
-  }
+  },
 );
 
 export default IconButton;

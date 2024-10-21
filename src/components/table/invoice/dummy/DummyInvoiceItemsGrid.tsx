@@ -75,7 +75,7 @@ function DummyInvoiceItemsGrid({
   const inputRefs = useRef<any[]>([]);
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Enter") {
-      console.log("Enter",index);
+      console.log("Enter", index);
       e.preventDefault();
       const nextInput = inputRefs.current[index + 1];
       if (nextInput) {
@@ -134,7 +134,7 @@ function DummyInvoiceItemsGrid({
                 }
                 ref={(el) => (inputRefs.current[1] = el)}
                 onKeyDown={(e) => {
-                  if (newItem.name!=="") {
+                  if (newItem.name !== "") {
                     handleKeyDown(e, 1);
                   }
                 }}
@@ -184,13 +184,13 @@ function DummyInvoiceItemsGrid({
                 : (newItem.price * newItem.quantity).toFixed(2)}
             </TableCell>
             <TableCell align="center" className="w-2/12">
-                <IconButton
-                  icon={<CirclePlus height="20" width="20" />}
-                  tooltipMsg="Add item"
-                  ref={(el) => (inputRefs.current[4] = el)}
-                  handleOnClick={handleAddItem}
-                  disabled={!isFormValid()}
-                />
+              <IconButton
+                icon={<CirclePlus height="20" width="20" />}
+                tooltipMsg="Add item"
+                ref={(el) => (inputRefs.current[4] = el)}
+                handleOnClick={handleAddItem}
+                disabled={!isFormValid()}
+              />
             </TableCell>
           </TableRow>
         </TableBody>

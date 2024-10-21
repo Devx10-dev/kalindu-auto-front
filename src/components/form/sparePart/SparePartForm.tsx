@@ -261,7 +261,7 @@ export default function SparePartForm({
             render={({ field, fieldState }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Chassis No" />
-                <FormControl >
+                <FormControl>
                   <Select
                     className="select-place-holder"
                     placeholder={"Select Chassis No"}
@@ -269,8 +269,8 @@ export default function SparePartForm({
                     ref={(el) => (inputRefs.current[4] = el)}
                     onKeyDown={(e) => {
                       if (form.getValues().chassisNo) {
-                      //   e.preventDefault(); // Prevent any action when there's no value
-                      // } else {
+                        //   e.preventDefault(); // Prevent any action when there's no value
+                        // } else {
                         handleKeyDown(e, 4); // Move to the next field if a value exists
                       }
                     }}

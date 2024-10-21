@@ -142,9 +142,7 @@ function ChequeForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Creditor" />
-                <FormControl
-                 
-                >
+                <FormControl>
                   <Select
                     className="select-place-holder"
                     placeholder={"Select Creditor"}
@@ -155,13 +153,12 @@ function ChequeForm({
                     isSearchable={true}
                     onKeyDown={(e) => {
                       if (form.getValues().creditor) {
-                      //   e.preventDefault(); // Prevent any action when there's no value
-                      // } 
-                      // else if(e.key === "Enter" && form.getValues().creditor) {
+                        //   e.preventDefault(); // Prevent any action when there's no value
+                        // }
+                        // else if(e.key === "Enter" && form.getValues().creditor) {
                         handleKeyDown(e, 2); // Move to the next field if a value exists
                       }
-                    }
-                    }
+                    }}
                   />
                 </FormControl>
 

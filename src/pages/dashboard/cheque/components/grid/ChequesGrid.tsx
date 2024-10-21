@@ -33,6 +33,7 @@ import { CheckCheck, Filter, GalleryHorizontalEnd } from "lucide-react";
 import { Fragment, useState } from "react";
 import { SettlementModal } from "../modal/SettlementModal";
 import CreditInvoiceGrid from "./CreditInvoiceGrid";
+import TablePagination from "@/components/TablePagination";
 
 function ChequesGrid({
   creditors = [],
@@ -44,8 +45,9 @@ function ChequesGrid({
   const queryClient = useQueryClient();
 
   const [pageNo, setPageNo] = useState(0);
-  const [pageSize, setPageSize] = useState(10000);
+  const [pageSize, setPageSize] = useState(10);
   const [creditorId, setCreditorId] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [show, setShow] = useState(false);
   const [title, setTitle] = useState("");
@@ -61,7 +63,7 @@ function ChequesGrid({
     data: cheques,
     refetch,
   } = useQuery<ChequeResponseData>({
-    queryKey: ["cheques"],
+    queryKey: ["cheques", pageNo, creditorId],
     queryFn: () => chequeService.fetchCheques(pageNo, pageSize, creditorId),
     retry: 2,
   });
@@ -196,7 +198,15 @@ function ChequesGrid({
         ) : (
           <div className="overflow-x-auto ">
             <Table className="border rounded-md text-md mb-5 min-w-full table-auto">
-              <TableCaption>Cheque Details</TableCaption>
+              <TableCaption>
+                <TablePagination
+                  pageNo={pageNo + 1}
+                  totalPages={totalPages}
+                  onPageChange={(page) => {
+                    setPageNo(page - 1);
+                  }}
+                />
+              </TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Cheque No</TableHead>
