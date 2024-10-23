@@ -11,6 +11,7 @@ import { Search, Settings2 } from "lucide-react";
 import { useState } from "react";
 import CreditorAPI from "./api/CreditorAPI";
 import CreditorsTable from "./components/CreditorsTable";
+import { TableSkeleton } from "./components/TableSkelton";
 
 export default function CreditorManagement() {
   const axiosPrivate = useAxiosPrivate();
@@ -38,30 +39,6 @@ export default function CreditorManagement() {
     setPageNo(newPageNo);
   };
 
-  const SkeletonLoader = () => (
-    <div className="space-y-4">
-      {[...Array(10)].map((_, index) => (
-        <div key={index} className="flex items-center space-x-4">
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <div className="p-10">
       <PageHeader
@@ -77,23 +54,29 @@ export default function CreditorManagement() {
           value={searchInput}
           onChange={handleSearchChange}
           placeholder="Search creditor name"
+          style={{ minWidth: "200px" }}
         />
-        <Button variant={"secondary"} onClick={() => refetch()}>
+        <Button
+          className="action-button"
+          variant={"secondary"}
+          onClick={() => refetch()}
+        >
           <Search className="mr-2 h-4 w-4" />
-          Search
+          <span className="button-text">Search</span>
         </Button>
-        <Button variant={"secondary"} onClick={handleReset}>
+        <Button
+          className="action-button"
+          variant={"secondary"}
+          onClick={handleReset}
+        >
           <ResetIcon className="mr-2 h-4 w-4" />
-          Reset
+          <span className="button-text">Reset</span>
         </Button>
       </div>
 
       {/* creditor data table */}
-      {isLoading ? (
-        <SkeletonLoader />
-      ) : (
-        <CreditorsTable creditorData={data?.creditors} />
-      )}
+
+      <CreditorsTable creditorData={data?.creditors} isLoading={isLoading} />
 
       {/* pagination */}
       <div className="mt-10">

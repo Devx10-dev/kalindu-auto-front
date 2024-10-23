@@ -159,8 +159,8 @@ function DummyInvoice() {
                       value={
                         customer !== null ? customer?.contactNo : undefined
                       }
-                      ref={(el) => (inputRefs.current[1] = el)}
-                      onKeyDown={(e) => handleKeyDown(e, 1)}
+                      ref={(el) => (inputRefs.current[2] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 2)}
                       onChange={(e) =>
                         setCustomer({ ...customer, contactNo: e.target.value })
                       }
@@ -171,6 +171,8 @@ function DummyInvoice() {
                     <OptionalLabel label="Address" />
                     <Textarea
                       className="max-h-32"
+                      ref={(el) => (inputRefs.current[3] = el)}
+                      onKeyDown={(e) => handleKeyDown(e, 3)}
                       placeholder="Enter address"
                       value={customer !== null ? customer?.address : undefined}
                       onChange={(e) =>
@@ -180,7 +182,12 @@ function DummyInvoice() {
                   </div>
                 </div>
                 <div className="flex mt-4">
-                  <Button onClick={handlePrintBtn}>View Quotation</Button>
+                  <Button
+                    ref={(el) => (inputRefs.current[4] = el)}
+                    onClick={handlePrintBtn}
+                  >
+                    View Quotation
+                  </Button>
                 </div>
               </CardContent>
             </Card>

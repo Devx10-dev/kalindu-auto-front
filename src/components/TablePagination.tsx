@@ -7,7 +7,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useState } from "react";
+import useQueryParams from "@/hooks/getQueryParams";
+import { useEffect, useState } from "react";
 
 export default function TablePagination(props: {
   pageNo?: number;

@@ -1,4 +1,5 @@
 import { Service } from "@/service/apiService";
+import { UseMutationResult } from "@tanstack/react-query";
 
 export type IconProps = {
   width: string;
@@ -32,12 +33,16 @@ export type FormSelectProps = {
 };
 
 export type FormModalProps = {
-  show: boolean;
-  onClose: () => void;
+  show?: boolean;
+  onClose?: () => void;
   title: string;
   titleDescription?: string;
   component: JSX.Element;
   service?: Service;
+  buttonIcon?: JSX.Element;
+  buttonTitle?: string;
+  dialogFooter?: JSX.Element;
+  setShow?: (show: boolean) => void;
 };
 
 export interface ToastFunction {
@@ -62,4 +67,5 @@ export type ChequeSettleModalProps = {
   title: string;
   onSettle: () => void;
   onReject: () => void;
+  settleCheckMutation?: UseMutationResult;
 };

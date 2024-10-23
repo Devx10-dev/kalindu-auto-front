@@ -121,8 +121,14 @@ function FieldForm({
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Category" />
                 <FormControl
-                  onKeyDown={(e) => handleKeyDown(e, 1)}
                   ref={(el) => (inputRefs.current[1] = el)}
+                  onKeyDown={(e) => {
+                    if (form.getValues().category) {
+                      //   e.preventDefault(); // Prevent any action when there's no value
+                      // } else {
+                      handleKeyDown(e, 1); // Move to the next field if a value exists
+                    }
+                  }}
                 >
                   <Select
                     className="select-place-holder"

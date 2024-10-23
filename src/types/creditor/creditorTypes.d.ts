@@ -1,5 +1,5 @@
 export type Creditor = {
-  creditorID?: string;
+  creditorID?: string | number;
   id?: number;
   shopName?: string;
   contactPersonName?: string;
@@ -7,8 +7,8 @@ export type Creditor = {
   primaryContact?: string;
   secondaryContact?: string;
   address?: string;
-  totalDue?: string;
-  chequeBalance?: string;
+  totalDue?: number;
+  chequeBalance?: number;
   creditLimit?: number;
   status?: string;
   dueDate?: string;
@@ -28,6 +28,18 @@ export type Creditor = {
   dueStatus?: string;
   latestDueDays?: number;
   latestOverdueDays?: number;
+  pendingChequeCount?: number;
+  redeemedChequeCount?: number;
+  settledChequeCount?: number;
+  rejectedChequeCount?: number;
+  totalInvoiceCount?: number;
+  creditorRefund?: number;
+  totalChequeCount?: number;
+  availableChequeBalance?: number;
+  redeemedChequeAmount?: number;
+  pendingChequeAmount?: number;
+  rejectedChequeAmount?: number;
+  settledChequeAmount?: number;
 };
 
 export type CreditorResponseData = {

@@ -14,11 +14,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import CreditorAPI from "@/pages/dashboard/creditors/api/CreditorAPI";
 import { ChequeService } from "@/service/cheque/ChequeService";
-import {
-  Creditor,
-  TransactionType,
-  TransactionTypes,
-} from "@/types/creditor/creditorTypes";
+import { Creditor, TransactionTypes } from "@/types/creditor/creditorTypes";
 import { transactionSchema } from "@/validation/schema/creditor/transaction/transactionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,6 +23,7 @@ import Select from "react-select";
 import { z } from "zod";
 
 import { Card } from "@/components/ui/card";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Select as SelectComponent,
   SelectContent,
@@ -35,17 +32,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { getRandomColor } from "@/utils/colors";
-import { getInitials, truncate } from "@/utils/string";
-import { useEffect, useState, useRef } from "react";
-import { Separator } from "@/components/ui/separator";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
-import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "lucide-react";
+import { getRandomColor } from "@/utils/colors";
+import { useEffect, useRef, useState } from "react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
-import { MultiSelect } from "@/components/ui/multi-select";
-import { Cheque } from "@/types/cheque/chequeTypes";
+import useQueryParams from "@/hooks/getQueryParams";
 
 const RANDOM_COLOR = getRandomColor();
 
@@ -196,7 +187,7 @@ function TransactionForm({
         transaction.amount >
           (selectedCreditor.chequeBalance === undefined
             ? 0
-            : parseFloat(selectedCreditor.chequeBalance))
+            : selectedCreditor.chequeBalance)
       ) {
         toast({
           title: "Validation error",
@@ -252,6 +243,42 @@ function TransactionForm({
     setCreditInvoiceSelectKey((prevKey) => prevKey + 1);
   }, [selectedCreditor]);
 
+  const { queryParams, setQueryParam } = useQueryParams();
+  useEffect(() => {
+    if (queryParams.creditor && creditors?.length > 0) {
+      const creditor = creditors.find(
+        (creditor) =>
+          creditor.creditorID === String(queryParams.creditor) ||
+          creditor.creditorID === Number(queryParams.creditor),
+      );
+
+      if (creditor) {
+        // Create the option object that react-select expects
+        const creditorOption = {
+          value: parseInt(creditor.creditorID),
+          label: creditor?.shopName ?? "-",
+        };
+
+        setSelectedCreditor(creditor);
+        // Set both the form value and directly control the Select value
+        form.setValue("creditor", creditorOption, {
+          shouldValidate: true, // This will trigger validation
+          shouldDirty: true, // This will mark the field as dirty
+        });
+      }
+    }
+  }, [queryParams.creditor, creditors, form]);
+
+  useEffect(() => {
+    if (selectedCreditor) {
+      setQueryParam("creditor", selectedCreditor.creditorID);
+    }
+  }, [selectedCreditor, setQueryParam]);
+
+  useEffect(() => {
+    console.log(selectedCreditor);
+  }, [selectedCreditor]);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
       {selectedCreditor !== null && (
@@ -304,6 +331,7 @@ function TransactionForm({
                           );
                           setSelectedCreditor(selectedCreditor);
                         }}
+                        value={field.value}
                       />
                     </FormControl>
                     {fieldState.error &&

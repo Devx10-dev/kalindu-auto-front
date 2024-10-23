@@ -129,6 +129,22 @@ const AddItem: React.FC<{
               <FormItem>
                 <RequiredLabel label="Item name" />
                 <CreatableSelect
+                  onKeyDown={(e) => {
+                    const nameValue = form.getValues("name");
+                    const selectValue = nameRef.current?.getValue();
+                    if (nameValue && selectValue.length > 0) {
+                      handleKeyDown(e, priceRef);
+                    }
+                  }}
+                  // onKeyDown={(e) => {
+                  //   const nameValue = form.getValues("name");
+                  //   const selectValue = nameRef.current?.getValue();
+                  //   if (e.key === "Enter" && selectValue.length < 1) {
+                  //     e.preventDefault(); // Prevent any action when there's no value
+                  //   }else if (e.key === "Enter" && nameValue && selectValue.length > 0) {
+                  //     handleKeyDown(e, priceRef);
+                  //   }
+                  // }}
                   options={sparePartsOptions}
                   onInputChange={handleInputChange}
                   ref={nameRef}

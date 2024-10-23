@@ -178,14 +178,18 @@ function SaleOrExpenseForm({
             render={({ field }) => (
               <FormItem className="w-full col-span-1 row-span-1">
                 <RequiredLabel label="Field" />
-                <FormControl
-                  onKeyDown={(e) => handleKeyDown(e, 1)}
-                  ref={(el) => (inputRefs.current[1] = el)}
-                >
+                <FormControl ref={(el) => (inputRefs.current[1] = el)}>
                   <Select
                     className="select-place-holder"
                     placeholder={"Select field"}
                     options={fieldOptions}
+                    onKeyDown={(e) => {
+                      if (form.getValues().field) {
+                        //   e.preventDefault(); // Prevent any action when there's no value
+                        // } else {
+                        handleKeyDown(e, 1); // Move to the next field if a value exists
+                      }
+                    }}
                     value={field.value || ""}
                     onChange={field.onChange}
                   />
@@ -228,11 +232,17 @@ function SaleOrExpenseForm({
                   onValueChange={field.onChange}
                   value={field.value}
                 >
-                  <FormControl
-                    onKeyDown={(e) => handleKeyDown(e, 3)}
-                    ref={(el) => (inputRefs.current[3] = el)}
-                  >
-                    <SelectTrigger>
+                  <FormControl>
+                    <SelectTrigger
+                      ref={(el) => (inputRefs.current[3] = el)}
+                      onKeyDown={(e) => {
+                        if (form.getValues().type) {
+                          //   e.preventDefault(); // Prevent any action when there's no value
+                          // } else {
+                          handleKeyDown(e, 3); // Move to the next field if a value exists
+                        }
+                      }}
+                    >
                       <SelectValue placeholder="Select the record type" />
                     </SelectTrigger>
                   </FormControl>

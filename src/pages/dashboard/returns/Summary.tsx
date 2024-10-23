@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import AmountCard from "@/components/card/AmountCard";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,15 +8,26 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Delete, Printer } from "lucide-react";
-import useReturnInvoiceStore from "./context/useReturnInvoiceStore";
-import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { useToast } from "@/components/ui/use-toast.ts";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { ReturnService } from "@/service/return/ReturnService.ts";
-import { OptionalLabel } from "@/components/formElements/FormLabel.tsx";
+import { getRandomColor } from "@/utils/colors";
+import { convertArrayToISOFormat } from "@/utils/dateTime";
+import { getInitials } from "@/utils/string";
+import { Delete, Printer } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import useReturnInvoiceStore from "./context/useReturnInvoiceStore";
+import { Switch } from "@/components/ui/switch";
 
-const Summary = () => {
+const COLOR = getRandomColor();
+
+const Summary = ({
+  creditorSelectKey,
+  setCreditorSelectKey,
+}: {
+  creditorSelectKey: number;
+  setCreditorSelectKey: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const {
     customerName,
     sourceInvoiceId,
@@ -35,11 +46,19 @@ const Summary = () => {
     purchaseDate,
     totalPrice,
     resetState,
+    invoiceId,
+    newInvoiceType,
+    setNewInvoiceType,
   } = useReturnInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
   const returnInvoiceService = new ReturnService(axiosPrivate);
   const [netPaidAmount, setNetPaidAmount] = useState(returnAmount);
+
+  const cancelReturn = () => {
+    resetState();
+    setCreditorSelectKey(creditorSelectKey + 1);
+  };
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
@@ -98,11 +117,23 @@ const Summary = () => {
   };
 
   const { toast } = useToast();
+  console.log(newInvoiceType);
 
   async function printAndSaveInvoice() {
+    if (returnAmount === 0) {
+      toast({
+        title: "Invalid return details",
+        description: "Please add return details!",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
     try {
       const requestData = getRequestData();
       console.log(requestData);
+
       const createdInvoice =
         await returnInvoiceService.createReturnInvoice(requestData);
       console.log("Cash invoice created:", requestData);
@@ -112,7 +143,7 @@ const Summary = () => {
         description: "The cash invoice has been created and printed.",
         variant: "default",
       });
-      resetState();
+      cancelReturn();
     } catch (error) {
       console.error("Error creating cash invoice:", error);
       // Handle error
@@ -126,121 +157,89 @@ const Summary = () => {
 
   return (
     <Card>
-      <CardContent className="p-5 shadow-sm pt-0">
-        <h3 className="text-2xl font-semibold leading-none tracking-tight mb-4">
-          Summary
-        </h3>
-        <div className="flex flex-col">
-          {sourceInvoiceId && (
-            <div
-              className="border-2 border-gray-300 "
-              style={{
-                padding: 15,
-                borderRadius: 5,
-              }}
-            >
-              <div>
-                {purchaseDate && (
-                  <p className="text-sm text-gray-500">#{sourceInvoiceId}</p>
-                )}
-              </div>
-              <div className="d-flex align">
-                <p className="text-2xl text-gray-800">{customerName}</p>
-              </div>
-              <div className="d-flex align">
-                {/* <p className="text-sm text-gray-500">{`Purchased ${purchaseDate[2]}/${purchaseDate[1]}/${purchaseDate[0]}`}</p> */}
-                {purchaseDate && (
-                  <p className="text-sm text-gray-400">{`Purchased ${purchaseDate[2]}/${purchaseDate[1]}/${purchaseDate[0]}`}</p>
-                )}
-              </div>
+      <CardHeader className="flex flex-row items-start bg-muted/50">
+        <div className="grid">
+          <CardTitle className="group flex items-center gap-2 text-lg">
+            <div className="flex gap-2 items-center">
+              <Avatar>
+                <AvatarFallback style={{ background: COLOR }}>
+                  {sourceInvoiceId ? getInitials(customerName) : "NA"}
+                </AvatarFallback>
+              </Avatar>
+              {sourceInvoiceId ? (
+                <div>
+                  <p>{customerName}</p>
+                  <CardDescription>{`Invoice NO: ${sourceInvoiceId}`}</CardDescription>
+                  <CardDescription>{`Issued Time : ${convertArrayToISOFormat(purchaseDate)}`}</CardDescription>
+                </div>
+              ) : (
+                <p>Please select invoice</p>
+              )}
             </div>
-          )}
-          <div
-            className="border-2 border-gray-300 mt-5"
-            style={{
-              padding: 15,
-              borderRadius: 5,
-            }}
-          >
+          </CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="p-5 shadow-sm pt-0">
+        <div className="flex flex-col">
+          <div className="mt-5">
             <div className="d-flex align justify-between">
               <p className="text-sm text-gray-500">Return Amount: </p>
-              <p className="text-sm text-gray-800">
-                LKR {returnAmount ? returnAmount.toFixed(2) : 0}
-              </p>
+              <AmountCard
+                amount={returnAmount ? parseFloat(returnAmount.toFixed(2)) : 0}
+                color="#FFAAAA"
+              />
             </div>
-            <div className="d-flex align justify-between">
+            <div className="d-flex align justify-between mt-2">
               <p className="text-sm text-gray-500">Purchase Amount: </p>
-              <p className="text-sm text-gray-800">
-                LKR {returnAmount ? totalWithVat.toFixed(2) : 0}
-              </p>
+              <AmountCard
+                amount={parseFloat(totalWithVat.toFixed(2))}
+                color="#B4E380"
+              />
             </div>
+            <hr className="mt-4 mb-4" />
+            <div className="d-flex align justify-between">
+              <p className="text-sm text-gray-500">Cashback Amount: </p>
+              <AmountCard
+                amount={
+                  sourceInvoiceId === undefined ||
+                  sourceInvoiceId.split("-")[1] === "CRE"
+                    ? 0
+                    : returnAmount - totalWithVat
+                }
+                color="#FFAAAA"
+              />
+            </div>
+            {((sourceInvoiceId !== undefined &&
+              sourceInvoiceId.split("-")[1] === "CRE") ||
+              returnAmount - totalWithVat < 0) && (
+              <div className="error-message fade-in mt-4">
+                <span className="error-message-icon">⚠️</span>
+                {`${
+                  sourceInvoiceId !== undefined &&
+                  sourceInvoiceId.split("-")[1] === "CRE"
+                    ? "Cashback is not allowed for credit invoices."
+                    : "Customer exchange exceeds cashback limit; do not issue cash back."
+                }`}
+              </div>
+            )}
+
+            <hr className="mt-4 mb-4" />
+            {sourceInvoiceId !== undefined &&
+              sourceInvoiceId.split("-")[1] === "CRE" && (
+                <div className="d-flex align justify-between">
+                  <p className="text-md text-gray-500">Is credit invoice?</p>
+                  <Switch
+                    defaultChecked
+                    onCheckedChange={(checked) =>
+                      setNewInvoiceType(checked ? "CRE" : "CASH")
+                    }
+                  />
+                </div>
+              )}
           </div>
         </div>
 
-        {/* <div className="mt-8">
-          <div className="d-flex justify-between mb-4">
-            <Label>Discount (%)</Label>
-            <Input
-              style={{
-                maxWidth: "100px",
-                textAlign: "right",
-                padding: 2,
-                maxHeight: 30,
-              }}
-              type="number"
-              value={discountPercentage}
-              onChange={handleDiscountPercentageChange}
-              min={0}
-              max={100}
-            />
-          </div>
-          <div className="d-flex justify-between mb-4">
-            <Label>Discount Amount (LKR)</Label>
-            <Input
-              style={{
-                maxWidth: "100px",
-                textAlign: "right",
-                padding: 2,
-                maxHeight: 30,
-              }}
-              type="number"
-              value={discountAmount}
-              onChange={handleDiscountAmountChange}
-            />
-          </div>
-          <div className="d-flex justify-between mb-4">
-            <Label>VAT Percentage (%)</Label>
-            <Input
-              style={{
-                maxWidth: "100px",
-                textAlign: "right",
-                padding: 2,
-                maxHeight: 30,
-              }}
-              type="number"
-              value={vatPercentage}
-              onChange={handleVatPercentageChange}
-              min={0}
-              max={100}
-            />
-          </div>
-          <div className="d-flex justify-between mb-4">
-            <Label>VAT Amount (LKR)</Label>
-            <Input
-              style={{
-                maxWidth: "100px",
-                textAlign: "right",
-                padding: 2,
-                maxHeight: 30,
-              }}
-              type="number"
-              value={vatAmount}
-              onChange={handleVatAmountChange}
-            />
-          </div>
-        </div> */}
-
-        <div className="flex justify-start text-left mt-10">
+        <div className="flex justify-start text-left mt-8">
           <div className="text-left">
             <p className="text-lg font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
               NET PAID : LKR {netPaidAmount ? netPaidAmount.toFixed(2) : 0}
@@ -253,7 +252,10 @@ const Summary = () => {
                 <Printer className={"mr-2"} />
                 Print Invoice
               </Button>
-              <Button className="mt-4 mb-3 bg-red-400 ml-2 text-white">
+              <Button
+                className="mt-4 mb-3 bg-red-400 ml-2 text-white"
+                onClick={cancelReturn}
+              >
                 <Delete className={"mr-2"} /> Cancel
               </Button>
             </div>

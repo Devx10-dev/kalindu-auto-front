@@ -11,7 +11,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   returnedItems: [], //Must be
 
   returnType: undefined, //Must be
-  newInvoiceType: undefined, //Must be
+  newInvoiceType: "CRE", //Must be
   reason: undefined, //Must be
 
   cashBackAmount: 0,
@@ -291,6 +291,8 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       const uniqueNumber = (parseInt(hours + minutes, 10) % 10000)
         .toString()
         .padStart(4, "0");
+
+      console.log(state.newInvoiceType);
       const invoiceType = state.newInvoiceType == "CASH" ? "CASH" : "CRE";
       return `INV-${invoiceType}-${year}${month}${day}${uniqueNumber}`;
     };

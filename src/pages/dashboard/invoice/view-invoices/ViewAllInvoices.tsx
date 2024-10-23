@@ -25,14 +25,9 @@ import {
   useCreditInvoiceListStore,
   useInvoiceListStore,
 } from "./context/InvoiceListState";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 import { MultiSelect } from "@/components/ui/multi-select";
+import useQueryParams from "@/hooks/getQueryParams";
 
 export function ViewAllInvoices() {
   // active tab state
@@ -46,6 +41,7 @@ export function ViewAllInvoices() {
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   const [toDate, setToDate] = useState<Date | undefined>(undefined);
   const [pageNo, setPageNo] = useState<number>(0);
+  const [cashPageNo, setCashPageNo] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
   const { cashInvoicesStore, setCashInvoicesStore } = useInvoiceListStore();
   const { creditInvoicesStore, setCreditInvoicesStore } =
@@ -54,6 +50,37 @@ export function ViewAllInvoices() {
   const [statusList, setStatusList] = useState<
     { label: string; value: string }[]
   >([{ label: "COMPLETED", value: "COMPLETED" }]);
+
+  const { queryParams, setQueryParam } = useQueryParams();
+
+  useEffect(() => {
+    if (queryParams) {
+      console.log(queryParams);
+    }
+    if (queryParams?.type === "creditor") {
+      setActiveTab("creditor");
+    }
+
+    if (queryParams?.type === "cash") {
+      setActiveTab("cash");
+    }
+
+    if (queryParams?.pageNo) {
+      if (activeTab === "cash") {
+        setCashPageNo(Number(queryParams.pageNo));
+      } else {
+        setPageNo(Number(queryParams.pageNo));
+      }
+    }
+  }, [queryParams, activeTab]);
+
+  useEffect(() => {
+    if (activeTab === "cash") {
+      setQueryParam("pageNo", cashPageNo);
+    } else {
+      setQueryParam("pageNo", pageNo);
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     if (activeTab === "cash") {
@@ -102,7 +129,7 @@ export function ViewAllInvoices() {
       debouncedSearch,
       fromDate,
       toDate,
-      pageNo,
+      cashPageNo,
       pageSize,
     ],
     queryFn: () =>
@@ -110,7 +137,7 @@ export function ViewAllInvoices() {
         debouncedSearch,
         fromDate ? dateToString(fromDate) : undefined,
         toDate ? dateToString(toDate) : undefined,
-        pageNo,
+        cashPageNo,
         pageSize,
       ),
     enabled: activeTab === "cash",
@@ -179,6 +206,7 @@ export function ViewAllInvoices() {
   // on tab change
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
+    setQueryParam("type", tab);
   };
 
   return (
@@ -187,6 +215,7 @@ export function ViewAllInvoices() {
         defaultValue="cash"
         className="w-[100%]"
         onValueChange={handleTabChange}
+        value={activeTab}
       >
         <div className="flex justify-between items-center">
           {/* <h1 className="text-2xl font-semibold">View Invoices</h1> */}
@@ -255,9 +284,9 @@ export function ViewAllInvoices() {
           ) : (
             <InvoiceTable
               invoices={cashInvoiceData}
-              setPageNo={setPageNo}
+              setPageNo={setCashPageNo}
               type="cash"
-              pageNo={pageNo}
+              pageNo={cashPageNo}
               pageSize={pageSize}
               isLoading={cashInvoiceLoading}
               err={cashInvoiceError}
@@ -282,24 +311,6 @@ export function ViewAllInvoices() {
             />
           )}
         </TabsContent>
-        {/* <TabsContent value="dummy">
-          {dummyInvoiceError ? (
-            <ErrorPage
-              errorHeading="Uh oh! Something went wrong"
-              errorSubHeading="There was an unexpected error. Please try again or contact support."
-            />
-          ) : (
-            <InvoiceTable
-              invoices={dummyInvoiceData}
-              setPageNo={setPageNo}
-              type="cash"
-              pageNo={pageNo}
-              pageSize={pageSize}
-              isLoading={dummyInvoiceLoading}
-              err={dummyInvoiceError}
-            />
-          )}
-        </TabsContent> */}
       </Tabs>
     </Fragment>
   );

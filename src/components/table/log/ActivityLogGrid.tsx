@@ -1,6 +1,14 @@
-import Loading from "@/components/Loading";
+import { MOBILE_SCREEN_WIDTH } from "@/components/sidebar/Sidebar";
+import TablePagination from "@/components/TablePagination";
+import ToolTip from "@/components/ToolTip";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Table,
   TableBody,
@@ -10,11 +18,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import useDebounce from "@/hooks/useDebounce";
+import { cn } from "@/lib/utils";
+import { TableBodySkeleton } from "@/pages/dashboard/invoice/view-invoices/components/TableSkeleton";
 import { ActivityLogService } from "@/service/activityLog/activityLogService";
 import {
   ActivityLog,
   ActivityLogsResponseData,
 } from "@/types/log/activityLogTypes";
+import dateArrayToString from "@/utils/dateArrayToString";
+import { formatDateToISO } from "@/utils/dateTime";
+import { toNormalCase, truncate } from "@/utils/string";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Fragment, useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
 import {
   Select,
   SelectContent,
@@ -22,26 +41,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { toNormalCase } from "@/utils/string";
-import { Calendar } from "@/components/ui/calendar";
-import { DateRange } from "react-day-picker";
-import { CalendarIcon } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { convertArrayToISOFormat, formatDateToISO } from "@/utils/dateTime";
-import { MOBILE_SCREEN_WIDTH } from "@/components/sidebar/Sidebar";
-import SkeletonGrid from "@/components/loader/SkeletonGrid";
-import { TableBodySkeleton } from "@/pages/dashboard/invoice/view-invoices/components/TableSkeleton";
-import useDebounce from "@/hooks/useDebounce";
-import dateArrayToString from "@/utils/dateArrayToString";
-import TablePagination from "@/components/TablePagination";
 
 // TODO: Add pagination to the grid
 function ActivityLogGrid({
@@ -270,46 +269,61 @@ function ActivityLogGrid({
             </Button>
           </div>
         </div>
-        <Table className="border rounded-md text-md mb-5 table-responsive">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Id</TableHead>
-              <TableHead>User ID</TableHead>
-              <TableHead>Feature</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead>Done at</TableHead>
-              <TableHead>Description</TableHead>
-            </TableRow>
-          </TableHeader>
-          {isLoading ? (
-            <TableBodySkeleton cols={6} rows={10} />
-          ) : (
-            <TableBody>
-              {viewActivityLogs &&
-                viewActivityLogs.map((activityLog) => (
-                  <TableRow key={activityLog.id}>
-                    <TableCell>{activityLog.id}</TableCell>
-                    <TableCell>{activityLog.doneBy}</TableCell>
-                    <TableCell>{toNormalCase(activityLog.feature)}</TableCell>
-                    <TableCell>{toNormalCase(activityLog.dbaction)}</TableCell>
-                    <TableCell>
-                      {dateArrayToString(activityLog.doneAt)}
-                    </TableCell>
-                    <TableCell>{activityLog.description}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          )}
-          <TableCaption>
-            <TablePagination
-              pageNo={pageNo + 1}
-              totalPages={totalPages}
-              onPageChange={(page) => {
-                setPageNo(page - 1);
-              }}
-            />
-          </TableCaption>
-        </Table>
+        <div className="overflow-x-auto ">
+          <Table className="border rounded-md text-md mb-5 min-w-full table-auto">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Id</TableHead>
+                <TableHead>Username</TableHead>
+                <TableHead>Feature</TableHead>
+                <TableHead>Action</TableHead>
+                <TableHead>Done at</TableHead>
+                <TableHead>Description</TableHead>
+              </TableRow>
+            </TableHeader>
+            {isLoading ? (
+              <TableBodySkeleton cols={6} rows={10} />
+            ) : (
+              <TableBody>
+                {viewActivityLogs &&
+                  viewActivityLogs.map((activityLog) => (
+                    <TableRow key={activityLog.id}>
+                      <TableCell>{activityLog.id}</TableCell>
+                      <TableCell>
+                        <ToolTip
+                          description={activityLog.doneBy}
+                          message={truncate(activityLog.doneBy, 20)}
+                        />
+                      </TableCell>
+                      <TableCell>{toNormalCase(activityLog.feature)}</TableCell>
+                      <TableCell>
+                        {toNormalCase(activityLog.dbaction)}
+                      </TableCell>
+                      <TableCell>
+                        {dateArrayToString(activityLog.doneAt)}
+                      </TableCell>
+                      <TableCell>
+                        <ToolTip
+                          description={activityLog.description}
+                          message={truncate(activityLog.description, 30)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            )}
+            <TableCaption>Activity Logs</TableCaption>
+          </Table>
+        </div>
+        <div className="mt-5">
+          <TablePagination
+            pageNo={pageNo + 1}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setPageNo(page - 1);
+            }}
+          />
+        </div>
       </>
     </Fragment>
   );

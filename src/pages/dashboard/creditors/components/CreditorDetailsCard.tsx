@@ -11,9 +11,8 @@ import { Creditor } from "@/types/creditor/creditorTypes";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { convertArrayToISOFormat } from "@/utils/dateTime";
 import { getInitials, truncate } from "@/utils/string";
-import { CheckCircle, ChevronsDown, ChevronsUp, ChevronUp } from "lucide-react";
+import { ChevronsDown, ChevronsUp } from "lucide-react";
 import { useState } from "react";
-import StatusCard from "../../invoice/view/components/StatusCard";
 
 function CreditorDetailsCard({
   selectedCreditor,
@@ -206,7 +205,7 @@ function CreditorDetailsCard({
                             borderRadius: 5,
                           }}
                         >
-                          Rs {invoice.totalPrice - invoice.settledAmount ?? 0}
+                          Rs {invoice.totalPrice - invoice.settledAmount}
                         </span>
                       </li>
                     </ul>
