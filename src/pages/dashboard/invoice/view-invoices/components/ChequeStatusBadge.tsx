@@ -20,7 +20,7 @@ function ChequeStatusBadge({
       statusText = "Settled";
       break;
     case "REDEEMED":
-      background = redeemStatus ? "blue" : "green";
+      background = redeemStatus ? "gray" : "green";
       statusText = redeemStatus ? "Redeemed" : "Settled";
       break;
     case "PENDING":
