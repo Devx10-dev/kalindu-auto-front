@@ -176,7 +176,7 @@ export function CreditorStatPieChart() {
                 data ? (
                   contentRender(
                     "currencyAmount",
-                    currencyAmountString(data.totalCreditBalance),
+                    currencyAmountString(data.totalCreditBalance)
                   )
                 ) : (
                   contentRender("currencyAmount", "Rs. 0.00")
@@ -235,7 +235,7 @@ export function CreditorStatPieChart() {
                 data ? (
                   contentRender(
                     "currencyAmount",
-                    currencyAmountString(data.dueAmount),
+                    currencyAmountString(data.dueAmount)
                   )
                 ) : (
                   contentRender("currencyAmount", "Rs. 0.00")
@@ -252,7 +252,7 @@ export function CreditorStatPieChart() {
                 data ? (
                   contentRender(
                     "currencyAmount",
-                    currencyAmountString(data.overdueAmount),
+                    currencyAmountString(data.overdueAmount)
                   )
                 ) : (
                   contentRender("currencyAmount", "Rs. 0.00")

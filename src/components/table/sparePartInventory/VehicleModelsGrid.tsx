@@ -54,7 +54,7 @@ export default function VehicleModelsGrid({
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
-    null,
+    null
   );
   const [searchQuery, setSearchQuery] = useState("");
   const debounceSearch = useDebounce(searchQuery, 500);
@@ -110,13 +110,13 @@ export default function VehicleModelsGrid({
         selectedType,
         selectedBrand,
         selectedChassisNo,
-        debounceSearch,
+        debounceSearch
       ),
     retry: 2,
   });
 
   const [viewVehicleModels, setViewVehicleModels] = useState<VehicleModel[]>(
-    vehicleModels?.vehicleModels ?? [],
+    vehicleModels?.vehicleModels ?? []
   );
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export default function VehicleModelsGrid({
                         <SelectItem key={brand.id} value={brand.brand}>
                           {capitalize(brand.brand)}
                         </SelectItem>
-                      ),
+                      )
                     )}
                 </SelectContent>
               </Select>
@@ -227,7 +227,7 @@ export default function VehicleModelsGrid({
                         >
                           {chassisNo.chassisNo}
                         </SelectItem>
-                      ),
+                      )
                     )}
                 </SelectContent>
               </Select>
@@ -240,64 +240,66 @@ export default function VehicleModelsGrid({
             </Button>
           </div>
         </div>
-        <Table className="border rounded-md text-md mb-5 table-responsive">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Vehicle</TableHead>
-              <TableHead>Vehicle Type</TableHead>
-              <TableHead>Vehicle Brand</TableHead>
-              <TableHead>Chassis No</TableHead>
-              <TableHead>Remark</TableHead>
-              <TableHead className="text-center">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          {isLoading ? (
-            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
-            <TableBodySkeleton cols={6} rows={10} noHeader={true} />
-          ) : (
-            <TableBody>
-              {viewVehicleModels &&
-                viewVehicleModels.map((vehicle) => (
-                  <TableRow key={vehicle.id}>
-                    <TableCell className="font-medium">
-                      {capitalize(vehicle.model)}
-                    </TableCell>
-                    <TableCell>{capitalize(vehicle.vehicleType)}</TableCell>
-                    <TableCell>{capitalize(vehicle.vehicleBrand)}</TableCell>
-                    <TableCell>{vehicle.chassisNo}</TableCell>
-                    <TableCell>
-                      {truncate(vehicle.description ?? "", 30) ?? "-"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-center">
-                        <IconButton
-                          icon={<EditIcon height="20" width="20" />}
-                          tooltipMsg="Edit Vehicle"
-                          handleOnClick={() => handleEditClick(vehicle)}
-                        />
-                        <IconButton
-                          icon={<SparePartIcon height="20" width="20" />}
-                          handleOnClick={() =>
-                            handleViewClick(vehicle.chassisNo)
-                          }
-                          tooltipMsg="View Spare parts"
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          )}
-          <TableCaption>
-            <TablePagination
-              pageNo={pageNo + 1}
-              totalPages={totalPages}
-              onPageChange={(page) => {
-                setPageNo(page - 1);
-              }}
-            />
-          </TableCaption>
-        </Table>
+        <div className="overflow-x-auto ">
+          <Table className="border rounded-md text-md mb-5 table-responsive">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Vehicle</TableHead>
+                <TableHead>Vehicle Type</TableHead>
+                <TableHead>Vehicle Brand</TableHead>
+                <TableHead>Chassis No</TableHead>
+                <TableHead>Remark</TableHead>
+                <TableHead className="text-center">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            {isLoading ? (
+              // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+              <TableBodySkeleton cols={6} rows={10} noHeader={true} />
+            ) : (
+              <TableBody>
+                {viewVehicleModels &&
+                  viewVehicleModels.map((vehicle) => (
+                    <TableRow key={vehicle.id}>
+                      <TableCell className="font-medium">
+                        {capitalize(vehicle.model)}
+                      </TableCell>
+                      <TableCell>{capitalize(vehicle.vehicleType)}</TableCell>
+                      <TableCell>{capitalize(vehicle.vehicleBrand)}</TableCell>
+                      <TableCell>{vehicle.chassisNo}</TableCell>
+                      <TableCell>
+                        {truncate(vehicle.description ?? "", 30) ?? "-"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-center">
+                          <IconButton
+                            icon={<EditIcon height="20" width="20" />}
+                            tooltipMsg="Edit Vehicle"
+                            handleOnClick={() => handleEditClick(vehicle)}
+                          />
+                          <IconButton
+                            icon={<SparePartIcon height="20" width="20" />}
+                            handleOnClick={() =>
+                              handleViewClick(vehicle.chassisNo)
+                            }
+                            tooltipMsg="View Spare parts"
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            )}
+            <TableCaption>
+              <TablePagination
+                pageNo={pageNo + 1}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setPageNo(page - 1);
+                }}
+              />
+            </TableCaption>
+          </Table>
+        </div>
       </>
     </Fragment>
   );

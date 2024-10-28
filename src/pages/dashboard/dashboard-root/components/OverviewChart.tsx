@@ -84,11 +84,11 @@ export default function OverviewChart({
   const [rateSelected, setRateSelected] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("today");
   const [dailyProcessed, setDailyProcessed] = useState<DailySummaryTimeBased[]>(
-    [],
+    []
   );
   const [weeklyProcessed, setWeeklyProcessed] = useState<WeeklySummary[]>([]);
   const [monthlyProcessed, setMonthlyProcessed] = useState<MonthlySummary[]>(
-    [],
+    []
   );
   const [yearlyProcessed, setYearlyProcessed] = useState<YearlySummary[]>([]);
   const [chartData, setChartData] = useState<
@@ -145,7 +145,7 @@ export default function OverviewChart({
           case "daily": {
             const processedData = processDailyData(
               analyticData,
-              analyticalRange.dateRange,
+              analyticalRange.dateRange
             );
             setDailyProcessed(processedData);
             break;
@@ -153,7 +153,7 @@ export default function OverviewChart({
           case "weekly": {
             const processedData = processWeeklyData(
               analyticData,
-              analyticalRange.dateRange,
+              analyticalRange.dateRange
             );
             setWeeklyProcessed(processedData);
             break;
@@ -161,7 +161,7 @@ export default function OverviewChart({
           case "monthly": {
             const processedData = processMonthlyData(
               analyticData,
-              analyticalRange.dateRange,
+              analyticalRange.dateRange
             );
             setMonthlyProcessed(processedData);
             break;
@@ -169,7 +169,7 @@ export default function OverviewChart({
           case "yearly": {
             const processedData = processYearlyData(
               analyticData,
-              analyticalRange.dateRange,
+              analyticalRange.dateRange
             );
             setYearlyProcessed(processedData);
             break;
@@ -214,14 +214,14 @@ export default function OverviewChart({
   return (
     <div className={className}>
       <Card className="h-[100%] ">
-        <div className="flex justify-between items-center align-items-top p-6">
+        <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center p-6">
           <CardHeader className="p-0 ">
             <CardTitle className="pl-0"> Overview </CardTitle>
             <CardDescription className="pl-0">
               Summay of sales and Expenses
             </CardDescription>
           </CardHeader>
-          <div className="gap-2 pt-0 flex">
+          <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:gap-2">
             <MultiSelect
               options={rateList}
               onValueChange={setSelectedOption}
@@ -234,7 +234,7 @@ export default function OverviewChart({
               badgeInlineClose={false}
             />
             <Select value={rateSelected} onValueChange={setRateSelected}>
-              <SelectTrigger className="w-[100px]">
+              <SelectTrigger className="w-full sm:w-[100px]">
                 <SelectValue placeholder="Rate" />
               </SelectTrigger>
               <SelectContent>

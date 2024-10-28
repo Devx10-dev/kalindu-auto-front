@@ -68,99 +68,101 @@ export default function InvoiceTable({
 
   return (
     <Fragment>
-      <Table className="border rounded-md text-md mb-5 table-responsive">
-        <TableCaption>
-          {!err && isLoading ? (
-            <Skeleton className="w-full h-10" />
-          ) : (
-            <TablePagination
-              pageNo={pageNo + 1}
-              totalPages={invoices?.totalPages}
-              onPageChange={(page) => {
-                setPageNo(page - 1);
-                setQueryParam("pageNo", page - 1);
-              }}
-            />
-          )}
-        </TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Invoice No</TableHead>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Vehicle No</TableHead>
-            <TableHead>Invoice Date</TableHead>
-            <TableHead className="text-right">Total Amount</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        {isLoading ? (
-          <TableBodySkeleton cols={7} rows={10} noHeader={true} />
-        ) : invoices?.invoices.length === 0 ? (
-          <TableBody>
+      <div className="overflow-x-auto ">
+        <Table className="border rounded-md text-md mb-5 table-responsive">
+          <TableCaption>
+            {!err && isLoading ? (
+              <Skeleton className="w-full h-10" />
+            ) : (
+              <TablePagination
+                pageNo={pageNo + 1}
+                totalPages={invoices?.totalPages}
+                onPageChange={(page) => {
+                  setPageNo(page - 1);
+                  setQueryParam("pageNo", page - 1);
+                }}
+              />
+            )}
+          </TableCaption>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={6}>
-                <div className="flex items-center justify-center">
-                  <p className="text-red-500 text-lg font-semibold">
-                    No Invoices Found
-                  </p>
-                </div>
-              </TableCell>
+              <TableHead>Invoice No</TableHead>
+              <TableHead>Customer Name</TableHead>
+              <TableHead>Vehicle No</TableHead>
+              <TableHead>Invoice Date</TableHead>
+              <TableHead className="text-right">Total Amount</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
-          </TableBody>
-        ) : (
-          <TableBody>
-            {invoices?.invoices &&
-              err === null &&
-              invoices.invoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell>{invoice.invoiceId}</TableCell>
-                  <TableCell className="w-40 turncate">
-                    {invoice.customerName === null
-                      ? "N/A"
-                      : invoice.customerName}
-                  </TableCell>
-                  <TableCell>
-                    {invoice.vehicleNo
-                      ? invoice.vehicleNo.toUpperCase()
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    {dateArrayToString(invoice.issuedTime, false, true)}
-                  </TableCell>
-                  <TableCell align="right">
-                    {priceRender(
-                      "currencyAmount",
-                      currencyAmountString(invoice.totalPrice),
-                    )}
-                  </TableCell>
-                  <TableCell align="center">
-                    {/* make background greem intag */}
-                    <p
-                      className="p-badge"
-                      style={{
-                        background: "#198754",
-                      }}
-                    >
-                      COMPLETED
+          </TableHeader>
+          {isLoading ? (
+            <TableBodySkeleton cols={7} rows={10} noHeader={true} />
+          ) : invoices?.invoices.length === 0 ? (
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="flex items-center justify-center">
+                    <p className="text-red-500 text-lg font-semibold">
+                      No Invoices Found
                     </p>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-center">
-                      <Link
-                        to={`/dashboard/invoice/${type}/${invoice.invoiceId}`}
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          ) : (
+            <TableBody>
+              {invoices?.invoices &&
+                err === null &&
+                invoices.invoices.map((invoice) => (
+                  <TableRow key={invoice.id}>
+                    <TableCell>{invoice.invoiceId}</TableCell>
+                    <TableCell className="w-40 turncate">
+                      {invoice.customerName === null
+                        ? "N/A"
+                        : invoice.customerName}
+                    </TableCell>
+                    <TableCell>
+                      {invoice.vehicleNo
+                        ? invoice.vehicleNo.toUpperCase()
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {dateArrayToString(invoice.issuedTime, false, true)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {priceRender(
+                        "currencyAmount",
+                        currencyAmountString(invoice.totalPrice)
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      {/* make background greem intag */}
+                      <p
+                        className="p-badge"
+                        style={{
+                          background: "#198754",
+                        }}
                       >
-                        <Button variant="outline" className="mr-2">
-                          <OpenInNewWindowIcon className="h-5 w-5" /> View
-                        </Button>
-                      </Link>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        )}
-      </Table>
+                        COMPLETED
+                      </p>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-center">
+                        <Link
+                          to={`/dashboard/invoice/${type}/${invoice.invoiceId}`}
+                        >
+                          <Button variant="outline" className="mr-2">
+                            <OpenInNewWindowIcon className="h-5 w-5" /> View
+                          </Button>
+                        </Link>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          )}
+        </Table>
+      </div>
     </Fragment>
   );
 }

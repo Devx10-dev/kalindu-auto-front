@@ -173,7 +173,7 @@ function HandlingReturn() {
       items.forEach((item) => {
         if (item.outsourced) {
           const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
+            (outsourcedItem) => outsourcedItem.index === item.sparePartId
           )[0];
 
           if (
@@ -245,7 +245,7 @@ function HandlingReturn() {
     itemCode: string,
     quantity: number,
     price: number,
-    id: number,
+    id: number
   ) => {
     addReturnItem({ id: id, returnedQuantity: quantity });
     setReturnedQuantities((prev) => ({
@@ -258,7 +258,7 @@ function HandlingReturn() {
     const totalValue = Object.keys(returnedQuantities).reduce((acc, id) => {
       const quantity = returnedQuantities[id];
       const item = selectedInvoice?.items.find(
-        (item) => item.id === Number(id),
+        (item) => item.id === Number(id)
       );
       return acc + (item ? quantity * item.price : 0);
     }, 0);
@@ -300,13 +300,8 @@ function HandlingReturn() {
         </CardHeader>
 
         {/* main section */}
-        <CardContent
-          style={{
-            display: "flex",
-            gap: "10px",
-          }}
-        >
-          <div style={{ flex: 9 }}>
+        <CardContent className="flex flex-col lg:flex-row gap-4">
+          <div className="w-full lg:w-[75%]">
             <div
               style={{
                 padding: 15,
@@ -335,7 +330,7 @@ function HandlingReturn() {
               >
                 <div>
                   <div className="flex justify-between items-center">
-                    <TabsList className="grid w-[40%] grid-cols-2 bg-primary text-slate-50">
+                    <TabsList className="grid w-full sm:w-[40%] grid-cols-2 bg-primary text-slate-50">
                       <TabsTrigger value="returnItems">
                         Return Items
                       </TabsTrigger>
@@ -344,100 +339,112 @@ function HandlingReturn() {
                   </div>
                   {/* Return Item view section */}
                   <TabsContent value="returnItems">
-                    <Table className="border rounded-md text-md mt-6 mb-5 table-responsive">
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Spare Part</TableHead>
-                          <TableHead>Item Code</TableHead>
-                          <TableHead style={{ textAlign: "end" }}>
-                            Unit Price
-                          </TableHead>
-                          <TableHead style={{ textAlign: "end" }}>
-                            Quantity
-                          </TableHead>
-                          <TableHead style={{ textAlign: "end" }}>
-                            Available Qty
-                          </TableHead>
-                          <TableHead style={{ textAlign: "end" }}>
-                            Returned Qty
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {selectedInvoice ? (
-                          selectedInvoice?.items.map((item) => (
-                            <TableRow key={item.id}>
-                              <TableCell>{item.name}</TableCell>
-                              <TableCell>
-                                {item?.code.length === 0 ? "-" : item.code}
-                              </TableCell>
-                              <TableCell align="right">{item.price}</TableCell>
-                              <TableCell align="right">
-                                {item.quantity}
-                              </TableCell>
-                              <TableCell align="right">
-                                <AmountCard
-                                  amount={
-                                    item?.availableQuantity ?? item?.quantity
-                                  }
-                                  color={
-                                    item.availableQuantity === undefined ||
-                                    item.availableQuantity > 0
-                                      ? colors["number-green"]
-                                      : colors["number-red"]
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell align="right">
-                                <Input
-                                  id={"" + item.id}
-                                  type="number"
-                                  max={item.quantity}
-                                  min={0}
-                                  value={returnedQuantities[item.id]}
-                                  onChange={(e) => {
-                                    let enteredValue = e.target.value;
-                                    if (enteredValue === "") {
-                                      enteredValue = "";
-                                    } else {
-                                      // Parse the input value as an integer
-                                      enteredValue = parseInt(enteredValue, 10);
+                    <div className="overflow-x-auto">
+                      <Table className="border rounded-md text-md mt-6 mb-5 table-responsive">
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Spare Part</TableHead>
+                            <TableHead>Item Code</TableHead>
+                            <TableHead style={{ textAlign: "end" }}>
+                              Unit Price
+                            </TableHead>
+                            <TableHead style={{ textAlign: "end" }}>
+                              Quantity
+                            </TableHead>
+                            <TableHead style={{ textAlign: "end" }}>
+                              Available Qty
+                            </TableHead>
+                            <TableHead style={{ textAlign: "end" }}>
+                              Returned Qty
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {selectedInvoice ? (
+                            selectedInvoice?.items.map((item) => (
+                              <TableRow key={item.id}>
+                                <TableCell>{item.name}</TableCell>
+                                <TableCell>
+                                  {item?.code.length === 0 ? "-" : item.code}
+                                </TableCell>
+                                <TableCell align="right">
+                                  {item.price}
+                                </TableCell>
+                                <TableCell align="right">
+                                  {item.quantity}
+                                </TableCell>
+                                <TableCell align="right">
+                                  <AmountCard
+                                    amount={
+                                      item?.availableQuantity ?? item?.quantity
                                     }
-                                    if (enteredValue > item.availableQuantity) {
-                                      // Prevent the input from going beyond the max value
-                                      e.target.value = item.availableQuantity;
-                                    } else if (enteredValue >= 0) {
-                                      handleReturnedQuantityChange(
-                                        item.code,
-                                        enteredValue,
-                                        item.price,
-                                        item.id,
-                                      );
+                                    color={
+                                      item.availableQuantity === undefined ||
+                                      item.availableQuantity > 0
+                                        ? colors["number-green"]
+                                        : colors["number-red"]
                                     }
-                                  }}
-                                  step={1}
-                                  style={{
-                                    textAlign: "right",
-                                    maxWidth: "140px",
-                                  }}
-                                  placeholder="Enter return qty"
-                                  disabled={
-                                    item.availableQuantity !== undefined &&
-                                    item.availableQuantity === 0
-                                  }
-                                />
+                                  />
+                                </TableCell>
+                                <TableCell align="right">
+                                  <Input
+                                    id={"" + item.id}
+                                    type="number"
+                                    max={item.quantity}
+                                    min={0}
+                                    value={returnedQuantities[item.id]}
+                                    onChange={(e) => {
+                                      let enteredValue = e.target.value;
+                                      if (enteredValue === "") {
+                                        enteredValue = "";
+                                      } else {
+                                        // Parse the input value as an integer
+                                        enteredValue = parseInt(
+                                          enteredValue,
+                                          10
+                                        );
+                                      }
+                                      if (
+                                        enteredValue > item.availableQuantity
+                                      ) {
+                                        // Prevent the input from going beyond the max value
+                                        e.target.value = item.availableQuantity;
+                                      } else if (enteredValue >= 0) {
+                                        handleReturnedQuantityChange(
+                                          item.code,
+                                          enteredValue,
+                                          item.price,
+                                          item.id
+                                        );
+                                      }
+                                    }}
+                                    step={1}
+                                    style={{
+                                      textAlign: "right",
+                                      maxWidth: "140px",
+                                    }}
+                                    placeholder="Enter return qty"
+                                    disabled={
+                                      item.availableQuantity !== undefined &&
+                                      item.availableQuantity === 0
+                                    }
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell
+                                colSpan={6}
+                                className="text-center py-4"
+                              >
+                                Please select the invoice first.
                               </TableCell>
                             </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <TableCell colSpan={6} className="text-center py-4">
-                              Please select the invoice first.
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </TabsContent>
 
                   {/* New invoice section */}
@@ -452,7 +459,7 @@ function HandlingReturn() {
             </div>
           </div>
 
-          <div style={{ flex: 3 }}>
+          <div className="w-full lg:w-[25%]">
             <Summary
               creditorSelectKey={creditorSelectKey}
               setCreditorSelectKey={setCreditorSelectKey}

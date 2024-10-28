@@ -67,7 +67,7 @@ const UsersTable = ({ userService }: { userService: UserService }) => {
     setShow(true);
     setTitle(`${user.active ? "Deactivate" : "Activate"} User! `);
     setDescription(
-      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`,
+      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`
     );
 
     setUser(user);
@@ -121,80 +121,82 @@ const UsersTable = ({ userService }: { userService: UserService }) => {
         {/* {isLoading ? (
           <SkeletonGrid noOfColumns={7} noOfItems={10} />
         ) : ( */}
-        <Table className="border rounded-md text-md mb-5">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Username</TableHead>
-              <TableHead>Full Name</TableHead>
-              <TableHead>Designation</TableHead>
-              <TableHead>Mobile No</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Active</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          {isLoading ? (
-            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
-            <TableBodySkeleton cols={7} rows={10} noHeader={true} />
-          ) : (
-            <TableBody>
-              {users &&
-                users.users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">
-                      {user.username}
-                    </TableCell>
-                    <TableCell>{user.fullName}</TableCell>
-                    <TableCell>{user.designation}</TableCell>
-                    <TableCell>{user.mobileNo}</TableCell>
-                    <TableCell>{user.email ?? "-"}</TableCell>
-                    <TableCell>{user.address ?? "-"}</TableCell>
-                    <TableCell>
-                      {user.active ? (
-                        <Badge variant="outline">Active</Badge>
-                      ) : (
-                        <Badge variant="outline">Inactive</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="d-flex">
-                        <IconButton
-                          handleOnClick={() => handleEdit(user)}
-                          icon={<EditIcon height="20" width="20" />}
-                          tooltipMsg="Edit User"
-                          variant="ghost"
-                        />
+        <div className="overflow-x-auto ">
+          <Table className="border rounded-md text-md mb-5">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Username</TableHead>
+                <TableHead>Full Name</TableHead>
+                <TableHead>Designation</TableHead>
+                <TableHead>Mobile No</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Active</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            {isLoading ? (
+              // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+              <TableBodySkeleton cols={7} rows={10} noHeader={true} />
+            ) : (
+              <TableBody>
+                {users &&
+                  users.users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">
+                        {user.username}
+                      </TableCell>
+                      <TableCell>{user.fullName}</TableCell>
+                      <TableCell>{user.designation}</TableCell>
+                      <TableCell>{user.mobileNo}</TableCell>
+                      <TableCell>{user.email ?? "-"}</TableCell>
+                      <TableCell>{user.address ?? "-"}</TableCell>
+                      <TableCell>
                         {user.active ? (
-                          <IconButton
-                            handleOnClick={() => handleActiveOrInactive(user)}
-                            icon={<LockIcon height="20" width="20" />}
-                            tooltipMsg="Deactivate User"
-                            variant="ghost"
-                          />
+                          <Badge variant="outline">Active</Badge>
                         ) : (
+                          <Badge variant="outline">Inactive</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="d-flex">
                           <IconButton
-                            handleOnClick={() => handleActiveOrInactive(user)}
-                            icon={<UnlockIcon height="20" width="20" />}
-                            tooltipMsg="Activate User"
+                            handleOnClick={() => handleEdit(user)}
+                            icon={<EditIcon height="20" width="20" />}
+                            tooltipMsg="Edit User"
                             variant="ghost"
                           />
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          )}
-          <TableCaption>
-            <TablePagination
-              pageNo={pageNo + 1}
-              totalPages={totalPages}
-              onPageChange={(page) => {
-                setPageNo(page - 1);
-              }}
-            />
-          </TableCaption>
-        </Table>
+                          {user.active ? (
+                            <IconButton
+                              handleOnClick={() => handleActiveOrInactive(user)}
+                              icon={<LockIcon height="20" width="20" />}
+                              tooltipMsg="Deactivate User"
+                              variant="ghost"
+                            />
+                          ) : (
+                            <IconButton
+                              handleOnClick={() => handleActiveOrInactive(user)}
+                              icon={<UnlockIcon height="20" width="20" />}
+                              tooltipMsg="Activate User"
+                              variant="ghost"
+                            />
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            )}
+            <TableCaption>
+              <TablePagination
+                pageNo={pageNo + 1}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setPageNo(page - 1);
+                }}
+              />
+            </TableCaption>
+          </Table>
+        </div>
         {/* )} */}
         <ConfirmationModal
           onClose={() => setShow(false)}

@@ -47,7 +47,7 @@ export default function SparePartGrid({
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
-    null,
+    null
   );
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,7 +70,7 @@ export default function SparePartGrid({
         pageNo,
         pageSize,
         selectedChassisNo,
-        debouncedSearch,
+        debouncedSearch
       ),
     retry: 2,
   });
@@ -80,7 +80,7 @@ export default function SparePartGrid({
   }, [state]);
 
   const [viewSpareParts, setViewSpareParts] = useState<SparePartItem[]>(
-    spareParts?.spareParts ?? [],
+    spareParts?.spareParts ?? []
   );
 
   useEffect(() => {
@@ -187,7 +187,7 @@ export default function SparePartGrid({
                         >
                           {chassisNo.chassisNo}
                         </SelectItem>
-                      ),
+                      )
                     )}
                 </SelectContent>
               </Select>
@@ -200,59 +200,60 @@ export default function SparePartGrid({
             </Button>
           </div>
         </div>
+        <div className="overflow-x-auto ">
+          <Table className="border rounded-md text-md mb-5 table-responsive">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Spare Part</TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead>Chassis No</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Remark</TableHead>
+                <TableHead className="text-center">Action</TableHead>
+              </TableRow>
+            </TableHeader>
 
-        <Table className="border rounded-md text-md mb-5 table-responsive">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Spare Part</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>Chassis No</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Remark</TableHead>
-              <TableHead className="text-center">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          {isLoading ? (
-            // <SkeletonGrid noOfColumns={6} noOfItems={10} />
-            <TableBodySkeleton cols={6} rows={10} noHeader={true} />
-          ) : (
-            <TableBody>
-              {viewSpareParts &&
-                viewSpareParts.map((sparePart) => (
-                  <TableRow key={sparePart.id}>
-                    <TableCell className="font-medium">
-                      {capitalize(sparePart.partName)}
-                    </TableCell>
-                    <TableCell>{sparePart.code ?? "-"}</TableCell>
-                    <TableCell>{sparePart.chassisNo}</TableCell>
-                    <TableCell>{sparePart.quantity}</TableCell>
-                    <TableCell>
-                      {truncate(sparePart.description ?? "", 30) ?? "-"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-center">
-                        <IconButton
-                          icon={<EditIcon height="20" width="20" />}
-                          tooltipMsg="Edit Spare Part"
-                          handleOnClick={() => handleEditClick(sparePart)}
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          )}
-          <TableCaption>
-            <TablePagination
-              pageNo={pageNo + 1}
-              totalPages={totalPages}
-              onPageChange={(page) => {
-                setPageNo(page - 1);
-              }}
-            />
-          </TableCaption>
-        </Table>
+            {isLoading ? (
+              // <SkeletonGrid noOfColumns={6} noOfItems={10} />
+              <TableBodySkeleton cols={6} rows={10} noHeader={true} />
+            ) : (
+              <TableBody>
+                {viewSpareParts &&
+                  viewSpareParts.map((sparePart) => (
+                    <TableRow key={sparePart.id}>
+                      <TableCell className="font-medium">
+                        {capitalize(sparePart.partName)}
+                      </TableCell>
+                      <TableCell>{sparePart.code ?? "-"}</TableCell>
+                      <TableCell>{sparePart.chassisNo}</TableCell>
+                      <TableCell>{sparePart.quantity}</TableCell>
+                      <TableCell>
+                        {truncate(sparePart.description ?? "", 30) ?? "-"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-center">
+                          <IconButton
+                            icon={<EditIcon height="20" width="20" />}
+                            tooltipMsg="Edit Spare Part"
+                            handleOnClick={() => handleEditClick(sparePart)}
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            )}
+            <TableCaption>
+              <TablePagination
+                pageNo={pageNo + 1}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setPageNo(page - 1);
+                }}
+              />
+            </TableCaption>
+          </Table>
+        </div>
       </>
     </Fragment>
   );

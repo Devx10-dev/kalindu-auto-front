@@ -50,7 +50,7 @@ import QuickSearch from "./components/QuickSearch";
 export function MainDashboard() {
   return (
     <Fragment>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         {/* <h1 className="text-2xl font-semibold">View Invoices</h1> */}
         <CardHeader>
           <PageHeader
@@ -68,9 +68,10 @@ export function MainDashboard() {
           <Clock />
         </div>
       </div>
-      <div className="flex justify-between items-top gap-5 ">
-        <div className="flex flex-col lg:w-[50%] md:w-full h-auto mb-5 gap-5">
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2  h-fit">
+      <div className="flex flex-col lg:flex-row gap-5">
+        <div className="w-full lg:w-1/2 flex flex-col gap-5">
+          {/* Quick Access Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <QuickAccessCard
               title="Cash Invoice"
               description="Quick Access to Cash Invoice Creation"
@@ -100,9 +101,11 @@ export function MainDashboard() {
               // bgImage="/path-to-your-background-image.jpg" // Optional
             />
           </div>
-          <QuickSearch />
+          <div className="hidden md:block">
+            <QuickSearch />
+          </div>
         </div>
-        <div className="lg:w-[50%] md:w-full h-auto mb-5">
+        <div className="w-full lg:w-1/2 flex flex-col gap-4">
           <CreditorStatPieChart />
           <CreditorCard className="max-h-[400px] mt-4 mb-5" />
         </div>

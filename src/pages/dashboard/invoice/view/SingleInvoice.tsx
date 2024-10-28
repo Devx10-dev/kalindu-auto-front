@@ -30,7 +30,7 @@ function SingleInvoice() {
   const queryClient = useQueryClient();
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
-    null,
+    null
   );
   const [isAvailableInStore, setIsAvailableInStore] = useState<boolean>(true);
 
@@ -76,128 +76,118 @@ function SingleInvoice() {
   useEffect(() => {}, [cashInvoicesStore]);
 
   return (
-    <Fragment>
-      <div className="ml-2">
-        <div className="flex justify-between items-center">
-          <CardHeader>
-            <PageHeader
-              title={`Invoice No: ${invoiceDetails?.invoiceId}`}
-              description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
-              icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
-              badge={
-                <Badge className="bg-green-200 text-black rounded-md">
-                  Cash Invoice
-                </Badge>
-              }
-            />
-          </CardHeader>
-          <div className="text-left pr-6 rounded-md color-slate-900">
-            <StatusCard
-              icon={<CheckCircle size={30} color="green" />}
-              status="Completed"
-              statusColor="red"
-              statusText="This invoice has been completed"
-              type={"Cash"}
-            />
-          </div>
+    <div className="p-2 md:p-4 max-w-[100vw] overflow-x-hidden">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <CardHeader className="p-0 md:p-4">
+          <PageHeader
+            title={`Invoice No: ${invoiceDetails?.invoiceId}`}
+            description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
+            icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
+            badge={
+              <Badge className="bg-green-200 text-black rounded-md">
+                Cash Invoice
+              </Badge>
+            }
+          />
+        </CardHeader>
+        <div className="w-full md:w-auto">
+          <StatusCard
+            icon={<CheckCircle size={30} color="green" />}
+            status="Completed"
+            statusColor="red"
+            statusText="This invoice has been completed"
+            type="Cash"
+          />
         </div>
-        <CardContent
-          style={{
-            display: "flex",
-            gap: "10px",
-          }}
-        >
-          <div style={{ flex: 9 }}>
-            <div
-              style={{
-                boxShadow:
-                  "rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px",
-                borderRadius: 5,
-              }}
-              className="p-6 "
-            >
-              <div className="flex justify-between gap-5 mb-10">
-                <div className="flex flex-col gap-2 flex-grow">
-                  <h4 className="scroll-m-20 text-l font-semibold tracking-tight">
-                    Customer Name:
-                  </h4>
-                  <p className="text-xl font-semibold text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md border border-slate-200">
-                    {invoiceDetails?.customerName}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 flex-grow">
-                  <h4 className="scroll-m-20 text-l font-semibold tracking-tight">
-                    Vehicle No:
-                  </h4>
-                  <p className="text-xl font-semibold text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md border border-slate-200">
-                    {invoiceDetails?.vehicleNo
-                      ? invoiceDetails?.vehicleNo.toUpperCase()
-                      : "N/A"}
-                  </p>
-                </div>
-              </div>
+      </div>
 
+      {/* Main Content */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        {/* Left Column */}
+        <div className="w-full lg:w-[70%]">
+          {/* Customer Info Card */}
+          <div className="bg-white rounded-lg p-4 shadow-md mb-4">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <div className="flex-1">
+                <h4 className="text-sm font-semibold mb-2">Customer Name:</h4>
+                <p className="text-lg font-semibold p-3 border rounded-md">
+                  {invoiceDetails?.customerName}
+                </p>
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-semibold mb-2">Vehicle No:</h4>
+                <p className="text-lg font-semibold p-3 border rounded-md">
+                  {invoiceDetails?.vehicleNo
+                    ? invoiceDetails?.vehicleNo.toUpperCase()
+                    : "N/A"}
+                </p>
+              </div>
+            </div>
+            <div className="overflow-x-auto ">
               <InvoiceItemsGrid
                 invoiceDetails={invoiceDetails}
                 invoiceLoading={invoiceLoading}
               />
             </div>
-            <div>
-              <Card className="mt-4 ">
-                <CardHeader className="pb-0">
-                  <CardTitle>Outsourced Items</CardTitle>
-                  <CardDescription>
-                    This section contains all the outsourced items
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pl-6 pr-6 pt-6 pb-6 shadow-sm">
-                  <div>
-                    <OutsourceItemsGrid
-                      invoiceDetails={invoiceDetails}
-                      invoiceLoading={invoiceLoading}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            <div>
-              <Card className="mt-4 ">
-                <CardHeader className="pb-0">
-                  <CardTitle>CommissionDetails</CardTitle>
-                  <CardDescription>
-                    This section contains all the commission details
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pl-6 pr-6 pt-6 pb-6 shadow-sm">
-                  <div>
-                    <CommissionDetailsGrid
-                      invoiceDetails={invoiceDetails}
-                      invoiceLoading={invoiceLoading}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </div>
-          <div style={{ flex: 3 }}>
-            <BillSummaryViewCard
-              total={invoiceDetails?.totalPrice}
-              vatPercentage={
-                (invoiceDetails?.vat * 100) /
-                (invoiceDetails?.totalPrice - invoiceDetails?.totalDiscount)
-              }
-              discountPercentage={invoiceDetails?.discount}
-              discountAmount={invoiceDetails?.totalDiscount}
-            />
-            <TransactionDrawer
-              invoiceDetails={invoiceDetails}
-              invoiceLoading={invoiceLoading}
-              nonIcon={true}
-            />
-          </div>
-        </CardContent>
+
+          {/* Outsourced Items Card */}
+          <Card className="mb-4">
+            <CardHeader className="p-4">
+              <CardTitle>Outsourced Items</CardTitle>
+              <CardDescription>
+                This section contains all the outsourced items
+              </CardDescription>
+            </CardHeader>
+            <div className="overflow-x-auto ">
+              <CardContent className="p-4">
+                <OutsourceItemsGrid
+                  invoiceDetails={invoiceDetails}
+                  invoiceLoading={invoiceLoading}
+                />
+              </CardContent>
+            </div>
+          </Card>
+
+          {/* Commission Details Card */}
+          <Card>
+            <CardHeader className="p-4">
+              <CardTitle>Commission Details</CardTitle>
+              <CardDescription>
+                This section contains all the commission details
+              </CardDescription>
+            </CardHeader>
+            <div className="overflow-x-auto ">
+              <CardContent className="p-4">
+                <CommissionDetailsGrid
+                  invoiceDetails={invoiceDetails}
+                  invoiceLoading={invoiceLoading}
+                />
+              </CardContent>
+            </div>
+          </Card>
+        </div>
+
+        {/* Right Column */}
+        <div className="w-full lg:w-[30%] space-y-4">
+          <BillSummaryViewCard
+            total={invoiceDetails?.totalPrice}
+            vatPercentage={
+              (invoiceDetails?.vat * 100) /
+              (invoiceDetails?.totalPrice - invoiceDetails?.totalDiscount)
+            }
+            discountPercentage={invoiceDetails?.discount}
+            discountAmount={invoiceDetails?.totalDiscount}
+          />
+          <TransactionDrawer
+            invoiceDetails={invoiceDetails}
+            invoiceLoading={invoiceLoading}
+            nonIcon={true}
+          />
+        </div>
       </div>
-    </Fragment>
+    </div>
   );
 }
 

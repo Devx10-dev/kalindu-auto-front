@@ -58,17 +58,8 @@ const CreditorInvoiceBase: React.FC = () => {
           icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
         />
       </CardHeader>
-      <CardContent
-        style={{
-          display: "flex",
-          gap: "10px",
-        }}
-      >
-        <div
-          style={{
-            flex: 9,
-          }}
-        >
+      <CardContent className="flex flex-col md:flex-row gap-4">
+        <div className="flex-1 w-full">
           {/* Add creditor data section */}
           <section className="flex flex-col ">
             <RequiredLabel label="Creditor" />
@@ -104,11 +95,7 @@ const CreditorInvoiceBase: React.FC = () => {
           {hasOutsourcedItems && <OutsourcedItemDetails />}
           <Commissions />
         </div>
-        <div
-          style={{
-            flex: 3,
-          }}
-        >
+        <div className="flex-1 md:flex-none md:w-1/4 w-full">
           <BillSummary />
         </div>
       </CardContent>
