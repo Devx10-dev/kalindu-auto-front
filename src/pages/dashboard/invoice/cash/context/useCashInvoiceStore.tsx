@@ -31,7 +31,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.filter(
-        (item) => item !== itemToRemove,
+        (item) => item !== itemToRemove
       ),
     })),
 
@@ -39,7 +39,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item.name === updateItem.name ? updateItem : item,
+        item.name === updateItem.name ? updateItem : item
       ),
     })),
 
@@ -59,13 +59,13 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
     set((state) => ({
       ...state,
       invoiceItemDTOList: state.invoiceItemDTOList.map((item) =>
-        item === itemOutsourced ? { ...item, outsourced: status } : item,
+        item === itemOutsourced ? { ...item, outsourced: status } : item
       ),
     })),
 
   setOutsourcedCompanyName: (
     itemOutsourced: InvoiceItem,
-    companyName: string,
+    companyName: string
   ) =>
     set((state) => ({
       ...state,
@@ -78,13 +78,13 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
                 companyName: companyName,
               },
             }
-          : item,
+          : item
       ),
     })),
 
   setOutsourcedBuyingPrice: (
     itemOutsourced: InvoiceItem,
-    buyingPrice: number,
+    buyingPrice: number
   ) =>
     set((state) => ({
       ...state,
@@ -97,7 +97,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
                 buyingPrice: buyingPrice,
               },
             }
-          : item,
+          : item
       ),
     })),
 
@@ -166,14 +166,11 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Month (0-indexed, so +1)
       const day = now.getDate().toString().padStart(2, "0"); // Day of the month
 
-      // Generate a unique 4-digit number based on time
       const hours = now.getHours().toString().padStart(2, "0");
       const minutes = now.getMinutes().toString().padStart(2, "0");
-      const uniqueNumber = (parseInt(hours + minutes, 10) % 10000)
-        .toString()
-        .padStart(4, "0");
+      const seconds = now.getSeconds().toString().padStart(2, "0");
 
-      return `INV-CASH-${year}${month}${day}${uniqueNumber}`;
+      return `INV-CASH-${year}${month}${day}${hours}${minutes}${seconds}`;
     };
 
     const invoiceId = generateInvoiceId();

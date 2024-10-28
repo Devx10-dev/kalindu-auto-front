@@ -136,7 +136,7 @@ const InvoiceTable: React.FC<{
 
   return (
     <div>
-      <div className="overflow-x-auto ">
+      <div className="no-scrollbar">
         <Table className="border rounded-md text-md mb-5 mt-5 overflow-x-auto">
           <TableBody>
             <TableRow>

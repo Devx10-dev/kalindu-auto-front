@@ -42,6 +42,16 @@
   color: red;
 }
 
+.no-scrollbar {
+  overflow-x: auto;
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; 
+}
+
 .color-gray {
   color: rgb(97, 96, 96);
 }
