@@ -694,7 +694,7 @@ const ViewCreditor = () => {
                               currencyAmountString(invoice.settledAmount || 0)
                             )}
                           </TableCell>
-                          <TableCell align="right">
+                          {/* <TableCell align="right">
                             {priceRender(
                               "currencyAmount",
                               currencyAmountString(invoice.pendingPayment || 0)
@@ -703,6 +703,7 @@ const ViewCreditor = () => {
                           <TableCell className="text-center">
                             <InvoiceStatusBadge invoice={invoice} />
                           </TableCell>
+                             </TableCell> */}
                           <TableCell align="center">
                             <Link
                               to={`/dashboard/invoice/creditor/${invoice.invoiceId}`}

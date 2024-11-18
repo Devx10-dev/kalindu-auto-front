@@ -100,4 +100,5 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: ["bg-blue-500", "bg-gray-500"],
 };

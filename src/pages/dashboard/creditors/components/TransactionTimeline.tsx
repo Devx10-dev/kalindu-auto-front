@@ -27,6 +27,7 @@ import {
   Newspaper,
   PenBox,
   TriangleAlert,
+  Undo2,
 } from "lucide-react";
 import TimeLineComponent from "./TimeLineCompoent";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,14 +75,21 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
       return (
         <TimeLineComponent
           title={
-            <div className="flex-col gap-2 w-fit">
-              <p className="text-gray-700 dark:text-white">
-                {dateArrayToString(transaction.createdDate, false, true)}
-              </p>
-              <div className="flex gap-2 ">
-                {/* <p className="text-gray-1000 dark:text-white">Cash Payment</p> */}
-                <Badge className="text-xs bg-green-700 dark:bg-green-700 text-green-100 dark:text-green-300 rounded-sm">
-                  Cash Payment
+            <div className="flex justify-between items-flex-start w-full">
+              <div className="flex-col gap-2 w-fit">
+                <p className="text-gray-700 dark:text-white">
+                  {dateArrayToString(transaction.createdDate, false, true)}
+                </p>
+                <div className="flex gap-2 ">
+                  {/* <p className="text-gray-1000 dark:text-white">Cash Payment</p> */}
+                  <Badge className="text-xs bg-green-700 dark:bg-green-700 text-green-100 dark:text-green-300 rounded-sm">
+                    Cash Payment
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <Badge variant="outline">
+                  #{transaction.creditorTransactionID}
                 </Badge>
               </div>
             </div>
@@ -102,16 +110,23 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
       return (
         <TimeLineComponent
           title={
-            <div className="flex-col gap-2 w-fit">
-              <p className="text-gray-700 dark:text-white">
-                {dateArrayToString(transaction.createdDate, false, true)}
-              </p>
-              <div className="flex gap-1 ">
-                {/* <p className="text-gray-1000 dark:text-white">Cheque Payment</p> */}
-                <Badge className="text-xs bg-gray-600 dark:bg-gray-900 text-gray-100 dark:text-gray-300 rounded-sm">
-                  Cheque Payment
+            <div className="flex justify-between items-flex-start w-full">
+              <div className="flex-col gap-2 w-fit">
+                <p className="text-gray-700 dark:text-white">
+                  {dateArrayToString(transaction.createdDate, false, true)}
+                </p>
+                <div className="flex gap-1 ">
+                  {/* <p className="text-gray-1000 dark:text-white">Cheque Payment</p> */}
+                  <Badge className="text-xs bg-gray-600 dark:bg-gray-900 text-gray-100 dark:text-gray-300 rounded-sm">
+                    Cheque Payment
+                  </Badge>
+                  <ChequeStatusBadge cheque={transaction.cheque} />
+                </div>
+              </div>
+              <div>
+                <Badge variant="outline">
+                  #{transaction.creditorTransactionID}
                 </Badge>
-                <ChequeStatusBadge cheque={transaction.cheque} />
               </div>
             </div>
           }
@@ -126,7 +141,7 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
                     transaction.cheque.chequeNo
                   ) : (
                     <Badge className="text-xs rounded-sm" variant="destructive">
-                      Missing
+                      N/A
                     </Badge>
                   )}
                 </p>
@@ -144,14 +159,21 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
       return (
         <TimeLineComponent
           title={
-            <div className="flex-col gap-2 w-fit">
-              <p className="text-gray-700 dark:text-white">
-                {dateArrayToString(transaction.createdDate, false, true)}
-              </p>
-              <div className="flex gap-2 ">
-                {/* <p className="text-gray-1000 dark:text-white">Bank Deposit</p> */}
-                <Badge className="text-xs bg-blue-700 dark:bg-blue-900 text-blue-100 dark:text-blue-300 rounded-sm">
-                  Bank Deposit
+            <div className="flex justify-between items-flex-start w-full">
+              <div className="flex-col gap-2 w-fit">
+                <p className="text-gray-700 dark:text-white">
+                  {dateArrayToString(transaction.createdDate, false, true)}
+                </p>
+                <div className="flex gap-2 ">
+                  {/* <p className="text-gray-1000 dark:text-white">Bank Deposit</p> */}
+                  <Badge className="text-xs bg-blue-700 dark:bg-blue-900 text-blue-100 dark:text-blue-300 rounded-sm">
+                    Bank Deposit
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <Badge variant="outline">
+                  #{transaction.creditorTransactionID}
                 </Badge>
               </div>
             </div>
@@ -160,6 +182,40 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
             <Landmark className="w-4 h-4 text-blue-600 dark:text-blue-300" />
           }
           body={<TransactionInvoiceCard transaction={transaction} />}
+        />
+      );
+    case "RETURN":
+      return (
+        <TimeLineComponent
+          title={
+            <div className="flex justify-between items-flex-start w-full">
+              <div className="flex-col gap-2 w-fit">
+                <p className="text-gray-700 dark:text-white">
+                  {dateArrayToString(transaction.createdDate, false, true)}
+                </p>
+                <div className="flex gap-1 ">
+                  {/* <p className="text-gray-1000 dark:text-white">Bank Deposit</p> */}
+                  <Badge className="text-xs bg-red-700 dark:bg-red-900 text-red-100 dark:text-red-300 rounded-sm">
+                    Return
+                  </Badge>
+                  {transaction.transactionInvoices?.length > 0 &&
+                    transaction.transactionInvoices.map((invoice: any) => (
+                      <Badge className="text-xs bg-red-200 dark:bg-red-900 text-black dark:text-black rounded-sm">
+                        {invoice.creditorInvoice.invoiceId}
+                      </Badge>
+                    ))}
+                </div>
+              </div>
+              <div>
+                <Badge variant="outline">
+                  #{transaction.creditorTransactionID}
+                </Badge>
+              </div>
+            </div>
+          }
+          icon={<Undo2 className="w-4 h-4 text-red-600 dark:text-red-300" />}
+          body={<TransactionInvoiceCard transaction={transaction} />}
+          iconColor="bg-red-100 text-red-800"
         />
       );
   }
@@ -182,25 +238,37 @@ function TransactionInvoiceCard({ transaction }: { transaction: any }) {
       </div>
       <CardContent className="p-2">
         {transaction.transactionInvoices &&
-        transaction.transactionInvoices.length > 0 ? (
-          transaction.transactionInvoices.map((invoice: any) => (
-            <div className="flex items-center justify-between">
-              <Link
-                to={`/dashboard/invoice/creditor/${invoice.creditorInvoice.invoiceId}`}
-              >
-                <p className="text-xs">{invoice.creditorInvoice.invoiceId}</p>
-              </Link>
-              <PriceComponent
-                content={currencyAmountString(invoice.settledAmount)}
-                contentType="currencyAmount"
-                bold={false}
-              />
-            </div>
-          ))
-        ) : (
-          <div className="flex items-center justify-center gap-2">
-            <TriangleAlert className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            <p className="text-xs">No invoice records found</p>
+        transaction.transactionInvoices.length > 0
+          ? transaction.transactionInvoices.map((invoice: any) => (
+              <div className="flex items-center justify-between">
+                <Link
+                  to={`/dashboard/invoice/creditor/${invoice.creditorInvoice.invoiceId}`}
+                >
+                  <p className="text-xs">{invoice.creditorInvoice.invoiceId}</p>
+                </Link>
+                <PriceComponent
+                  content={currencyAmountString(invoice.settledAmount)}
+                  contentType="currencyAmount"
+                  bold={false}
+                />
+              </div>
+            ))
+          : transaction.creditorRefund == null && (
+              <div className="flex items-center justify-center gap-2">
+                <TriangleAlert className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <p className="text-xs">No invoice records found</p>
+              </div>
+            )}
+        {/* <Separator className="w-full my-2" /> */}
+        {transaction.creditorRefund && (
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-xs">REFUNDS</p>
+            <PriceComponent
+              content={currencyAmountString(
+                transaction.creditorRefund.refundAmount,
+              )}
+              contentType="currencyAmount"
+            />
           </div>
         )}
       </CardContent>
