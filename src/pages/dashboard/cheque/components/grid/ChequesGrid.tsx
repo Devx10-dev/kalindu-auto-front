@@ -328,7 +328,7 @@ function ChequesGrid({
                         {
                           <ChequeStatusBadge
                             cheque={cheque}
-                            redeemStatus={true}
+                            // redeemStatus={true}
                           />
                         }
                       </TableCell>
