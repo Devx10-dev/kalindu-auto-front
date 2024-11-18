@@ -5,10 +5,10 @@ import { useEffect } from "react";
 
 function ChequeStatusBadge({
   cheque,
-  redeemStatus = false,
+  // redeemStatus = false,
 }: {
   cheque: Cheque;
-  redeemStatus?: boolean;
+  // redeemStatus?: boolean;
 }) {
   const status = cheque.status;
   let background = "";
@@ -20,8 +20,8 @@ function ChequeStatusBadge({
       statusText = "Settled";
       break;
     case "REDEEMED":
-      background = redeemStatus ? "gray" : "green";
-      statusText = redeemStatus ? "Redeemed" : "Settled";
+      background = "gray";
+      statusText = "Redeemed";
       break;
     case "PENDING":
       background = "yellow";
@@ -34,9 +34,9 @@ function ChequeStatusBadge({
   }
 
   return (
-    <div className="flex w-fit h-fit justify-center items-center">
+    <div className="flex w-fit h-fit justify-center items-center ">
       <Badge
-        className={`text-xs bg-${background}-500 dark:bg-${background}-900 text-white dark:text-${background}-300 rounded-sm`}
+        className={`text-xs bg-${background}-500  dark:bg-${background}-900 text-white dark:text-${background}-300 rounded-sm`}
       >
         {statusText}
       </Badge>

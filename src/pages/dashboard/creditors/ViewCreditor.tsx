@@ -300,7 +300,7 @@ const ViewCreditor = () => {
                       <TableHead>Due Date</TableHead>
                       <TableHead className="text-right">Total Amount</TableHead>
                       <TableHead className="text-right">Settled</TableHead>
-                      <TableHead className="text-right">Pending</TableHead>
+                      {/* <TableHead className="text-right">Pending</TableHead> */}
                       <TableHead className="text-center">Status</TableHead>
                       <TableHead className="text-center">Action</TableHead>
                     </TableRow>
@@ -343,7 +343,7 @@ const ViewCreditor = () => {
                                 )
                               : priceRender("currencyAmount", "Rs. 0.00")}
                           </TableCell>
-                          <TableCell align="right">
+                          {/* <TableCell align="right">
                             {priceRender(
                               "currencyAmount",
                               currencyAmountString(
@@ -352,7 +352,7 @@ const ViewCreditor = () => {
                                   : 0,
                               ),
                             )}
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell className="text-center items-center justify-center h-full">
                             {invoice ? (
                               <InvoiceStatusBadge invoice={invoice} />
