@@ -34,6 +34,7 @@ import { z } from "zod";
 import Select from "react-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRef } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 function SaleOrExpenseForm({
   onClose,
@@ -299,8 +300,13 @@ function SaleOrExpenseForm({
               ref={(el) => (inputRefs.current[5] = el)}
               onClick={form.handleSubmit(handleSubmit)}
               className="mr-2"
+              disabled={createSaleOrExpenseMutation.isPending}
             >
-              Save
+              
+              {createSaleOrExpenseMutation.isPending && (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              )}
+              {createSaleOrExpenseMutation.isPending ? "Saving..." : "Save"}
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>
               Reset

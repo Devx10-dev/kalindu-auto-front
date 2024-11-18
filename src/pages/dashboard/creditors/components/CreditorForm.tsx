@@ -30,6 +30,7 @@ import CreditorAPI from "../api/CreditorAPI";
 import { creditorFormSchema } from "./formScheme";
 import { RequiredLabel } from "@/components/formElements/FormLabel";
 import { useRef } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export function RegisterForm(props: {
@@ -169,9 +170,9 @@ export function RegisterForm(props: {
     return modifiedFields;
   }
 
-  if (createCreditorMutation.isPending || updateCreditorMutation.isPending) {
-    return <FormSkeleton />;
-  }
+  // if (createCreditorMutation.isPending || updateCreditorMutation.isPending) {
+  //   return <FormSkeleton />;
+  // }
 
   return (
     <Form {...form}>
@@ -367,8 +368,19 @@ export function RegisterForm(props: {
 
         {props.isEditMode != true && (
           <>
-            <Button type="submit" className="mr-5 w-40">
-              Register Creditor
+            <Button
+              type="submit"
+              className="mr-5 w-40"
+              disabled={createCreditorMutation.isPending}
+            >
+              {createCreditorMutation.isPending ||
+              updateCreditorMutation.isPending ? (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              ) : null}
+              {createCreditorMutation.isPending ||
+              updateCreditorMutation.isPending
+                ? "Saving..."
+                : " Register Creditor"}
             </Button>
             <Button
               onClick={() => form.reset(defaultValues)}

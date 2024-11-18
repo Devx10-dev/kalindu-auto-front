@@ -107,93 +107,92 @@ export function CreditorStatPieChart() {
   }, [data]);
 
   return (
-    <Card className="flex flex-col h-200 w-full px-0">
-      <CardContent className="flex pb-0 px-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-0 aspect-square max-h-[150px] min-w-[150px]"
-        >
-          {isLoading ? (
-            <div className="h-[150px] w-[150px] flex items-center justify-center">
-              <Skeleton className="h-[110px] w-[110px] rounded-full" />
-            </div>
-          ) : (
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Pie
-                data={chartData}
-                dataKey="creditors"
-                nameKey="status"
-                innerRadius={35}
-                outerRadius={50}
-                strokeWidth={5}
-              >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                        >
-                          <tspan
+    <Card className="w-full">
+      <CardContent className="flex flex-col md:flex-row p-4 gap-6">
+        <div className="flex justify-center md:justify-start w-full md:w-auto">
+          <ChartContainer
+            config={chartConfig}
+            className="w-[200px] md:w-[150px] aspect-square"
+          >
+            {isLoading ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <Skeleton className="h-[110px] w-[110px] rounded-full" />
+              </div>
+            ) : (
+              <PieChart width={200} height={200}>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={chartData}
+                  dataKey="creditors"
+                  nameKey="status"
+                  innerRadius="40%"
+                  outerRadius="60%"
+                  strokeWidth={5}
+                >
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text
                             x={viewBox.cx}
                             y={viewBox.cy}
-                            className="fill-foreground text-2xl font-bold"
+                            textAnchor="middle"
+                            dominantBaseline="middle"
                           >
-                            {totalCreditors.toLocaleString()}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 24}
-                            className="fill-muted-foreground"
-                          >
-                            Creditors
-                          </tspan>
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
-          )}
-        </ChartContainer>
-        <div className="grid grid-cols-2 grid-rows-2 p-4 gap-x-5 w-full">
-          <div className="flex col-span-1 row-span-1 justify-between">
-            <div>
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              className="fill-foreground text-2xl font-bold"
+                            >
+                              {totalCreditors.toLocaleString()}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy + 24}
+                              className="fill-muted-foreground text-sm"
+                            >
+                              Creditors
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            )}
+          </ChartContainer>
+        </div>
+
+        <div className="flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
                 Total Credit Balance
               </p>
-              {/* <h1 className="text-2xl font-bold text-black">
-                    </h1> */}
               {!isLoading ? (
                 data ? (
-                  contentRender(
-                    "currencyAmount",
-                    currencyAmountString(data.totalCreditBalance)
-                  )
+                  <p className="text-2xl font-bold">
+                    {currencyAmountString(data.totalCreditBalance)}
+                  </p>
                 ) : (
-                  contentRender("currencyAmount", "Rs. 0.00")
+                  <p className="text-2xl font-bold">Rs. 0.00</p>
                 )
               ) : (
-                <Skeleton className="w-40 h-8" />
+                <Skeleton className="h-8 w-40" />
               )}
             </div>
-          </div>
-          <div className="flex col-span-1 row-span-1 justify-between">
-            <div className="flex gap-1 items-right">
+
+            <div className="flex gap-4 items-start">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="flex gap-1 items-center">
+                    <div className="flex items-center gap-1">
                       <TimerOff className="w-5 h-5 text-red-500" />
-                      <Badge className="w-fit" variant="secondary">
+                      <Badge variant="secondary">
                         {!isLoading ? (
                           data?.totalOverdueInvoices
                         ) : (
@@ -207,12 +206,13 @@ export function CreditorStatPieChart() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="flex gap-1 items-center">
+                    <div className="flex items-center gap-1">
                       <TimerReset className="w-5 h-5 text-yellow-500" />
-                      <Badge className="w-fit" variant="secondary">
+                      <Badge variant="secondary">
                         {!isLoading ? (
                           data?.totalDueInvoices
                         ) : (
@@ -227,43 +227,200 @@ export function CreditorStatPieChart() {
                 </Tooltip>
               </TooltipProvider>
             </div>
-          </div>
-          <div className="col-span-1 row-span-1">
-            <p className="text-sm text-muted-foreground">Due Amount</p>
-            <h1 className="text-xl font-bold text-black">
+
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Due Amount</p>
               {!isLoading ? (
                 data ? (
-                  contentRender(
-                    "currencyAmount",
-                    currencyAmountString(data.dueAmount)
-                  )
+                  <p className="text-xl font-bold">
+                    {currencyAmountString(data.dueAmount)}
+                  </p>
                 ) : (
-                  contentRender("currencyAmount", "Rs. 0.00")
+                  <p className="text-xl font-bold">Rs. 0.00</p>
                 )
               ) : (
-                <Skeleton className="w-40 h-8" />
+                <Skeleton className="h-8 w-40" />
               )}
-            </h1>
-          </div>
-          <div className="col-span-1 row-span-1">
-            <p className="text-sm text-muted-foreground">Overdue Amount</p>
-            <h1 className="text-xl font-bold text-black">
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Overdue Amount</p>
               {!isLoading ? (
                 data ? (
-                  contentRender(
-                    "currencyAmount",
-                    currencyAmountString(data.overdueAmount)
-                  )
+                  <p className="text-xl font-bold">
+                    {currencyAmountString(data.overdueAmount)}
+                  </p>
                 ) : (
-                  contentRender("currencyAmount", "Rs. 0.00")
+                  <p className="text-xl font-bold">Rs. 0.00</p>
                 )
               ) : (
-                <Skeleton className="w-40 h-8" />
+                <Skeleton className="h-8 w-40" />
               )}
-            </h1>
+            </div>
           </div>
         </div>
       </CardContent>
     </Card>
   );
+
+  // return (
+  //   <Card className="flex flex-col h-200 w-full px-0">
+  //     <CardContent className="flex pb-0 px-0">
+  //       <ChartContainer
+  //         config={chartConfig}
+  //         className="mx-0 aspect-square max-h-[150px] min-w-[150px]"
+  //       >
+  //         {isLoading ? (
+  //           <div className="h-[150px] w-[150px] flex items-center justify-center">
+  //             <Skeleton className="h-[110px] w-[110px] rounded-full" />
+  //           </div>
+  //         ) : (
+  //           <PieChart>
+  //             <ChartTooltip
+  //               cursor={false}
+  //               content={<ChartTooltipContent hideLabel />}
+  //             />
+  //             <Pie
+  //               data={chartData}
+  //               dataKey="creditors"
+  //               nameKey="status"
+  //               innerRadius={35}
+  //               outerRadius={50}
+  //               strokeWidth={5}
+  //             >
+  //               <Label
+  //                 content={({ viewBox }) => {
+  //                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+  //                     return (
+  //                       <text
+  //                         x={viewBox.cx}
+  //                         y={viewBox.cy}
+  //                         textAnchor="middle"
+  //                         dominantBaseline="middle"
+  //                       >
+  //                         <tspan
+  //                           x={viewBox.cx}
+  //                           y={viewBox.cy}
+  //                           className="fill-foreground text-2xl font-bold"
+  //                         >
+  //                           {totalCreditors.toLocaleString()}
+  //                         </tspan>
+  //                         <tspan
+  //                           x={viewBox.cx}
+  //                           y={(viewBox.cy || 0) + 24}
+  //                           className="fill-muted-foreground"
+  //                         >
+  //                           Creditors
+  //                         </tspan>
+  //                       </text>
+  //                     );
+  //                   }
+  //                 }}
+  //               />
+  //             </Pie>
+  //           </PieChart>
+  //         )}
+  //       </ChartContainer>
+  //       <div className="grid grid-cols-2 grid-rows-2 p-4 gap-x-5 w-full">
+  //         <div className="flex col-span-1 row-span-1 justify-between">
+  //           <div>
+  //             <p className="text-sm text-muted-foreground">
+  //               Total Credit Balance
+  //             </p>
+  //             {/* <h1 className="text-2xl font-bold text-black">
+  //                   </h1> */}
+  //             {!isLoading ? (
+  //               data ? (
+  //                 contentRender(
+  //                   "currencyAmount",
+  //                   currencyAmountString(data.totalCreditBalance)
+  //                 )
+  //               ) : (
+  //                 contentRender("currencyAmount", "Rs. 0.00")
+  //               )
+  //             ) : (
+  //               <Skeleton className="w-40 h-8" />
+  //             )}
+  //           </div>
+  //         </div>
+  //         <div className="flex col-span-1 row-span-1 justify-between">
+  //           <div className="flex gap-1 items-right">
+  //             <TooltipProvider>
+  //               <Tooltip>
+  //                 <TooltipTrigger asChild>
+  //                   <div className="flex gap-1 items-center">
+  //                     <TimerOff className="w-5 h-5 text-red-500" />
+  //                     <Badge className="w-fit" variant="secondary">
+  //                       {!isLoading ? (
+  //                         data?.totalOverdueInvoices
+  //                       ) : (
+  //                         <Skeleton className="h-5 w-5" />
+  //                       )}
+  //                     </Badge>
+  //                   </div>
+  //                 </TooltipTrigger>
+  //                 <TooltipContent>
+  //                   <p>Overdue Invoice Count</p>
+  //                 </TooltipContent>
+  //               </Tooltip>
+  //             </TooltipProvider>
+  //             <TooltipProvider>
+  //               <Tooltip>
+  //                 <TooltipTrigger asChild>
+  //                   <div className="flex gap-1 items-center">
+  //                     <TimerReset className="w-5 h-5 text-yellow-500" />
+  //                     <Badge className="w-fit" variant="secondary">
+  //                       {!isLoading ? (
+  //                         data?.totalDueInvoices
+  //                       ) : (
+  //                         <Skeleton className="h-5 w-5" />
+  //                       )}
+  //                     </Badge>
+  //                   </div>
+  //                 </TooltipTrigger>
+  //                 <TooltipContent>
+  //                   <p>Due Invoice Count</p>
+  //                 </TooltipContent>
+  //               </Tooltip>
+  //             </TooltipProvider>
+  //           </div>
+  //         </div>
+  //         <div className="col-span-1 row-span-1">
+  //           <p className="text-sm text-muted-foreground">Due Amount</p>
+  //           <h1 className="text-xl font-bold text-black">
+  //             {!isLoading ? (
+  //               data ? (
+  //                 contentRender(
+  //                   "currencyAmount",
+  //                   currencyAmountString(data.dueAmount)
+  //                 )
+  //               ) : (
+  //                 contentRender("currencyAmount", "Rs. 0.00")
+  //               )
+  //             ) : (
+  //               <Skeleton className="w-40 h-8" />
+  //             )}
+  //           </h1>
+  //         </div>
+  //         <div className="col-span-1 row-span-1">
+  //           <p className="text-sm text-muted-foreground">Overdue Amount</p>
+  //           <h1 className="text-xl font-bold text-black">
+  //             {!isLoading ? (
+  //               data ? (
+  //                 contentRender(
+  //                   "currencyAmount",
+  //                   currencyAmountString(data.overdueAmount)
+  //                 )
+  //               ) : (
+  //                 contentRender("currencyAmount", "Rs. 0.00")
+  //               )
+  //             ) : (
+  //               <Skeleton className="w-40 h-8" />
+  //             )}
+  //           </h1>
+  //         </div>
+  //       </div>
+  //     </CardContent>
+  //   </Card>
+  // );
 }

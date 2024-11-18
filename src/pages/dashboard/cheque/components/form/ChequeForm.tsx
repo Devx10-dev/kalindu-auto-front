@@ -19,6 +19,8 @@ import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { z } from "zod";
 import { useRef } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { CheckSquareIcon } from "lucide-react";
 
 function ChequeForm({
   onClose,
@@ -199,10 +201,15 @@ function ChequeForm({
             <Button
               ref={(el) => (inputRefs.current[4] = el)}
               onClick={form.handleSubmit(handleSubmit)}
+              disabled={createChequeMutation.isPending}
               className="mr-2"
             >
-              Save
+              {createChequeMutation.isPending ? (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              ) : null}
+              {createChequeMutation.isPending ? "Saving..." : "Save"}
             </Button>
+
             <Button type="reset" variant={"outline"} onClick={resetForm}>
               Reset
             </Button>

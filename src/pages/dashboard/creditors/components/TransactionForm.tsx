@@ -37,6 +37,7 @@ import { getRandomColor } from "@/utils/colors";
 import { useEffect, useRef, useState } from "react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
 import useQueryParams from "@/hooks/getQueryParams";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const RANDOM_COLOR = getRandomColor();
 
@@ -54,7 +55,7 @@ function TransactionForm({
   const queryClient = useQueryClient();
 
   const [selectedCreditor, setSelectedCreditor] = useState<Creditor | null>(
-    null,
+    null
   );
 
   const inputRefs = useRef<any[]>([]);
@@ -89,7 +90,7 @@ function TransactionForm({
     queryKey: ["unsettledCreditorInvoices", selectedCreditor],
     queryFn: () =>
       creditorService.fetchUnsettledCreditInvoicesByID(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
       ),
     retry: 1,
   });
@@ -98,7 +99,7 @@ function TransactionForm({
     queryKey: [`nonRedeemCheques-${selectedCreditor?.id}`, selectedCreditor],
     queryFn: () =>
       chequeService.fetchNonRedeemChequesOfCreditor(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
       ),
     enabled: selectedCreditor !== null && selectedType === "CHEQUE",
     retry: 1,
@@ -202,7 +203,7 @@ function TransactionForm({
       const totalSelectedAmount = selectedCreditInvoices.reduce(
         (total, invoice) =>
           total + (invoice.totalPrice - invoice.settledAmount),
-        0,
+        0
       );
       if (transaction.amount > totalSelectedAmount) {
         toast({
@@ -249,7 +250,7 @@ function TransactionForm({
       const creditor = creditors.find(
         (creditor) =>
           creditor.creditorID === String(queryParams.creditor) ||
-          creditor.creditorID === Number(queryParams.creditor),
+          creditor.creditorID === Number(queryParams.creditor)
       );
 
       if (creditor) {
@@ -327,7 +328,7 @@ function TransactionForm({
                           const selectedCreditor = creditors.find(
                             (creditor) =>
                               parseInt(creditor.creditorID) ===
-                              selectedOption.value,
+                              selectedOption.value
                           );
                           setSelectedCreditor(selectedCreditor);
                         }}
@@ -362,8 +363,8 @@ function TransactionForm({
                           const selectedCreditInvoices = creditInvoices.filter(
                             (creditInvoice) =>
                               selectedOptions.includes(
-                                creditInvoice.id.toString(),
-                              ),
+                                creditInvoice.id.toString()
+                              )
                           );
                           setSelectedCreditInvoices(selectedCreditInvoices);
                           setSelectedCreditInvoiceIDs(selectedOptions);
@@ -524,8 +525,14 @@ function TransactionForm({
                 ref={(el) => (inputRefs.current[5] = el)}
                 onClick={form.handleSubmit(handleSubmit)}
                 className="px-6"
+                disabled={createTransactionMutation.isPending}
               >
-                Add Transaction
+                {createTransactionMutation.isPending && (
+                  <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+                )}
+                {createTransactionMutation.isPending
+                  ? "Adding..."
+                  : "Add Transaction"}
               </Button>
               <Button
                 type="reset"

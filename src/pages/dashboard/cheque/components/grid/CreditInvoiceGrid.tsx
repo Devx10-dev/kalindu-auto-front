@@ -43,34 +43,36 @@ function CreditInvoiceGrid({
                 </TableRow>
               </TableHeader>
 
-              <TableBody>
-                {cheque?.chequeInvoices.map((chequeInvoice) => (
-                  <TableRow key={chequeInvoice.invoiceNo}>
-                    <TableCell className="font-medium">
-                      {chequeInvoice.invoiceNo}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      {formatDateTime(chequeInvoice.issuedTime)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {typeof chequeInvoice.totalPrice === "number"
-                        ? chequeInvoice.totalPrice.toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                        : chequeInvoice.totalPrice}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {typeof chequeInvoice.amount === "number"
-                        ? chequeInvoice.amount.toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                        : chequeInvoice.amount}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+              <div className="overflow-x-auto ">
+                <TableBody>
+                  {cheque?.chequeInvoices.map((chequeInvoice) => (
+                    <TableRow key={chequeInvoice.invoiceNo}>
+                      <TableCell className="font-medium">
+                        {chequeInvoice.invoiceNo}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatDateTime(chequeInvoice.issuedTime)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {typeof chequeInvoice.totalPrice === "number"
+                          ? chequeInvoice.totalPrice.toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })
+                          : chequeInvoice.totalPrice}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {typeof chequeInvoice.amount === "number"
+                          ? chequeInvoice.amount.toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })
+                          : chequeInvoice.amount}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </div>
             </Table>
           </div>
         </div>

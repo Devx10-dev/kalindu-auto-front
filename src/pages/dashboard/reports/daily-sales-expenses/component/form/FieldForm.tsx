@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { z } from "zod";
 import { useRef } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 function FieldForm({
   onClose,
@@ -175,8 +176,13 @@ function FieldForm({
               ref={(el) => (inputRefs.current[3] = el)}
               onClick={form.handleSubmit(handleSubmit)}
               className="mr-2"
+              disabled={createFieldMutation.isPending}
             >
-              Save
+              
+              {createFieldMutation.isPending && (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              )}
+              {createFieldMutation.isPending ? "Saving..." : "Save"}
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>
               Reset
