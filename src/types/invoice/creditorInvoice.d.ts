@@ -18,6 +18,7 @@ export type InvoiceItem = {
 };
 
 export type InvoiceState = {
+  id: number;
   creditorName?: string;
   creditorID?: number;
   invoiceItemDTOList: InvoiceItem[];
