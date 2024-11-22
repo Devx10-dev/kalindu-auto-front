@@ -54,6 +54,7 @@ import StatusCardCredit from "./components/StatusCardCredit";
 import { Button } from "@/components/ui/button";
 import BillSummaryViewCardCredit from "./components/BillSummaryViewCardCredit";
 import { InvoiceSettledPieChart } from "./components/InvoiceSettledPieChart";
+import { InvoiceTransactionDrawer } from "../../creditors/components/InvoiceTransactionDrawer";
 
 const dotSizeClasses = {
   sm: "h-2 w-2",
@@ -67,6 +68,7 @@ function SingleInvoiceCredit() {
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
     null
   );
+  const [invoiceId, setInvoiceId] = useState<string>("");
   const [isAvailableInStore, setIsAvailableInStore] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
   const [vatPercentage, setVatPercentage] = useState<number>(0);
@@ -124,6 +126,7 @@ function SingleInvoiceCredit() {
       setVatPercentage(invoiceDetails.vat);
       setDiscountPercentage(invoiceDetails.discountPercentage);
       setDiscountAmount(invoiceDetails.totalDiscount);
+      setInvoiceId(invoiceDetails.invoiceId.toString());
     }
   }, [invoiceDetails]);
 
@@ -273,9 +276,13 @@ function SingleInvoiceCredit() {
                 <StatusCardCredit invoiceDetails={invoiceDetails} />
               </div>
               <div className="relative flex-shrink-0">
-                <TransactionDrawer
+                {/* <TransactionDrawer
                   invoiceDetails={invoiceDetails}
                   invoiceLoading={invoiceLoading}
+                /> */}
+                <InvoiceTransactionDrawer
+                  invoiceId={invoiceId}
+                  creditorName={invoiceId}
                 />
                 <span
                   className={`absolute top-[-5px] right-[-5px] block ${dotSizeClasses["lg"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`}
