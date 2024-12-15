@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,8 +9,10 @@ import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { useToast } from "@/components/ui/use-toast.ts";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi.ts";
 import { OptionalLabel } from "@/components/formElements/FormLabel.tsx";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const BillSummary = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     invoiceItemDTOList,
     discountPercentage,
@@ -33,17 +35,17 @@ const BillSummary = () => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
         acc + item.quantity * item.price - item.quantity * item.discount,
-      0,
+      0
     );
   }, [invoiceItemDTOList]);
 
   const discountedTotal = useMemo(
     () => subtotal - (discountAmount || 0),
-    [subtotal, discountAmount],
+    [subtotal, discountAmount]
   );
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
-    [discountedTotal, vatAmount],
+    [discountedTotal, vatAmount]
   );
 
   // Update the total price when discountedTotal or vatAmount changes
@@ -52,7 +54,7 @@ const BillSummary = () => {
   }, [totalWithVat, setTotalPrice]);
 
   const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setDiscountPercentage(percentage);
@@ -60,7 +62,7 @@ const BillSummary = () => {
   };
 
   const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const amount = Math.max(parseFloat(e.target.value), 0);
     setDiscountAmount(amount);
@@ -68,7 +70,7 @@ const BillSummary = () => {
   };
 
   const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setVatPercentage(percentage);
@@ -92,6 +94,7 @@ const BillSummary = () => {
       });
     }
 
+    setIsLoading(true);
     try {
       const requestData = getRequestData();
       const createdInvoice =
@@ -113,6 +116,8 @@ const BillSummary = () => {
         description: "Failed to create the cash invoice. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -193,9 +198,14 @@ const BillSummary = () => {
               <Button
                 className="mt-4 mb-3"
                 onClick={() => printAndSaveInvoice()}
+                disabled={isLoading}
               >
-                <Printer className={"mr-2"} />
-                Print Invoice
+                {isLoading ? (
+                  <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <Printer className="mr-2" />
+                )}
+                {isLoading ? "Printing..." : "Print Invoice"}
               </Button>
               <Button
                 className="mt-4 mb-3 bg-red-400 ml-2 text-white"

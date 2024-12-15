@@ -49,64 +49,64 @@ import QuickSearch from "./components/QuickSearch";
 
 export function MainDashboard() {
   return (
-    <Fragment>
-      <div className="flex justify-between items-center">
-        {/* <h1 className="text-2xl font-semibold">View Invoices</h1> */}
-        <CardHeader>
-          <PageHeader
-            title="Dashboard"
-            description=""
-            icon={<LayoutDashboard />}
-          />
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <CardHeader className="p-0">
+          <div className="flex items-center gap-2">
+            <LayoutDashboard className="h-6 w-6" />
+            <h1 className="text-2xl font-semibold">Dashboard</h1>
+          </div>
           <CardDescription>
-            <p className="text-sm text-muted-foreground">
-              Welcome to the Kalindu Auto Dashboard
-            </p>
+            Welcome to the Kalindu Auto Dashboard
           </CardDescription>
         </CardHeader>
         <div className="flex gap-2 justify-end">
           <Clock />
         </div>
       </div>
-      <div className="flex justify-between items-top gap-5 ">
-        <div className="flex flex-col lg:w-[50%] md:w-full h-auto mb-5 gap-5">
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2  h-fit">
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <QuickAccessCard
               title="Cash Invoice"
               description="Quick Access to Cash Invoice Creation"
               icon={<FileText className="h-6 w-6 text-primary" />}
               linkTo="/dashboard/invoice/cash"
-              // bgImage="https://cdni.iconscout.com/illustration/premium/thumb/money-invoice-11878369-9684535.png?f=webp" // Optional
             />
             <QuickAccessCard
               title="Credit Invoice"
               description="Quick Access to Credit Invoice Creation"
               icon={<CreditCard className="h-6 w-6 text-primary" />}
               linkTo="/dashboard/invoice/creditor"
-              // bgImage="/path-to-your-background-image.jpg" // Optional
             />
             <QuickAccessCard
               title="Dummy Invoice"
-              description="Quickl Access to Dummy Invoice Creation"
+              description="Quick Access to Dummy Invoice Creation"
               icon={<NotepadTextDashed className="h-6 w-6 text-primary" />}
               linkTo="/dashboard/invoice/dummy"
-              // bgImage="/path-to-your-background-image.jpg" // Optional
             />
             <QuickAccessCard
               title="Manage Creditors"
               description="Quick Access to Creditor Management"
               icon={<Contact className="h-6 w-6 text-primary" />}
               linkTo="/dashboard/creditors/manage"
-              // bgImage="/path-to-your-background-image.jpg" // Optional
             />
           </div>
-          <QuickSearch />
+          <div className="hidden md:block">
+            <QuickSearch />
+          </div>
         </div>
-        <div className="lg:w-[50%] md:w-full h-auto mb-5">
-          <CreditorStatPieChart />
-          <CreditorCard className="max-h-[400px] mt-4 mb-5" />
+
+        <div className="space-y-6">
+          <div className="bg-background rounded-lg shadow">
+            <CreditorStatPieChart />
+          </div>
+          <div className="bg-background rounded-lg shadow">
+            <CreditorCard />
+          </div>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 }

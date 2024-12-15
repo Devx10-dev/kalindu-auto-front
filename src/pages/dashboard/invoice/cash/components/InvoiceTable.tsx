@@ -84,7 +84,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
       }));
     } else if (option) {
       const selectedSparePart = spareParts?.find(
-        (part) => part.id.toString() === option.value,
+        (part) => part.id.toString() === option.value
       );
       if (selectedSparePart) {
         setNewItem((prev) => ({
@@ -117,165 +117,167 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
 
   return (
     <div>
-      <Table className="border rounded-md text-md mb-5 mt-5">
-        <TableBody>
-          <TableRow>
-            <TableHead className="w-[300px]">Item</TableHead>
-            <TableHead>Item Code</TableHead>
-            <TableHead className="text-right">Quantity</TableHead>
-            <TableHead className="text-right">Price</TableHead>
-            <TableHead className="text-right">Total</TableHead>
-            <TableHead>Outsource</TableHead>
-            <TableHead className="flex justify-end items-center">
-              Action
-            </TableHead>
-          </TableRow>
-          {invoiceItemDTOList.length > 0 ? (
-            invoiceItemDTOList.map((item: any, index: any) => (
-              <TableRow key={index}>
-                <TableCell className="w-[300px]">{item.name}</TableCell>
-                <TableCell>{item.code}</TableCell>
-                <TableCell className="text-right w-[100px]">
-                  {item.quantity}
-                </TableCell>
-                <TableCell className="text-right">{item.price}</TableCell>
-                <TableCell className="text-right">
-                  {(
-                    item.quantity * item.price -
-                    item.quantity * item.discount
-                  ).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  <Switch
-                    checked={item.outsourced}
-                    onCheckedChange={(state) =>
-                      setOutsourcedStatus(item, state)
-                    }
-                  />
-                </TableCell>
-                <TableCell>
-                  <div className="flex justify-end items-center gap-4">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            onClick={() => removeInvoiceItem(item)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <Trash2 color="#C7253E" height={22} width={18} />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{"Remove Item"}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+      <div className="no-scrollbar">
+        <Table className="border rounded-md text-md mb-5 mt-5 overflow-x-auto">
+          <TableBody>
+            <TableRow>
+              <TableHead className="w-[300px]">Item</TableHead>
+              <TableHead>Item Code</TableHead>
+              <TableHead className="text-right">Quantity</TableHead>
+              <TableHead className="text-right">Price</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead>Outsource</TableHead>
+              <TableHead className="flex justify-end items-center">
+                Action
+              </TableHead>
+            </TableRow>
+            {invoiceItemDTOList.length > 0 ? (
+              invoiceItemDTOList.map((item: any, index: any) => (
+                <TableRow key={index}>
+                  <TableCell className="w-[300px]">{item.name}</TableCell>
+                  <TableCell>{item.code}</TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    {item.quantity}
+                  </TableCell>
+                  <TableCell className="text-right">{item.price}</TableCell>
+                  <TableCell className="text-right">
+                    {(
+                      item.quantity * item.price -
+                      item.quantity * item.discount
+                    ).toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={item.outsourced}
+                      onCheckedChange={(state) =>
+                        setOutsourcedStatus(item, state)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex justify-end items-center gap-4">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div
+                              onClick={() => removeInvoiceItem(item)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <Trash2 color="#C7253E" height={22} width={18} />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{"Remove Item"}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            onClick={() => setEditingItem(item)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <Pencil color="#E9C46A" height={22} width={18} />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{"Edit Item"}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div
+                              onClick={() => setEditingItem(item)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <Pencil color="#E9C46A" height={22} width={18} />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{"Edit Item"}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-4">
+                  No items added for the invoice.
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center py-4">
-                No items added for the invoice.
+            )}
+            <TableRow className="bg-slate-100">
+              <TableCell className="w-[300px]">
+                <CreatableSelect
+                  options={sparePartsOptions}
+                  onInputChange={handleInputChange}
+                  onChange={handleSelectChange}
+                  isClearable
+                  value={
+                    newItem.name
+                      ? {
+                          label: newItem.name,
+                          value: newItem.sparePartId.toString(),
+                        }
+                      : null
+                  }
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="text"
+                  value={newItem.code}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({ ...prev, code: e.target.value }))
+                  }
+                  placeholder="Item code"
+                />
+              </TableCell>
+              <TableCell className="w-[100px]">
+                <Input
+                  type="number"
+                  value={newItem.quantity}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({
+                      ...prev,
+                      quantity: Number(e.target.value),
+                    }))
+                  }
+                  placeholder="Quantity"
+                  min={0}
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  value={newItem.price === null ? "" : newItem.price}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({
+                      ...prev,
+                      price: e.target.value ? parseFloat(e.target.value) : 0,
+                    }))
+                  }
+                  placeholder="Price"
+                  min={0}
+                />
+              </TableCell>
+
+              <TableCell className="text-right">
+                {(
+                  (newItem.quantity || 0) * (newItem.price || 0) -
+                  (newItem.discount || 0)
+                ).toFixed(2)}
+              </TableCell>
+              <TableCell>
+                <Switch disabled />
+              </TableCell>
+              <TableCell>
+                <IconButton
+                  icon={<CirclePlus height="20" width="20" />}
+                  tooltipMsg="Add item"
+                  handleOnClick={handleAddItem}
+                  disabled={!isFormValid()}
+                />
               </TableCell>
             </TableRow>
-          )}
-          <TableRow className="bg-slate-100">
-            <TableCell className="w-[300px]">
-              <CreatableSelect
-                options={sparePartsOptions}
-                onInputChange={handleInputChange}
-                onChange={handleSelectChange}
-                isClearable
-                value={
-                  newItem.name
-                    ? {
-                        label: newItem.name,
-                        value: newItem.sparePartId.toString(),
-                      }
-                    : null
-                }
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                type="text"
-                value={newItem.code}
-                onChange={(e) =>
-                  setNewItem((prev) => ({ ...prev, code: e.target.value }))
-                }
-                placeholder="Item code"
-              />
-            </TableCell>
-            <TableCell className="w-[100px]">
-              <Input
-                type="number"
-                value={newItem.quantity}
-                onChange={(e) =>
-                  setNewItem((prev) => ({
-                    ...prev,
-                    quantity: Number(e.target.value),
-                  }))
-                }
-                placeholder="Quantity"
-                min={0}
-              />
-            </TableCell>
-            <TableCell>
-              <Input
-                type="number"
-                value={newItem.price === null ? "" : newItem.price}
-                onChange={(e) =>
-                  setNewItem((prev) => ({
-                    ...prev,
-                    price: e.target.value ? parseFloat(e.target.value) : 0,
-                  }))
-                }
-                placeholder="Price"
-                min={0}
-              />
-            </TableCell>
-
-            <TableCell className="text-right">
-              {(
-                (newItem.quantity || 0) * (newItem.price || 0) -
-                (newItem.discount || 0)
-              ).toFixed(2)}
-            </TableCell>
-            <TableCell>
-              <Switch disabled />
-            </TableCell>
-            <TableCell>
-              <IconButton
-                icon={<CirclePlus height="20" width="20" />}
-                tooltipMsg="Add item"
-                handleOnClick={handleAddItem}
-                disabled={!isFormValid()}
-              />
-            </TableCell>
-          </TableRow>
-        </TableBody>
-        <TableCaption className="text-right italic m-2">
-          Required fields: Item name, Quantity and Price
-        </TableCaption>
-      </Table>
+          </TableBody>
+          <TableCaption className="text-right italic m-2">
+            Required fields: Item name, Quantity and Price
+          </TableCaption>
+        </Table>
+      </div>
 
       <FormModal
         title="Edit Item"

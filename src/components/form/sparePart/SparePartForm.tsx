@@ -22,6 +22,7 @@ import {
   spaerPartSchema,
 } from "@/validation/schema/SparePart/sparePartSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
@@ -79,17 +80,17 @@ export default function SparePartForm({
             value: sparePart.chassisNo,
             label: sparePart.chassisNo,
           }
-        : undefined,
+        : undefined
     );
     form.setValue("partName", sparePart ? sparePart.partName : "");
     form.setValue(
       "quantity",
-      sparePart ? sparePart?.quantity?.toString() ?? "0" : "",
+      sparePart ? sparePart?.quantity?.toString() ?? "0" : ""
     );
     form.setValue("code", sparePart ? sparePart?.code ?? "" : "");
     form.setValue(
       "description",
-      sparePart ? sparePart.description || "" : undefined,
+      sparePart ? sparePart.description || "" : undefined
     );
 
     form.clearErrors();
@@ -319,8 +320,16 @@ export default function SparePartForm({
               ref={(el) => (inputRefs.current[6] = el)}
               type="submit"
               onClick={form.handleSubmit(handleSubmit)}
+              disabled={
+                createSparePartMutation.isPending ||
+                updateSparePartMutation.isPending
+              }
             >
-              Save
+              {(createSparePartMutation.isPending ||
+                updateSparePartMutation.isPending) && (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              )}
+              {createSparePartMutation.isPending ? "Saving..." : "Save"}
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>
               Reset

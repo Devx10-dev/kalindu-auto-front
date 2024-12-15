@@ -111,7 +111,7 @@ function ChequesGrid({
         pageSize,
         creditorId,
         debouncedSearch,
-        selectedOption,
+        selectedOption
       ),
     retry: 2,
   });
@@ -202,7 +202,7 @@ function ChequesGrid({
   const handleViewBtnClick = (cheque: Cheque) => {
     setGridModalTitle(`Credit invoices of ${cheque.chequeNo}`);
     setGridModalDescription(
-      `Credit invoices those settled by ${cheque.chequeNo}`,
+      `Credit invoices those settled by ${cheque.chequeNo}`
     );
     setSelectedCheque(cheque);
     setGridModalShow(true);
@@ -307,18 +307,18 @@ function ChequesGrid({
                       <TableCell align="right">
                         {priceRender(
                           "currencyAmount",
-                          currencyAmountString(cheque.amount),
+                          currencyAmountString(cheque.amount)
                         )}
                       </TableCell>
                       <TableCell align="right">
                         {cheque?.availableAmount
                           ? priceRender(
                               "currencyAmount",
-                              currencyAmountString(cheque.availableAmount),
+                              currencyAmountString(cheque.availableAmount)
                             )
                           : priceRender(
                               "currencyAmount",
-                              currencyAmountString(0),
+                              currencyAmountString(0)
                             )}
                       </TableCell>
                       <TableCell>

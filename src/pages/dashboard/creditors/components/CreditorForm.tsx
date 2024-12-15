@@ -30,6 +30,7 @@ import CreditorAPI from "../api/CreditorAPI";
 import { creditorFormSchema } from "./formScheme";
 import { RequiredLabel } from "@/components/formElements/FormLabel";
 import { useRef } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export function RegisterForm(props: {
@@ -87,7 +88,8 @@ export function RegisterForm(props: {
         variant: "default",
         title: "Success",
         description: "Successfully created creditor ✅",
-        className: "bg-green-200",
+        className: "bg-white-200",
+        duration: 3000,
         action: (
           <ToastAction altText="View Creditors">
             <Link to={"creditors/manage"}>View Creditors</Link>{" "}
@@ -111,7 +113,7 @@ export function RegisterForm(props: {
     mutationFn: (data: CreditorFormValues) =>
       creditorAPI.updateCreditor(
         getModifiedCreditorFields(data, props.creditor),
-        props.creditor.creditorID,
+        props.creditor.creditorID
       ),
 
     onSuccess: (updatedCreditor) => {
@@ -155,7 +157,7 @@ export function RegisterForm(props: {
   // this function will remove any not updated values from the request data to be generated
   function getModifiedCreditorFields(
     newData: CreditorFormValues,
-    originalCreditor: Creditor,
+    originalCreditor: Creditor
   ) {
     const modifiedFields: any = {};
 
@@ -168,9 +170,9 @@ export function RegisterForm(props: {
     return modifiedFields;
   }
 
-  if (createCreditorMutation.isPending || updateCreditorMutation.isPending) {
-    return <FormSkeleton />;
-  }
+  // if (createCreditorMutation.isPending || updateCreditorMutation.isPending) {
+  //   return <FormSkeleton />;
+  // }
 
   return (
     <Form {...form}>
@@ -315,7 +317,7 @@ export function RegisterForm(props: {
                       form.setValue(
                         "creditLimit",
                         parseInt(event.target.value),
-                        { shouldDirty: true },
+                        { shouldDirty: true }
                       );
                     }}
                   />
@@ -366,8 +368,19 @@ export function RegisterForm(props: {
 
         {props.isEditMode != true && (
           <>
-            <Button type="submit" className="mr-5 w-40">
-              Register Creditor
+            <Button
+              type="submit"
+              className="mr-5 w-40"
+              disabled={createCreditorMutation.isPending}
+            >
+              {createCreditorMutation.isPending ||
+              updateCreditorMutation.isPending ? (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              ) : null}
+              {createCreditorMutation.isPending ||
+              updateCreditorMutation.isPending
+                ? "Saving..."
+                : " Register Creditor"}
             </Button>
             <Button
               onClick={() => form.reset(defaultValues)}

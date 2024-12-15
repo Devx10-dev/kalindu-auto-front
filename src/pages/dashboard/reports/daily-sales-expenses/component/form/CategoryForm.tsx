@@ -19,6 +19,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRef } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 function CategoryForm({
   onClose,
@@ -125,8 +126,12 @@ function CategoryForm({
               ref={(el) => (inputRefs.current[2] = el)}
               onClick={form.handleSubmit(handleSubmit)}
               className="mr-2"
+              disabled={createCategoryMutation.isPending}
             >
-              Save
+              {createCategoryMutation.isPending && (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              )}
+              {createCategoryMutation.isPending ? "Saving..." : "Save"}
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>
               Reset

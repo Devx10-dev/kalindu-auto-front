@@ -58,7 +58,7 @@ const DailySalesBase = () => {
       <FieldForm
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />,
+      />
     );
     setShow(true);
   };
@@ -70,7 +70,7 @@ const DailySalesBase = () => {
       <CategoryForm
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />,
+      />
     );
     setShow(true);
   };
@@ -83,7 +83,7 @@ const DailySalesBase = () => {
         date={formattedDate()}
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />,
+      />
     );
     setShow(true);
   };
@@ -150,17 +150,27 @@ const DailySalesBase = () => {
         />
       </CardHeader>
       <CardContent style={{ width: "98%" }}>
-        <div className="mb-1 d-flex justify-between">
-          <Button className="gap-1" onClick={handleAddSaleOrExpenseBtnClick}>
+        <div className="flex flex-col sm:flex-row justify-between w-full gap-4 mb-4">
+          <Button
+            className="flex items-center gap-1 w-full sm:w-auto"
+            onClick={handleAddSaleOrExpenseBtnClick}
+          >
             <PlusIcon height="24" width="24" color="#fff" />
             Sale or Expense
           </Button>
-          <div className="mb-3 d-flex gap-4">
-            <Button className="gap-1" onClick={handleAddFieldBtnClick}>
+
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <Button
+              className="flex items-center gap-1 w-full sm:w-auto"
+              onClick={handleAddFieldBtnClick}
+            >
               <PlusIcon height="24" width="24" color="#fff" />
               Field
             </Button>
-            <Button className="gap-1" onClick={handleAddCategoryBtnClick}>
+            <Button
+              className="flex items-center gap-1 w-full sm:w-auto"
+              onClick={handleAddCategoryBtnClick}
+            >
               <PlusIcon height="24" width="24" color="#fff" />
               Category
             </Button>
@@ -173,7 +183,7 @@ const DailySalesBase = () => {
                 variant={"outline"}
                 className={cn(
                   "w-[240px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground",
+                  !date && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -201,15 +211,15 @@ const DailySalesBase = () => {
       </CardContent>
 
       <Card className="m-8 pl-4 p-4 pt-0">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 mb-4 mt-0 pt-0">
+        <CardHeader className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 pb-2 mb-4 mt-0 pt-0">
           <CardTitle className="text-xl font-bold">
             {`Summary of ${formatDateToHumanReadable(date)}`}
           </CardTitle>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
             {summery !== undefined && summery.verified ? (
               <div
-                className="d-flex gap-2 pl-4 pr-4 pt-1 pb-1"
+                className="d-flex gap-2 pl-4 pr-4 pt-1 pb-1 w-full sm:w-auto"
                 style={{
                   background: "#9ec16c",
                   alignItems: "center",
@@ -220,7 +230,10 @@ const DailySalesBase = () => {
                 <VerifyIcon height="20" width="20" color="#fff" />
               </div>
             ) : (
-              <Button onClick={() => setconfirmationModalShow(true)}>
+              <Button
+                onClick={() => setconfirmationModalShow(true)}
+                className="w-full sm:w-auto"
+              >
                 <div className="gap-2 d-flex">
                   <VerifyIcon height="20" width="20" color="#fff" />
                   Verify Daily Summary
@@ -230,9 +243,9 @@ const DailySalesBase = () => {
 
             <Button
               onClick={handlePrint}
-              className="px-4 py-2 text-white rounded"
+              className="px-4 py-2 text-white rounded w-full sm:w-auto"
             >
-              <Printer className={"mr-2"} />
+              <Printer className="mr-2" />
               Print Daily Summary
             </Button>
           </div>

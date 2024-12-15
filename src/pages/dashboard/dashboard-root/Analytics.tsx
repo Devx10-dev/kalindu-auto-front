@@ -287,81 +287,83 @@ export function Analytics() {
 
   return (
     <Fragment>
-      <div className="flex justify-between items-center">
-        {/* <h1 className="text-2xl font-semibold">View Invoices</h1> */}
-        <CardHeader>
-          <PageHeader
-            title="Analytics"
-            description=""
-            icon={<SquareLibrary />}
-          />
-          <CardDescription>
-            <p className="text-sm text-muted-foreground">
-              Welcome to Analytics! Here you can view statistics of your sales
-              and expenses
-            </p>
-          </CardDescription>
-        </CardHeader>
-        <div className="flex gap-2 justify-end">
-          <DateRangePicker
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-            // externalDateRange={dateRange}
-            disabled={activeTab !== "custom"}
-          />
-          <Tabs
-            defaultValue="today"
-            className="w-[100%] size-sm"
-            onValueChange={handleTabChange}
-          >
-            <TabsList className="grid w-[100%] grid-cols-5 size-sm">
-              <TabsTrigger value="today">Today</TabsTrigger>
-              <TabsTrigger value="week">Week</TabsTrigger>
-              <TabsTrigger value="month">Month</TabsTrigger>
-              <TabsTrigger value="year">Year</TabsTrigger>
-              <TabsTrigger value="custom">Custom</TabsTrigger>
-            </TabsList>
-          </Tabs>
+      <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* <h1 className="text-2xl font-semibold">View Invoices</h1> */}
+          <CardHeader>
+            <PageHeader
+              title="Analytics"
+              description=""
+              icon={<SquareLibrary />}
+            />
+            <CardDescription>
+              <p className="text-sm text-muted-foreground">
+                Welcome to Analytics! Here you can view statistics of your sales
+                and expenses
+              </p>
+            </CardDescription>
+          </CardHeader>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <DateRangePicker
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+              // externalDateRange={dateRange}
+              disabled={activeTab !== "custom"}
+            />
+            <Tabs
+              defaultValue="today"
+              className="w-[100%] size-sm"
+              onValueChange={handleTabChange}
+            >
+              <TabsList className="grid w-[100%] grid-cols-5 size-sm">
+                <TabsTrigger value="today">Today</TabsTrigger>
+                <TabsTrigger value="week">Week</TabsTrigger>
+                <TabsTrigger value="month">Month</TabsTrigger>
+                <TabsTrigger value="year">Year</TabsTrigger>
+                <TabsTrigger value="custom">Custom</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 ml-5">
-        <DashboardCard
-          title="Total Revenue"
-          icon={<DollarSign />}
-          content={salesAndExpenses?.totalRevenueString}
-          isLoading={!dataLoaded}
-          contentType="currencyAmount"
-        />
-        <DashboardCard
-          title="Total Sales"
-          icon={<TrendingUp />}
-          content={salesAndExpenses?.totalSalesString}
-          isLoading={!dataLoaded}
-          contentType="currencyAmount"
-        />
-        <DashboardCard
-          title="Total Expenses"
-          icon={<TrendingDown />}
-          content={salesAndExpenses?.totalExpensesString}
-          isLoading={!dataLoaded}
-          contentType="currencyAmount"
-        />
-        <DashboardCard
-          title="Credit Sales"
-          icon={<CreditCard />}
-          content={salesAndExpenses?.totalCreditString}
-          isLoading={!dataLoaded}
-          contentType="currencyAmount"
-        />
-      </div>
-      <div className="grid gap-4 md:grid-cols-1 md:gap-8 lg:grid-cols-5 ml-5 mt-5">
-        <OverviewChart
-          className="col-span-3"
-          analyticalRange={analiticalRange}
-          analyticData={salesAndExpensesDataState}
-          isDataLoading={salesAndExpensesLoading}
-        />
-        <CreditorCard className="col-span-2 h-400 max-h-[500px]" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <DashboardCard
+            title="Total Revenue"
+            icon={<DollarSign />}
+            content={salesAndExpenses?.totalRevenueString}
+            isLoading={!dataLoaded}
+            contentType="currencyAmount"
+          />
+          <DashboardCard
+            title="Total Sales"
+            icon={<TrendingUp />}
+            content={salesAndExpenses?.totalSalesString}
+            isLoading={!dataLoaded}
+            contentType="currencyAmount"
+          />
+          <DashboardCard
+            title="Total Expenses"
+            icon={<TrendingDown />}
+            content={salesAndExpenses?.totalExpensesString}
+            isLoading={!dataLoaded}
+            contentType="currencyAmount"
+          />
+          <DashboardCard
+            title="Credit Sales"
+            icon={<CreditCard />}
+            content={salesAndExpenses?.totalCreditString}
+            isLoading={!dataLoaded}
+            contentType="currencyAmount"
+          />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          <OverviewChart
+            className="col-span-3"
+            analyticalRange={analiticalRange}
+            analyticData={salesAndExpensesDataState}
+            isDataLoading={salesAndExpensesLoading}
+          />
+          <CreditorCard className="col-span-2 h-400 max-h-[500px]" />
+        </div>
       </div>
     </Fragment>
   );

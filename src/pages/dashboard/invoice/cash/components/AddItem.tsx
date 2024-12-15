@@ -91,12 +91,14 @@ const AddItem: React.FC<{
 
   const onSubmit = (data: any) => {
     addInvoiceItem(data);
+    form.clearErrors();
     form.reset();
     onClose();
   };
 
   const handleCancel = (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    form.clearErrors();
     onClose();
   };
 
@@ -116,6 +118,7 @@ const AddItem: React.FC<{
     }
   };
   const onReset = () => {
+    form.clearErrors();
     form.reset();
   };
   return (

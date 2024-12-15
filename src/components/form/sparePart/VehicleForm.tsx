@@ -21,6 +21,7 @@ import {
   vehicleModelSchema,
 } from "@/validation/schema/SparePart/vehicleModelSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { ToastAction } from "@radix-ui/react-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
@@ -78,7 +79,7 @@ export default function VehicleForm({
             label: vehicleModel.vehicleBrand,
             __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false },
+        : { label: "", value: "", __isNew__: false }
     );
     form.setValue(
       "type",
@@ -88,7 +89,7 @@ export default function VehicleForm({
             label: vehicleModel.vehicleType,
             __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false },
+        : { label: "", value: "", __isNew__: false }
     );
     form.setValue(
       "chassisNo",
@@ -98,12 +99,12 @@ export default function VehicleForm({
             label: vehicleModel.chassisNo,
             __isNew__: false,
           }
-        : { label: "", value: "", __isNew__: false },
+        : { label: "", value: "", __isNew__: false }
     );
     form.setValue("model", vehicleModel ? vehicleModel.model : "");
     form.setValue(
       "description",
-      vehicleModel ? vehicleModel.description || "" : undefined,
+      vehicleModel ? vehicleModel.description || "" : undefined
     );
     form.clearErrors();
   };
@@ -199,8 +200,8 @@ export default function VehicleForm({
   };
 
   const handleSubmit = async () => {
-    console.log("-------------------------");
-    console.log(form.getValues());
+    // console.log("-------------------------");
+    // console.log(form.getValues());
     try {
       if (form.getValues()) {
         if (vehicleModel === null) {
@@ -391,8 +392,15 @@ export default function VehicleForm({
               ref={(el) => (inputRefs.current[6] = el)}
               type="submit"
               onClick={form.handleSubmit(handleSubmit)}
+              disabled={
+                createVehicleMutation.isPending ||
+                updateVehicleMutation.isPending
+              }
             >
-              Save
+              {createVehicleMutation.isPending && (
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+              )}
+              {createVehicleMutation.isPending ? "Saving..." : "Save"}
             </Button>
             <Button type="reset" variant={"outline"} onClick={resetForm}>
               Reset
