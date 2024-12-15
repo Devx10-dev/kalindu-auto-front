@@ -21,6 +21,7 @@ import { Fragment } from "react/jsx-runtime";
 import { TableBodySkeleton } from "./TableSkeleton";
 import useQueryParams from "@/hooks/getQueryParams";
 import { currencyAmountString } from "@/utils/analyticsUtils";
+import { useEffect } from "react";
 
 function priceRender(contentType: string, content: string) {
   // split from firdst dot from the right
@@ -76,6 +77,7 @@ export default function CreditInvoiceTable({
     const issuedDate = new Date(issuedTime[0], issuedTime[1], issuedTime[2]);
     const dueDate = new Date(issuedDate);
     dueDate.setDate(dueDate.getDate() + maxDueWeeks * 7);
+    console.log(dueDate);
     // turninto array
     const dateArray = [
       dueDate.getFullYear(),
@@ -85,7 +87,8 @@ export default function CreditInvoiceTable({
       issuedTime[4],
       issuedTime[5],
     ];
-    return dateArray;
+    console.log(dateArray);
+    return dateArrayToString(dateArray, true, false);
   };
 
   const getDueStatus = (
@@ -99,7 +102,7 @@ export default function CreditInvoiceTable({
 
     const issuedDate = new Date(
       issuedTime[0],
-      issuedTime[1] - 1,
+      issuedTime[1],
       issuedTime[2],
       issuedTime[3],
       issuedTime[4],
@@ -213,13 +216,9 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(invoice.issuedTime, false, true)}
                   </TableCell>
                   <TableCell>
-                    {dateArrayToString(
-                      calculateDueDate(
-                        invoice.issuedTime,
-                        Number(invoice.creditor.maxDuePeriod) as number,
-                      ),
-                      true,
-                      true,
+                    {calculateDueDate(
+                      invoice.issuedTime,
+                      Number(invoice.creditor.maxDuePeriod) as number,
                     )}
                   </TableCell>
                   <TableCell align="right">
