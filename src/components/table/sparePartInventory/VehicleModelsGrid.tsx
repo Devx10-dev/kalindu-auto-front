@@ -54,7 +54,7 @@ export default function VehicleModelsGrid({
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
-    null
+    null,
   );
   const [searchQuery, setSearchQuery] = useState("");
   const debounceSearch = useDebounce(searchQuery, 500);
@@ -110,13 +110,13 @@ export default function VehicleModelsGrid({
         selectedType,
         selectedBrand,
         selectedChassisNo,
-        debounceSearch
+        debounceSearch,
       ),
     retry: 2,
   });
 
   const [viewVehicleModels, setViewVehicleModels] = useState<VehicleModel[]>(
-    vehicleModels?.vehicleModels ?? []
+    vehicleModels?.vehicleModels ?? [],
   );
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export default function VehicleModelsGrid({
                         <SelectItem key={brand.id} value={brand.brand}>
                           {capitalize(brand.brand)}
                         </SelectItem>
-                      )
+                      ),
                     )}
                 </SelectContent>
               </Select>
@@ -227,7 +227,7 @@ export default function VehicleModelsGrid({
                         >
                           {chassisNo.chassisNo}
                         </SelectItem>
-                      )
+                      ),
                     )}
                 </SelectContent>
               </Select>

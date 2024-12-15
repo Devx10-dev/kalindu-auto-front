@@ -302,7 +302,6 @@ function SaleOrExpenseForm({
               className="mr-2"
               disabled={createSaleOrExpenseMutation.isPending}
             >
-              
               {createSaleOrExpenseMutation.isPending && (
                 <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
               )}

@@ -67,7 +67,7 @@ const UsersTable = ({ userService }: { userService: UserService }) => {
     setShow(true);
     setTitle(`${user.active ? "Deactivate" : "Activate"} User! `);
     setDescription(
-      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`
+      `Are you sure you want to ${user.active ? "deactivate" : "activate"} user ${user.fullName}?`,
     );
 
     setUser(user);

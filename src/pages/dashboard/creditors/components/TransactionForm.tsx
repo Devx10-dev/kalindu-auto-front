@@ -56,7 +56,7 @@ function TransactionForm({
   const queryClient = useQueryClient();
 
   const [selectedCreditor, setSelectedCreditor] = useState<Creditor | null>(
-    null
+    null,
   );
 
   const inputRefs = useRef<any[]>([]);
@@ -91,7 +91,7 @@ function TransactionForm({
     queryKey: ["unsettledCreditorInvoices", selectedCreditor],
     queryFn: () =>
       creditorService.fetchUnsettledCreditInvoicesByID(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
       ),
     retry: 1,
   });
@@ -100,7 +100,7 @@ function TransactionForm({
     queryKey: [`nonRedeemCheques-${selectedCreditor?.id}`, selectedCreditor],
     queryFn: () =>
       chequeService.fetchNonRedeemChequesOfCreditor(
-        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID)
+        selectedCreditor === null ? 0 : parseInt(selectedCreditor.creditorID),
       ),
     enabled: selectedCreditor !== null && selectedType === "CHEQUE",
     retry: 1,
@@ -141,7 +141,10 @@ function TransactionForm({
   const creditInvoiceOptions =
     creditInvoices?.map((creditInvoice) => ({
       value: creditInvoice.id.toString(),
-      label: creditInvoice.invoiceId + " - Rs." + (creditInvoice.totalPrice - creditInvoice.settledAmount),
+      label:
+        creditInvoice.invoiceId +
+        " - Rs." +
+        (creditInvoice.totalPrice - creditInvoice.settledAmount),
     })) || [];
 
   console.log(cheques?.length);
@@ -204,7 +207,7 @@ function TransactionForm({
       const totalSelectedAmount = selectedCreditInvoices.reduce(
         (total, invoice) =>
           total + (invoice.totalPrice - invoice.settledAmount),
-        0
+        0,
       );
       if (transaction.amount > totalSelectedAmount) {
         toast({
@@ -251,7 +254,7 @@ function TransactionForm({
       const creditor = creditors.find(
         (creditor) =>
           creditor.creditorID === String(queryParams.creditor) ||
-          creditor.creditorID === Number(queryParams.creditor)
+          creditor.creditorID === Number(queryParams.creditor),
       );
 
       if (creditor) {
@@ -329,7 +332,7 @@ function TransactionForm({
                           const selectedCreditor = creditors.find(
                             (creditor) =>
                               parseInt(creditor.creditorID) ===
-                              selectedOption.value
+                              selectedOption.value,
                           );
                           setSelectedCreditor(selectedCreditor);
                         }}
@@ -364,8 +367,8 @@ function TransactionForm({
                           const selectedCreditInvoices = creditInvoices.filter(
                             (creditInvoice) =>
                               selectedOptions.includes(
-                                creditInvoice.id.toString()
-                              )
+                                creditInvoice.id.toString(),
+                              ),
                           );
                           setSelectedCreditInvoices(selectedCreditInvoices);
                           setSelectedCreditInvoiceIDs(selectedOptions);

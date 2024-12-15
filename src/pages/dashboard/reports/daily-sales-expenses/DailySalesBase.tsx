@@ -58,7 +58,7 @@ const DailySalesBase = () => {
       <FieldForm
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />
+      />,
     );
     setShow(true);
   };
@@ -70,7 +70,7 @@ const DailySalesBase = () => {
       <CategoryForm
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />
+      />,
     );
     setShow(true);
   };
@@ -83,7 +83,7 @@ const DailySalesBase = () => {
         date={formattedDate()}
         onClose={() => setShow(false)}
         salesAndExpenseService={salesAndExpenseService}
-      />
+      />,
     );
     setShow(true);
   };
@@ -183,7 +183,7 @@ const DailySalesBase = () => {
                 variant={"outline"}
                 className={cn(
                   "w-[240px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
+                  !date && "text-muted-foreground",
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />

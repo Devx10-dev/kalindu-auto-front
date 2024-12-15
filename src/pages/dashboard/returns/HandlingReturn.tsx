@@ -185,7 +185,7 @@ function HandlingReturn() {
       items.forEach((item) => {
         if (item.outsourced) {
           const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId
+            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
           )[0];
 
           if (
@@ -257,7 +257,7 @@ function HandlingReturn() {
     itemCode: string,
     quantity: number,
     price: number,
-    id: number
+    id: number,
   ) => {
     addReturnItem({ id: id, returnedQuantity: quantity });
     setReturnedQuantities((prev) => ({
@@ -270,7 +270,7 @@ function HandlingReturn() {
     const totalValue = Object.keys(returnedQuantities).reduce((acc, id) => {
       const quantity = returnedQuantities[id];
       const item = selectedInvoice?.items.find(
-        (item) => item.id === Number(id)
+        (item) => item.id === Number(id),
       );
       return acc + (item ? quantity * item.price : 0);
     }, 0);
@@ -424,7 +424,7 @@ function HandlingReturn() {
                                         // Parse the input value as an integer
                                         enteredValue = parseInt(
                                           enteredValue,
-                                          10
+                                          10,
                                         );
                                       }
                                       if (
@@ -437,7 +437,7 @@ function HandlingReturn() {
                                           item.code,
                                           enteredValue,
                                           item.price,
-                                          item.id
+                                          item.id,
                                         );
                                       }
                                     }}

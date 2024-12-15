@@ -121,7 +121,7 @@ const CreditorsTable = (props: {
                       {creditor.totalDue ? (
                         priceRender(
                           "currencyAmount",
-                          currencyAmountString(creditor.totalDue)
+                          currencyAmountString(creditor.totalDue),
                         )
                       ) : (
                         <div className="flex gap-1 items-right justify-end">
@@ -136,7 +136,7 @@ const CreditorsTable = (props: {
                       {creditor.chequeBalance ? (
                         priceRender(
                           "currencyAmount",
-                          currencyAmountString(creditor.chequeBalance)
+                          currencyAmountString(creditor.chequeBalance),
                         )
                       ) : (
                         <div className="flex gap-1 items-right justify-end">
@@ -151,7 +151,7 @@ const CreditorsTable = (props: {
                       {creditor.creditLimit ? (
                         priceRender(
                           "currencyAmount",
-                          currencyAmountString(creditor.creditLimit)
+                          currencyAmountString(creditor.creditLimit),
                         )
                       ) : (
                         <div className="flex gap-1 items-right justify-end">

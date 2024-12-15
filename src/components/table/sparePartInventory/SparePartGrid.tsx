@@ -47,7 +47,7 @@ export default function SparePartGrid({
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedChassisNo, setSelectedChassisNo] = useState<string | null>(
-    null
+    null,
   );
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,7 +70,7 @@ export default function SparePartGrid({
         pageNo,
         pageSize,
         selectedChassisNo,
-        debouncedSearch
+        debouncedSearch,
       ),
     retry: 2,
   });
@@ -80,7 +80,7 @@ export default function SparePartGrid({
   }, [state]);
 
   const [viewSpareParts, setViewSpareParts] = useState<SparePartItem[]>(
-    spareParts?.spareParts ?? []
+    spareParts?.spareParts ?? [],
   );
 
   useEffect(() => {
@@ -187,7 +187,7 @@ export default function SparePartGrid({
                         >
                           {chassisNo.chassisNo}
                         </SelectItem>
-                      )
+                      ),
                     )}
                 </SelectContent>
               </Select>

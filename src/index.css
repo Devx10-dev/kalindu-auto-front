@@ -32,7 +32,6 @@
   border-radius: 5px !important;
 }
 
-
 .table-responsive {
   overflow-x: scroll;
   min-width: 800px;
@@ -44,12 +43,12 @@
 
 .no-scrollbar {
   overflow-x: auto;
-  -ms-overflow-style: none;  
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 
 .color-gray {

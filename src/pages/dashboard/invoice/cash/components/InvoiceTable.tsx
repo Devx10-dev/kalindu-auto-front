@@ -84,7 +84,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
       }));
     } else if (option) {
       const selectedSparePart = spareParts?.find(
-        (part) => part.id.toString() === option.value
+        (part) => part.id.toString() === option.value,
       );
       if (selectedSparePart) {
         setNewItem((prev) => ({

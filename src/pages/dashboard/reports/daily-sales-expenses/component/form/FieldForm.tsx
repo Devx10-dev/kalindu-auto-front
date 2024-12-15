@@ -178,7 +178,6 @@ function FieldForm({
               className="mr-2"
               disabled={createFieldMutation.isPending}
             >
-              
               {createFieldMutation.isPending && (
                 <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
               )}
