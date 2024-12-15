@@ -30,7 +30,7 @@ function SingleInvoice() {
   const queryClient = useQueryClient();
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
-    null
+    null,
   );
   const [isAvailableInStore, setIsAvailableInStore] = useState<boolean>(true);
 

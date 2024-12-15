@@ -66,7 +66,7 @@ function SingleInvoiceCredit() {
   const axiosPrivate = useAxiosPrivate();
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
-    null
+    null,
   );
   const [invoiceId, setInvoiceId] = useState<string>("");
   const [isAvailableInStore, setIsAvailableInStore] = useState<boolean>(true);
@@ -208,7 +208,7 @@ function SingleInvoiceCredit() {
                         className="whitespace-nowrap p-2 rounded-md"
                       >
                         {invoiceDetails?.invoiceItems.filter(
-                          (item) => item.outsourced
+                          (item) => item.outsourced,
                         ).length === 0
                           ? "No Items"
                           : `${invoiceDetails?.invoiceItems.filter((item) => item.outsourced).length} Outsourced`}

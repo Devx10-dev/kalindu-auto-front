@@ -84,11 +84,11 @@ export default function OverviewChart({
   const [rateSelected, setRateSelected] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("today");
   const [dailyProcessed, setDailyProcessed] = useState<DailySummaryTimeBased[]>(
-    []
+    [],
   );
   const [weeklyProcessed, setWeeklyProcessed] = useState<WeeklySummary[]>([]);
   const [monthlyProcessed, setMonthlyProcessed] = useState<MonthlySummary[]>(
-    []
+    [],
   );
   const [yearlyProcessed, setYearlyProcessed] = useState<YearlySummary[]>([]);
   const [chartData, setChartData] = useState<
@@ -145,7 +145,7 @@ export default function OverviewChart({
           case "daily": {
             const processedData = processDailyData(
               analyticData,
-              analyticalRange.dateRange
+              analyticalRange.dateRange,
             );
             setDailyProcessed(processedData);
             break;
@@ -153,7 +153,7 @@ export default function OverviewChart({
           case "weekly": {
             const processedData = processWeeklyData(
               analyticData,
-              analyticalRange.dateRange
+              analyticalRange.dateRange,
             );
             setWeeklyProcessed(processedData);
             break;
@@ -161,7 +161,7 @@ export default function OverviewChart({
           case "monthly": {
             const processedData = processMonthlyData(
               analyticData,
-              analyticalRange.dateRange
+              analyticalRange.dateRange,
             );
             setMonthlyProcessed(processedData);
             break;
@@ -169,7 +169,7 @@ export default function OverviewChart({
           case "yearly": {
             const processedData = processYearlyData(
               analyticData,
-              analyticalRange.dateRange
+              analyticalRange.dateRange,
             );
             setYearlyProcessed(processedData);
             break;

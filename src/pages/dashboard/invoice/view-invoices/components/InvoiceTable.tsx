@@ -132,7 +132,7 @@ export default function InvoiceTable({
                     <TableCell align="right">
                       {priceRender(
                         "currencyAmount",
-                        currencyAmountString(invoice.totalPrice)
+                        currencyAmountString(invoice.totalPrice),
                       )}
                     </TableCell>
                     <TableCell align="center">

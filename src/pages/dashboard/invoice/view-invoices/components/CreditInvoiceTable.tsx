@@ -74,15 +74,14 @@ export default function CreditInvoiceTable({
   };
 
   useEffect(() => {
-    if(invoices){
-      for(let i = 0; i < invoices.invoices.length; i++){
-        console.log("ISSUED",invoices.invoices[i].issuedTime);
-        console.log("MAXDUE",invoices.invoices[i].creditor.maxDuePeriod);
-        console.log("DUE",invoices.invoices[i].dueTime);
+    if (invoices) {
+      for (let i = 0; i < invoices.invoices.length; i++) {
+        console.log("ISSUED", invoices.invoices[i].issuedTime);
+        console.log("MAXDUE", invoices.invoices[i].creditor.maxDuePeriod);
+        console.log("DUE", invoices.invoices[i].dueTime);
       }
     }
-  }
-  , [invoices]);
+  }, [invoices]);
 
   const getDueStatus = (
     issuedTime: number[],
