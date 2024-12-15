@@ -21,7 +21,7 @@ import { ReturnService } from "@/service/return/ReturnService";
 import { SparePartService } from "@/service/sparePartInventory/sparePartService";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
-import { BaseInvoice } from "@/types/returns/returnsTypes";
+import { BaseInvoice, InvoiceID } from "@/types/returns/returnsTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Select from "react-select";
@@ -33,7 +33,7 @@ import Summary from "./Summary";
 
 interface InvoiceOption {
   label: string;
-  value: BaseInvoice;
+  value: InvoiceID;
 }
 
 function HandlingReturn() {
@@ -82,6 +82,9 @@ function HandlingReturn() {
   const [tabCredit, setTabCredit] = useState(false);
   const [tabCash, setTabCash] = useState(false);
   const [creditorSelectKey, setCreditorSelectKey] = useState(0);
+  const [selectedInvoiceID, setSelectedSourceID] = useState<InvoiceID | null>(
+    null,
+  );
 
   const generateInvoiceId = () => {
     const now = new Date();
@@ -99,17 +102,26 @@ function HandlingReturn() {
     return `INV-DUMMY-${year}${month}${day}${uniqueNumber}`;
   };
 
-  const { data: baseInvoices } = useQuery<BaseInvoice[]>({
+  const { data: baseInvoices } = useQuery<InvoiceID[]>({
     queryKey: ["baseInvoices", debouncedSearchTerm],
     queryFn: () =>
       returnService.fetchAllInvoiceByGivenTerm(debouncedSearchTerm),
     retry: 1,
   });
 
+  const { data: selectedBaseInvoice } = useQuery<BaseInvoice>({
+    queryKey: ["selectedBaseInvoice", selectedInvoiceID],
+    queryFn: () =>
+      returnService.fetchInvoiceByInvoiceID(selectedInvoiceID.invoiceID),
+    retry: 1,
+  });
+
   const invoiceOptions: InvoiceOption[] = baseInvoices?.map((invoice) => ({
-    label: invoice.invoiceId,
+    label: invoice.invoiceID,
     value: invoice,
   }));
+
+  console.log(invoiceOptions);
 
   const createDummyInvoiceMutation = useMutation({
     mutationFn: () => {
@@ -267,23 +279,34 @@ function HandlingReturn() {
   }, [returnedQuantities, selectedInvoice]);
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    console.log(tab);
   };
 
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
+    console.log(baseInvoice);
+    if (baseInvoice === undefined || baseInvoice === null) return;
+
     setReturnedQuantities({});
     setSelectedInvoice(baseInvoice);
-    setCustomer(baseInvoice.customer);
-    setPurchaseDate(baseInvoice.date);
-    setReturnType(findReturnType(baseInvoice.invoiceId));
-    setNewInvoiceType(findReturnType(baseInvoice.invoiceId));
-    setSourceInvoiceId(baseInvoice.invoiceId);
+    setCustomer(baseInvoice?.customer);
+    setPurchaseDate(baseInvoice?.date);
+    setReturnType(findReturnType(baseInvoice?.invoiceId));
+    setNewInvoiceType(findReturnType(baseInvoice?.invoiceId));
+    setSourceInvoiceId(baseInvoice?.invoiceId);
     resetExchangeItemTable();
-    setNewInvoiceType(baseInvoice.invoiceId.split("-")[1]);
+    setNewInvoiceType(
+      baseInvoice?.invoiceId === undefined
+        ? ""
+        : baseInvoice?.invoiceId.split("-")[1],
+    );
   };
 
+  useEffect(() => {
+    if (selectedBaseInvoice === null) return;
+    handleSourceInvoice(selectedBaseInvoice);
+  }, [selectedBaseInvoice]);
+
   const findReturnType = (invoiceId: string): string => {
-    const parts = invoiceId.split("-");
+    const parts = invoiceId?.split("-");
     const returnType = parts[1];
     return returnType;
   };
@@ -317,7 +340,7 @@ function HandlingReturn() {
                 placeholder={"Search and select returned invoice"}
                 options={invoiceOptions}
                 onChange={(option) => {
-                  handleSourceInvoice(option.value);
+                  setSelectedSourceID(option.value);
                 }}
                 onInputChange={handleInputChange}
               />

@@ -1,6 +1,10 @@
 import { AxiosInstance } from "axios";
 import { Service } from "../apiService";
-import { BaseInvoice, InvoiceState } from "@/types/returns/returnsTypes";
+import {
+  BaseInvoice,
+  InvoiceID,
+  InvoiceState,
+} from "@/types/returns/returnsTypes";
 
 const RETURN_INVOICE_URL = "return";
 
@@ -9,9 +13,9 @@ class ReturnService extends Service {
     super(api);
   }
 
-  async fetchAllInvoiceByGivenTerm(term: string): Promise<BaseInvoice[]> {
+  async fetchAllInvoiceByGivenTerm(term: string): Promise<InvoiceID[]> {
     try {
-      const response = await this.api.get<BaseInvoice[]>(
+      const response = await this.api.get<InvoiceID[]>(
         `${RETURN_INVOICE_URL}/search/${term}`,
       );
       return response.data;
@@ -24,10 +28,6 @@ class ReturnService extends Service {
     returnInvoiceData: InvoiceState,
   ): Promise<InvoiceState> {
     try {
-      console.log(
-        "////////////////// request data in the return service",
-        returnInvoiceData,
-      );
       const response = await this.api.post<InvoiceState>(
         RETURN_INVOICE_URL,
         returnInvoiceData,
@@ -35,6 +35,20 @@ class ReturnService extends Service {
       return returnInvoiceData;
     } catch (error) {
       throw new Error("Failed to create cash invoice");
+    }
+  }
+
+  async fetchInvoiceByInvoiceID(invoiceID: string): Promise<BaseInvoice> {
+    if (invoiceID === undefined || invoiceID === null || invoiceID === "")
+      return;
+
+    try {
+      const response = await this.api.get<BaseInvoice>(
+        `${RETURN_INVOICE_URL}/invoice/${invoiceID}`,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch cash invoice");
     }
   }
 }

@@ -123,3 +123,8 @@ export type InvoiceItem = {
     buyingPrice?: number;
   };
 };
+
+export interface InvoiceID {
+  id: number;
+  invoiceID: string;
+}
