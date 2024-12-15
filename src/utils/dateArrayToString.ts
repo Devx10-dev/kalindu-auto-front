@@ -34,7 +34,7 @@ export default function dateArrayToString(
   } else {
     // dateStr = `${dateArray[0]}-${dateArray[1]}-${dateArray[2]}`;
     // FORMAT: DAY [Month with 3 letters] YEAR
-    dateStr = `${dateArray[2]} ${months[dateArray[1]].substring(0, 3)} ${dateArray[0]}`;
+    dateStr = `${dateArray[2]} ${months[dateArray[1] - 1].substring(0, 3)} ${dateArray[0]}`;
   }
 
   return dateStr;

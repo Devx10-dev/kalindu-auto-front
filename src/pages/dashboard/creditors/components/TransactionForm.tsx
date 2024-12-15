@@ -38,6 +38,7 @@ import { useEffect, useRef, useState } from "react";
 import CreditorDetailsCard from "./CreditorDetailsCard";
 import useQueryParams from "@/hooks/getQueryParams";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import dateArrayToString from "@/utils/dateArrayToString";
 
 const RANDOM_COLOR = getRandomColor();
 
@@ -140,7 +141,7 @@ function TransactionForm({
   const creditInvoiceOptions =
     creditInvoices?.map((creditInvoice) => ({
       value: creditInvoice.id.toString(),
-      label: creditInvoice.invoiceId,
+      label: creditInvoice.invoiceId + " - Rs." + (creditInvoice.totalPrice - creditInvoice.settledAmount),
     })) || [];
 
   console.log(cheques?.length);
