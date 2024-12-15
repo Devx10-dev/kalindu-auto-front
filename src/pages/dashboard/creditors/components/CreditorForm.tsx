@@ -350,8 +350,11 @@ export function RegisterForm(props: {
                           <SelectValue placeholder="Select credit due period" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">1 week</SelectItem>
-                          <SelectItem value="2">2 weeks</SelectItem>
+                          <SelectItem value="1">1 Week</SelectItem>
+                          <SelectItem value="2">2 Weeks</SelectItem>
+                          <SelectItem value="4">1 Month</SelectItem>
+                          <SelectItem value="8">2 Months</SelectItem>
+                          <SelectItem value="12">3 Months</SelectItem>
                         </SelectContent>
                       </Select>
                     )}

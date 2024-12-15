@@ -73,23 +73,16 @@ export default function CreditInvoiceTable({
     nav(`/dashboard/invoice/view/${type}/${invoiceId}`);
   };
 
-  const calculateDueDate = (issuedTime: number[], maxDueWeeks: number) => {
-    const issuedDate = new Date(issuedTime[0], issuedTime[1], issuedTime[2]);
-    const dueDate = new Date(issuedDate);
-    dueDate.setDate(dueDate.getDate() + maxDueWeeks * 7);
-    console.log(dueDate);
-    // turninto array
-    const dateArray = [
-      dueDate.getFullYear(),
-      dueDate.getMonth(),
-      dueDate.getDate(),
-      issuedTime[3],
-      issuedTime[4],
-      issuedTime[5],
-    ];
-    console.log(dateArray);
-    return dateArrayToString(dateArray, true, false);
-  };
+  useEffect(() => {
+    if(invoices){
+      for(let i = 0; i < invoices.invoices.length; i++){
+        console.log("ISSUED",invoices.invoices[i].issuedTime);
+        console.log("MAXDUE",invoices.invoices[i].creditor.maxDuePeriod);
+        console.log("DUE",invoices.invoices[i].dueTime);
+      }
+    }
+  }
+  , [invoices]);
 
   const getDueStatus = (
     issuedTime: number[],
@@ -216,10 +209,7 @@ export default function CreditInvoiceTable({
                     {dateArrayToString(invoice.issuedTime, false, true)}
                   </TableCell>
                   <TableCell>
-                    {calculateDueDate(
-                      invoice.issuedTime,
-                      Number(invoice.creditor.maxDuePeriod) as number,
-                    )}
+                    {dateArrayToString(invoice.dueTime, true, true)}
                   </TableCell>
                   <TableCell align="right">
                     {priceRender(
