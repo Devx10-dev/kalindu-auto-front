@@ -14,6 +14,8 @@ class ReturnService extends Service {
   }
 
   async fetchAllInvoiceByGivenTerm(term: string): Promise<InvoiceID[]> {
+    if (term === undefined || term === null || term === "")
+      return;
     try {
       const response = await this.api.get<InvoiceID[]>(
         `${RETURN_INVOICE_URL}/search/${term}`,

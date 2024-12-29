@@ -24,6 +24,15 @@ import InvoiceItemsGrid from "./components/InvoiceItemGrid";
 import OutsourceItemsGrid from "./components/OutSourceItemGrid";
 import StatusCard from "./components/StatusCard";
 import { TransactionDrawer } from "./components/TransactionDrawer";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { CashInvoiceTransactionDrawer } from "../../creditors/components/CashInvoiceTransactionDrawer";
+
+
+const dotSizeClasses = {
+  sm: "h-2 w-2",
+  md: "h-2.5 w-2.5",
+  lg: "h-3 w-3",
+};
 
 function SingleInvoice() {
   const axiosPrivate = useAxiosPrivate();
@@ -91,15 +100,37 @@ function SingleInvoice() {
             }
           />
         </CardHeader>
-        <div className="w-full md:w-auto">
-          <StatusCard
-            icon={<CheckCircle size={30} color="green" />}
-            status="Completed"
-            statusColor="red"
-            statusText="This invoice has been completed"
-            type="Cash"
-          />
+        
+        <div className="w-full lg:w-[30%] space-y-4 mt-5">
+          <div className="flex justify-between items-center gap-4 w-full">
+            <div className="flex-grow">
+              <StatusCard
+                icon={<CheckCircle size={30} color="green" />}
+                status="Completed"
+                statusColor="red"
+                statusText="This invoice has been completed"
+                type="Cash"
+              />
+            </div>
+            <div className="relative flex-shrink-0">
+              {/* <TransactionDrawer
+                invoiceDetails={invoiceDetails}
+                invoiceLoading={invoiceLoading}
+              /> */}
+              {!invoiceLoading && invoiceDetails && (
+                <CashInvoiceTransactionDrawer
+                  invoiceId={invoiceDetails?.invoiceId}
+                  creditorName={invoiceDetails?.invoiceId}
+                />
+              )}
+              <span
+                className={`absolute top-[-5px] right-[-5px] block ${dotSizeClasses["lg"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`}
+              />
+            </div>
+          </div>
         </div>
+
+        
       </div>
 
       {/* Main Content */}
@@ -107,20 +138,21 @@ function SingleInvoice() {
         {/* Left Column */}
         <div className="w-full lg:w-[70%]">
           {/* Customer Info Card */}
-          <div className="bg-white rounded-lg p-4 shadow-md mb-4">
+          {/* <div className="bg-white rounded-lg p-4 shadow-md mb-4"> */}
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <div className="flex-1">
-                <h4 className="text-sm font-semibold mb-2">Customer Name:</h4>
-                <p className="text-lg font-semibold p-3 border rounded-md">
-                  {invoiceDetails?.customerName}
+                <h4 className="text-sm  mb-2">Customer Name:</h4>
+                <p className="text-md font-regular p-2 border rounded-md">
+                  {invoiceDetails?.customerName ?
+                    invoiceDetails?.customerName : "Not Provided"}
                 </p>
               </div>
               <div className="flex-1">
-                <h4 className="text-sm font-semibold mb-2">Vehicle No:</h4>
-                <p className="text-lg font-semibold p-3 border rounded-md">
+                <h4 className="text-sm  mb-2">Vehicle No:</h4>
+                <p className="text-md font-regular  p-2 border rounded-md">
                   {invoiceDetails?.vehicleNo
                     ? invoiceDetails?.vehicleNo.toUpperCase()
-                    : "N/A"}
+                    : "Not Provided"}
                 </p>
               </div>
             </div>
@@ -130,43 +162,87 @@ function SingleInvoice() {
                 invoiceLoading={invoiceLoading}
               />
             </div>
-          </div>
+          {/* </div> */}
 
           {/* Outsourced Items Card */}
-          <Card className="mb-4">
-            <CardHeader className="p-4">
-              <CardTitle>Outsourced Items</CardTitle>
-              <CardDescription>
-                This section contains all the outsourced items
-              </CardDescription>
-            </CardHeader>
-            <div className="overflow-x-auto ">
-              <CardContent className="p-4">
-                <OutsourceItemsGrid
-                  invoiceDetails={invoiceDetails}
-                  invoiceLoading={invoiceLoading}
-                />
-              </CardContent>
-            </div>
-          </Card>
+          <Card className="mb-5">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="1">
+                  <CardHeader className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                      <CardTitle className="text-sm">
+                        Outsourced Items
+                      </CardTitle>
+                      <CardDescription className="text-sm">
+                        This section contains all the outsourced items
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant="secondary"
+                        className="whitespace-nowrap p-2 rounded-md"
+                      >
+                        {invoiceDetails?.invoiceItems.filter(
+                          (item) => item.outsourced,
+                        ).length === 0
+                          ? "No Items"
+                          : `${invoiceDetails?.invoiceItems.filter((item) => item.outsourced).length} Outsourced`}
+                      </Badge>
+                      <AccordionTrigger className="p-2 rounded-md bg-primary-500 border border-primary-500" />
+                    </div>
+                  </CardHeader>
+                  <AccordionContent>
+                    <CardContent className="p-2 md:p-6">
+                      <OutsourceItemsGrid
+                        invoiceDetails={invoiceDetails}
+                        invoiceLoading={invoiceLoading}
+                      />
+                    </CardContent>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </Card>
 
-          {/* Commission Details Card */}
-          <Card>
-            <CardHeader className="p-4">
-              <CardTitle>Commission Details</CardTitle>
-              <CardDescription>
-                This section contains all the commission details
-              </CardDescription>
-            </CardHeader>
-            <div className="overflow-x-auto ">
-              <CardContent className="p-4">
-                <CommissionDetailsGrid
-                  invoiceDetails={invoiceDetails}
-                  invoiceLoading={invoiceLoading}
-                />
-              </CardContent>
-            </div>
-          </Card>
+            <Card>
+              <Accordion
+                type="single"
+                collapsible
+                className="w-full"
+                defaultValue={invoiceDetails?.commissions.length > 0 ? "1" : ""}
+              >
+                <AccordionItem value="1">
+                  <CardHeader className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                      <CardTitle className="text-sm">
+                        Commission Details
+                      </CardTitle>
+                      <CardDescription className="text-sm">
+                        This section contains all the commission details
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant="secondary"
+                        className="whitespace-nowrap p-2 rounded-md"
+                      >
+                        {invoiceDetails?.commissions.length === 0
+                          ? "No Commissions"
+                          : `${invoiceDetails?.commissions.length} Commissions`}
+                      </Badge>
+                      <AccordionTrigger className="p-2 rounded-md bg-primary-500 border border-primary-500" />
+                    </div>
+                  </CardHeader>
+                  <AccordionContent>
+                    <CardContent className="p-2 md:p-6">
+                      <CommissionDetailsGrid
+                        invoiceDetails={invoiceDetails}
+                        invoiceLoading={invoiceLoading}
+                      />
+                    </CardContent>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </Card>
         </div>
 
         {/* Right Column */}
@@ -179,11 +255,6 @@ function SingleInvoice() {
             }
             discountPercentage={invoiceDetails?.discount}
             discountAmount={invoiceDetails?.totalDiscount}
-          />
-          <TransactionDrawer
-            invoiceDetails={invoiceDetails}
-            invoiceLoading={invoiceLoading}
-            nonIcon={true}
           />
         </div>
       </div>

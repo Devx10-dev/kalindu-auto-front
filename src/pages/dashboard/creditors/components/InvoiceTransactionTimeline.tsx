@@ -219,14 +219,14 @@ function generateTimelineComponent({
                 <div className="flex gap-1 ">
                   {/* <p className="text-gray-1000 dark:text-white">Bank Deposit</p> */}
                   <Badge className="text-xs bg-red-700 dark:bg-red-900 text-red-100 dark:text-red-300 rounded-sm">
-                    Return
+                    Payment from Return
                   </Badge>
-                  {transaction.transactionInvoices?.length > 0 &&
+                  {/* {transaction.transactionInvoices?.length > 0 &&
                     transaction.transactionInvoices.file.map((invoice: any) => (
                       <Badge className="text-xs bg-red-200 dark:bg-red-900 text-black dark:text-black rounded-sm">
                         {invoice.creditorInvoice.invoiceId}
                       </Badge>
-                    ))}
+                    ))} */}
                 </div>
               </div>
               <div>

@@ -23,17 +23,18 @@ import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { BaseInvoice, InvoiceID } from "@/types/returns/returnsTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import { Fragment } from "react/jsx-runtime";
 import colors from "../../../assets/colors.json";
 import InvoiceTable from "../invoice/creditor/components/InvoiceTable";
 import useReturnInvoiceStore from "./context/useReturnInvoiceStore";
 import Summary from "./Summary";
+import { TableBodySkeleton } from "../invoice/view-invoices/components/TableSkeleton";
 
 interface InvoiceOption {
   label: string;
-  value: InvoiceID;
+  value: string;
 }
 
 function HandlingReturn() {
@@ -49,24 +50,25 @@ function HandlingReturn() {
     returnType,
     resetExchangeItemTable,
     newInvoiceType,
-    invoiceItemDTOList,
     setSelectedInvoice,
     selectedInvoice,
     resetState,
+    discountAmount,
+    invoiceItemDTOList,
+    vatAmount,
+    setSelectedInvoiceType,
+    setRemainingDue,
+    setCashBackAmount,
+    returnAmount,
+    remainingDue,
+    selectedInvoiceId,
+    setSelectedInvoiceId,
   } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
-  const queryClient = useQueryClient();
 
-  const [items, setItems] = useState<DummyInvoiceItem[]>([]);
-  const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const [vatPrecentage, setVatPrecentage] = useState(0);
-  const [discountPercentage, setDiscountPercentage] = useState(0);
-  const [customerName, setCustomerName] = useState("");
-  const [vehicleNo, setVehicleNo] = useState("");
-  const [isValid, setIsValid] = useState(true);
 
   const [returnedQuantities, setReturnedQuantities] = useState<{
     [key: string]: number;
@@ -74,7 +76,6 @@ function HandlingReturn() {
 
   const [totalReturnValue, setTotalReturnValue] = useState(0);
 
-  const dummyInvoiceService = new DummyInvoiceService(axiosPrivate);
   const sparePartService = new SparePartService(axiosPrivate);
   const returnService = new ReturnService(axiosPrivate);
 
@@ -82,158 +83,56 @@ function HandlingReturn() {
   const [tabCredit, setTabCredit] = useState(false);
   const [tabCash, setTabCash] = useState(false);
   const [creditorSelectKey, setCreditorSelectKey] = useState(0);
-  const [selectedInvoiceID, setSelectedSourceID] = useState<InvoiceID | null>(
-    null,
-  );
 
-  const generateInvoiceId = () => {
-    const now = new Date();
-    const year = now.getFullYear().toString().slice(2); // Last two digits of the year
-    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Month (0-indexed, so +1)
-    const day = now.getDate().toString().padStart(2, "0"); // Day of the month
 
-    // Generate a unique 4-digit number based on time
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    const uniqueNumber = (parseInt(hours + minutes, 10) % 10000)
-      .toString()
-      .padStart(4, "0");
+  const [invoiceOptions, setInvoiceOptions] = useState<InvoiceOption[]>([]);
 
-    return `INV-DUMMY-${year}${month}${day}${uniqueNumber}`;
-  };
 
-  const { data: baseInvoices } = useQuery<InvoiceID[]>({
+
+  const { 
+    data: baseInvoices,
+    isLoading: baseInvoiceLoading,
+  } = useQuery<InvoiceID[]>({
     queryKey: ["baseInvoices", debouncedSearchTerm],
     queryFn: () =>
       returnService.fetchAllInvoiceByGivenTerm(debouncedSearchTerm),
     retry: 1,
   });
 
-  const { data: selectedBaseInvoice } = useQuery<BaseInvoice>({
-    queryKey: ["selectedBaseInvoice", selectedInvoiceID],
+  const { 
+    data: selectedBaseInvoice,
+    isLoading: selectedInvoiceLoading,
+  } = useQuery<BaseInvoice>({
+    queryKey: ["selectedBaseInvoice", selectedInvoiceId],
     queryFn: () =>
-      returnService.fetchInvoiceByInvoiceID(selectedInvoiceID.invoiceID),
+      returnService.fetchInvoiceByInvoiceID(selectedInvoiceId),
     retry: 1,
+    enabled: selectedInvoiceId !== null,
+    
   });
 
-  const invoiceOptions: InvoiceOption[] = baseInvoices?.map((invoice) => ({
-    label: invoice.invoiceID,
-    value: invoice,
-  }));
-
-  console.log(invoiceOptions);
-
-  const createDummyInvoiceMutation = useMutation({
-    mutationFn: () => {
-      const isValid = validateAndRefactoringData();
-      setIsValid(isValid);
-
-      if (isValid) {
-        return dummyInvoiceService.createDummyInvoice({
-          customerName: customerName,
-          discount: discountPercentage,
-          dummy: true,
-          tax: vatPrecentage,
-          invoiceItems: items,
-          invoiceId: generateInvoiceId(),
-          vehicleNo: vehicleNo,
-        });
-      }
-    },
-    onSuccess: () => {
-      // Handle onSuccess logic here
-      if (isValid) {
-        queryClient.invalidateQueries({ queryKey: ["dummyInvoices"] });
-        toast({
-          variant: "default",
-          title: "Success",
-          description: "Dummy invoice is created.",
-        });
-      }
-    },
-    onError: (data) => {
-      toast({
-        variant: "destructive",
-        title: "Dummy Invoice creation failed",
-        description: `${
-          data.message.split(" ").at(-1) === "409"
-            ? "Invoice ID already exists!"
-            : data.message.split(" ").at(-1) === "412"
-              ? "Requested quantity is not available for one of the items"
-              : data.message
-        }`,
-        duration: 5000,
-      });
-    },
-  });
-
-  const validateAndRefactoringData = (): boolean => {
-    let validationError = "";
-    let hasValidationError = false;
-
-    if (customerName.length === 0) {
-      hasValidationError = true;
-      validationError = "Customer name is required";
-    }
-
-    if (!hasValidationError && items.length === 0) {
-      validationError = "Items must have at least one";
-      hasValidationError = true;
-    }
-
-    if (!hasValidationError) {
-      items.forEach((item) => {
-        if (item.outsourced) {
-          const outSourcedPart = outsourcedItems.filter(
-            (outsourcedItem) => outsourcedItem.index === item.sparePartId,
-          )[0];
-
-          if (
-            !outSourcedPart ||
-            outSourcedPart.companyName === undefined ||
-            outSourcedPart.companyName.trim().length <= 0 ||
-            outSourcedPart.buyingPrice <= 0
-          ) {
-            validationError = "Please enter outsource details of " + item.name;
-            hasValidationError = true;
-            return;
-          }
-
-          item.outsourceItem = outSourcedPart;
-        }
-      });
-    }
-
-    if (hasValidationError) {
-      toast({
-        variant: "destructive",
-        title: "Validation Error",
-        description: validationError,
-        duration: 3000,
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const calculateTotalPrice = () => {
-    if (items.length === 0) return;
-
-    let total = 0;
-    items.forEach((item) => {
-      let itemTotalPrice = item.quantity * item.price;
-      if (item.discount !== undefined) {
-        itemTotalPrice -= item.discount;
-      }
-      total += itemTotalPrice;
-    });
-  };
+  // const invoiceOptions: InvoiceOption[] = baseInvoices?.map((invoice) => ({
+  //   label: invoice.invoiceID,
+  //   value: invoice,
+  // }));
 
   useEffect(() => {
-    calculateTotalPrice();
-  }, [items]);
+    if (baseInvoices) {
+      setInvoiceOptions(baseInvoices.map((invoice) => ({
+        label: invoice.invoiceID,
+        value: invoice.invoiceID,
+      })));
+    }
+  }, [baseInvoices]);
+
+  useEffect(() => {
+    console.log("===================",selectedInvoiceId);
+  }
+  , [selectedInvoiceId])
+
 
   const handleInputChange = (inputValue: string) => {
+    setInputText(inputValue)
     setSearchTerm(inputValue);
   };
 
@@ -282,15 +181,14 @@ function HandlingReturn() {
   };
 
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
-    console.log(baseInvoice);
+    console.log("BAAASE",baseInvoice);
     if (baseInvoice === undefined || baseInvoice === null) return;
 
     setReturnedQuantities({});
     setSelectedInvoice(baseInvoice);
     setCustomer(baseInvoice?.customer);
     setPurchaseDate(baseInvoice?.date);
-    setReturnType(findReturnType(baseInvoice?.invoiceId));
-    setNewInvoiceType(findReturnType(baseInvoice?.invoiceId));
+    setNewInvoiceType(findInvoiceType(baseInvoice?.invoiceId));
     setSourceInvoiceId(baseInvoice?.invoiceId);
     resetExchangeItemTable();
     setNewInvoiceType(
@@ -298,19 +196,68 @@ function HandlingReturn() {
         ? ""
         : baseInvoice?.invoiceId.split("-")[1],
     );
+    
   };
 
   useEffect(() => {
     if (selectedBaseInvoice === null) return;
-    handleSourceInvoice(selectedBaseInvoice);
-  }, [selectedBaseInvoice]);
+    // this needs to happen only if there is a difference previous selected invoice and the new selected invoice
+    // if (selectedBaseInvoice?.invoiceId !== sourceInvoiceId) {
+      handleSourceInvoice(selectedBaseInvoice);
+    // }
+  }, [selectedBaseInvoice, sourceInvoiceId]);
 
-  const findReturnType = (invoiceId: string): string => {
+  const findInvoiceType = (invoiceId: string): string => {
     const parts = invoiceId?.split("-");
-    const returnType = parts[1];
-    return returnType;
+    const invoiceType = parts[1];
+    return invoiceType;
   };
 
+
+  const subtotal = useMemo(() => {
+    return invoiceItemDTOList.reduce(
+      (acc: any, item: any) =>
+        acc + item.quantity * item.price - item.quantity * item.discount,
+      0,
+    );
+  }, [invoiceItemDTOList]);
+
+  const discountedTotal = useMemo(
+    () => subtotal - (discountAmount || 0),
+    [subtotal, discountAmount],
+  );
+  
+  const totalWithVat = useMemo(
+    () => discountedTotal + (vatAmount || 0),
+    [discountedTotal, vatAmount],
+  );
+
+  
+
+  useEffect(() => {
+    if (selectedInvoice) {
+      setSelectedInvoiceType(selectedInvoice.invoiceId.split("-")[1]);
+    }
+  }, [selectedInvoice]);
+
+  useEffect(() => {
+    setCashBackAmount(returnAmount - totalWithVat - remainingDue < 0 ? 0 : returnAmount - totalWithVat - remainingDue);
+  }, 
+  [returnAmount, totalWithVat, remainingDue,setCashBackAmount])
+
+  useEffect(() => {
+    const totalDue = selectedBaseInvoice?.totalPrice - selectedBaseInvoice?.settledAmount;
+    let subjectedDue = 0;
+    if(totalDue >= returnAmount) {
+      subjectedDue = returnAmount
+    } else {
+      subjectedDue = totalDue
+    }
+    setRemainingDue(subjectedDue);
+  }
+  , [returnAmount, selectedBaseInvoice?.totalPrice, selectedBaseInvoice?.settledAmount, setRemainingDue])
+  
+  const [inputText, setInputText] = useState<string>('')
   return (
     <Fragment>
       <div className="ml-2">
@@ -335,23 +282,36 @@ function HandlingReturn() {
             >
               <RequiredLabel label="Returned Invoice" />
               <Select
-                key={creditorSelectKey}
+                // key={creditorSelectKey}
                 className="select-place-holder"
                 placeholder={"Search and select returned invoice"}
                 options={invoiceOptions}
                 onChange={(option) => {
-                  setSelectedSourceID(option.value);
+                  // if cleared the selected invoice
+                  if (option === null) {
+                    // resetState();
+                    setSelectedInvoiceId(null);
+                    return;
+                  }
+                  setSelectedInvoiceId(option.value);
+                  // setSourceInvoiceId(option.value);
                 }}
                 onInputChange={handleInputChange}
+                isLoading = {baseInvoiceLoading}
+                isClearable={true}
+                isSearchable={true}
+                inputValue={inputText}
+                noOptionsMessage={() => "No invoice found for given criteria, please try another one."}
+                // value={sourceInvoiceId}
               />
             </div>
             <div style={{ marginTop: 15 }}>
               <Tabs
                 defaultValue="returnItems"
-                className="w-[100%]"
+                className="w-[100%] h-full"
                 onValueChange={handleTabChange}
               >
-                <div>
+                <div className="h-full">
                   <div className="flex justify-between items-center">
                     <TabsList className="grid w-full sm:w-[40%] grid-cols-2 bg-primary text-slate-50">
                       <TabsTrigger value="returnItems">
@@ -361,9 +321,8 @@ function HandlingReturn() {
                     </TabsList>
                   </div>
                   {/* Return Item view section */}
-                  <TabsContent value="returnItems">
-                    <div className="overflow-x-auto">
-                      <Table className="border rounded-md text-md mt-6 mb-5 table-responsive">
+                  <TabsContent value="returnItems" className="h-full">
+                      <Table className="border rounded-md text-md mt-6 mb-5 table-responsive h-full">
                         <TableHeader>
                           <TableRow>
                             <TableHead>Spare Part</TableHead>
@@ -382,6 +341,9 @@ function HandlingReturn() {
                             </TableHead>
                           </TableRow>
                         </TableHeader>
+                        {selectedInvoiceLoading ? (
+                          <TableBodySkeleton cols={6} rows={5} noHeader={true} />
+                        ) : (
                         <TableBody>
                           {selectedInvoice ? (
                             selectedInvoice?.items.map((item) => (
@@ -412,33 +374,32 @@ function HandlingReturn() {
                                 <TableCell align="right">
                                   <Input
                                     id={"" + item.id}
+                                    className="w-fit"
                                     type="number"
-                                    max={item.quantity}
+                                    max={item.quantity + 1}
                                     min={0}
-                                    value={returnedQuantities[item.id]}
+                                    value={returnedQuantities[item.id] || ""}
                                     onChange={(e) => {
-                                      let enteredValue = e.target.value;
+                                      const enteredValue = e.target.value;
                                       if (enteredValue === "") {
-                                        enteredValue = "";
-                                      } else {
-                                        // Parse the input value as an integer
-                                        enteredValue = parseInt(
-                                          enteredValue,
-                                          10,
-                                        );
-                                      }
-                                      if (
-                                        enteredValue > item.availableQuantity
-                                      ) {
-                                        // Prevent the input from going beyond the max value
-                                        e.target.value = item.availableQuantity;
-                                      } else if (enteredValue >= 0) {
                                         handleReturnedQuantityChange(
                                           item.code,
-                                          enteredValue,
+                                          0,
                                           item.price,
                                           item.id,
                                         );
+                                      } else {
+                                        const parsedValue = parseInt(enteredValue, 10);
+                                        if (parsedValue > item.availableQuantity) {
+                                          e.target.value = item.availableQuantity.toString();
+                                        } else if (parsedValue >= 0) {
+                                          handleReturnedQuantityChange(
+                                            item.code,
+                                            parsedValue,
+                                            item.price,
+                                            item.id,
+                                          );
+                                        }
                                       }
                                     }}
                                     step={1}
@@ -466,8 +427,8 @@ function HandlingReturn() {
                             </TableRow>
                           )}
                         </TableBody>
+                        )}
                       </Table>
-                    </div>
                   </TabsContent>
 
                   {/* New invoice section */}
@@ -486,6 +447,7 @@ function HandlingReturn() {
             <Summary
               creditorSelectKey={creditorSelectKey}
               setCreditorSelectKey={setCreditorSelectKey}
+              isDataLoading={selectedInvoiceLoading}
             />
           </div>
         </CardContent>
