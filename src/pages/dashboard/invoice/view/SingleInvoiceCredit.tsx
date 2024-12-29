@@ -195,7 +195,7 @@ function SingleInvoiceCredit() {
                 <AccordionItem value="1">
                   <CardHeader className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                      <CardTitle className="text-md">
+                      <CardTitle className="text-sm">
                         Outsourced Items
                       </CardTitle>
                       <CardDescription className="text-sm">
@@ -238,7 +238,7 @@ function SingleInvoiceCredit() {
                 <AccordionItem value="1">
                   <CardHeader className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                      <CardTitle className="text-md">
+                      <CardTitle className="text-sm">
                         Commission Details
                       </CardTitle>
                       <CardDescription className="text-sm">

@@ -45,10 +45,12 @@ import { currencyAmountString } from "@/utils/analyticsUtils";
 import TransactionLoading from "./TransactionLoading";
 import NoInvoices from "./NoInvoices";
 
-function TransactionTimeLine({
+function CashInvoiceTransactionTimeLine({
+  invoiceId,
   transactions,
   transactionLoading,
 }: {
+  invoiceId?: string;
   transactions: TransactionList;
   transactionLoading: boolean;
 }) {
@@ -61,7 +63,7 @@ function TransactionTimeLine({
       ) : (
         <div className="relative border-l border-gray-200 dark:border-gray-700 w-full h-fit">
           {transactions?.creditorTransactions?.map((transaction) =>
-            generateTimelineComponent({ transaction }),
+            generateTimelineComponent({ transaction, invoiceId }),
           )}
         </div>
       )}
@@ -69,7 +71,13 @@ function TransactionTimeLine({
   );
 }
 
-function generateTimelineComponent({ transaction }: { transaction: any }) {
+function generateTimelineComponent({
+  transaction,
+  invoiceId,
+}: {
+  transaction: any;
+  invoiceId?: string;
+}) {
   switch (transaction.transactionType) {
     case "CASH":
       return (
@@ -102,7 +110,12 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
           icon={
             <Coins className="w-4 h-4 text-green-600 dark:text-green-300" />
           }
-          body={<TransactionInvoiceCard transaction={transaction} />}
+          body={
+            <TransactionInvoiceCard
+              transaction={transaction}
+              invoiceId={invoiceId}
+            />
+          }
           iconColor="bg-green-100 text-green-800"
         />
       );
@@ -151,7 +164,12 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
           icon={
             <CreditCard className="w-4 h-4 text-gray-600 dark:text-gray-300" />
           }
-          body={<TransactionInvoiceCard transaction={transaction} />}
+          body={
+            <TransactionInvoiceCard
+              transaction={transaction}
+              invoiceId={invoiceId}
+            />
+          }
           iconColor="bg-gray-100 text-gray-800"
         />
       );
@@ -181,7 +199,12 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
           icon={
             <Landmark className="w-4 h-4 text-blue-600 dark:text-blue-300" />
           }
-          body={<TransactionInvoiceCard transaction={transaction} />}
+          body={
+            <TransactionInvoiceCard
+              transaction={transaction}
+              invoiceId={invoiceId}
+            />
+          }
         />
       );
     case "RETURN":
@@ -199,9 +222,9 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
                     Payment from Return
                   </Badge>
                   {/* {transaction.transactionInvoices?.length > 0 &&
-                    transaction.transactionInvoices.map((invoice: any) => (
+                    transaction.transactionInvoices.file.map((invoice: any) => (
                       <Badge className="text-xs bg-red-200 dark:bg-red-900 text-black dark:text-black rounded-sm">
-                        {invoice.creditorInvoice.invoiceId}
+                        {invoice.cashInvoice.invoiceId}
                       </Badge>
                     ))} */}
                 </div>
@@ -214,14 +237,25 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
             </div>
           }
           icon={<Undo2 className="w-4 h-4 text-red-600 dark:text-red-300" />}
-          body={<TransactionInvoiceCard transaction={transaction} />}
+          body={
+            <TransactionInvoiceCard
+              transaction={transaction}
+              invoiceId={invoiceId}
+            />
+          }
           iconColor="bg-red-100 text-red-800"
         />
       );
   }
 }
 
-function TransactionInvoiceCard({ transaction }: { transaction: any }) {
+function TransactionInvoiceCard({
+  transaction,
+  invoiceId,
+}: {
+  transaction: any;
+  invoiceId?: string;
+}) {
   return (
     <Card className="w-full mt-2">
       <CardHeader className="p-0">
@@ -239,20 +273,25 @@ function TransactionInvoiceCard({ transaction }: { transaction: any }) {
       <CardContent className="p-2">
         {transaction.transactionInvoices &&
         transaction.transactionInvoices.length > 0
-          ? transaction.transactionInvoices.map((invoice: any) => (
-              <div className="flex items-center justify-between">
-                <Link
-                  to={`/dashboard/invoice/creditor/${invoice.creditorInvoice.invoiceId}`}
-                >
-                  <p className="text-xs">{invoice.creditorInvoice.invoiceId}</p>
-                </Link>
-                <PriceComponent
-                  content={currencyAmountString(invoice.settledAmount)}
-                  contentType="currencyAmount"
-                  bold={false}
-                />
-              </div>
-            ))
+          ? transaction.transactionInvoices.map(
+              (invoice: any) =>
+                invoiceId == invoice.cashInvoice.invoiceId && (
+                  <div className="flex items-center justify-between">
+                    <Link
+                      to={`/dashboard/invoice/creditor/${invoice.cashInvoice.invoiceId}`}
+                    >
+                      <p className="text-xs">
+                        {invoice.cashInvoice.invoiceId}
+                      </p>
+                    </Link>
+                    <PriceComponent
+                      content={currencyAmountString(invoice.settledAmount)}
+                      contentType="currencyAmount"
+                      bold={false}
+                    />
+                  </div>
+                ),
+            )
           : transaction.creditorRefund == null && (
               <div className="flex items-center justify-center gap-2">
                 <TriangleAlert className="w-4 h-4 text-gray-500 dark:text-gray-400" />
@@ -276,4 +315,4 @@ function TransactionInvoiceCard({ transaction }: { transaction: any }) {
   );
 }
 
-export default TransactionTimeLine;
+export default CashInvoiceTransactionTimeLine;

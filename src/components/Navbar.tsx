@@ -44,7 +44,7 @@ function Navbar({
   const { data: user } = useQuery<User>({
     queryKey: ["user", username],
     queryFn: () => userService.fetchUserProfileDetails(username),
-    retry: 2,
+    retry: 0,
   });
 
   const handleLogout = () => {

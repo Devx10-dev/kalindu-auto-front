@@ -2,6 +2,7 @@ import {
   BaseInvoice,
   InvoiceItem,
   InvoiceState,
+  Payment,
   ReturnItem,
 } from "@/types/returns/returnsTypes";
 import { create } from "zustand";
@@ -9,6 +10,7 @@ import { create } from "zustand";
 const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   sourceInvoiceId: undefined, //Must be
   returnedItems: [], //Must be
+  remainingDue: 0,
 
   returnType: undefined, //Must be
   newInvoiceType: "CRE", //Must be
@@ -37,11 +39,29 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   // exchange items
   invoiceItemDTOList: [],
   selectedInvoice: undefined,
+  selectedInvoiceType: undefined,
+  cashbackType: undefined,
+  payments: [],
+
+  selectedInvoiceId: undefined,
+  
 
   setSourceInvoiceId: (sourceInvoiceId?: string) =>
     set((state) => ({
       ...state,
       sourceInvoiceId: sourceInvoiceId,
+    })),
+
+  setSelectedInvoiceType: (selectedInvoiceType?: string) =>
+    set((state) => ({
+      ...state,
+      selectedInvoiceType: selectedInvoiceType,
+    })),
+
+  setRemainingDue: (remainingDue: number) =>
+    set((state) => ({
+      ...state,
+      remainingDue: remainingDue,
     })),
 
   setReturnType: (returnType?: string) =>
@@ -243,23 +263,20 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
     }),
 
   resetState: () =>
-    set({
-      sourceInvoiceId: undefined, //Must be
-      returnedItems: [], //Must be
-
-      returnType: undefined, //Must be
-      newInvoiceType: undefined, //Must be
-      reason: undefined, //Must be
-
+    set((state) => ({
+      ...state,
+      sourceInvoiceId: undefined,
+      returnedItems: [],
+      remainingDue: 0,
+      returnType: undefined,
+      newInvoiceType: "CRE",
+      reason: undefined,
       cashBackAmount: 0,
       creditorCashBack: 0,
       creditInvoice: false,
-
       invoiceID: undefined,
       customerName: undefined,
       vehicleNumber: undefined,
-
-      // final bill summary items
       discountPercentage: 0,
       discountAmount: 0,
       vatPercentage: 0,
@@ -267,14 +284,16 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       returnAmount: 0,
       totalPrice: undefined,
       purchaseDate: undefined,
-      //commissions details
       commissionName: undefined,
       commissionAmount: undefined,
       commissionRemark: undefined,
-      // exchange items
       invoiceItemDTOList: [],
       selectedInvoice: undefined,
-    }),
+      selectedInvoiceType: undefined,
+      cashbackType: undefined,
+      payments: [],
+      selectedInvoiceId: undefined,
+    })),
 
   getRequestData: () => {
     const state = get();
@@ -301,15 +320,56 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
 
     const requestData = {
       sourceInvoiceId: state.sourceInvoiceId,
+      sourceInvoiceType: state.selectedInvoiceType,
       returnedItems: state.returnedItems,
       creditInvoice: state.newInvoiceType == "CASH" ? false : true,
       reason: state.reason,
       exchangeItems: state.invoiceItemDTOList,
       newInvoiceId: invoiceId,
+      newInvoiceType: state.newInvoiceType,
+      returnType: state.returnType,
+      cashBackAmount: state.cashBackAmount,
+      cashbackType: state.cashbackType,
+      payments: state.payments,
+      cashBackType: state.cashbackType,
     };
 
     return requestData;
   },
+
+  setCashbackType: (cashbackType: string) =>
+    set((state) => ({
+      ...state,
+      cashbackType: cashbackType,
+    })),
+
+  setPayments: (payments: Payment[]) =>
+    set((state) => ({
+      ...state,
+      payments: payments,
+    })),
+
+  addPayment: (payment: Payment) => {
+    set((state) => ({
+      ...state,
+      payments: [...state.payments, payment],
+    }));
+  },
+
+  removePayment: (payment: Payment) => {
+    set((state) => ({
+      ...state,
+      payments: state.payments.filter((p) => p !== payment),
+    }));
+  },
+
+  setSelectedInvoiceId: (selectedInvoiceId: string) =>
+    set((state) => ({
+      ...state,
+      selectedInvoiceId: selectedInvoiceId,
+    })),
+
+  
 }));
 
 export default useReturnInvoiceStore;

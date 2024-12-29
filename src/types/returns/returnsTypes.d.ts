@@ -7,6 +7,7 @@ export interface BaseInvoice {
   date: number[];
   invoiceType: string;
   totalPrice: number;
+  settledAmount: number;
 }
 
 export type InvoiceItem = {
@@ -31,10 +32,16 @@ export type ReturnItem = {
   returnedQuantity?: number;
 };
 
+export type Payment = {
+  paymentType: string;
+  amount: number;
+};
+
 export type InvoiceState = {
   sourceInvoiceId?: string;
   returnedItems: ReturnItem[];
   invoiceID: string;
+  remainingDue: number;
 
   returnType?: string;
   newInvoiceType?: string; //Must be
@@ -63,13 +70,18 @@ export type InvoiceState = {
   totalDiscount?: number;
   returnAmount?: number;
   purchaseDate?: Array<number>;
+  cashbackType?: string;
 
   commissionName?: string;
   commissionRemark?: string;
   commissionAmount?: number;
   selectedInvoice?: BaseInvoice;
+  selectedInvoiceType?: string;
 
   commissions?: Commission[];
+  payments ?: Payment[];
+
+  selectedInvoiceId?: string;
 
   setSourceInvoiceId: (sourceInvoiceId?: string) => void;
   setReturnType: (returnType?: string) => void;
@@ -79,6 +91,7 @@ export type InvoiceState = {
   setCreditorCashBack: (creditorCashBack: number) => void;
   setCreditInvoice: (creditInvoice: boolean) => void;
   addReturnItem: (item: ReturnItem) => void;
+  setRemainingDue: (remainingDue: number) => void;
 
   setCustomer: (name?: string) => void;
   setVehicleNumber: (number?: string) => void;
@@ -98,6 +111,7 @@ export type InvoiceState = {
   setTotalPrice: (price: number) => void;
   setReturnAmount: (returnAmount: number) => void;
   setPurchaseDate: (purchaseDate: Array<number>) => void;
+  setCashbackType: (cashbackType: string) => void;
 
   setCommissionName: (name?: string) => void;
   setCommissionRemark: (remark?: string) => void;
@@ -107,6 +121,11 @@ export type InvoiceState = {
   resetExchangeItemTable: () => void;
   resetState: () => void;
   setSelectedInvoice: (invoice?: BaseInvoice) => void;
+  setSelectedInvoiceType: (invoiceType?: string) => void;
+  setPayments: (payments: Payment[]) => void;
+  addPayment: (payment: Payment) => void;
+  removePayment: (payment: Payment) => void;
+  setSelectedInvoiceId: (invoiceId?: string) => void;
 };
 
 export type InvoiceItem = {
@@ -127,4 +146,15 @@ export type InvoiceItem = {
 export interface InvoiceID {
   id: number;
   invoiceID: string;
+}
+
+type Option = {
+  id: string
+  icon: React.ElementType
+  label: string
+}
+
+type IconRadioGroupProps = {
+  options: Option[]
+  onChange?: (selectedId: string) => void
 }

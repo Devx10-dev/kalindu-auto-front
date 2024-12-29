@@ -5,10 +5,16 @@ export default function CurrencyComponent({
   amount,
   currency,
   withoutCurrency,
+  mainTextSize = "text-3xl", // Default size for the main text
+  subTextSize = "text-sm", // Default size for the subtext
+  fontStyle = "font-bold", // Default font style
 }: {
   amount: number;
   currency: string | undefined;
   withoutCurrency?: boolean;
+  mainTextSize?: string; // Optional prop for main text size
+  subTextSize?: string; // Optional prop for subtext size
+  fontStyle?: string; // Optional prop for font style
 }) {
   const [amountString, setAmountString] = useState<string>("");
   const [pre, setPre] = useState<string>("");
@@ -22,8 +28,6 @@ export default function CurrencyComponent({
     }
   }, [amount, currency]);
 
-  // const [pre, post] = amountString.split(/(?<=\..*)\./
-
   useEffect(() => {
     const [pre, post] = amountString.split(/(?<=\..*)\./);
     setPre(pre);
@@ -31,9 +35,9 @@ export default function CurrencyComponent({
   }, [amountString]);
 
   return (
-    <div className="text-3xl font-bold">
+    <div className={`${fontStyle} ${mainTextSize}`}>
       <span>{withoutCurrency == true ? pre.replace(/[^0-9]/g, "") : pre}</span>
-      <span className="text-sm color-muted-foreground">.{post}</span>
+      <span className={`${subTextSize} color-muted-foreground`}>.{post}</span>
     </div>
   );
 }
