@@ -13,6 +13,7 @@ import { Analytics } from "./pages/dashboard/dashboard-root/Analytics";
 import CashInvoice from "./pages/dashboard/invoice/cash/CashInvoice";
 import CreditorInvoiceBase from "./pages/dashboard/invoice/creditor/CreditorInvoiceBase";
 import DummyInvoice from "./pages/dashboard/invoice/dummy/DummyInvoice";
+import QuotationInvoice from "./pages/dashboard/invoice/dummy/QuotationInvoiceView ";
 import { ViewAllInvoices } from "./pages/dashboard/invoice/view-invoices/ViewAllInvoices";
 import SingleInvoice from "./pages/dashboard/invoice/view/SingleInvoice";
 import DailySalesBase from "./pages/dashboard/reports/daily-sales-expenses/DailySalesBase";
@@ -45,6 +46,7 @@ function App() {
             <Route path="cash" element={<CashInvoice />} />
             <Route path="creditor" element={<CreditorInvoiceBase />} />
             <Route path="quotation" element={<DummyInvoice />} />
+            <Route path="quotation/print-page" element={<QuotationInvoice />} />
             <Route path="all" element={<ViewAllInvoices />} />
             <Route path="cash/:id" element={<SingleInvoice />} />
             <Route path="creditor/:id" element={<SingleInvoiceCredit />} />
