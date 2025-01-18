@@ -29,7 +29,7 @@ function ChequeStatusBadge({
       break;
     case "REJECTED":
       background = "red";
-      statusText = "Overdue";
+      statusText = "Rejected";
       break;
   }
 
