@@ -9,18 +9,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import useApiErrorHandler from "@/hooks/useApiErrorHandler";
 import { SaleAndExpenseService } from "@/service/salesAndExpenses/SaleAndExpenseService";
 import {
   Field,
   fieldSchema,
 } from "@/validation/schema/salesAndExpenses/fieldSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
 import { z } from "zod";
-import { useRef } from "react";
-import { ReloadIcon } from "@radix-ui/react-icons";
 
 function FieldForm({
   onClose,
@@ -30,6 +31,7 @@ function FieldForm({
   salesAndExpenseService: SaleAndExpenseService;
 }) {
   const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
 
   const inputRefs = useRef<any[]>([]);
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -84,13 +86,8 @@ function FieldForm({
         description: "Successfully inserted field.",
       });
     },
-    onError: (data) => {
-      toast({
-        variant: "destructive",
-        title: "Field creation is failed",
-        description: data.message,
-        duration: 5000,
-      });
+    onError: (error) => {
+      handleError(error);
     },
   });
 

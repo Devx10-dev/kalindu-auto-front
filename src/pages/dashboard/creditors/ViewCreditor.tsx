@@ -135,7 +135,7 @@ const ViewCreditor = () => {
         dateB.setHours(...b.issuedTime.slice(3) as [number, number, number, number]);
         return dateB.getTime() - dateA.getTime();
       });
-      setSortedInvoices(filteredInvoices);
+      setSortedInvoices(sortedInvoices);
     }
   }
   , [filteredInvoices]);
@@ -328,7 +328,7 @@ const ViewCreditor = () => {
                       <div className="flex justify-center items-center">
                         <p>No Invoices for the creditor</p>
                       </div>
-                    ) : filteredInvoices.length === 0 ? (
+                    ) : sortedInvoices.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center">
                           <div className="flex justify-center items-center gap-2 my-4">
@@ -338,7 +338,7 @@ const ViewCreditor = () => {
                       </TableRow>
                     ) : (
                       // add filter by search and status
-                      filteredInvoices.map((invoice) => (
+                      sortedInvoices.map((invoice) => (
                         <TableRow key={invoice.invoiceId}>
                           <TableCell>{invoice.invoiceId}</TableCell>
                           <TableCell>
@@ -350,14 +350,14 @@ const ViewCreditor = () => {
                           <TableCell align="right">
                             {priceRender(
                               "currencyAmount",
-                              currencyAmountString(invoice.totalPrice),
+                              currencyAmountString(invoice.totalPrice)
                             )}
                           </TableCell>
                           <TableCell align="right">
                             {invoice.settledAmount
                               ? priceRender(
                                   "currencyAmount",
-                                  currencyAmountString(invoice.settledAmount),
+                                  currencyAmountString(invoice.settledAmount)
                                 )
                               : priceRender("currencyAmount", "Rs. 0.00")}
                           </TableCell>
@@ -367,8 +367,8 @@ const ViewCreditor = () => {
                               currencyAmountString(
                                 invoice.pendingPayment
                                   ? invoice.pendingPayment
-                                  : 0,
-                              ),
+                                  : 0
+                              )
                             )}
                           </TableCell>
                           <TableCell className="text-center items-center justify-center h-full">
