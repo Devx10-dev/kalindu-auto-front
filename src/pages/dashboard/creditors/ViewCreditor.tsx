@@ -129,16 +129,23 @@ const ViewCreditor = () => {
       const sortedInvoices = filteredInvoices.sort((a, b) => {
         const dateA = new Date();
         const dateB = new Date();
-        dateA.setFullYear(...a.issuedTime.slice(0, 3) as [number, number, number]); // Use the first three elements
-        dateB.setFullYear(...b.issuedTime.slice(0, 3) as [number, number, number]);
-        dateA.setHours(...a.issuedTime.slice(3) as [number, number, number, number]);
-        dateB.setHours(...b.issuedTime.slice(3) as [number, number, number, number]);
+        dateA.setFullYear(
+          ...(a.issuedTime.slice(0, 3) as [number, number, number]),
+        ); // Use the first three elements
+        dateB.setFullYear(
+          ...(b.issuedTime.slice(0, 3) as [number, number, number]),
+        );
+        dateA.setHours(
+          ...(a.issuedTime.slice(3) as [number, number, number, number]),
+        );
+        dateB.setHours(
+          ...(b.issuedTime.slice(3) as [number, number, number, number]),
+        );
         return dateB.getTime() - dateA.getTime();
       });
       setSortedInvoices(filteredInvoices);
     }
-  }
-  , [filteredInvoices]);
+  }, [filteredInvoices]);
 
   if (creditorDetails.isLoading) {
     return <Loading />;

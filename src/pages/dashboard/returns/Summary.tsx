@@ -38,8 +38,6 @@ const Summary = ({
   setCreditorSelectKey: React.Dispatch<React.SetStateAction<number>>;
   isDataLoading: boolean;
 }) => {
-
-
   const {
     customerName,
     sourceInvoiceId,
@@ -65,7 +63,7 @@ const Summary = ({
     remainingDue,
     cashBackAmount,
     setReturnType,
-    setSelectedInvoiceId
+    setSelectedInvoiceId,
   } = useReturnInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
@@ -96,11 +94,9 @@ const Summary = ({
 
   // Update the total price when discountedTotal or vatAmount changes
   useEffect(() => {
-    setNetPaidAmount(totalWithVat - returnAmount + remainingDue)
+    setNetPaidAmount(totalWithVat - returnAmount + remainingDue);
     console.log("Net Paid Amount: ", returnAmount - totalWithVat);
-  }, [totalWithVat, setNetPaidAmount, returnAmount, remainingDue])
-
-  
+  }, [totalWithVat, setNetPaidAmount, returnAmount, remainingDue]);
 
   useEffect(() => {
     setTotalPrice(totalWithVat);
@@ -176,14 +172,14 @@ const Summary = ({
   }
 
   const options: Option[] = [
-    { id: 'cash', icon: Coins, label: 'Cash' },
-    { id: 'credit', icon: CreditCard, label: 'Credit' },
-// Added to show how it handles longer labels
-  ]
+    { id: "cash", icon: Coins, label: "Cash" },
+    { id: "credit", icon: CreditCard, label: "Credit" },
+    // Added to show how it handles longer labels
+  ];
 
   const handleChange = (selectedId: string) => {
-    console.log('Selected:', selectedId)
-  }
+    console.log("Selected:", selectedId);
+  };
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -191,8 +187,8 @@ const Summary = ({
   const dummyReturnSummary = {
     customerName: "John Doe",
     sourceInvoiceId: "INV-001",
-    returnAmount: 100.00,
-    totalPrice: 150.00
+    returnAmount: 100.0,
+    totalPrice: 150.0,
   };
 
   const handlePrintInvoice = () => {
@@ -200,7 +196,7 @@ const Summary = ({
   };
 
   const handleProceed = (cashbackOption?: string) => {
-    console.log('Proceeding with cashback option:', cashbackOption);
+    console.log("Proceeding with cashback option:", cashbackOption);
     // Here you would typically call your API to process the return
     setTimeout(() => {
       setIsPopupOpen(false);
@@ -208,49 +204,57 @@ const Summary = ({
   };
 
   useEffect(() => {
-    if(totalWithVat === 0){
-      if(cashBackAmount !== 0){
+    if (totalWithVat === 0) {
+      if (cashBackAmount !== 0) {
         setReturnType("CASHBACK");
       } else {
         setReturnType("BALANCED");
       }
-    } else{
-      if(cashBackAmount !== 0){
+    } else {
+      if (cashBackAmount !== 0) {
         setReturnType("PARTIAL");
       } else {
         setReturnType("EXCHANGE");
       }
     }
-  }
-  , [totalWithVat, netPaidAmount, cashBackAmount, setReturnType]);
+  }, [totalWithVat, netPaidAmount, cashBackAmount, setReturnType]);
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div>
           <CardTitle className="group flex items-center gap-2 text-lg w-full">
-
             {sourceInvoiceId ? (
               <div className="flex-row gap-5 items-center">
                 <div className="flex items-center gap-2 mb-2">
                   <Avatar className="size-7">
-                    <AvatarFallback style={{ background: COLOR }} className="text-xs">
+                    <AvatarFallback
+                      style={{ background: COLOR }}
+                      className="text-xs"
+                    >
                       {customerName ? getInitials(customerName) : "AN"}
                     </AvatarFallback>
                   </Avatar>
                   <p>{customerName ? customerName : "Anonymous Customer"}</p>
                 </div>
                 <div>
-                  <CardDescription className="flex gap-2"><p>InvoiceNO:</p><Badge className="rounded-sm" variant="default">{sourceInvoiceId}</Badge></CardDescription>
-                  <CardDescription>{`Issued At: ${dateArrayToString(purchaseDate,false,false)}`}</CardDescription>
+                  <CardDescription className="flex gap-2">
+                    <p>InvoiceNO:</p>
+                    <Badge className="rounded-sm" variant="default">
+                      {sourceInvoiceId}
+                    </Badge>
+                  </CardDescription>
+                  <CardDescription>{`Issued At: ${dateArrayToString(purchaseDate, false, false)}`}</CardDescription>
                 </div>
               </div>
-              ) : (
-                <div className="flex w-full gap-3 items-center justify-center">
-                  <CircleAlert className="text-yellow-500 size-8" />
-                  <p className="w-full text-sm">Please select invoice to continue</p>
-                </div>
-              )}
+            ) : (
+              <div className="flex w-full gap-3 items-center justify-center">
+                <CircleAlert className="text-yellow-500 size-8" />
+                <p className="w-full text-sm">
+                  Please select invoice to continue
+                </p>
+              </div>
+            )}
           </CardTitle>
         </div>
       </CardHeader>
@@ -277,11 +281,7 @@ const Summary = ({
             <div className="d-flex align justify-between mb-2">
               <p className="text-sm text-gray-500">Remaining Due: </p>
               <AmountCard
-                amount={
-                  remainingDue < 0
-                    ? 0
-                    : remainingDue
-                }
+                amount={remainingDue < 0 ? 0 : remainingDue}
                 color="#FFAAAA"
                 fontStyle="font-semibold"
               />
@@ -340,24 +340,24 @@ const Summary = ({
               <Label className="text-lg text-left ">Net Total</Label>
               <div className="flex items-center">
                 {/* <IconCash className="" color="gray" /> */}
-                {
-                  netPaidAmount< 0 ? (
-                    <Badge className="rounded-sm bg-red-500" variant="default">
-                      Cash Out
-                    </Badge>
-                  ) : (
-                    <Badge className="rounded-sm bg-green-500" variant="default">
-                      Cash In
-                    </Badge>
-                  )
-                }
+                {netPaidAmount < 0 ? (
+                  <Badge className="rounded-sm bg-red-500" variant="default">
+                    Cash Out
+                  </Badge>
+                ) : (
+                  <Badge className="rounded-sm bg-green-500" variant="default">
+                    Cash In
+                  </Badge>
+                )}
               </div>
             </div>
             <div className="flex justify-between">
               <p className="text-2xl font-thin align-bottom">Rs.</p>
               {/* <p className="text-4xl font-semibold">{total}</p> */}
               <CurrencyComponent
-                amount={netPaidAmount ? parseFloat(netPaidAmount.toFixed(2)) : 0}
+                amount={
+                  netPaidAmount ? parseFloat(netPaidAmount.toFixed(2)) : 0
+                }
                 currency="LKR"
                 withoutCurrency
                 mainTextSize="text-2xl"
@@ -366,36 +366,40 @@ const Summary = ({
             </div>
           </div>
           <div className="d-flex justify-between mt-4">
-            <Button 
-              className="w-full mt-4 mb-3" 
+            <Button
+              className="w-full mt-4 mb-3"
               onClick={handlePrintInvoice}
-              disabled={sourceInvoiceId === undefined || sourceInvoiceId === null || returnAmount === 0}
+              disabled={
+                sourceInvoiceId === undefined ||
+                sourceInvoiceId === null ||
+                returnAmount === 0
+              }
             >
               Create Return
             </Button>
-              {/* <Button
+            {/* <Button
                 
                 onClick={() => printAndSaveInvoice()}
               >
                 <Printer className={"mr-2"} />
                 Print Invoice
               </Button> */}
-              <Button
-                className="mt-4 mb-3 bg-red-400 ml-2 text-white"
-                onClick={cancelReturn}
-              >
-                <Delete className={"mr-2"} /> Clear
-              </Button>
-              
-              <ReturnPopup
-                isOpen={isPopupOpen}
-                onClose={() => setIsPopupOpen(false)}
-                onProceed={handleProceed}
-                invoiceType="CASH"
-                creditorSelectKey={creditorSelectKey}
-                setCreditorSelectKey={setCreditorSelectKey}
-                netPaidAmount={netPaidAmount}
-              />
+            <Button
+              className="mt-4 mb-3 bg-red-400 ml-2 text-white"
+              onClick={cancelReturn}
+            >
+              <Delete className={"mr-2"} /> Clear
+            </Button>
+
+            <ReturnPopup
+              isOpen={isPopupOpen}
+              onClose={() => setIsPopupOpen(false)}
+              onProceed={handleProceed}
+              invoiceType="CASH"
+              creditorSelectKey={creditorSelectKey}
+              setCreditorSelectKey={setCreditorSelectKey}
+              netPaidAmount={netPaidAmount}
+            />
           </div>
         </div>
 

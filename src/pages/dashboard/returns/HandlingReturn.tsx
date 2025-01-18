@@ -69,7 +69,6 @@ function HandlingReturn() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-
   const [returnedQuantities, setReturnedQuantities] = useState<{
     [key: string]: number;
   }>({});
@@ -84,32 +83,24 @@ function HandlingReturn() {
   const [tabCash, setTabCash] = useState(false);
   const [creditorSelectKey, setCreditorSelectKey] = useState(0);
 
-
   const [invoiceOptions, setInvoiceOptions] = useState<InvoiceOption[]>([]);
 
-
-
-  const { 
-    data: baseInvoices,
-    isLoading: baseInvoiceLoading,
-  } = useQuery<InvoiceID[]>({
+  const { data: baseInvoices, isLoading: baseInvoiceLoading } = useQuery<
+    InvoiceID[]
+  >({
     queryKey: ["baseInvoices", debouncedSearchTerm],
     queryFn: () =>
       returnService.fetchAllInvoiceByGivenTerm(debouncedSearchTerm),
     retry: 1,
   });
 
-  const { 
-    data: selectedBaseInvoice,
-    isLoading: selectedInvoiceLoading,
-  } = useQuery<BaseInvoice>({
-    queryKey: ["selectedBaseInvoice", selectedInvoiceId],
-    queryFn: () =>
-      returnService.fetchInvoiceByInvoiceID(selectedInvoiceId),
-    retry: 1,
-    enabled: selectedInvoiceId !== null,
-    
-  });
+  const { data: selectedBaseInvoice, isLoading: selectedInvoiceLoading } =
+    useQuery<BaseInvoice>({
+      queryKey: ["selectedBaseInvoice", selectedInvoiceId],
+      queryFn: () => returnService.fetchInvoiceByInvoiceID(selectedInvoiceId),
+      retry: 1,
+      enabled: selectedInvoiceId !== null,
+    });
 
   // const invoiceOptions: InvoiceOption[] = baseInvoices?.map((invoice) => ({
   //   label: invoice.invoiceID,
@@ -118,21 +109,21 @@ function HandlingReturn() {
 
   useEffect(() => {
     if (baseInvoices) {
-      setInvoiceOptions(baseInvoices.map((invoice) => ({
-        label: invoice.invoiceID,
-        value: invoice.invoiceID,
-      })));
+      setInvoiceOptions(
+        baseInvoices.map((invoice) => ({
+          label: invoice.invoiceID,
+          value: invoice.invoiceID,
+        })),
+      );
     }
   }, [baseInvoices]);
 
   useEffect(() => {
-    console.log("===================",selectedInvoiceId);
-  }
-  , [selectedInvoiceId])
-
+    console.log("===================", selectedInvoiceId);
+  }, [selectedInvoiceId]);
 
   const handleInputChange = (inputValue: string) => {
-    setInputText(inputValue)
+    setInputText(inputValue);
     setSearchTerm(inputValue);
   };
 
@@ -181,7 +172,7 @@ function HandlingReturn() {
   };
 
   const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
-    console.log("BAAASE",baseInvoice);
+    console.log("BAAASE", baseInvoice);
     if (baseInvoice === undefined || baseInvoice === null) return;
 
     setReturnedQuantities({});
@@ -196,14 +187,13 @@ function HandlingReturn() {
         ? ""
         : baseInvoice?.invoiceId.split("-")[1],
     );
-    
   };
 
   useEffect(() => {
     if (selectedBaseInvoice === null) return;
     // this needs to happen only if there is a difference previous selected invoice and the new selected invoice
     // if (selectedBaseInvoice?.invoiceId !== sourceInvoiceId) {
-      handleSourceInvoice(selectedBaseInvoice);
+    handleSourceInvoice(selectedBaseInvoice);
     // }
   }, [selectedBaseInvoice, sourceInvoiceId]);
 
@@ -212,7 +202,6 @@ function HandlingReturn() {
     const invoiceType = parts[1];
     return invoiceType;
   };
-
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
@@ -226,13 +215,11 @@ function HandlingReturn() {
     () => subtotal - (discountAmount || 0),
     [subtotal, discountAmount],
   );
-  
+
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
     [discountedTotal, vatAmount],
   );
-
-  
 
   useEffect(() => {
     if (selectedInvoice) {
@@ -241,23 +228,31 @@ function HandlingReturn() {
   }, [selectedInvoice]);
 
   useEffect(() => {
-    setCashBackAmount(returnAmount - totalWithVat - remainingDue < 0 ? 0 : returnAmount - totalWithVat - remainingDue);
-  }, 
-  [returnAmount, totalWithVat, remainingDue,setCashBackAmount])
+    setCashBackAmount(
+      returnAmount - totalWithVat - remainingDue < 0
+        ? 0
+        : returnAmount - totalWithVat - remainingDue,
+    );
+  }, [returnAmount, totalWithVat, remainingDue, setCashBackAmount]);
 
   useEffect(() => {
-    const totalDue = selectedBaseInvoice?.totalPrice - selectedBaseInvoice?.settledAmount;
+    const totalDue =
+      selectedBaseInvoice?.totalPrice - selectedBaseInvoice?.settledAmount;
     let subjectedDue = 0;
-    if(totalDue >= returnAmount) {
-      subjectedDue = returnAmount
+    if (totalDue >= returnAmount) {
+      subjectedDue = returnAmount;
     } else {
-      subjectedDue = totalDue
+      subjectedDue = totalDue;
     }
     setRemainingDue(subjectedDue);
-  }
-  , [returnAmount, selectedBaseInvoice?.totalPrice, selectedBaseInvoice?.settledAmount, setRemainingDue])
-  
-  const [inputText, setInputText] = useState<string>('')
+  }, [
+    returnAmount,
+    selectedBaseInvoice?.totalPrice,
+    selectedBaseInvoice?.settledAmount,
+    setRemainingDue,
+  ]);
+
+  const [inputText, setInputText] = useState<string>("");
   return (
     <Fragment>
       <div className="ml-2">
@@ -297,11 +292,13 @@ function HandlingReturn() {
                   // setSourceInvoiceId(option.value);
                 }}
                 onInputChange={handleInputChange}
-                isLoading = {baseInvoiceLoading}
+                isLoading={baseInvoiceLoading}
                 isClearable={true}
                 isSearchable={true}
                 inputValue={inputText}
-                noOptionsMessage={() => "No invoice found for given criteria, please try another one."}
+                noOptionsMessage={() =>
+                  "No invoice found for given criteria, please try another one."
+                }
                 // value={sourceInvoiceId}
               />
             </div>
@@ -322,28 +319,28 @@ function HandlingReturn() {
                   </div>
                   {/* Return Item view section */}
                   <TabsContent value="returnItems" className="h-full">
-                      <Table className="border rounded-md text-md mt-6 mb-5 table-responsive h-full">
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Spare Part</TableHead>
-                            <TableHead>Item Code</TableHead>
-                            <TableHead style={{ textAlign: "end" }}>
-                              Unit Price
-                            </TableHead>
-                            <TableHead style={{ textAlign: "end" }}>
-                              Quantity
-                            </TableHead>
-                            <TableHead style={{ textAlign: "end" }}>
-                              Available Qty
-                            </TableHead>
-                            <TableHead style={{ textAlign: "end" }}>
-                              Returned Qty
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        {selectedInvoiceLoading ? (
-                          <TableBodySkeleton cols={6} rows={5} noHeader={true} />
-                        ) : (
+                    <Table className="border rounded-md text-md mt-6 mb-5 table-responsive h-full">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Spare Part</TableHead>
+                          <TableHead>Item Code</TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Unit Price
+                          </TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Quantity
+                          </TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Available Qty
+                          </TableHead>
+                          <TableHead style={{ textAlign: "end" }}>
+                            Returned Qty
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      {selectedInvoiceLoading ? (
+                        <TableBodySkeleton cols={6} rows={5} noHeader={true} />
+                      ) : (
                         <TableBody>
                           {selectedInvoice ? (
                             selectedInvoice?.items.map((item) => (
@@ -389,9 +386,15 @@ function HandlingReturn() {
                                           item.id,
                                         );
                                       } else {
-                                        const parsedValue = parseInt(enteredValue, 10);
-                                        if (parsedValue > item.availableQuantity) {
-                                          e.target.value = item.availableQuantity.toString();
+                                        const parsedValue = parseInt(
+                                          enteredValue,
+                                          10,
+                                        );
+                                        if (
+                                          parsedValue > item.availableQuantity
+                                        ) {
+                                          e.target.value =
+                                            item.availableQuantity.toString();
                                         } else if (parsedValue >= 0) {
                                           handleReturnedQuantityChange(
                                             item.code,
@@ -427,8 +430,8 @@ function HandlingReturn() {
                             </TableRow>
                           )}
                         </TableBody>
-                        )}
-                      </Table>
+                      )}
+                    </Table>
                   </TabsContent>
 
                   {/* New invoice section */}
