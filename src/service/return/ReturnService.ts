@@ -14,8 +14,7 @@ class ReturnService extends Service {
   }
 
   async fetchAllInvoiceByGivenTerm(term: string): Promise<InvoiceID[]> {
-    if (term === undefined || term === null || term === "")
-      return;
+    if (term === undefined || term === null || term === "") return;
     try {
       const response = await this.api.get<InvoiceID[]>(
         `${RETURN_INVOICE_URL}/search/${term}`,
@@ -34,7 +33,7 @@ class ReturnService extends Service {
         RETURN_INVOICE_URL,
         returnInvoiceData,
       );
-      return returnInvoiceData;
+      return response.data;
     } catch (error) {
       throw new Error("Failed to create cash invoice");
     }

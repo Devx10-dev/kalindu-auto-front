@@ -49,7 +49,7 @@ export type InvoiceState = {
 
   cashBackAmount?: number;
   creditorCashBack?: number;
-  creditInvoice?: boolean;
+  creditInvoice?: BaseInvoice;
 
   id?: number;
   invoiceId?: string;
@@ -79,9 +79,12 @@ export type InvoiceState = {
   selectedInvoiceType?: string;
 
   commissions?: Commission[];
-  payments ?: Payment[];
+  payments?: Payment[];
 
   selectedInvoiceId?: string;
+
+  returnedCreditInvoice?: BaseInvoice;
+  returnedInvoice?: BaseInvoice;
 
   setSourceInvoiceId: (sourceInvoiceId?: string) => void;
   setReturnType: (returnType?: string) => void;
@@ -149,12 +152,12 @@ export interface InvoiceID {
 }
 
 type Option = {
-  id: string
-  icon: React.ElementType
-  label: string
-}
+  id: string;
+  icon: React.ElementType;
+  label: string;
+};
 
 type IconRadioGroupProps = {
-  options: Option[]
-  onChange?: (selectedId: string) => void
-}
+  options: Option[];
+  onChange?: (selectedId: string) => void;
+};

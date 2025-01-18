@@ -44,7 +44,6 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   payments: [],
 
   selectedInvoiceId: undefined,
-  
 
   setSourceInvoiceId: (sourceInvoiceId?: string) =>
     set((state) => ({
@@ -368,8 +367,6 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       ...state,
       selectedInvoiceId: selectedInvoiceId,
     })),
-
-  
 }));
 
 export default useReturnInvoiceStore;

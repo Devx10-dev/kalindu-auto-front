@@ -280,9 +280,7 @@ function TransactionInvoiceCard({
                     <Link
                       to={`/dashboard/invoice/creditor/${invoice.cashInvoice.invoiceId}`}
                     >
-                      <p className="text-xs">
-                        {invoice.cashInvoice.invoiceId}
-                      </p>
+                      <p className="text-xs">{invoice.cashInvoice.invoiceId}</p>
                     </Link>
                     <PriceComponent
                       content={currencyAmountString(invoice.settledAmount)}

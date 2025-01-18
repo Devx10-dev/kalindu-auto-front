@@ -1,7 +1,17 @@
 import CurrencyComponent from "@/pages/dashboard/invoice/view/components/CurrencyComponent";
 import React from "react";
 
-function AmountCard({ amount, color, fontStyle = "font-bold",withoutCurrency = true }: { amount: number; color: string; fontStyle?: string; withoutCurrency? : boolean }) {
+function AmountCard({
+  amount,
+  color,
+  fontStyle = "font-bold",
+  withoutCurrency = true,
+}: {
+  amount: number;
+  color: string;
+  fontStyle?: string;
+  withoutCurrency?: boolean;
+}) {
   return (
     <p
       style={{
@@ -16,7 +26,7 @@ function AmountCard({ amount, color, fontStyle = "font-bold",withoutCurrency = t
       <CurrencyComponent
         amount={amount ? parseFloat(amount.toFixed(2)) : 0}
         currency="Rs"
-        withoutCurrency = {withoutCurrency}
+        withoutCurrency={withoutCurrency}
         mainTextSize="text-md"
         subTextSize="text-xs"
         fontStyle={fontStyle}
