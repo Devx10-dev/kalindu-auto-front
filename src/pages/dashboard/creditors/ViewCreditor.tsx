@@ -124,28 +124,40 @@ const ViewCreditor = () => {
     }
   }, [creditorDetails.data]);
 
+  const sortInvoices = (invoices, order = "descending") => {
+    return [...invoices].sort((a, b) => {
+      const dateA = new Date(
+        a.issuedTime[0],
+        a.issuedTime[1] - 1,
+        a.issuedTime[2],
+        a.issuedTime[3],
+        a.issuedTime[4],
+        a.issuedTime[5],
+        a.issuedTime[6] / 1000000
+      );
+      const dateB = new Date(
+        b.issuedTime[0],
+        b.issuedTime[1] - 1,
+        b.issuedTime[2],
+        b.issuedTime[3],
+        b.issuedTime[4],
+        b.issuedTime[5],
+        b.issuedTime[6] / 1000000
+      );
+  
+      // Adjust for ascending or descending order
+      return order === "ascending" ? dateA - dateB : dateB - dateA;
+    });
+  };
+  
+  // Updated useEffect
   useEffect(() => {
-    if (filterInvoices) {
-      const sortedInvoices = filteredInvoices.sort((a, b) => {
-        const dateA = new Date();
-        const dateB = new Date();
-        dateA.setFullYear(
-          ...(a.issuedTime.slice(0, 3) as [number, number, number]),
-        ); // Use the first three elements
-        dateB.setFullYear(
-          ...(b.issuedTime.slice(0, 3) as [number, number, number]),
-        );
-        dateA.setHours(
-          ...(a.issuedTime.slice(3) as [number, number, number, number]),
-        );
-        dateB.setHours(
-          ...(b.issuedTime.slice(3) as [number, number, number, number]),
-        );
-        return dateB.getTime() - dateA.getTime();
-      });
+    if (filteredInvoices) {
+      const sortedInvoices = sortInvoices(filteredInvoices, "descending"); // Change to "ascending" for ascending order
       setSortedInvoices(sortedInvoices);
     }
   }, [filteredInvoices]);
+  
 
   if (creditorDetails.isLoading) {
     return <Loading />;
