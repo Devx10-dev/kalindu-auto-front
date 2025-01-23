@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -11,7 +12,7 @@ import { Creditor } from "@/types/creditor/creditorTypes";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
 import { convertArrayToISOFormat } from "@/utils/dateTime";
 import { getInitials, truncate } from "@/utils/string";
-import { ChevronsDown, ChevronsUp } from "lucide-react";
+import { ChevronsDown, ChevronsUp, CircleAlert } from "lucide-react";
 import { useState } from "react";
 
 function CreditorDetailsCard({
@@ -27,29 +28,46 @@ function CreditorDetailsCard({
   return (
     <>
       <CardHeader className="flex flex-row items-start bg-muted/50">
-        <div className="grid gap-0.5">
-          <CardTitle className="group flex items-center gap-2 text-lg">
-            <div className="flex gap-2 items-center">
-              <Avatar>
-                <AvatarFallback style={{ background: color }}>
-                  {selectedCreditor !== null
-                    ? getInitials(selectedCreditor.contactPersonName)
-                    : "NA"}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p>
-                  {selectedCreditor !== null
-                    ? truncate(selectedCreditor?.shopName, 20)
-                    : ""}
-                </p>
-                <CardDescription>{`Contact Name : ${
-                  selectedCreditor !== null
-                    ? truncate(selectedCreditor?.contactPersonName, 20)
-                    : ""
-                }`}</CardDescription>
+        <div className="grid gap-0.5 grid-cols-1 w-full">
+          <CardTitle className="group flex items-center gap-2 text-lg w-full">
+            {selectedCreditor ? (
+              <div className="flex-row gap-5 items-center w-full">
+                <div className="flex items-center gap-2 mb-2">
+                  <Avatar className="size-7">
+                    <AvatarFallback
+                      style={{ background: color }}
+                      className="text-xs"
+                    >
+                      {selectedCreditor ? getInitials(selectedCreditor.shopName) : "AN"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p>{selectedCreditor ? selectedCreditor.shopName : "Anonymous Customer"}</p>
+                </div>
+                <div className="flex justify-between w-full">
+                  <CardDescription className="flex-col w-full gap-5">
+                    <p className="text-muted-foreground text-xs">
+                      Contact Person:
+                    </p>
+                    <p className="font-bold text-lg text-black">
+                      {selectedCreditor.contactPersonName}
+                    </p>
+                  </CardDescription>
+                  <CardDescription className="flex-col w-full gap-2">
+                    <p className="text-muted-foreground text-xs">Contact No: </p>
+                    <Badge className="rounded-sm text-md " variant="outline">
+                      {selectedCreditor.primaryContact}
+                    </Badge>
+                  </CardDescription>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex w-full gap-3 items-center justify-center">
+                <CircleAlert className="text-yellow-500 size-8" />
+                <p className="w-full text-sm">
+                  Please select a creditor to Continue
+                </p>
+              </div>
+            )}
           </CardTitle>
         </div>
         <div className="ml-auto flex items-center gap-1 sm:block md:hidden lg:hidden">
@@ -101,18 +119,6 @@ function CreditorDetailsCard({
                 >
                   Rs {selectedCreditor?.chequeBalance ?? 0}
                 </span>
-              </li>
-            </ul>
-            <Separator className="my-2" />
-            <div className="font-semibold">Contact Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Contact No</span>
-                <span>{selectedCreditor?.primaryContact ?? ""}</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Email Address</span>
-                <span>{selectedCreditor?.email ?? ""}</span>
               </li>
             </ul>
           </div>

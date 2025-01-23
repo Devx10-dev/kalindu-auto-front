@@ -146,7 +146,7 @@ const ViewCreditor = () => {
       );
   
       // Adjust for ascending or descending order
-      return order === "ascending" ? dateA - dateB : dateB - dateA;
+      return order === "ascending" ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
     });
   };
   
@@ -384,8 +384,8 @@ const ViewCreditor = () => {
                             {priceRender(
                               "currencyAmount",
                               currencyAmountString(
-                                invoice.pendingPayment
-                                  ? invoice.pendingPayment
+                                invoice.pendingPayments
+                                  ? invoice.pendingPayments
                                   : 0
                               )
                             )}
