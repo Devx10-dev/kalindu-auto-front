@@ -2,6 +2,7 @@ import { InvoiceItem, InvoiceState } from "@/types/invoice/creditorInvoice";
 import { create } from "zustand";
 
 const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
+  id: undefined,
   invoiceId: undefined,
   creditorName: undefined,
   creditorID: undefined,

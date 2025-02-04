@@ -45,7 +45,7 @@ const CreditorInvoiceBase: React.FC = () => {
   const creditorData =
     data &&
     data.map(({ creditorID, shopName }) => ({
-      value: parseInt(creditorID),
+      value: parseInt(creditorID.toString()),
       label: shopName,
     }));
 

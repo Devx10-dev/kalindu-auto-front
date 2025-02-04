@@ -25,13 +25,6 @@ export function AddTransaction() {
   return (
     <Fragment>
       <div className="mr-2 ml-2">
-        <CardHeader>
-          <PageHeader
-            title="Add Transaction"
-            description="Record a creditor's transaction details"
-            icon={<ArrowLeftRight />}
-          />
-        </CardHeader>
         <CardContent>
           <TransactionForm
             chequeService={chequeService}

@@ -92,7 +92,7 @@ export type InvoiceState = {
   setReason: (reason?: string) => void;
   setCashBackAmount: (cashBackAmount: number) => void;
   setCreditorCashBack: (creditorCashBack: number) => void;
-  setCreditInvoice: (creditInvoice: boolean) => void;
+  setCreditInvoice: (creditInvoice: BaseInvoice) => void;
   addReturnItem: (item: ReturnItem) => void;
   setRemainingDue: (remainingDue: number) => void;
 

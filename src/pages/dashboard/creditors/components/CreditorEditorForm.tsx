@@ -32,7 +32,7 @@ import { RequiredLabel } from "@/components/formElements/FormLabel";
 import { useRef } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Save } from "lucide-react";
-type CreditorFormValues = z.infer<typeof creditorFormSchema>;
+export type CreditorFormValues = z.infer<typeof creditorFormSchema>;
 
 export function CreditorEditorForm(props: {
   isEditMode?: boolean;
@@ -113,7 +113,7 @@ export function CreditorEditorForm(props: {
     mutationFn: (data: CreditorFormValues) =>
       creditorAPI.updateCreditor(
         getModifiedCreditorFields(data, props.creditor),
-        props.creditor.creditorID,
+        props.creditor.creditorID.toString(),
       ),
 
     onSuccess: (updatedCreditor) => {

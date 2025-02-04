@@ -14,6 +14,12 @@ import { convertArrayToISOFormat } from "@/utils/dateTime";
 import { getInitials, truncate } from "@/utils/string";
 import { ChevronsDown, ChevronsUp, CircleAlert } from "lucide-react";
 import { useState } from "react";
+import { CardCarousel } from "./CardCarousel";
+import AmountCard from "@/components/card/AmountCard";
+import { Label } from "@/components/ui/label";
+import CurrencyComponent from "../../invoice/view/components/CurrencyComponent";
+import NoInvoices from "./NoInvoices";
+import NotSelected from "./NotSelected";
 
 function CreditorDetailsCard({
   selectedCreditor,
@@ -38,33 +44,73 @@ function CreditorDetailsCard({
                       style={{ background: color }}
                       className="text-xs"
                     >
-                      {selectedCreditor ? getInitials(selectedCreditor.shopName) : "AN"}
+                      {selectedCreditor
+                        ? getInitials(selectedCreditor.shopName)
+                        : "AN"}
                     </AvatarFallback>
                   </Avatar>
-                  <p>{selectedCreditor ? selectedCreditor.shopName : "Anonymous Customer"}</p>
+                  <p>
+                    {selectedCreditor
+                      ? selectedCreditor.shopName
+                      : "Anonymous Customer"}
+                  </p>
                 </div>
-                <div className="flex justify-between w-full">
-                  <CardDescription className="flex-col w-full gap-5">
-                    <p className="text-muted-foreground text-xs">
-                      Contact Person:
-                    </p>
-                    <p className="font-bold text-lg text-black">
-                      {selectedCreditor.contactPersonName}
-                    </p>
-                  </CardDescription>
-                  <CardDescription className="flex-col w-full gap-2">
-                    <p className="text-muted-foreground text-xs">Contact No: </p>
-                    <Badge className="rounded-sm text-md " variant="outline">
-                      {selectedCreditor.primaryContact}
-                    </Badge>
-                  </CardDescription>
+                <div className="flex-col items-center">
+                  <div className="flex justify-between w-full mb-3">
+                    <CardDescription className="flex-col w-full gap-5">
+                      <p className="text-muted-foreground text-xs">
+                        Contact Person:
+                      </p>
+                      <p className="font-bold text-lg text-black">
+                        {selectedCreditor.contactPersonName}
+                      </p>
+                    </CardDescription>
+                    <CardDescription className="flex-col w-full gap-2">
+                      <p className="text-muted-foreground text-xs">
+                        Contact No:{" "}
+                      </p>
+                      <Badge className="rounded-sm text-md " variant="outline">
+                        {selectedCreditor.primaryContact}
+                      </Badge>
+                    </CardDescription>
+                  </div>
+                  <div className="flex justify-between w-full">
+                    <CardDescription className="flex flex-col w-full gap-1">
+                      <p className="text-muted-foreground text-xs">
+                        Total Due:
+                      </p>
+                      {/* <Badge className="rounded-sm text-md bg-red-200" variant="outline">
+                        Rs {selectedCreditor?.totalDue ?? 0}
+                      </Badge> */}
+                      <AmountCard
+                        amount={selectedCreditor.totalDue}
+                        color="#fed7d7"
+                        fontStyle="font-bold text-black"
+                        withoutCurrency={false}
+                      />
+                    </CardDescription>
+                    <CardDescription className="flex flex-col w-full gap-1">
+                      <p className="text-muted-foreground text-xs">
+                        Cheque Balance:
+                      </p>
+                      {/* <Badge className="rounded-sm text-md bg-green-200" variant="outline">
+                        Rs {selectedCreditor?.chequeBalance ?? 0}
+                      </Badge> */}
+                      <AmountCard
+                        amount={selectedCreditor.chequeBalance}
+                        color="#c6f6d5"
+                        fontStyle="font-bold text-black"
+                        withoutCurrency={false}
+                      />
+                    </CardDescription>
+                  </div>
                 </div>
               </div>
             ) : (
               <div className="flex w-full gap-3 items-center justify-center">
                 <CircleAlert className="text-yellow-500 size-8" />
                 <p className="w-full text-sm">
-                  Please select a creditor to Continue
+                  Please select creditor to continue
                 </p>
               </div>
             )}
@@ -91,45 +137,10 @@ function CreditorDetailsCard({
         <div
           className={`grid gap-6 grid-cols-1 lg:grid-cols-1 ${selectedCreditInvoices.length === 0 ? "" : "md:grid-cols-2"}`}
         >
-          <div className="md:col-span-1">
-            <div className="font-semibold">Creditor Balance Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Total Due Amount</span>
-                <span
-                  style={{
-                    background: "#FFAAAA",
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    borderRadius: 5,
-                  }}
-                >
-                  Rs {selectedCreditor?.totalDue ?? 0}
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Cheque Balance</span>
-                <span
-                  style={{
-                    background: "#B4E380",
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    borderRadius: 5,
-                  }}
-                >
-                  Rs {selectedCreditor?.chequeBalance ?? 0}
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {selectedCreditInvoices.length > 0 && (
+          {selectedCreditInvoices.length > 0 ? (
             <div className="md:col-span-1">
-              <Separator
-                className={`my-2 hidden lg:block sm:block md:hidden`}
-              />
-              <div className="font-semibold">Credit Invoices Details</div>
-              <li className="flex items-center justify-between mt-1">
+              {/* <div className="font-semibold">Credit Invoices Details</div> */}
+              {/* <li className="flex items-center justify-between mt-1">
                 <span>Total Amount</span>
                 <span
                   style={{
@@ -146,11 +157,37 @@ function CreditorDetailsCard({
                     0,
                   )}
                 </span>
-              </li>
+              </li> */}
+              <div className="text-right flex-col gap-10 bg-slate-100 rounded-md p-4">
+                <div className="flex justify-between">
+                  <Label className="text-lg text-left ">Total Payable</Label>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-2xl font-thin align-bottom">Rs.</p>
+                  {/* <p className="text-4xl font-semibold">{total}</p> */}
+                  <CurrencyComponent
+                    amount={selectedCreditInvoices.reduce(
+                      (total, invoice) =>
+                        total +
+                        (invoice.totalPrice -
+                          invoice.settledAmount -
+                          invoice.pendingPayments),
+                      0,
+                    )}
+                    currency="LKR"
+                    withoutCurrency
+                    mainTextSize="text-2xl"
+                    subTextSize="text-sm"
+                  />
+                </div>
+              </div>
               <Separator
                 className={`my-2 hidden lg:block sm:block md:hidden`}
               />
-              <div
+              <div className="w-full">
+                <CardCarousel creditInvoices={selectedCreditInvoices} />
+              </div>
+              {/* <div
                 style={{
                   height: "180px",
                   overflowY: "scroll",
@@ -220,8 +257,10 @@ function CreditorDetailsCard({
                     />
                   </div>
                 ))}
-              </div>
+              </div> */}
             </div>
+          ) : (
+            <NotSelected message="Invoice details will be shown here once creditor and invoices are selected." />
           )}
         </div>
       </CardContent>

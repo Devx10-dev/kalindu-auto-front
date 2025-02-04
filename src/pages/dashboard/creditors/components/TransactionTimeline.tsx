@@ -118,7 +118,7 @@ function generateTimelineComponent({ transaction }: { transaction: any }) {
                 <div className="flex gap-1 ">
                   {/* <p className="text-gray-1000 dark:text-white">Cheque Payment</p> */}
                   <Badge className="text-xs bg-gray-600 dark:bg-gray-900 text-gray-100 dark:text-gray-300 rounded-sm">
-                    Cheque Payment
+                    Cheque
                   </Badge>
                   <ChequeStatusBadge cheque={transaction.cheque} />
                 </div>

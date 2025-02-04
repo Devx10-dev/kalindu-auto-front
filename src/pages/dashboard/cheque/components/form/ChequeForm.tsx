@@ -53,7 +53,7 @@ function ChequeForm({
   const creditorOptions =
     creditors?.map((creditor) => ({
       value: {
-        id: parseInt(creditor.creditorID),
+        id: parseInt(creditor.creditorID.toString()),
         contactPersonName: creditor.contactPersonName,
       },
       label: creditor.shopName,

@@ -6,6 +6,7 @@ import {
 import { AxiosInstance } from "axios";
 import { CreditorEndpoints } from "./CreditorEndpoints";
 import { CreditInvoice } from "@/types/invoice/credit/creditInvoiceTypes";
+import { CreditorFormValues } from "../components/CreditorEditorForm";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -55,7 +56,7 @@ class CreditorAPI {
     }
   }
 
-  async createCreditor(creditor: Creditor): Promise<Creditor> {
+  async createCreditor(creditor: CreditorFormValues): Promise<Creditor> {
     const response = await this.api.post(
       CreditorEndpoints.CREATE_CREDITOR_URL,
       creditor,

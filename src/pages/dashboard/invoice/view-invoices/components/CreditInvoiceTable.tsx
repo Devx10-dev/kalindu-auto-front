@@ -233,7 +233,7 @@ export default function CreditInvoiceTable({
                   </TableCell>
                   <TableCell align="right">
                     <div className="flex items-center justify-end gap-2 relative">
-                      {!invoice.pendingPayment && (
+                      {!invoice.pendingPayments && (
                         <span
                           className={`block ${dotSizeClasses["sm"]} rounded-full bg-yellow-500 ring-2 ring-white shadow-md`}
                         />
@@ -241,9 +241,9 @@ export default function CreditInvoiceTable({
                       {priceRender(
                         "currencyAmount",
                         currencyAmountString(
-                          invoice.pendingPayment == null
+                          invoice.pendingPayments == null
                             ? 0
-                            : invoice.pendingPayment,
+                            : invoice.pendingPayments,
                         ),
                       )}
                     </div>

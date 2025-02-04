@@ -7,4 +7,5 @@ export interface CreditInvoice {
   vat?: number;
   settledAmount?: number;
   settled?: boolean;
+  pendingPayments?: number;
 }

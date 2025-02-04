@@ -18,7 +18,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
 
   cashBackAmount: 0,
   creditorCashBack: 0,
-  creditInvoice: false,
+  creditInvoice: undefined,
 
   invoiceID: undefined,
   customerName: undefined,
@@ -93,7 +93,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       creditorCashBack: creditorCashBack,
     })),
 
-  setCreditInvoice: (creditInvoice: boolean) =>
+  setCreditInvoice: (creditInvoice: BaseInvoice) =>
     set((state) => ({
       ...state,
       creditInvoice: creditInvoice,
@@ -272,7 +272,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       reason: undefined,
       cashBackAmount: 0,
       creditorCashBack: 0,
-      creditInvoice: false,
+      creditInvoice: undefined,
       invoiceID: undefined,
       customerName: undefined,
       vehicleNumber: undefined,

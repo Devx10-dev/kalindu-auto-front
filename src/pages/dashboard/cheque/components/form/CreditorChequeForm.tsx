@@ -54,7 +54,7 @@ function CreditorChequeForm({
   const creditorOptions =
     creditors?.map((creditor) => ({
       value: {
-        id: parseInt(creditor.creditorID),
+        id: parseInt(creditor.creditorID.toString()),
         contactPersonName: creditor.contactPersonName,
       },
       label: creditor.shopName,
@@ -120,7 +120,7 @@ function CreditorChequeForm({
     if (creditors.length > 0) {
       form.setValue("creditor", {
         value: {
-          id: parseInt(creditors[0].creditorID),
+          id: parseInt(creditors[0].creditorID.toString()),
           contactPersonName: creditors[0].contactPersonName,
         },
         label: creditors[0].shopName,

@@ -113,7 +113,7 @@ export function RegisterForm(props: {
     mutationFn: (data: CreditorFormValues) =>
       creditorAPI.updateCreditor(
         getModifiedCreditorFields(data, props.creditor),
-        props.creditor.creditorID,
+        props.creditor.creditorID.toString(),
       ),
 
     onSuccess: (updatedCreditor) => {

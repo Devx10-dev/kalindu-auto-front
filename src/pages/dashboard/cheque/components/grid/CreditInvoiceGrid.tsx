@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Cheque } from "@/types/cheque/chequeTypes";
+import dateArrayToString from "@/utils/dateArrayToString";
 
 function CreditInvoiceGrid({
   cheque,
@@ -51,7 +52,7 @@ function CreditInvoiceGrid({
                         {chequeInvoice.invoiceNo}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        {formatDateTime(chequeInvoice.issuedTime)}
+                        {dateArrayToString(chequeInvoice.issuedTime)}
                       </TableCell>
                       <TableCell className="text-right">
                         {typeof chequeInvoice.totalPrice === "number"

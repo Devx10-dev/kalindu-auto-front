@@ -133,7 +133,7 @@ const ViewCreditor = () => {
         a.issuedTime[3],
         a.issuedTime[4],
         a.issuedTime[5],
-        a.issuedTime[6] / 1000000
+        a.issuedTime[6] / 1000000,
       );
       const dateB = new Date(
         b.issuedTime[0],
@@ -142,14 +142,16 @@ const ViewCreditor = () => {
         b.issuedTime[3],
         b.issuedTime[4],
         b.issuedTime[5],
-        b.issuedTime[6] / 1000000
+        b.issuedTime[6] / 1000000,
       );
-  
+
       // Adjust for ascending or descending order
-      return order === "ascending" ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
+      return order === "ascending"
+        ? dateA.getTime() - dateB.getTime()
+        : dateB.getTime() - dateA.getTime();
     });
   };
-  
+
   // Updated useEffect
   useEffect(() => {
     if (filteredInvoices) {
@@ -157,7 +159,6 @@ const ViewCreditor = () => {
       setSortedInvoices(sortedInvoices);
     }
   }, [filteredInvoices]);
-  
 
   if (creditorDetails.isLoading) {
     return <Loading />;
@@ -369,14 +370,14 @@ const ViewCreditor = () => {
                           <TableCell align="right">
                             {priceRender(
                               "currencyAmount",
-                              currencyAmountString(invoice.totalPrice)
+                              currencyAmountString(invoice.totalPrice),
                             )}
                           </TableCell>
                           <TableCell align="right">
                             {invoice.settledAmount
                               ? priceRender(
                                   "currencyAmount",
-                                  currencyAmountString(invoice.settledAmount)
+                                  currencyAmountString(invoice.settledAmount),
                                 )
                               : priceRender("currencyAmount", "Rs. 0.00")}
                           </TableCell>
@@ -386,8 +387,8 @@ const ViewCreditor = () => {
                               currencyAmountString(
                                 invoice.pendingPayments
                                   ? invoice.pendingPayments
-                                  : 0
-                              )
+                                  : 0,
+                              ),
                             )}
                           </TableCell>
                           <TableCell className="text-center items-center justify-center h-full">

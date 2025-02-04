@@ -14,9 +14,16 @@ export const transactionSchema = z
       },
       { required_error: "Creditor is required" },
     ),
-    creditInvoices: z.array(z.string(), {
-      required_error: "Select at least one invoice",
-    }),
+    creditInvoices: z.array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+        unsettledAmount: z.number(),
+      }),
+      {
+        required_error: "Select at least one invoice",
+      },
+    ),
     type: z.enum(["CHEQUE", "CASH", "DEPOSIT"], {
       errorMap: () => ({ message: "Please select a valid transaction type." }),
     }),
