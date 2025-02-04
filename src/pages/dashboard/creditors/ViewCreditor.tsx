@@ -38,6 +38,7 @@ import "../../../assets/css/base.css";
 import { NewFormModal } from "@/components/modal/NewFormModal";
 import CreditorChequeForm from "../cheque/components/form/CreditorChequeForm";
 import CreditorEditor from "./components/CreditorEditor";
+import truncate from "@/utils/truncate";
 
 function priceRender(contentType: string, content: string) {
   // split from firdst dot from the right
@@ -330,94 +331,100 @@ const ViewCreditor = () => {
                   />
                 </div>
 
-                <Table className="border rounded-md text-sm mb-5 overflow-y-auto ">
-                  <TableHeader className="sticky top-0 z-10 bg-white">
-                    <TableRow>
-                      <TableHead>Invoice No</TableHead>
-                      <TableHead>Issued Date</TableHead>
-                      <TableHead>Due Date</TableHead>
-                      <TableHead className="text-right">Total Amount</TableHead>
-                      <TableHead className="text-right">Settled</TableHead>
-                      <TableHead className="text-right">Pending</TableHead>
-                      <TableHead className="text-center">Status</TableHead>
-                      <TableHead className="text-center">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody className="overflow-y-auto h-fit w-full text-xs">
-                    {!creditorDetails.data ? (
-                      <div className="flex justify-center items-center">
-                        <p>No Invoices for the creditor</p>
-                      </div>
-                    ) : sortedInvoices.length === 0 ? (
+                <div className="w-full overflow-x-auto">
+                  <Table className="border rounded-md text-sm mb-5 overflow-y-auto ">
+                    <TableHeader className="sticky top-0 z-10 bg-white">
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center">
-                          <div className="flex justify-center items-center gap-2 my-4">
-                            <NoInvoices />
-                          </div>
-                        </TableCell>
+                        <TableHead>Invoice No</TableHead>
+                        <TableHead>Issued Date</TableHead>
+                        <TableHead>Due Date</TableHead>
+                        <TableHead className="text-right">
+                          Total Amount
+                        </TableHead>
+                        <TableHead className="text-right">Settled</TableHead>
+                        <TableHead className="text-right">Pending</TableHead>
+                        <TableHead className="text-center">Status</TableHead>
+                        <TableHead className="text-center">Action</TableHead>
                       </TableRow>
-                    ) : (
-                      // add filter by search and status
-                      sortedInvoices.map((invoice) => (
-                        <TableRow key={invoice.invoiceId}>
-                          <TableCell>{invoice.invoiceId}</TableCell>
-                          <TableCell>
-                            {dateArrayToString(invoice.issuedTime, true)}
-                          </TableCell>
-                          <TableCell>
-                            {dateArrayToString(invoice.dueTime, true)}
-                          </TableCell>
-                          <TableCell align="right">
-                            {priceRender(
-                              "currencyAmount",
-                              currencyAmountString(invoice.totalPrice),
-                            )}
-                          </TableCell>
-                          <TableCell align="right">
-                            {invoice.settledAmount
-                              ? priceRender(
-                                  "currencyAmount",
-                                  currencyAmountString(invoice.settledAmount),
-                                )
-                              : priceRender("currencyAmount", "Rs. 0.00")}
-                          </TableCell>
-                          <TableCell align="right">
-                            {priceRender(
-                              "currencyAmount",
-                              currencyAmountString(
-                                invoice.pendingPayments
-                                  ? invoice.pendingPayments
-                                  : 0,
-                              ),
-                            )}
-                          </TableCell>
-                          <TableCell className="text-center items-center justify-center h-full">
-                            {invoice ? (
-                              <InvoiceStatusBadge invoice={invoice} />
-                            ) : (
-                              <Badge variant="outline">No Status</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell align="center">
-                            <div className="flex justify-center">
-                              <Link
-                                to={`/dashboard/invoice/creditor/${invoice.invoiceId}`}
-                              >
-                                <Button
-                                  variant="outline"
-                                  className=""
-                                  size="sm"
-                                >
-                                  <OpenInNewWindowIcon className="h-5 w-5" />
-                                </Button>
-                              </Link>
+                    </TableHeader>
+                    <TableBody className="overflow-y-auto h-fit w-full text-xs">
+                      {!creditorDetails.data ? (
+                        <div className="flex justify-center items-center">
+                          <NoInvoices message="No Invoices for the creditor" />
+                        </div>
+                      ) : sortedInvoices.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center">
+                            <div className="flex justify-center items-center gap-2 my-4">
+                              <NoInvoices />
                             </div>
                           </TableCell>
                         </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                      ) : (
+                        // add filter by search and status
+                        sortedInvoices.map((invoice) => (
+                          <TableRow key={invoice.invoiceId}>
+                            <TableCell className="text-sm">
+                              {truncate(invoice.invoiceId)}
+                            </TableCell>
+                            <TableCell>
+                              {dateArrayToString(invoice.issuedTime, true)}
+                            </TableCell>
+                            <TableCell>
+                              {dateArrayToString(invoice.dueTime, true)}
+                            </TableCell>
+                            <TableCell align="right">
+                              {priceRender(
+                                "currencyAmount",
+                                currencyAmountString(invoice.totalPrice),
+                              )}
+                            </TableCell>
+                            <TableCell align="right">
+                              {invoice.settledAmount
+                                ? priceRender(
+                                    "currencyAmount",
+                                    currencyAmountString(invoice.settledAmount),
+                                  )
+                                : priceRender("currencyAmount", "Rs. 0.00")}
+                            </TableCell>
+                            <TableCell align="right">
+                              {priceRender(
+                                "currencyAmount",
+                                currencyAmountString(
+                                  invoice.pendingPayments
+                                    ? invoice.pendingPayments
+                                    : 0,
+                                ),
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center items-center justify-center h-full">
+                              {invoice ? (
+                                <InvoiceStatusBadge invoice={invoice} />
+                              ) : (
+                                <Badge variant="outline">No Status</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell align="center">
+                              <div className="flex justify-center">
+                                <Link
+                                  to={`/dashboard/invoice/creditor/${invoice.invoiceId}`}
+                                >
+                                  <Button
+                                    variant="outline"
+                                    className=""
+                                    size="sm"
+                                  >
+                                    <OpenInNewWindowIcon className="h-5 w-5" />
+                                  </Button>
+                                </Link>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </TabsContent>
 
               <TabsContent value="cheques" className="mt-0">

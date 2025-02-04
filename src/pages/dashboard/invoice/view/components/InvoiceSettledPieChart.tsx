@@ -23,6 +23,7 @@ import { currencyAmountString } from "@/utils/analyticsUtils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const chartConfig = {
   creditors: {
@@ -68,6 +69,12 @@ export function InvoiceSettledPieChart({
     { status: "unsettled", amount: 2000, fill: "#FFD700" },
   ]);
 
+  const navigate = useNavigate();
+
+  const onSettleClick = (id: number | string) => {
+    navigate(`/dashboard/creditors/transaction?creditor=${id}`);
+  };
+
   const settledPercentage = React.useMemo(() => {
     // calculate the percentage of settled amount from total amount (settled + unsettled)
     const total = chartData.reduce((acc, item) => acc + item.amount, 0);
@@ -86,8 +93,16 @@ export function InvoiceSettledPieChart({
             fill: "#4CAF50",
           },
           {
+            status: "pending",
+            amount: invoiceDetails.pendingPayments,
+            fill: "#FFD700",
+          },
+          {
             status: "unsettled",
-            amount: invoiceDetails.totalPrice - invoiceDetails.settledAmount,
+            amount:
+              invoiceDetails.totalPrice -
+              invoiceDetails.settledAmount -
+              invoiceDetails.pendingPayments,
             fill: "#F44336",
           },
         ];
@@ -171,6 +186,16 @@ export function InvoiceSettledPieChart({
                 variant="outline"
                 className="w-full h-full size-sm"
                 size="sm"
+                disabled={
+                  !invoiceDetails ||
+                  invoiceDetails?.settledAmount +
+                    invoiceDetails?.pendingPayments ===
+                    invoiceDetails?.totalPrice ||
+                  invoiceDetails?.settled
+                }
+                onClick={() =>
+                  onSettleClick(invoiceDetails?.creditor.creditorID)
+                }
               >
                 <ChevronRight size={16} />
               </Button>

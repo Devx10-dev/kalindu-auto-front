@@ -18,9 +18,10 @@ import {
   PackageOpen,
   TimerOff,
   TimerReset,
+  User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import {
   useCreditInvoiceListStore,
@@ -275,18 +276,27 @@ function SingleInvoiceCredit() {
               <div className="flex-grow">
                 <StatusCardCredit invoiceDetails={invoiceDetails} />
               </div>
-              <div className="relative flex-shrink-0">
-                {/* <TransactionDrawer
-                  invoiceDetails={invoiceDetails}
-                  invoiceLoading={invoiceLoading}
-                /> */}
-                <InvoiceTransactionDrawer
-                  invoiceId={invoiceId}
-                  creditorName={invoiceId}
-                />
-                <span
-                  className={`absolute top-[-5px] right-[-5px] block ${dotSizeClasses["lg"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`}
-                />
+              <div className="flex flex-col gap-1">
+                <div className="relative flex-shrink-0">
+                  {/* <TransactionDrawer
+                    invoiceDetails={invoiceDetails}
+                    invoiceLoading={invoiceLoading}
+                  /> */}
+                  <InvoiceTransactionDrawer
+                    invoiceId={invoiceId}
+                    creditorName={invoiceId}
+                  />
+                  <span
+                    className={`absolute top-[-5px] right-[-5px] block ${dotSizeClasses["lg"]} rounded-full bg-red-500 ring-2 ring-white shadow-md`}
+                  />
+                </div>
+                <Link
+                  to={`/dashboard/creditors/manage/${invoiceDetails?.creditor.creditorID}`}
+                >
+                  <Button className="w-full px-2" variant="outline">
+                    <User size={18} />
+                  </Button>
+                </Link>
               </div>
             </div>
 
