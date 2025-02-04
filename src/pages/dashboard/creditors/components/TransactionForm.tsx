@@ -119,6 +119,7 @@ function TransactionForm({
   const resetForm = () => {
     setSelectedCreditor(null);
     setSelectedCreditInvoices([]);
+    setValue([]);
 
     form.reset({
       id: undefined,
