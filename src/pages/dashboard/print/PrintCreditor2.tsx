@@ -46,42 +46,53 @@ const PrintCreditor2 = () => {
 
 
       const esc = "\x1B"; // ESC character
-  const reset = esc + "@"; // Reset printer
-  const boldOn = esc + "E"; // Bold text on
-  const boldOff = esc + "F"; // Bold text off
-  const smallFont = esc + "M"; // Selects a smaller font
-  const normalFont = esc + "P"; // Selects normal font
-  const alignCenter = esc + "a1"; // Center alignment
-  const alignLeft = esc + "a0"; // Left alignment
-  const alignRight = esc + "a2"; // Right alignment
-  const cutPaper = esc + "i"; // Cut paper command (if supported)
-  const lineBreak = "\n"; // Line break
-  const underlineOn = esc + "-1"; // Underline on
-  const underlineOff = esc + "-0"; // Underline off
-
-  let cmds = reset + smallFont + 
-    alignCenter + boldOn + "KALINDU AUTO" + boldOff + lineBreak +
-    alignCenter + "Colombo-Kandy Highway, 252/4 Kandy Rd, Yakkala" + lineBreak +
-    alignCenter + "Contact: 0332 234 900" + lineBreak + lineBreak +
+      const reset = esc + "@"; // Reset printer
+      const boldOn = esc + "E"; // Bold text on
+      const boldOff = esc + "F"; // Bold text off
+      const smallFont = esc + "M"; // Selects a smaller font
+      const normalFont = esc + "P"; // Selects normal font
+      const alignCenter = esc + "a1"; // Center alignment
+      const alignLeft = esc + "a0"; // Left alignment
+      const alignRight = esc + "a2"; // Right alignment
+      const cutPaper = esc + "i"; // Cut paper command (if supported)
+      const lineBreak = "\n"; // Line break
+      const underlineOn = esc + "-1"; // Underline on
+      const underlineOff = esc + "-0"; // Underline off
     
-    alignCenter + boldOn + "Creditor Invoice" + boldOff + lineBreak +
-    alignLeft + "INVOICE: INV-123456" + lineBreak +
-    "Date: Tue, Feb 05, 2025" + lineBreak +
-    "Creditor: ABC Suppliers" + lineBreak +
-    "Address: 45 Business Street, City" + lineBreak +
-    "Contact: +94 77 123 4567" + lineBreak + lineBreak;
-
-  cmds += boldOn + underlineOn + " Item Name        Price    Qty   Discount " + underlineOff + lineBreak;
-  cmds += "------------------------------------------------" + lineBreak;
-  cmds += " Engine Oil       Rs 2500   2     Rs 100 " + lineBreak;
-  cmds += " Brake Fluid      Rs 1800   1     Rs 50  " + lineBreak;
-  cmds += " Car Battery      Rs 12000  1     Rs 500 " + lineBreak;
-  cmds += "------------------------------------------------" + lineBreak;
-
-  cmds += boldOn + "Total:         Rs 16,300" + boldOff + lineBreak;
-  cmds += "VAT:           Rs 500" + lineBreak;
-  cmds += "Total Discount: Rs 650" + lineBreak + lineBreak;
-  cmds += cutPaper;
+      let cmds = reset + smallFont + 
+        alignCenter + boldOn + "KALINDU AUTO" + boldOff + lineBreak +
+        alignCenter + "Colombo-Kandy Highway, 252/4 Kandy Rd, Yakkala" + lineBreak +
+        alignCenter + "Contact: 0332 234 900" + lineBreak +
+        alignRight + "INVOICE ID: INV-123456" + lineBreak +
+        alignRight + "DATE: Tue, Feb 05, 2025" + lineBreak +
+        "--------------------------------------------------------------------------------------------------" + lineBreak +
+        
+        alignLeft + "Name: ABC Suppliers" + lineBreak +
+        "Address: 45 Business Street, City" + lineBreak +
+        "Contact: +94 77 123 4567" + lineBreak +
+        "--------------------------------------------------------------------------------------------------" + lineBreak +
+    
+        boldOn + underlineOn + 
+        " ITEM NAME            | UNIT PRICE | QTY | TOTAL " + underlineOff + lineBreak +
+        "--------------------------------------------------------------------------------------------------" + lineBreak +
+        " Engine Oil           | Rs 2500    | 2   | Rs 5000" + lineBreak +
+        " Brake Fluid          | Rs 1800    | 1   | Rs 1800" + lineBreak +
+        " Car Battery          | Rs 12000   | 1   | Rs 12000" + lineBreak +
+        "------------------------------------------------------" + lineBreak +
+    
+        alignRight + "Total:         Rs 16,800" + lineBreak +
+        alignRight + "Discount:      Rs 500" + lineBreak +
+        alignRight + "VAT:           Rs 750" + lineBreak +
+        alignRight + "SUB TOTAL:     Rs 17,050" + lineBreak +
+        "------------------------------------------------------" + lineBreak +
+    
+        "NOTES:" + lineBreak +
+        "  - Thank you for your business!" + lineBreak +
+        "  - Please keep this invoice for your records." + lineBreak +
+        "------------------------------------------------------" + lineBreak +
+    
+        alignCenter + boldOn + "THANK YOU!" + boldOff + lineBreak +
+        cutPaper;
     
     cpj.printerCommands = cmds.trim();
     cpj.sendToClient();
