@@ -26,6 +26,7 @@ import ActivityLog from "./pages/log/ActivityLog";
 import SpareParts from "./pages/sparePart/SpareParts";
 import VehicleModel from "./pages/sparePart/VehicleModel";
 import SingleInvoiceCredit from "./pages/dashboard/invoice/view/SingleInvoiceCredit";
+import PrintCreditor2 from "./pages/dashboard/print/PrintCreditor2";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
             <Route path="cash/:id" element={<SingleInvoice />} />
             <Route path="creditor/:id" element={<SingleInvoiceCredit />} />
             <Route path="creditor/print" element={<PrintCreditor />} />
+            <Route path="creditor/print2" element={<PrintCreditor2 />} />
           </Route>
 
           <Route path="vehicle">

@@ -1,3 +1,7 @@
+body {
+  overflow: hidden;
+}
+
 .d-flex {
   display: flex;
 }
