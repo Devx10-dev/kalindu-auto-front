@@ -29,10 +29,10 @@ const PrintCreditor2 = () => {
   }, []);
 
   const handlePrint = () => {
-    if (!invoiceData) {
-      alert("No invoice data available.");
-      return;
-    }
+    // if (!invoiceData) {
+    //   alert("No invoice data available.");
+    //   return;
+    // }
 
     if (!selectedPrinter && !printToDefault) {
       alert("You must select a printer or enable default printing.");
@@ -44,36 +44,45 @@ const PrintCreditor2 = () => {
       ? new JSPM.DefaultPrinter()
       : new JSPM.InstalledPrinter(selectedPrinter);
 
-    const cmds = `
-      ^XA
-      ^FO20,30^GB750,1100,4^FS
-      ^FO20,30^GB750,200,4^FS
-      ^FO30,40^ADN,36,20^FDKALINDU AUTO^FS
-      ^FO30,80^ADN,20,10^FDColombo-Kandy Highway, 252/4 Kandy Rd, Yakkala^FS
-      ^FO30,120^ADN,20,10^FDContact: 0332 234 900^FS
-      ^FO30,200^ADN,36,20^FDCreditor Invoice^FS
-      ^FO30,260^ADN,20,10^FDINVOICE: ${invoiceData.invoiceId}^FS
-      ^FO30,300^ADN,20,10^FDDate: ${new Date().toDateString()}^FS
-      ^FO30,400^ADN,20,10^FDCreditor: ${invoiceData.creditor.shopName}^FS
-      ^FO30,440^ADN,20,10^FDAddress: ${invoiceData.creditor.address || "N/A"}^FS
-      ^FO30,480^ADN,20,10^FDContact: ${invoiceData.creditor.primaryContact}^FS
-      ^FO30,520^GB750,2^FS
-      ${invoiceData.invoiceItems
-        .map(
-          (item: any, index: number) => `
-          ^FO30,${600 + index * 40}^ADN,18,10^FD${item.name} - ${item.description}^FS
-          ^FO400,${600 + index * 40}^ADN,18,10^FDPrice: Rs ${item.price}, Qty: ${item.quantity}, Discount: Rs ${item.discount}^FS
-        `
-        )
-        .join("")}
-      ^FO30,${700 + invoiceData.invoiceItems.length * 40}^GB750,2^FS
-      ^FO30,${750 + invoiceData.invoiceItems.length * 40}^ADN,20,10^FDTotal: Rs ${
-      invoiceData.totalPrice
-    }, VAT: Rs ${invoiceData.VAT}, Discount: Rs ${
-      invoiceData.totalDiscount
-    }^FS
-      ^XZ
-    `;
+
+      const esc = "\x1B"; // ESC character
+  const reset = esc + "@"; // Reset printer
+  const boldOn = esc + "E"; // Bold text on
+  const boldOff = esc + "F"; // Bold text off
+  const smallFont = esc + "M"; // Selects a smaller font
+  const normalFont = esc + "P"; // Selects normal font
+  const alignCenter = esc + "a1"; // Center alignment
+  const alignLeft = esc + "a0"; // Left alignment
+  const alignRight = esc + "a2"; // Right alignment
+  const cutPaper = esc + "i"; // Cut paper command (if supported)
+  const lineBreak = "\n"; // Line break
+  const underlineOn = esc + "-1"; // Underline on
+  const underlineOff = esc + "-0"; // Underline off
+
+  let cmds = reset + smallFont + 
+    alignCenter + boldOn + "KALINDU AUTO" + boldOff + lineBreak +
+    alignCenter + "Colombo-Kandy Highway, 252/4 Kandy Rd, Yakkala" + lineBreak +
+    alignCenter + "Contact: 0332 234 900" + lineBreak + lineBreak +
+    
+    alignCenter + boldOn + "Creditor Invoice" + boldOff + lineBreak +
+    alignLeft + "INVOICE: INV-123456" + lineBreak +
+    "Date: Tue, Feb 05, 2025" + lineBreak +
+    "Creditor: ABC Suppliers" + lineBreak +
+    "Address: 45 Business Street, City" + lineBreak +
+    "Contact: +94 77 123 4567" + lineBreak + lineBreak;
+
+  cmds += boldOn + underlineOn + " Item Name        Price    Qty   Discount " + underlineOff + lineBreak;
+  cmds += "------------------------------------------------" + lineBreak;
+  cmds += " Engine Oil       Rs 2500   2     Rs 100 " + lineBreak;
+  cmds += " Brake Fluid      Rs 1800   1     Rs 50  " + lineBreak;
+  cmds += " Car Battery      Rs 12000  1     Rs 500 " + lineBreak;
+  cmds += "------------------------------------------------" + lineBreak;
+
+  cmds += boldOn + "Total:         Rs 16,300" + boldOff + lineBreak;
+  cmds += "VAT:           Rs 500" + lineBreak;
+  cmds += "Total Discount: Rs 650" + lineBreak + lineBreak;
+  cmds += cutPaper;
+    
     cpj.printerCommands = cmds.trim();
     cpj.sendToClient();
   };
