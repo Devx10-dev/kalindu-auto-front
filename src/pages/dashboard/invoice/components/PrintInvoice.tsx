@@ -1,15 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
-import * as JSPM from "jsprintmanager";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { InvoiceData } from "@/types/Invoices/invoiceTypes";
+import * as JSPM from "jsprintmanager";
+import { useEffect, useState } from "react";
 
-const PrintCreditor2 = () => {
+function PrintInvoice({
+  buttonRef,
+  invoiceData,
+}: {
+  buttonRef: React.MutableRefObject<HTMLButtonElement>;
+  invoiceData: InvoiceData;
+}) {
   const [printers, setPrinters] = useState<string[]>([]);
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
   const [printToDefault, setPrintToDefault] = useState<boolean>(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const invoiceData = location.state?.invoiceData;
 
   useEffect(() => {
     const initializePrintManager = async () => {
@@ -29,6 +32,10 @@ const PrintCreditor2 = () => {
   }, []);
 
   const handlePrint = () => {
+    console.log("-------------------");
+    console.log(invoiceData);
+    console.log("-------------------");
+
     // if (!invoiceData) {
     //   alert("No invoice data available.");
     //   return;
@@ -138,42 +145,13 @@ const PrintCreditor2 = () => {
   };
 
   return (
-    <div>
-      <div>
-        <h1>Creditor Invoice</h1>
-        <fieldset>
-          <legend>Printer Selection</legend>
-          <label>
-            <input
-              type="checkbox"
-              checked={printToDefault}
-              onChange={(e) => setPrintToDefault(e.target.checked)}
-            />
-            Print to Default Printer
-          </label>
-          <br />
-          <select
-            value={selectedPrinter}
-            onChange={(e) => setSelectedPrinter(e.target.value)}
-            disabled={printToDefault}
-          >
-            <option value="">Select Printer</option>
-            {printers.map((printer) => (
-              <option key={printer} value={printer}>
-                {printer}
-              </option>
-            ))}
-          </select>
-        </fieldset>
-      </div>
-      <Button onClick={handlePrint}>Print Invoice</Button>
-      <Link to={"/dashboard/invoice/creditor"}>
-        <Button onClick={() => navigate("")} variant="outline">
-          Cancel
-        </Button>
-      </Link>
-    </div>
+    <Button
+      style={{ display: "none" }}
+      hidden={true}
+      ref={buttonRef}
+      onClick={() => handlePrint()}
+    />
   );
-};
+}
 
-export default PrintCreditor2;
+export default PrintInvoice;
