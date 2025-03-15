@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
 import * as JSPM from "jsprintmanager";
 import { useEffect, useState } from "react";
@@ -10,36 +11,30 @@ function PrintInvoice({
   buttonRef: React.MutableRefObject<HTMLButtonElement>;
   invoiceData: InvoiceData;
 }) {
-  const [printers, setPrinters] = useState<string[]>([]);
-  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
-  const [printToDefault, setPrintToDefault] = useState<boolean>(false);
+  const { toast } = useToast();
+  const [printToDefault, setPrintToDefault] = useState<boolean>(true);
 
   useEffect(() => {
     const initializePrintManager = async () => {
       JSPM.JSPrintManager.auto_reconnect = true;
       await JSPM.JSPrintManager.start();
-
-      JSPM.JSPrintManager.WS.onStatusChanged = () => {
-        if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Open) {
-          JSPM.JSPrintManager.getPrinters().then((availablePrinters) => {
-            setPrinters(availablePrinters);
-          });
-        }
-      };
     };
 
     initializePrintManager();
   }, []);
 
   const handlePrint = () => {
-    console.log("-------------------");
-    console.log(invoiceData);
-    console.log("-------------------");
+    if (!invoiceData) {
+      toast({
+        variant: "destructive",
+        title: "Invoice data not available🤕",
+        description:
+          "Don't worry! Invoice has been created in the system. Please try again later!",
+        duration: 5000,
+      });
 
-    // if (!invoiceData) {
-    //   alert("No invoice data available.");
-    //   return;
-    // }
+      return;
+    }
 
     if (!selectedPrinter && !printToDefault) {
       alert("You must select a printer or enable default printing.");
