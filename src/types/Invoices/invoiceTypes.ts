@@ -15,6 +15,8 @@ export interface InvoiceItem {
   price: number;
   discount: number;
   sparePartId: number;
+  code: string;
+  description: string;
 }
 
 export interface InvoiceData {
@@ -26,4 +28,8 @@ export interface InvoiceData {
   invoiceItems: InvoiceItem[];
   totalDiscount: number;
   totalPrice: number;
+  contactNo: string;
+  vehicle: string;
+  date: string;
+  type: string;
 }

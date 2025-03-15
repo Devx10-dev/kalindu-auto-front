@@ -14,6 +14,19 @@ function PrintInvoice({
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
 
+  const printRightAlign = (value: string | number, totalLength: number) => {
+    const strValue = value.toString();
+    return " ".repeat(Math.max(0, totalLength - strValue.length)) + strValue;
+  };
+
+  const handleVerticalAlignment = (
+    existingRecordCount: number,
+    totalLines: number,
+  ) => {
+    const newLine = "\n";
+    return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
+  };
+
   useEffect(() => {
     const initializePrintManager = async () => {
       JSPM.JSPrintManager.auto_reconnect = true;
@@ -24,19 +37,7 @@ function PrintInvoice({
   }, []);
 
   const handlePrint = () => {
-    if (!invoiceData) {
-      toast({
-        variant: "destructive",
-        title: "Invoice data not available🤕",
-        description:
-          "Don't worry! Invoice has been created in the system. Please try again later!",
-        duration: 5000,
-      });
-
-      return;
-    }
-
-    if (!selectedPrinter && !printToDefault) {
+    if (!printToDefault) {
       alert("You must select a printer or enable default printing.");
       return;
     }
@@ -44,96 +45,92 @@ function PrintInvoice({
     let cpj = new JSPM.ClientPrintJob();
     cpj.clientPrinter = printToDefault
       ? new JSPM.DefaultPrinter()
-      : new JSPM.InstalledPrinter(selectedPrinter);
+      : new JSPM.InstalledPrinter(printToDefault);
 
     const esc = "\x1B"; // ESC character
     const reset = esc + "@"; // Reset printer
     const boldOn = esc + "E"; // Bold text on
     const boldOff = esc + "F"; // Bold text off
-    const smallFont = esc + "M"; // Selects a smaller font
-    const normalFont = esc + "P"; // Selects normal font
+    // Set print area width to 250mm
+    const rightMargin = "\x1B\x51\x64"; // 255mm
+    const underlineOn = esc + "-1"; // Underline on
+    const underlineOff = esc + "-0"; // Underline off
     const alignCenter = esc + "a1"; // Center alignment
     const alignLeft = esc + "a0"; // Left alignment
     const alignRight = esc + "a2"; // Right alignment
-    const cutPaper = esc + "i"; // Cut paper command (if supported)
-    const lineBreak = "\n"; // Line break
-    const underlineOn = esc + "-1"; // Underline on
-    const underlineOff = esc + "-0"; // Underline off
+    const condensedOn = esc + "\x0F"; // Condensed printing ON
+    const condensedOff = esc + "\x12"; // Condensed printing OFF
+    const doubleWidthOn = esc + "W1"; // Double width ON
+    const doubleWidthOff = esc + "W0"; // Double width OFF
+    const doubleHeightOn = "\x1B\x77\x01"; // Correct Double Height ON
+    const doubleHeightOff = "\x1B\x77\x00"; // Reset to normal size
 
-    let cmds =
-      reset +
-      smallFont +
-      alignCenter +
-      boldOn +
-      "KALINDU AUTO" +
-      boldOff +
-      lineBreak +
-      alignCenter +
-      "Colombo-Kandy Highway, 252/4 Kandy Rd, Yakkala" +
-      lineBreak +
-      alignCenter +
-      "Contact: 0332 234 900" +
-      lineBreak +
-      alignRight +
-      "INVOICE ID: INV-123456" +
-      lineBreak +
-      alignRight +
-      "DATE: Tue, Feb 05, 2025" +
-      lineBreak +
-      "--------------------------------------------------------------------------------------------------" +
-      lineBreak +
-      alignLeft +
-      "Name: ABC Suppliers" +
-      lineBreak +
-      "Address: 45 Business Street, City" +
-      lineBreak +
-      "Contact: +94 77 123 4567" +
-      lineBreak +
-      "--------------------------------------------------------------------------------------------------" +
-      lineBreak +
-      boldOn +
-      underlineOn +
-      " ITEM NAME            | UNIT PRICE | QTY | TOTAL " +
-      underlineOff +
-      lineBreak +
-      "--------------------------------------------------------------------------------------------------" +
-      lineBreak +
-      " Engine Oil           | Rs 2500    | 2   | Rs 5000" +
-      lineBreak +
-      " Brake Fluid          | Rs 1800    | 1   | Rs 1800" +
-      lineBreak +
-      " Car Battery          | Rs 12000   | 1   | Rs 12000" +
-      lineBreak +
-      "------------------------------------------------------" +
-      lineBreak +
-      alignRight +
-      "Total:         Rs 16,800" +
-      lineBreak +
-      alignRight +
-      "Discount:      Rs 500" +
-      lineBreak +
-      alignRight +
-      "VAT:           Rs 750" +
-      lineBreak +
-      alignRight +
-      "SUB TOTAL:     Rs 17,050" +
-      lineBreak +
-      "------------------------------------------------------" +
-      lineBreak +
-      "NOTES:" +
-      lineBreak +
-      "  - Thank you for your business!" +
-      lineBreak +
-      "  - Please keep this invoice for your records." +
-      lineBreak +
-      "------------------------------------------------------" +
-      lineBreak +
-      alignCenter +
-      boldOn +
-      "THANK YOU!" +
-      boldOff +
-      lineBreak +
-      cutPaper;
+    const newLine = "\n"; // Line break
+    const formFeed = "\x0C"; // Form feed
+    const cutPaper = esc + "i"; // Cut paper command
+
+    let cmds = "";
+
+    // Reset printer and set initial settings
+    cmds += reset;
+
+    // cmds += newLine.repeat(2)
+
+    // Customer Details Section - Left aligned with specific spacing
+    cmds +=
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x55" +
+      (invoiceData?.creditorName || "") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x55" +
+      " ".repeat(6) +
+      (invoiceData?.invoiceId || "") +
+      newLine +
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x0A" +
+      (invoiceData?.contactNo || "") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x0A" +
+      " ".repeat(6) +
+      (invoiceData?.date || "") +
+      newLine +
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x08" +
+      (invoiceData?.vehicle || "") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x08" +
+      " ".repeat(6) +
+      (invoiceData?.type || "Credit");
+
+    cmds += newLine.repeat(3);
+
+    // // Table Content
+    if (Array.isArray(invoiceData.invoiceItems)) {
+      invoiceData.invoiceItems.forEach((item) => {
+        cmds +=
+          (item.name || "").padEnd(19) +
+          "" +
+          (item.code || "").padEnd(9) +
+          "" +
+          (item.description || "").padEnd(20) +
+          "" +
+          printRightAlign(item.price || "", 13) +
+          "" +
+          printRightAlign(item.quantity || "", 7) +
+          printRightAlign(item.price * item.quantity || "", 12) +
+          newLine;
+      });
+      cmds += newLine.repeat(14);
+    }
+
+    cmds +=
+      "\x1B\x24\x78\x00" +
+      " ".repeat(12) +
+      printRightAlign(invoiceData.totalPrice, 6) +
+      (invoiceData?.invoiceId || "");
+
+    // Final commands
+    cmds += formFeed + cutPaper;
 
     cpj.printerCommands = cmds.trim();
     cpj.sendToClient();
