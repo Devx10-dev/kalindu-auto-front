@@ -91,10 +91,10 @@ const PrintCreditor2 = () => {
       //     printRightAlign(item.qty || "2", 7) + 
       //     printRightAlign(item.price || "200000.00", 12)+ newLine;
       // });
-      cmds += newLine.repeat(14)
+      cmds += newLine.repeat(4)
     }
 
-    cmds += "\x1B\x24\x78\x00" + " ".repeat(12) + printRightAlign("200000.00", 6)+  (invoiceData?.invoiceNo || "2408211133")
+    cmds += boldOn + "\x1B\x24\x78\x00" + " ".repeat(25) + printRightAlign("200000.00", 12) + " ".repeat(4) + printRightAlign("200000", 6) + " ".repeat(1) + printRightAlign("200000000.00", 12) + boldOff
 
     // Final commands
     cmds += formFeed + cutPaper;
