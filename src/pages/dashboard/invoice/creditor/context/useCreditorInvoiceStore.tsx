@@ -146,7 +146,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
       vat: state.vatAmount,
       creditorName: state.creditorName,
       invoiceItems: state.invoiceItemDTOList,
-      contactNo: state.creditor.primaryContact,
+      contactNo: state?.creditor?.primaryContact,
       issuedTime: state.issuedTime,
 
       commissions:
