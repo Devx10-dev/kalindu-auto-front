@@ -256,6 +256,7 @@ function SingleInvoice() {
             }
             discountPercentage={invoiceDetails?.discount}
             discountAmount={invoiceDetails?.totalDiscount}
+            invoiceData={invoiceDetails}
           />
         </div>
       </div>

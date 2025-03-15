@@ -8,6 +8,14 @@ const printRightAlign = (value: string | number, totalLength: number) => {
   return " ".repeat(Math.max(0, totalLength - strValue.length)) + strValue;
 };
 
+const handleVerticalAlignment = (
+  existingRecordCount: number,
+  totalLines: number,
+) => {
+  const newLine = "\n";
+  return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
+};
+
 const PrintCreditor2 = () => {
   const [printers, setPrinters] = useState<string[]>([]);
   const [selectedPrinter, setSelectedPrinter] = useState<string>("");
@@ -62,7 +70,6 @@ const PrintCreditor2 = () => {
     const doubleHeightOn = "\x1B\x77\x01"; // Correct Double Height ON
     const doubleHeightOff = "\x1B\x77\x00"; // Reset to normal size
 
-
     const newLine = "\n"; // Line break
     const formFeed = "\x0C"; // Form feed
     const cutPaper = esc + "i"; // Cut paper command
@@ -70,16 +77,37 @@ const PrintCreditor2 = () => {
     let cmds = "";
 
     // Reset printer and set initial settings
-    cmds += reset 
+    cmds += reset;
 
     // cmds += newLine.repeat(2)
 
     // Customer Details Section - Left aligned with specific spacing
-    cmds += "\x1B\x24\x1E\x00" + "\x1B\x4A\x55" + (invoiceData?.name || "Harsha Gunawardane ") + "\x1B\x24\x7D\x01" +"\x1B\x61\x55"+ " ".repeat(6) + (invoiceData?.invoiceNo || "2408211133") + newLine
-      + "\x1B\x24\x1E\x00" + "\x1B\x4A\x0A"  + (invoiceData?.contact || "0717272828") + "\x1B\x24\x7D\x01" +"\x1B\x61\x0A"+ " ".repeat(6) + (invoiceData?.date || "2025-01-03") + newLine
-      + "\x1B\x24\x1E\x00" + "\x1B\x4A\x08" + (invoiceData?.vehicle || "ABC") + "\x1B\x24\x7D\x01" +"\x1B\x61\x08"+ " ".repeat(6)  + (invoiceData?.sale || "def");
+    cmds +=
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x55" +
+      (invoiceData?.name || "Harsha Gunawardane ") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x55" +
+      " ".repeat(6) +
+      (invoiceData?.invoiceNo || "2408211133") +
+      newLine +
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x0A" +
+      (invoiceData?.contact || "0717272828") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x0A" +
+      " ".repeat(6) +
+      (invoiceData?.date || "2025-01-03") +
+      newLine +
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x08" +
+      (invoiceData?.vehicle || "ABC") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x08" +
+      " ".repeat(6) +
+      (invoiceData?.sale || "def");
 
-    cmds += newLine.repeat(3)
+    cmds += newLine.repeat(3);
 
     // // Table Content
     if (Array.isArray([1, 2])) {
@@ -87,14 +115,18 @@ const PrintCreditor2 = () => {
       //   cmds +=  (item.name || "Bufferrrrrrrrr").padEnd(19) + "" +
       //     (item.code || "BF").padEnd(9) + "" +
       //     (item.description || "Dessssssssssssssss").padEnd(20) + "" +
-      //     printRightAlign(item.rate || "8", 13) + "" + 
-      //     printRightAlign(item.qty || "2", 7) + 
+      //     printRightAlign(item.rate || "8", 13) + "" +
+      //     printRightAlign(item.qty || "2", 7) +
       //     printRightAlign(item.price || "200000.00", 12)+ newLine;
       // });
-      cmds += newLine.repeat(4)
+      cmds += newLine.repeat(14);
     }
 
-    cmds += boldOn + "\x1B\x24\x78\x00" + " ".repeat(25) + printRightAlign("200000.00", 12) + " ".repeat(4) + printRightAlign("200000", 6) + " ".repeat(1) + printRightAlign("200000000.00", 12) + boldOff
+    cmds +=
+      "\x1B\x24\x78\x00" +
+      " ".repeat(12) +
+      printRightAlign("200000.00", 6) +
+      (invoiceData?.invoiceNo || "2408211133");
 
     // Final commands
     cmds += formFeed + cutPaper;

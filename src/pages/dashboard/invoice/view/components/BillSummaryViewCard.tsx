@@ -12,19 +12,24 @@ import {
 } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { UseMutationResult } from "@tanstack/react-query";
 import { Delete, Printer } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CurrencyComponent from "./CurrencyComponent";
+import PrintInvoice from "../../components/PrintInvoice";
+import { InvoiceData } from "@/types/Invoices/invoiceTypes";
+import { InvoiceState } from "@/types/invoice/cashInvoice";
 
 function BillSummaryViewCard({
   total,
   vatPercentage,
   discountPercentage,
   discountAmount,
+  invoiceData,
 }: {
   total: number;
   vatPercentage: number;
   discountPercentage: number;
   discountAmount: number;
+  invoiceData?: InvoiceState;
 }) {
   useEffect(() => {
     console.log("BillSummaryViewCard.tsx: total: ", total);
@@ -36,67 +41,96 @@ function BillSummaryViewCard({
     console.log("BillSummaryViewCard.tsx: discountAmount: ", discountAmount);
   }, [total, vatPercentage, discountPercentage, discountAmount]);
 
+  const printButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [invoiceDetails, setInvoiceDetails] = useState<InvoiceData | null>(
+    null,
+  );
+  useEffect(() => {
+    if (!invoiceData) return;
+    const invoiceD: InvoiceData = {
+      commissions: [],
+      contactNo: "",
+      date: invoiceData?.issuedTime.toLocaleString(),
+      invoiceId: invoiceData?.invoiceId,
+      invoiceItems: invoiceData?.invoiceItems ?? [],
+      totalDiscount: invoiceData?.discountAmount,
+      totalPrice: invoiceData?.totalPrice,
+      vat: invoiceData?.vat,
+    };
+
+    setInvoiceDetails(invoiceD);
+  }, []);
+
   return (
-    <Card>
-      <CardContent className="p-5 shadow-sm pt-0">
-        <h3 className="text-2xl font-semibold leading-none tracking-tight mb-4">
-          Bill Summary
-        </h3>
-        <div style={{ marginTop: "30px" }}>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel label="Discount (%)" style={{ fontSize: 14 }} />
-            <p className="text-right text-md font-regular">
-              {discountPercentage}%
-            </p>
+    <>
+      <Card>
+        <CardContent className="p-5 shadow-sm pt-0">
+          <h3 className="text-2xl font-semibold leading-none tracking-tight mb-4">
+            Bill Summary
+          </h3>
+          <div style={{ marginTop: "30px" }}>
+            <div className="d-flex justify-between mb-2">
+              <OptionalLabel label="Discount (%)" style={{ fontSize: 14 }} />
+              <p className="text-right text-md font-regular">
+                {discountPercentage}%
+              </p>
+            </div>
+            <div className="d-flex justify-between mb-2">
+              <OptionalLabel style={{ fontSize: 14 }} label="Discount Amount" />
+              <p className="text-right text-md font-regular">
+                LKR {discountAmount}
+              </p>
+            </div>
+            <div className="d-flex justify-between mb-2">
+              <OptionalLabel style={{ fontSize: 14 }} label="VAT (%)" />
+              <p className="text-right text-md font-regular">
+                {vatPercentage}%
+              </p>
+            </div>
+            <div className="d-flex justify-between mb-2">
+              <OptionalLabel style={{ fontSize: 14 }} label="VAT Amount" />
+              <p className="text-right text-md font-regular">
+                LKR {(total - discountAmount) * (vatPercentage / 100)}
+              </p>
+            </div>
           </div>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel style={{ fontSize: 14 }} label="Discount Amount" />
-            <p className="text-right text-md font-regular">
-              LKR {discountAmount}
-            </p>
-          </div>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel style={{ fontSize: 14 }} label="VAT (%)" />
-            <p className="text-right text-md font-regular">{vatPercentage}%</p>
-          </div>
-          <div className="d-flex justify-between mb-2">
-            <OptionalLabel style={{ fontSize: 14 }} label="VAT Amount" />
-            <p className="text-right text-md font-regular">
-              LKR {(total - discountAmount) * (vatPercentage / 100)}
-            </p>
-          </div>
-        </div>
-        <Separator className="mt-8 mb-4" />
-        <div className="">
-          <div className="text-right flex-col gap-10 bg-slate-100 rounded-md p-4">
-            <div className="flex justify-between">
-              <div className="flex items-center">
-                <IconCash className="" color="gray" />
+          <Separator className="mt-8 mb-4" />
+          <div className="">
+            <div className="text-right flex-col gap-10 bg-slate-100 rounded-md p-4">
+              <div className="flex justify-between">
+                <div className="flex items-center">
+                  <IconCash className="" color="gray" />
+                </div>
+                <Label className="text-xl text-left ">Total</Label>
               </div>
-              <Label className="text-xl text-left ">Total</Label>
+              <div className="flex justify-between">
+                <p className="text-3xl font-thin align-bottom">Rs.</p>
+                {/* <p className="text-4xl font-semibold">{total}</p> */}
+                <CurrencyComponent
+                  amount={
+                    total -
+                    discountAmount +
+                    (total - discountAmount) * (vatPercentage / 100)
+                  }
+                  currency="LKR"
+                  withoutCurrency
+                />
+              </div>
             </div>
-            <div className="flex justify-between">
-              <p className="text-3xl font-thin align-bottom">Rs.</p>
-              {/* <p className="text-4xl font-semibold">{total}</p> */}
-              <CurrencyComponent
-                amount={
-                  total -
-                  discountAmount +
-                  (total - discountAmount) * (vatPercentage / 100)
-                }
-                currency="LKR"
-                withoutCurrency
-              />
+            <div className="flex-space-between w-full">
+              <Button
+                className="mt-4 mb-3 w-full"
+                onClick={() => printButtonRef.current.click()}
+              >
+                <Printer className={"mr-2"} /> Print Invoice
+              </Button>
             </div>
           </div>
-          <div className="flex-space-between w-full">
-            <Button className="mt-4 mb-3 w-full">
-              <Printer className={"mr-2"} /> Print Invoice
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <PrintInvoice buttonRef={printButtonRef} invoiceData={invoiceDetails} />
+    </>
   );
 }
 
