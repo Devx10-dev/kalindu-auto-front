@@ -98,7 +98,7 @@ const BillSummary = () => {
   const createCashInvoice = useMutation({
     mutationFn: () => cashInvoiceService.createCashInvoice(getRequestData()),
     onSuccess: (invoiceData) => {
-      resetState();
+      // resetState();
       toast({
         variant: "default",
         title: "Success",
@@ -149,7 +149,7 @@ const BillSummary = () => {
       title: "Print Invoice",
       description: "Confirm print invoice",
       content: (
-        <PrintInvoice buttonRef={printButtonRef} invoiceData={invoiceData} />
+        <PrintInvoice buttonRef={printButtonRef} invoiceData={getRequestData() as InvoiceData} />
       ),
       execute: () => printButtonHandleClick(),
       buttonName: "Print",

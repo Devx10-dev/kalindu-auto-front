@@ -28,6 +28,12 @@ function PrintInvoice({
   };
 
   useEffect(() => {
+    console.log("PrintInvoice.tsx: invoiceData: ", invoiceData);
+  }
+  , [invoiceData]);
+
+
+  useEffect(() => {
     const initializePrintManager = async () => {
       JSPM.JSPrintManager.auto_reconnect = true;
       await JSPM.JSPrintManager.start();
@@ -84,7 +90,8 @@ function PrintInvoice({
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x55" +
       " ".repeat(6) +
-      (invoiceData?.invoiceId || "") +
+      // last 12 chrcters of invoice id
+      (invoiceData?.invoiceId|| "").slice(-10)  +
       newLine +
       "\x1B\x24\x1E\x00" +
       "\x1B\x4A\x0A" +
@@ -105,14 +112,10 @@ function PrintInvoice({
     cmds += newLine.repeat(3);
 
     // // Table Content
-    if (Array.isArray(invoiceData.invoiceItems)) {
+    if (Array.isArray(invoiceData?.invoiceItems)) {
       invoiceData.invoiceItems.forEach((item) => {
         cmds +=
-          (item.name || "").padEnd(19) +
-          "" +
-          (item.code || "").padEnd(9) +
-          "" +
-          (item.description || "").padEnd(20) +
+          (item.name || "").padEnd(48) +
           "" +
           printRightAlign(item.price || "", 13) +
           "" +
@@ -120,14 +123,16 @@ function PrintInvoice({
           printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-      cmds += newLine.repeat(14);
+      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 16);
     }
 
-    cmds +=
-      "\x1B\x24\x78\x00" +
-      " ".repeat(12) +
-      printRightAlign(invoiceData.totalPrice, 6) +
-      (invoiceData?.invoiceId || "");
+    cmds += boldOn + "\x1B\x24\x78\x00" + " ".repeat(25) + printRightAlign(invoiceData?.totalDiscount ||"", 12) + " ".repeat(4) + printRightAlign(invoiceData?.vat || "", 6) + " ".repeat(1) + printRightAlign(invoiceData?.totalPrice || "200000000.00", 12) + boldOff
+
+    // cmds +=
+    //   "\x1B\x24\x78\x00" +
+    //   " ".repeat(12) +
+    //   printRightAlign(invoiceData?.totalPrice, 6) +
+    //   (invoiceData?.invoiceId || "");
 
     // Final commands
     cmds += formFeed + cutPaper;

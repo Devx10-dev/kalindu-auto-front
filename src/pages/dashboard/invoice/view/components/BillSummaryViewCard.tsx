@@ -46,15 +46,16 @@ function BillSummaryViewCard({
     null
   );
   useEffect(() => {
+    if(!invoiceData) return;  
     const invoiceD: InvoiceData = {
       commissions: [],
       contactNo: "",
-      date: invoiceData.issuedTime.toLocaleString(),
-      invoiceId: invoiceData.invoiceId,
+      date: invoiceData?.issuedTime.toLocaleString(),
+      invoiceId: invoiceData?.invoiceId,
       invoiceItems: invoiceData?.invoiceItems ?? [],
-      totalDiscount: invoiceData.discountAmount,
-      totalPrice: invoiceData.totalPrice,
-      vat: invoiceData.vat,
+      totalDiscount: invoiceData?.discountAmount,
+      totalPrice: invoiceData?.totalPrice,
+      vat: invoiceData?.vat,
     };
 
     setInvoiceDetails(invoiceD);
