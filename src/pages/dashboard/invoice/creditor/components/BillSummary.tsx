@@ -70,7 +70,7 @@ const BillSummary: React.FC = () => {
     mutationFn: () =>
       creditInvoiceService.createCreditInvoice(getRequestData()),
     onSuccess: (invoiceData) => {
-      resetState();
+      //resetState();
       // navigate("print", { state: { invoiceData } }); // this state will be accessed from the print component
       toast({
         variant: "default",
