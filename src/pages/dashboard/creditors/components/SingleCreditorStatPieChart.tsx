@@ -255,7 +255,11 @@ export function SingleCreditorStatPieChart({
                       creditorDetails ? (
                         contentRender(
                           "currencyAmount",
-                          currencyAmountString(creditorDetails.dueAmount + creditorDetails.overdueAmount + creditorDetails.pendingPayments),
+                          currencyAmountString(
+                            creditorDetails.dueAmount +
+                              creditorDetails.overdueAmount +
+                              creditorDetails.pendingPayments,
+                          ),
                         )
                       ) : (
                         contentRender("currencyAmount", "Rs. 0.00")

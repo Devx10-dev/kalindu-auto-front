@@ -43,7 +43,7 @@ function SingleInvoice() {
   const queryClient = useQueryClient();
   const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
-    null,
+    null
   );
   const [isAvailableInStore, setIsAvailableInStore] = useState<boolean>(true);
 
@@ -184,7 +184,7 @@ function SingleInvoice() {
                       className="whitespace-nowrap p-2 rounded-md"
                     >
                       {invoiceDetails?.invoiceItems.filter(
-                        (item) => item.outsourced,
+                        (item) => item.outsourced
                       ).length === 0
                         ? "No Items"
                         : `${invoiceDetails?.invoiceItems.filter((item) => item.outsourced).length} Outsourced`}
@@ -256,6 +256,7 @@ function SingleInvoice() {
             }
             discountPercentage={invoiceDetails?.discount}
             discountAmount={invoiceDetails?.totalDiscount}
+            invoiceData={invoiceDetails}
           />
         </div>
       </div>

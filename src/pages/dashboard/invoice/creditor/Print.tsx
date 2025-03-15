@@ -93,7 +93,7 @@ const PrintCreditor = () => {
             </div>
             <div className="bg-gray-100 p-2 rounded">
               <p className="text-gray-600">VAT</p>
-              <p className="font-bold">Rs : {invoiceData.VAT}</p>
+              <p className="font-bold">Rs : {invoiceData.vat}</p>
             </div>
             <div className="bg-gray-100 p-2 rounded">
               <p className="text-gray-600">TOTAL</p>
