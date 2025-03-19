@@ -13,6 +13,7 @@ import DialogStepper from "../../components/DialogStepper";
 import InvoiceDetailedView from "../../components/InvoiceDetailedView";
 import PrintInvoice from "../../components/PrintInvoice";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
+import { convertArrayToISOFormat } from "@/utils/dateTime";
 
 const BillSummary: React.FC = () => {
   //     ----------     STATE INITIALIZATION     ----------     //
@@ -71,7 +72,17 @@ const BillSummary: React.FC = () => {
       const responseData =
         await creditInvoiceService.createCreditInvoice(getRequestData());
 
-      setInvoiceData(responseData as unknown as InvoiceData);
+      console.log(responseData);
+
+      setInvoiceData({
+        ...(responseData as unknown as InvoiceData),
+        creditorName: responseData.creditor.shopName,
+        invoiceId: responseData.invoiceId.toString().split("-")[2],
+        issuedTime: convertArrayToISOFormat(responseData.issuedTime),
+        contactNo: responseData.creditor.primaryContact,
+        vehicle: "",
+        type: "CREDIT",
+      });
     },
     onSuccess: (invoiceData) => {
       resetState();

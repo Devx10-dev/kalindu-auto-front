@@ -14,6 +14,7 @@ import DialogStepper from "../../components/DialogStepper";
 import InvoiceDetailedView from "../../components/InvoiceDetailedView";
 import PrintInvoice from "../../components/PrintInvoice";
 import useInvoiceStore from "../context/useCashInvoiceStore";
+import { convertArrayToISOFormat } from "@/utils/dateTime";
 
 const BillSummary = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -99,7 +100,17 @@ const BillSummary = () => {
     mutationFn: async () => {
       const responseData =
         await cashInvoiceService.createCashInvoice(getRequestData());
-      setInvoiceData(responseData as unknown as InvoiceData);
+      console.log(responseData);
+
+      setInvoiceData({
+        ...(responseData as unknown as InvoiceData),
+        creditorName: responseData.customerName,
+        invoiceId: responseData.invoiceId.split("-")[2],
+        issuedTime: convertArrayToISOFormat(responseData.issuedTime),
+        contactNo: "",
+        vehicle: responseData.vehicleNo,
+        type: "CASH",
+      });
     },
     onSuccess: (invoiceData) => {
       resetState();
