@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
 import { formatCurrency } from "@/utils/price";
-import React from "react";
 
 function InvoiceDetailedView({ invoiceData }: { invoiceData: InvoiceData }) {
   return (

@@ -21,15 +21,11 @@ function PrintInvoice({
 
   const handleVerticalAlignment = (
     existingRecordCount: number,
-    totalLines: number,
+    totalLines: number
   ) => {
     const newLine = "\n";
     return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
   };
-
-  useEffect(() => {
-    console.log("PrintInvoice.tsx: invoiceData: ", invoiceData);
-  }, [invoiceData]);
 
   useEffect(() => {
     const initializePrintManager = async () => {
@@ -42,8 +38,12 @@ function PrintInvoice({
 
   const handlePrint = () => {
     if (!printToDefault) {
-      alert("You must select a printer or enable default printing.");
-      return;
+      return toast({
+        title: "Printer Selection Required",
+        description:
+          "Please select a printer or enable default printing to proceed.",
+        variant: "destructive",
+      });
     }
 
     let cpj = new JSPM.ClientPrintJob();
@@ -134,12 +134,6 @@ function PrintInvoice({
       " ".repeat(1) +
       printRightAlign(invoiceData?.totalPrice || "200000000.00", 12) +
       boldOff;
-
-    // cmds +=
-    //   "\x1B\x24\x78\x00" +
-    //   " ".repeat(12) +
-    //   printRightAlign(invoiceData?.totalPrice, 6) +
-    //   (invoiceData?.invoiceId || "");
 
     // Final commands
     cmds += formFeed + cutPaper;

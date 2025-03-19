@@ -39,23 +39,23 @@ const BillSummary: React.FC = () => {
   const printButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [open, setOpen] = useState(false);
-  const [invoiceData, setInvoiceData] = useState(getRequestData());
+  const [invoiceData, setInvoiceData] = useState<InvoiceData>(null);
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
         acc + item.quantity * item.price - item.quantity * item.discount,
-      0,
+      0
     );
   }, [invoiceItemDTOList]);
 
   const discountedTotal = useMemo(
     () => subtotal - (discountAmount || 0),
-    [subtotal, discountAmount],
+    [subtotal, discountAmount]
   );
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
-    [discountedTotal, vatAmount],
+    [discountedTotal, vatAmount]
   );
 
   // Update the total price when discountedTotal or vatAmount changes
@@ -67,11 +67,14 @@ const BillSummary: React.FC = () => {
 
   //create creditor mutation
   const createCreditorInvoice = useMutation({
-    mutationFn: () =>
-      creditInvoiceService.createCreditInvoice(getRequestData()),
+    mutationFn: async () => {
+      const responseData =
+        await creditInvoiceService.createCreditInvoice(getRequestData());
+
+      setInvoiceData(responseData as unknown as InvoiceData);
+    },
     onSuccess: (invoiceData) => {
-      //resetState();
-      // navigate("print", { state: { invoiceData } }); // this state will be accessed from the print component
+      resetState();
       toast({
         variant: "default",
         title: "Success",
@@ -112,7 +115,7 @@ const BillSummary: React.FC = () => {
   }
 
   const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setDiscountPercentage(percentage);
@@ -120,7 +123,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const amount = Math.max(parseFloat(e.target.value), 0);
     setDiscountAmount(amount);
@@ -128,7 +131,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setVatPercentage(percentage);
@@ -161,10 +164,7 @@ const BillSummary: React.FC = () => {
       title: "Print Invoice",
       description: "Confirm print invoice",
       content: (
-        <PrintInvoice
-          buttonRef={printButtonRef}
-          invoiceData={getRequestData() as InvoiceData}
-        />
+        <PrintInvoice buttonRef={printButtonRef} invoiceData={invoiceData} />
       ),
       execute: () => printButtonHandleClick(),
       buttonName: "Print",
