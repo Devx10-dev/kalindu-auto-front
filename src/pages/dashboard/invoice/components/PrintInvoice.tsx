@@ -133,7 +133,7 @@ function PrintInvoice({
       " ".repeat(4) +
       printRightAlign(invoiceData?.vat || "", 6) +
       " ".repeat(1) +
-      printRightAlign(invoiceData?.totalPrice || "200000000.00", 12) +
+      printRightAlign(invoiceData?.totalPrice || "", 12) +
       boldOff;
 
     // Final commands
