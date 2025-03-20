@@ -35,3 +35,15 @@ export function convertArrayToISOFormat(doneAt: number[]): string {
   const formattedDate = date.toISOString().replace("T", " ").split(".")[0];
   return formattedDate;
 }
+
+export function extractDateFromIssuedTime(issuedTimeArray: number[]): string {
+  // Extract only year, month, and day from the array
+  const [year, month, day] = issuedTimeArray;
+  
+  // Format month and day with leading zeros if needed
+  const formattedMonth = String(month).padStart(2, "0");
+  const formattedDay = String(day).padStart(2, "0");
+  
+  // Return in YYYY-MM-DD format
+  return `${year}-${formattedMonth}-${formattedDay}`;
+}
