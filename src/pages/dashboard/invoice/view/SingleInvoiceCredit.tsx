@@ -1,6 +1,12 @@
 import PageHeader from "@/components/card/PageHeader";
 import ReceiptIcon from "@/components/icon/ReceiptIcon";
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,54 +14,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi";
+import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService";
 import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowDownUp,
-  CheckCircle,
-  PackageOpen,
-  TimerOff,
-  TimerReset,
-  User,
-} from "lucide-react";
+import { InvoiceState } from "@/types/invoice/creditorInvoice";
+import { Accordion } from "@radix-ui/react-accordion";
+import { useQuery } from "@tanstack/react-query";
+import { User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Fragment } from "react/jsx-runtime";
-import {
-  useCreditInvoiceListStore,
-  useInvoiceListStore,
-} from "../view-invoices/context/InvoiceListState";
-import BillSummaryViewCard from "./components/BillSummaryViewCard";
+import { InvoiceTransactionDrawer } from "../../creditors/components/InvoiceTransactionDrawer";
+import { useCreditInvoiceListStore } from "../view-invoices/context/InvoiceListState";
+import BillSummaryViewCardCredit from "./components/BillSummaryViewCardCredit";
 import CommissionDetailsGrid from "./components/CommissionDetailsGrid";
 import InvoiceItemsGrid from "./components/InvoiceItemGrid";
-import OutsourceItemsGrid from "./components/OutSourceItemGrid";
-import StatusCard from "./components/StatusCard";
-import { TransactionDrawer } from "./components/TransactionDrawer";
-import { InvoiceState, PieChartData } from "@/types/invoice/creditorInvoice";
-import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService";
-import { Accordion } from "@radix-ui/react-accordion";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Separator } from "@/components/ui/separator";
-import dateArrayToString from "@/utils/dateArrayToString";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Label, Pie, PieChart } from "recharts";
-import StatusCardCredit from "./components/StatusCardCredit";
-import { Button } from "@/components/ui/button";
-import BillSummaryViewCardCredit from "./components/BillSummaryViewCardCredit";
 import { InvoiceSettledPieChart } from "./components/InvoiceSettledPieChart";
-import { InvoiceTransactionDrawer } from "../../creditors/components/InvoiceTransactionDrawer";
+import OutsourceItemsGrid from "./components/OutSourceItemGrid";
+import StatusCardCredit from "./components/StatusCardCredit";
 
 const dotSizeClasses = {
   sm: "h-2 w-2",
@@ -121,7 +97,7 @@ function SingleInvoiceCredit() {
   ]);
 
   useEffect(() => {
-    console.log(invoiceDetails);
+    // console.log(invoiceDetails);
     if (invoiceDetails) {
       setTotal(invoiceDetails.totalPrice);
       setVatPercentage(invoiceDetails.vat);
@@ -131,9 +107,9 @@ function SingleInvoiceCredit() {
     }
   }, [invoiceDetails]);
 
-  useEffect(() => {
-    console.log(total, vatPercentage, discountPercentage, discountAmount);
-  }, [total, vatPercentage, discountPercentage, discountAmount]);
+  // useEffect(() => {
+  //   console.log(total, vatPercentage, discountPercentage, discountAmount);
+  // }, [total, vatPercentage, discountPercentage, discountAmount]);
 
   return (
     <div className="w-full p-2 md:p-4 max-w-[100vw] overflow-x-hidden">
@@ -300,12 +276,15 @@ function SingleInvoiceCredit() {
               </div>
             </div>
 
-            <BillSummaryViewCardCredit
-              total={total}
-              vatPercentage={vatPercentage}
-              discountPercentage={discountPercentage}
-              discountAmount={discountAmount}
-            />
+            {invoiceDetails && (
+              <BillSummaryViewCardCredit
+                total={total}
+                vatPercentage={vatPercentage}
+                discountPercentage={discountPercentage}
+                discountAmount={discountAmount}
+                invoiceData={invoiceDetails}
+              />
+            )}
 
             <div className="mt-5 w-full">
               <InvoiceSettledPieChart invoiceDetails={invoiceDetails} />

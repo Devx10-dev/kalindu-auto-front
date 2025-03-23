@@ -2,21 +2,15 @@ import { OptionalLabel } from "@/components/formElements/FormLabel";
 import IconCash from "@/components/icon/IconCash";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
-import {
-  DummyInvoice,
-  DummyInvoiceItem,
-} from "@/types/invoice/dummy/dummyInvoiceTypes";
-import { UseMutationResult } from "@tanstack/react-query";
-import { Delete, Printer } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import CurrencyComponent from "./CurrencyComponent";
-import PrintInvoice from "../../components/PrintInvoice";
-import { InvoiceData } from "@/types/Invoices/invoiceTypes";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
+import { InvoiceData } from "@/types/Invoices/invoiceTypes";
+import { extractDateFromIssuedTime } from "@/utils/dateTime";
+import { Printer } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import PrintInvoice from "../../components/PrintInvoice";
+import CurrencyComponent from "./CurrencyComponent";
 
 function BillSummaryViewCard({
   total,
@@ -31,27 +25,28 @@ function BillSummaryViewCard({
   discountAmount: number;
   invoiceData?: InvoiceState;
 }) {
-  useEffect(() => {
-    console.log("BillSummaryViewCard.tsx: total: ", total);
-    console.log("BillSummaryViewCard.tsx: vatPercentage: ", vatPercentage);
-    console.log(
-      "BillSummaryViewCard.tsx: discountPercentage: ",
-      discountPercentage,
-    );
-    console.log("BillSummaryViewCard.tsx: discountAmount: ", discountAmount);
-  }, [total, vatPercentage, discountPercentage, discountAmount]);
+  // useEffect(() => {
+  //   console.log("BillSummaryViewCard.tsx: total: ", total);
+  //   console.log("BillSummaryViewCard.tsx: vatPercentage: ", vatPercentage);
+  //   console.log(
+  //     "BillSummaryViewCard.tsx: discountPercentage: ",
+  //     discountPercentage,
+  //   );
+  //   console.log("BillSummaryViewCard.tsx: discountAmount: ", discountAmount);
+  // }, [total, vatPercentage, discountPercentage, discountAmount]);
 
   const printButtonRef = useRef<HTMLButtonElement | null>(null);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceData | null>(
     null,
   );
+
   useEffect(() => {
     if (!invoiceData) return;
     const invoiceD: InvoiceData = {
       commissions: [],
       contactNo: "",
-      date: invoiceData?.issuedTime.toLocaleString(),
-      invoiceId: invoiceData?.invoiceId,
+      date: extractDateFromIssuedTime(invoiceData?.issuedTime),
+      invoiceId: invoiceData?.invoiceId.split("-")[2],
       invoiceItems: invoiceData?.invoiceItems ?? [],
       totalDiscount: invoiceData?.discountAmount,
       totalPrice: invoiceData?.totalPrice,
