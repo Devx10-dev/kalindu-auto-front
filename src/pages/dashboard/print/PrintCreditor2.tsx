@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import * as JSPM from "jsprintmanager";
 import { Button } from "@/components/ui/button";
+import * as JSPM from "jsprintmanager";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const printRightAlign = (value: string | number, totalLength: number) => {
@@ -31,9 +31,11 @@ const PrintCreditor2 = () => {
 
       JSPM.JSPrintManager.WS.onStatusChanged = () => {
         if (JSPM.JSPrintManager.websocket_status === JSPM.WSStatus.Open) {
-          JSPM.JSPrintManager.getPrinters().then((availablePrinters) => {
-            setPrinters(availablePrinters);
-          });
+          JSPM.JSPrintManager.getPrinters().then(
+            (availablePrinters: string[]) => {
+              setPrinters(availablePrinters);
+            },
+          );
         }
       };
     };

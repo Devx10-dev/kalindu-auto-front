@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
@@ -11,7 +12,7 @@ function PrintInvoice({
   buttonRef: React.MutableRefObject<HTMLButtonElement>;
   invoiceData: InvoiceData;
 }) {
-  console.log(invoiceData);
+  // console.log(invoiceData);
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
 
@@ -22,7 +23,7 @@ function PrintInvoice({
 
   const handleVerticalAlignment = (
     existingRecordCount: number,
-    totalLines: number
+    totalLines: number,
   ) => {
     const newLine = "\n";
     return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
@@ -38,6 +39,14 @@ function PrintInvoice({
   }, []);
 
   const handlePrint = () => {
+    if (invoiceData?.invoiceId == null || invoiceData?.invoiceId == undefined) {
+      return toast({
+        title: "Printing Unsuccessful",
+        description: "Invoice ID not found. Please try again.",
+        variant: "destructive",
+      });
+    }
+
     if (!printToDefault) {
       return toast({
         title: "Printer Selection Required",

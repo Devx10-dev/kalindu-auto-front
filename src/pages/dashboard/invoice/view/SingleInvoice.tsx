@@ -1,5 +1,11 @@
 import PageHeader from "@/components/card/PageHeader";
 import ReceiptIcon from "@/components/icon/ReceiptIcon";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -10,27 +16,18 @@ import {
 } from "@/components/ui/card";
 import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import { CashInvoiceService } from "@/service/invoice/cashInvoiceApi";
-import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { InvoiceState } from "@/types/invoice/cashInvoice";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Fragment } from "react/jsx-runtime";
+import { CashInvoiceTransactionDrawer } from "../../creditors/components/CashInvoiceTransactionDrawer";
 import { useInvoiceListStore } from "../view-invoices/context/InvoiceListState";
 import BillSummaryViewCard from "./components/BillSummaryViewCard";
 import CommissionDetailsGrid from "./components/CommissionDetailsGrid";
 import InvoiceItemsGrid from "./components/InvoiceItemGrid";
 import OutsourceItemsGrid from "./components/OutSourceItemGrid";
 import StatusCard from "./components/StatusCard";
-import { TransactionDrawer } from "./components/TransactionDrawer";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { CashInvoiceTransactionDrawer } from "../../creditors/components/CashInvoiceTransactionDrawer";
 
 const dotSizeClasses = {
   sm: "h-2 w-2",
@@ -40,8 +37,6 @@ const dotSizeClasses = {
 
 function SingleInvoice() {
   const axiosPrivate = useAxiosPrivate();
-  const queryClient = useQueryClient();
-  const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
     null,
   );
@@ -248,16 +243,18 @@ function SingleInvoice() {
 
         {/* Right Column */}
         <div className="w-full lg:w-[30%] space-y-4">
-          <BillSummaryViewCard
-            total={invoiceDetails?.totalPrice}
-            vatPercentage={
-              (invoiceDetails?.vat * 100) /
-              (invoiceDetails?.totalPrice - invoiceDetails?.totalDiscount)
-            }
-            discountPercentage={invoiceDetails?.discount}
-            discountAmount={invoiceDetails?.totalDiscount}
-            invoiceData={invoiceDetails}
-          />
+          {invoiceDetails && (
+            <BillSummaryViewCard
+              total={invoiceDetails?.totalPrice}
+              vatPercentage={
+                (invoiceDetails?.vat * 100) /
+                (invoiceDetails?.totalPrice - invoiceDetails?.totalDiscount)
+              }
+              discountPercentage={invoiceDetails?.discount}
+              discountAmount={invoiceDetails?.totalDiscount}
+              invoiceData={invoiceDetails}
+            />
+          )}
         </div>
       </div>
     </div>

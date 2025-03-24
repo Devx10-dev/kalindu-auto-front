@@ -40,6 +40,7 @@ export type Creditor = {
   pendingChequeAmount?: number;
   rejectedChequeAmount?: number;
   settledChequeAmount?: number;
+  pendingPayments?: number;
 };
 
 export type CreditorResponseData = {
