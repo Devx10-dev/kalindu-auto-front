@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast.ts";
 import useAxiosPrivate from "@/hooks/usePrivateAxios.ts";
 import { CreditInvoiceService } from "@/service/invoice/creditInvoiceService.ts";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
+import { extractDateFromIssuedTime } from "@/utils/dateTime";
 import { useMutation } from "@tanstack/react-query";
 import { Delete, Loader2, Printer } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -13,14 +14,8 @@ import DialogStepper from "../../components/DialogStepper";
 import InvoiceDetailedView from "../../components/InvoiceDetailedView";
 import PrintInvoice from "../../components/PrintInvoice";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
-import {
-  convertArrayToISOFormat,
-  extractDateFromIssuedTime,
-} from "@/utils/dateTime";
 
 const BillSummary: React.FC = () => {
-  //     ----------     STATE INITIALIZATION     ----------     //
-
   const {
     invoiceItemDTOList,
     discountPercentage,
@@ -44,22 +39,23 @@ const BillSummary: React.FC = () => {
 
   const [open, setOpen] = useState(false);
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(null);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
         acc + item.quantity * item.price - item.quantity * item.discount,
-      0,
+      0
     );
   }, [invoiceItemDTOList]);
 
   const discountedTotal = useMemo(
     () => subtotal - (discountAmount || 0),
-    [subtotal, discountAmount],
+    [subtotal, discountAmount]
   );
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
-    [discountedTotal, vatAmount],
+    [discountedTotal, vatAmount]
   );
 
   // Update the total price when discountedTotal or vatAmount changes
@@ -67,27 +63,35 @@ const BillSummary: React.FC = () => {
     setTotalPrice(totalWithVat);
   }, [totalWithVat, setTotalPrice]);
 
-  //     ----------     BACKEND API MUTATIONS (CALLS)    ----------     //
+  // const sleep = (ms: number) =>
+  //   new Promise((resolve) => setTimeout(resolve, ms));
 
-  //create creditor mutation
   const createCreditorInvoice = useMutation({
     mutationFn: async () => {
-      const responseData =
-        await creditInvoiceService.createCreditInvoice(getRequestData());
+      setIsCreatingInvoice(true);
+      try {
+        const responseData =
+          await creditInvoiceService.createCreditInvoice(getRequestData());
 
-      console.log(responseData);
+        // await sleep(10000);
 
-      setInvoiceData({
-        ...(responseData as unknown as InvoiceData),
-        creditorName: responseData.creditor.shopName,
-        invoiceId: responseData.invoiceId.toString().split("-")[2],
-        issuedTime: extractDateFromIssuedTime(responseData.issuedTime),
-        contactNo: responseData.creditor.primaryContact,
-        vehicle: "",
-        type: "CREDIT",
-      });
+        const formattedInvoiceData = {
+          ...(responseData as unknown as InvoiceData),
+          creditorName: responseData.creditor.shopName,
+          invoiceId: responseData.invoiceId.toString().split("-")[2],
+          issuedTime: extractDateFromIssuedTime(responseData.issuedTime),
+          contactNo: responseData.creditor.primaryContact,
+          vehicle: "",
+          type: "CREDIT",
+        };
+
+        setInvoiceData(formattedInvoiceData);
+        return formattedInvoiceData;
+      } finally {
+        setIsCreatingInvoice(false);
+      }
     },
-    onSuccess: (invoiceData) => {
+    onSuccess: () => {
       resetState();
       toast({
         variant: "default",
@@ -96,7 +100,6 @@ const BillSummary: React.FC = () => {
         className: "bg-green-200",
       });
     },
-
     onError: (data: any) => {
       toast({
         variant: "destructive",
@@ -104,6 +107,7 @@ const BillSummary: React.FC = () => {
         description: data.response.data,
         duration: 5000,
       });
+      setOpen(false); // Close dialog on error
     },
   });
 
@@ -129,7 +133,7 @@ const BillSummary: React.FC = () => {
   }
 
   const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setDiscountPercentage(percentage);
@@ -137,7 +141,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const amount = Math.max(parseFloat(e.target.value), 0);
     setDiscountAmount(amount);
@@ -145,7 +149,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setVatPercentage(percentage);
@@ -171,8 +175,11 @@ const BillSummary: React.FC = () => {
       content: (
         <InvoiceDetailedView invoiceData={getRequestData() as InvoiceData} />
       ),
-      execute: () => createCreditorInvoice.mutate(),
+      execute: async () => {
+        await createCreditorInvoice.mutateAsync();
+      },
       buttonName: "Create",
+      isLoading: isCreatingInvoice,
     },
     {
       title: "Print Invoice",
@@ -180,8 +187,13 @@ const BillSummary: React.FC = () => {
       content: (
         <PrintInvoice buttonRef={printButtonRef} invoiceData={invoiceData} />
       ),
-      execute: () => printButtonHandleClick(),
+      execute: () => {
+        if (printButtonRef.current) {
+          printButtonRef.current.click();
+        }
+      },
       buttonName: "Print",
+      isDisabled: !invoiceData, // Disable if invoice data is not available
     },
   ];
 

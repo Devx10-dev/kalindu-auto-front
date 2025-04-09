@@ -1,4 +1,3 @@
-// DialogStepper.jsx
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const DialogStepper = ({
   steps,
@@ -19,13 +19,16 @@ const DialogStepper = ({
     title: string;
     description: string;
     content: JSX.Element;
-    execute: () => void;
+    execute: () => Promise<void> | void;
     buttonName: string;
+    isDisabled?: boolean;
+    isLoading?: boolean;
   }[];
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -41,11 +44,27 @@ const DialogStepper = ({
     setCurrentStep(0);
   };
 
+  const handleStepExecution = async () => {
+    setIsExecuting(true);
+    try {
+      const result = await steps[currentStep].execute();
+      setIsExecuting(false);
+      handleNext();
+    } catch (error) {
+      console.error("Step execution failed:", error);
+      setIsExecuting(false);
+    }
+  };
+
   return (
     <>
       <Dialog
         open={open}
-        onOpenChange={(open) => open && setOpen(true)}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleCancel();
+          }
+        }}
         modal={true}
       >
         <DialogContent className="sm:max-w-2xl">
@@ -107,12 +126,17 @@ const DialogStepper = ({
               </Button>
             </div>
             <Button
-              onClick={() => {
-                steps[currentStep].execute();
-                handleNext();
-              }}
+              onClick={handleStepExecution}
+              disabled={isExecuting || steps[currentStep].isDisabled}
             >
-              {steps[currentStep].buttonName}
+              {isExecuting || steps[currentStep].isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                steps[currentStep].buttonName
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
