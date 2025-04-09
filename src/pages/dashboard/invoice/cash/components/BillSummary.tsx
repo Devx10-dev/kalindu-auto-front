@@ -38,6 +38,7 @@ const BillSummary = () => {
   const printButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(null);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
 
   const axiosPrivate = useAxiosPrivate();
   const cashInvoiceService = new CashInvoiceService(axiosPrivate);
@@ -46,17 +47,17 @@ const BillSummary = () => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
         acc + item.quantity * item.price - item.quantity * item.discount,
-      0,
+      0
     );
   }, [invoiceItemDTOList]);
 
   const discountedTotal = useMemo(
     () => subtotal - (discountAmount || 0),
-    [subtotal, discountAmount],
+    [subtotal, discountAmount]
   );
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
-    [discountedTotal, vatAmount],
+    [discountedTotal, vatAmount]
   );
 
   // Update the total price when discountedTotal or vatAmount changes
@@ -65,7 +66,7 @@ const BillSummary = () => {
   }, [totalWithVat, setTotalPrice]);
 
   const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setDiscountPercentage(percentage);
@@ -73,7 +74,7 @@ const BillSummary = () => {
   };
 
   const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const amount = Math.max(parseFloat(e.target.value), 0);
     setDiscountAmount(amount);
@@ -81,7 +82,7 @@ const BillSummary = () => {
   };
 
   const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setVatPercentage(percentage);
@@ -98,19 +99,25 @@ const BillSummary = () => {
 
   const createCashInvoice = useMutation({
     mutationFn: async () => {
-      const responseData =
-        await cashInvoiceService.createCashInvoice(getRequestData());
-      console.log(responseData);
+      setIsCreatingInvoice(true);
 
-      setInvoiceData({
-        ...(responseData as unknown as InvoiceData),
-        creditorName: responseData.customerName,
-        invoiceId: responseData.invoiceId.split("-")[2],
-        issuedTime: convertArrayToISOFormat(responseData.issuedTime),
-        contactNo: "",
-        vehicle: responseData.vehicleNo,
-        type: "CASH",
-      });
+      try {
+        const responseData =
+          await cashInvoiceService.createCashInvoice(getRequestData());
+        console.log(responseData);
+
+        setInvoiceData({
+          ...(responseData as unknown as InvoiceData),
+          creditorName: responseData.customerName,
+          invoiceId: responseData.invoiceId.split("-")[2],
+          issuedTime: convertArrayToISOFormat(responseData.issuedTime),
+          contactNo: "",
+          vehicle: responseData.vehicleNo,
+          type: "CASH",
+        });
+      } finally {
+        setIsCreatingInvoice(false);
+      }
     },
     onSuccess: (invoiceData) => {
       resetState();
@@ -157,8 +164,11 @@ const BillSummary = () => {
       content: (
         <InvoiceDetailedView invoiceData={getRequestData() as InvoiceData} />
       ),
-      execute: () => createCashInvoice.mutate(),
+      execute: async () => {
+        await createCashInvoice.mutate();
+      },
       buttonName: "Create",
+      isLoading: isCreatingInvoice,
     },
     {
       title: "Print Invoice",
@@ -166,8 +176,13 @@ const BillSummary = () => {
       content: (
         <PrintInvoice buttonRef={printButtonRef} invoiceData={invoiceData} />
       ),
-      execute: () => printButtonHandleClick(),
+      execute: () => {
+        if (printButtonRef.current) {
+          printButtonRef.current.click();
+        }
+      },
       buttonName: "Print",
+      isDisabled: !invoiceData,
     },
   ];
 

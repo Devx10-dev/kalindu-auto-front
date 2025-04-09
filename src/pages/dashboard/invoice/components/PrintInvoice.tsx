@@ -11,7 +11,7 @@ function PrintInvoice({
   buttonRef: React.MutableRefObject<HTMLButtonElement>;
   invoiceData: InvoiceData;
 }) {
-  // console.log(invoiceData);
+  console.log(invoiceData);
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
 
