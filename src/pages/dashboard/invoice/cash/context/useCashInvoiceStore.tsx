@@ -160,17 +160,11 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
   getRequestData: () => {
     const state = get();
 
-    const generateInvoiceId = () => {
+    const generateInvoiceId = (): string => {
       const now = new Date();
-      const year = now.getFullYear().toString().slice(2); // Last two digits of the year
-      const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Month (0-indexed, so +1)
-      const day = now.getDate().toString().padStart(2, "0"); // Day of the month
-
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-      const seconds = now.getSeconds().toString().padStart(2, "0");
-
-      return `INV-CASH-${year}${month}${day}${hours}${minutes}${seconds}`;
+      const date = now.toISOString().slice(2, 10).replace(/-/g, "");
+      const random = Math.floor(1000 + Math.random() * 9000);
+      return `INV-CRE-${date}${random}`;
     };
 
     const invoiceId = generateInvoiceId();
