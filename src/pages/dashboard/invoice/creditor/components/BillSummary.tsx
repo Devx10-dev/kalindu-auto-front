@@ -45,17 +45,17 @@ const BillSummary: React.FC = () => {
     return invoiceItemDTOList.reduce(
       (acc: any, item: any) =>
         acc + item.quantity * item.price - item.quantity * item.discount,
-      0
+      0,
     );
   }, [invoiceItemDTOList]);
 
   const discountedTotal = useMemo(
     () => subtotal - (discountAmount || 0),
-    [subtotal, discountAmount]
+    [subtotal, discountAmount],
   );
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
-    [discountedTotal, vatAmount]
+    [discountedTotal, vatAmount],
   );
 
   // Update the total price when discountedTotal or vatAmount changes
@@ -133,7 +133,7 @@ const BillSummary: React.FC = () => {
   }
 
   const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setDiscountPercentage(percentage);
@@ -141,7 +141,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const amount = Math.max(parseFloat(e.target.value), 0);
     setDiscountAmount(amount);
@@ -149,7 +149,7 @@ const BillSummary: React.FC = () => {
   };
 
   const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setVatPercentage(percentage);

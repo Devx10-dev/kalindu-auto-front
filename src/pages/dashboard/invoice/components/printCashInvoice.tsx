@@ -4,14 +4,17 @@ import { InvoiceData } from "@/types/Invoices/invoiceTypes";
 import * as JSPM from "jsprintmanager";
 import { useEffect, useState } from "react";
 
-function PrintInvoice({
+function PrintCashInvoice({
   buttonRef,
   invoiceData,
 }: {
   buttonRef: React.MutableRefObject<HTMLButtonElement>;
   invoiceData: InvoiceData;
 }) {
-  console.log(invoiceData);
+  useEffect(() => {
+    console.log("CASH", invoiceData);
+  }, []);
+
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
 
@@ -51,6 +54,12 @@ function PrintInvoice({
     cpj.clientPrinter = printToDefault
       ? new JSPM.DefaultPrinter()
       : new JSPM.InstalledPrinter(printToDefault);
+
+    let issuedDate;
+    if (invoiceData?.issuedTime && Array.isArray(invoiceData.issuedTime)) {
+      const [year, month, day] = invoiceData.issuedTime;
+      issuedDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    }
 
     const esc = "\x1B"; // ESC character
     const reset = esc + "@"; // Reset printer
@@ -98,7 +107,7 @@ function PrintInvoice({
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x0A" +
       " ".repeat(6) +
-      (invoiceData?.issuedTime || "") +
+      (issuedDate || "") +
       newLine +
       "\x1B\x24\x1E\x00" +
       "\x1B\x4A\x08" +
@@ -153,4 +162,4 @@ function PrintInvoice({
   );
 }
 
-export default PrintInvoice;
+export default PrintCashInvoice;
