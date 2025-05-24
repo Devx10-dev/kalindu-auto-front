@@ -11,9 +11,7 @@ function PrintCashInvoice({
   buttonRef: React.MutableRefObject<HTMLButtonElement>;
   invoiceData: InvoiceData;
 }) {
-  useEffect(() => {
-    console.log("CASH", invoiceData);
-  }, []);
+  console.log(invoiceData);
 
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
@@ -25,7 +23,7 @@ function PrintCashInvoice({
 
   const handleVerticalAlignment = (
     existingRecordCount: number,
-    totalLines: number,
+    totalLines: number
   ) => {
     const newLine = "\n";
     return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
