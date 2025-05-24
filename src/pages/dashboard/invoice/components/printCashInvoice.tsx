@@ -56,10 +56,11 @@ function PrintCashInvoice({
       : new JSPM.InstalledPrinter(printToDefault);
 
     let issuedDate;
-    if (invoiceData?.issuedTime && Array.isArray(invoiceData.issuedTime)) {
-      const [year, month, day] = invoiceData.issuedTime;
-      issuedDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    if (invoiceData?.issuedTime) {
+      issuedDate = invoiceData.issuedTime.split(" ")[0];
     }
+
+    console.log(issuedDate);
 
     const esc = "\x1B"; // ESC character
     const reset = esc + "@"; // Reset printer
@@ -142,7 +143,7 @@ function PrintCashInvoice({
       " ".repeat(4) +
       printRightAlign(invoiceData?.vat || "", 6) +
       " ".repeat(1) +
-      printRightAlign(invoiceData?.totalPrice || "", 12) +
+      printRightAlign(invoiceData?.totalPrice + invoiceData?.vat || "", 12) +
       boldOff;
 
     // Final commands
