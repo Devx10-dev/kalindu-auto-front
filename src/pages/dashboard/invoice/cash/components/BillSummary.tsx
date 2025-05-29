@@ -13,7 +13,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import DialogStepper from "../../components/DialogStepper";
 import InvoiceDetailedView from "../../components/InvoiceDetailedView";
 import useInvoiceStore from "../context/useCashInvoiceStore";
-import { convertArrayToISOFormat } from "@/utils/dateTime";
+import { convertArrayToNormalFormat } from "@/utils/dateTime";
 import PrintCashInvoice from "../../components/printCashInvoice";
 
 const BillSummary = () => {
@@ -60,8 +60,6 @@ const BillSummary = () => {
     [discountedTotal, vatAmount],
   );
 
-  console.log("INVO", invoiceData);
-
   // Update the total price when discountedTotal or vatAmount changes
   useEffect(() => {
     setTotalPrice(totalWithVat);
@@ -106,13 +104,12 @@ const BillSummary = () => {
       try {
         const responseData =
           await cashInvoiceService.createCashInvoice(getRequestData());
-        console.log("res", responseData);
 
         setInvoiceData({
           ...(responseData as unknown as InvoiceData),
           creditorName: responseData.customerName,
           invoiceId: responseData.invoiceId.split("-")[2],
-          issuedTime: convertArrayToISOFormat(responseData.issuedTime),
+          issuedTime: convertArrayToNormalFormat(responseData.issuedTime),
           contactNo: "",
           vehicle: responseData.vehicleNo,
           type: "CASH",

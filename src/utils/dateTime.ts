@@ -33,6 +33,17 @@ export function convertArrayToISOFormat(doneAt: number[]): string {
   // Format the date to a readable string
   // For example: "YYYY-MM-DD HH:MM:SS"
   const formattedDate = date.toISOString().replace("T", " ").split(".")[0];
+
+  return formattedDate;
+}
+
+export function convertArrayToNormalFormat(doneAt: number[]): string {
+  const [year, month, day, hours, minutes, seconds] = doneAt;
+
+  // Format components with leading zeroes
+  const pad = (n: number) => n.toString().padStart(2, "0");
+
+  const formattedDate = `${year}-${pad(month)}-${pad(day)} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
   return formattedDate;
 }
 
