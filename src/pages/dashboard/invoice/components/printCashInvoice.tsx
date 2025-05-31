@@ -130,14 +130,14 @@ function PrintCashInvoice({
           printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-      if (invoiceData?.tax != null || invoiceData?.tax != 0) {
+      if (invoiceData?.vat != null || invoiceData?.vat != 0) {
         cmds +=
           "VAT(ID:114501433-7000)".padEnd(48) +
           "" +
           printRightAlign("", 13) +
           "" +
           printRightAlign("", 7) +
-          printRightAlign(invoiceData?.tax || "", 12) +
+          printRightAlign(invoiceData?.vat || "", 12) +
           newLine;
       }
       cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 15);
@@ -151,7 +151,7 @@ function PrintCashInvoice({
       " ".repeat(4) +
       printRightAlign("", 6) +
       " ".repeat(1) +
-      printRightAlign(invoiceData?.totalPrice + invoiceData?.tax || "", 12) +
+      printRightAlign(invoiceData?.totalPrice + invoiceData?.vat || "", 12) +
       boldOff;
 
     // Final commands
