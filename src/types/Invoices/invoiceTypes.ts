@@ -33,4 +33,5 @@ export interface InvoiceData {
   date?: string;
   type?: string;
   issuedTime?: string;
+  tax?: number;
 }

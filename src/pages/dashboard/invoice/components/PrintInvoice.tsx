@@ -122,7 +122,17 @@ function PrintInvoice({
           printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 16);
+      if (invoiceData?.vat != null || invoiceData?.vat != 0) {
+        cmds +=
+          "VAT(ID:114501433-7000)".padEnd(48) +
+          "" +
+          printRightAlign("", 13) +
+          "" +
+          printRightAlign("", 7) +
+          printRightAlign(invoiceData?.vat || "", 12) +
+          newLine;
+      }
+      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 15);
     }
 
     cmds +=

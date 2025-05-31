@@ -23,7 +23,7 @@ function PrintCashInvoice({
 
   const handleVerticalAlignment = (
     existingRecordCount: number,
-    totalLines: number
+    totalLines: number,
   ) => {
     const newLine = "\n";
     return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
@@ -130,7 +130,17 @@ function PrintCashInvoice({
           printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 16);
+      if (invoiceData?.tax != null || invoiceData?.tax != 0) {
+        cmds +=
+          "VAT(ID:114501433-7000)".padEnd(48) +
+          "" +
+          printRightAlign("", 13) +
+          "" +
+          printRightAlign("", 7) +
+          printRightAlign(invoiceData?.tax || "", 12) +
+          newLine;
+      }
+      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 15);
     }
 
     cmds +=
@@ -139,9 +149,9 @@ function PrintCashInvoice({
       " ".repeat(25) +
       printRightAlign(invoiceData?.totalDiscount || "", 12) +
       " ".repeat(4) +
-      printRightAlign(invoiceData?.vat || "", 6) +
+      printRightAlign("", 6) +
       " ".repeat(1) +
-      printRightAlign(invoiceData?.totalPrice + invoiceData?.vat || "", 12) +
+      printRightAlign(invoiceData?.totalPrice + invoiceData?.tax || "", 12) +
       boldOff;
 
     // Final commands
