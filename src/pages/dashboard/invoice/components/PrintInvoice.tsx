@@ -141,7 +141,7 @@ function PrintInvoice({
       " ".repeat(25) +
       printRightAlign(invoiceData?.totalDiscount || "", 12) +
       " ".repeat(4) +
-      printRightAlign(invoiceData?.vat || "", 6) +
+      printRightAlign("", 6) +
       " ".repeat(1) +
       printRightAlign(invoiceData?.totalPrice || "", 12) +
       boldOff;
