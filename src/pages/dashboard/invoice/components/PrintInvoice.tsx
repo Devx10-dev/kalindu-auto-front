@@ -47,7 +47,7 @@ function PrintInvoice({
       });
     }
 
-    let cpj = new JSPM.ClientPrintJob();
+    const cpj = new JSPM.ClientPrintJob();
     cpj.clientPrinter = printToDefault
       ? new JSPM.DefaultPrinter()
       : new JSPM.InstalledPrinter(printToDefault);
@@ -122,17 +122,19 @@ function PrintInvoice({
           printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-      if (invoiceData?.vat != null || invoiceData?.vat != 0) {
+      if (invoiceData?.vat != null) {
+        cmds += newLine + boldOn
         cmds +=
-          "VAT(ID:114501433-7000)".padEnd(48) +
+          "VAT [ID: 114501433-7000]".padEnd(48) +
           "" +
           printRightAlign("", 13) +
           "" +
           printRightAlign("", 7) +
           printRightAlign(invoiceData?.vat || "", 12) +
+          boldOff +
           newLine;
       }
-      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 15);
+      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 14);
     }
 
     cmds +=
