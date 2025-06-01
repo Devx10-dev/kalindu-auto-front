@@ -65,25 +65,33 @@ function BillSummaryViewCard({
           </h3>
           <div style={{ marginTop: "30px" }}>
             <div className="d-flex justify-between mb-2">
-              <OptionalLabel label="Discount (%)" style={{ fontSize: 14 }} />
+              <OptionalLabel label="Net Total" style={{ fontSize: 14 }} />
+              <p className="text-right text-md font-regular">LKR {total}</p>
+            </div>
+            <div className="d-flex justify-between mb-2">
+              <OptionalLabel
+                style={{ fontSize: 14 }}
+                label={`Discount (${discountPercentage}%)`}
+              />
+              <p className="text-right text-md font-regular text-red-500">
+                - (LKR {discountAmount})
+              </p>
+            </div>
+            <Separator className="my-2" />
+            <div className="d-flex justify-between mb-2">
+              <OptionalLabel
+                style={{ fontSize: 14 }}
+                label="Discounted Total"
+              />
               <p className="text-right text-md font-regular">
-                {discountPercentage}%
+                LKR {total - discountAmount}
               </p>
             </div>
             <div className="d-flex justify-between mb-2">
-              <OptionalLabel style={{ fontSize: 14 }} label="Discount Amount" />
-              <p className="text-right text-md font-regular">
-                LKR {discountAmount}
-              </p>
-            </div>
-            <div className="d-flex justify-between mb-2">
-              <OptionalLabel style={{ fontSize: 14 }} label="VAT (%)" />
-              <p className="text-right text-md font-regular">
-                {vatPercentage}%
-              </p>
-            </div>
-            <div className="d-flex justify-between mb-2">
-              <OptionalLabel style={{ fontSize: 14 }} label="VAT Amount" />
+              <OptionalLabel
+                style={{ fontSize: 14 }}
+                label={`VAT (${vatPercentage})`}
+              />
               <p className="text-right text-md font-regular">
                 LKR {(total - discountAmount) * (vatPercentage / 100)}
               </p>

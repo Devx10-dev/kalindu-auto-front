@@ -12,7 +12,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
   // final bill summary items
   discountPercentage: 0,
   discountAmount: 0,
-  vatPercentage: 0,
+  vatPercentage: 18,
   vatAmount: 0,
   totalPrice: undefined,
 

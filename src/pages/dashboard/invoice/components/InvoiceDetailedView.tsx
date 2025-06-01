@@ -3,8 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
 import { formatCurrency } from "@/utils/price";
+import { useEffect } from "react";
 
 function InvoiceDetailedView({ invoiceData }: { invoiceData: InvoiceData }) {
+  useEffect(() => {
+    console.log("Invoice Data:", invoiceData);
+  }, [invoiceData]);
+
   return (
     <div className="space-y-3">
       {/* Invoice Header */}
@@ -35,7 +40,10 @@ function InvoiceDetailedView({ invoiceData }: { invoiceData: InvoiceData }) {
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>
-              {formatCurrency(invoiceData.totalPrice - invoiceData.vat)}
+              {formatCurrency(
+                (invoiceData.totalPrice / (100 + invoiceData.vat)) * 100 +
+                  invoiceData.totalDiscount,
+              )}
             </span>
           </div>
 
@@ -49,8 +57,15 @@ function InvoiceDetailedView({ invoiceData }: { invoiceData: InvoiceData }) {
           )}
 
           <div className="flex justify-between">
-            <span className="text-muted-foreground">VAT</span>
-            <span>{formatCurrency(invoiceData.vat)}</span>
+            <span className="text-muted-foreground">
+              VAT({invoiceData.vat}%)
+            </span>
+            <span>
+              {formatCurrency(
+                (invoiceData.totalPrice / (100 + invoiceData.vat)) *
+                  invoiceData.vat,
+              )}
+            </span>
           </div>
 
           <Separator />

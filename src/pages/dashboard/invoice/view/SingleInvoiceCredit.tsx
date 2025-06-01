@@ -41,7 +41,6 @@ const dotSizeClasses = {
 
 function SingleInvoiceCredit() {
   const axiosPrivate = useAxiosPrivate();
-  const [outsourcedItems, setOutsourcedItems] = useState<OutsourcedItem[]>([]);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceState | null>(
     null,
   );
@@ -49,6 +48,7 @@ function SingleInvoiceCredit() {
   const [isAvailableInStore, setIsAvailableInStore] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
   const [vatPercentage, setVatPercentage] = useState<number>(0);
+  const [vatAmount, setVatAmount] = useState<number>(0);
   const [discountPercentage, setDiscountPercentage] = useState<number>(0);
   const [discountAmount, setDiscountAmount] = useState<number>(0);
 
@@ -60,6 +60,12 @@ function SingleInvoiceCredit() {
     useCreditInvoiceListStore();
 
   useEffect(() => {
+    console.log("SingleInvoiceCredit.tsx: id:", id);
+    console.log(
+      "SingleInvoiceCredit.tsx: creditInvoicesStore:",
+      getCreditInvoiceById(id),
+    );
+    // Check if the invoice is available in the store
     if (id) {
       const invoice = getCreditInvoiceById(id);
       if (invoice) {
@@ -100,8 +106,17 @@ function SingleInvoiceCredit() {
     // console.log(invoiceDetails);
     if (invoiceDetails) {
       setTotal(invoiceDetails.totalPrice);
-      setVatPercentage(invoiceDetails.vat);
-      setDiscountPercentage(invoiceDetails.discountPercentage);
+      setVatPercentage(
+        (invoiceDetails?.vat * 100) /
+          (invoiceDetails.totalPrice - invoiceDetails?.vat),
+      );
+      setVatAmount(invoiceDetails?.vat);
+      setDiscountPercentage(
+        (invoiceDetails.totalDiscount * 100) /
+          (invoiceDetails.totalPrice -
+            invoiceDetails.vat +
+            invoiceDetails.totalDiscount),
+      );
       setDiscountAmount(invoiceDetails.totalDiscount);
       setInvoiceId(invoiceDetails.invoiceId.toString());
     }
@@ -280,6 +295,7 @@ function SingleInvoiceCredit() {
               <BillSummaryViewCardCredit
                 total={total}
                 vatPercentage={vatPercentage}
+                vatAmount={vatAmount}
                 discountPercentage={discountPercentage}
                 discountAmount={discountAmount}
                 invoiceData={invoiceDetails}

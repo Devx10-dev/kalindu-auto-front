@@ -14,6 +14,10 @@ import DialogStepper from "../../components/DialogStepper";
 import InvoiceDetailedView from "../../components/InvoiceDetailedView";
 import PrintInvoice from "../../components/PrintInvoice";
 import useCreditorInvoiceStore from "../context/useCreditorInvoiceStore";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import IconCash from "@/components/icon/IconCash";
+import CurrencyComponent from "../../view/components/CurrencyComponent";
 
 const BillSummary: React.FC = () => {
   const {
@@ -40,6 +44,8 @@ const BillSummary: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(null);
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [defaultVatPercentage, setDefaultVatPercentage] = useState(18);
+  const [vatIncluded, setVatIncluded] = useState(true);
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
@@ -156,6 +162,20 @@ const BillSummary: React.FC = () => {
     setVatAmount((discountedTotal * percentage) / 100);
   };
 
+  useEffect(() => {
+    if (vatPercentage >= 0) {
+      const vatAmount = (discountedTotal * vatPercentage) / 100;
+      setVatAmount(vatAmount);
+    }
+  }, [
+    vatPercentage,
+    discountedTotal,
+    vatAmount,
+    setVatAmount,
+    totalWithVat,
+    setTotalPrice,
+  ]);
+
   const handleVatAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const amount = Math.max(parseFloat(e.target.value), 0);
     setVatAmount(amount);
@@ -197,6 +217,17 @@ const BillSummary: React.FC = () => {
     },
   ];
 
+  const handleVatIncludedChange = (checked: boolean) => {
+    setVatIncluded(checked);
+    if (checked) {
+      setVatPercentage(
+        vatPercentage > 0 ? vatPercentage : defaultVatPercentage,
+      );
+    } else {
+      setVatPercentage(0);
+    }
+  };
+
   return (
     <>
       <Card className="w-72">
@@ -235,37 +266,49 @@ const BillSummary: React.FC = () => {
                 onChange={handleDiscountAmountChange}
               />
             </div>
-
+            <Separator className="my-4" />
             <div className="d-flex justify-between mb-4">
-              <Label>VAT (%)</Label>
-              <Input
-                style={{
-                  maxWidth: "100px",
-                  textAlign: "right",
-                  padding: 2,
-                  maxHeight: 24,
-                }}
-                type="number"
-                value={vatPercentage}
-                onChange={handleVatPercentageChange}
-                min={0}
-                max={100}
+              <Label>Include VAT</Label>
+              <Switch
+                checked={vatIncluded}
+                onCheckedChange={handleVatIncludedChange}
               />
             </div>
-            <div className="d-flex justify-between mb-4">
-              <Label>VAT Amount (LKR)</Label>
-              <Input
-                style={{
-                  maxWidth: "100px",
-                  textAlign: "right",
-                  padding: 2,
-                  maxHeight: 24,
-                }}
-                type="number"
-                value={vatAmount}
-                onChange={handleVatAmountChange}
-              />
-            </div>
+            {vatIncluded && (
+              <>
+                <div className="d-flex justify-between mb-4">
+                  <Label>VAT (%)</Label>
+                  <Input
+                    style={{
+                      maxWidth: "100px",
+                      textAlign: "right",
+                      padding: 2,
+                      maxHeight: 24,
+                    }}
+                    type="number"
+                    value={vatPercentage}
+                    onChange={handleVatPercentageChange}
+                    min={0}
+                    max={100}
+                  />
+                </div>
+                <div className="d-flex justify-between mb-4">
+                  <Label>VAT Amount (LKR)</Label>
+                  <Input
+                    style={{
+                      maxWidth: "100px",
+                      textAlign: "right",
+                      padding: 2,
+                      maxHeight: 24,
+                    }}
+                    type="number"
+                    value={vatAmount}
+                    onChange={handleVatAmountChange}
+                    disabled={true}
+                  />
+                </div>
+              </>
+            )}
             <div>
               {/* TODO :: Find a better way to have the white space on right */}
             </div>
@@ -275,9 +318,25 @@ const BillSummary: React.FC = () => {
           </div>
           <div className="flex justify-start text-left mt-16">
             <div className="text-left">
-              <p className="text-xl font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-                Total : LKR {totalWithVat.toFixed(2)}
-              </p>
+              <div className="">
+                <div className="text-right flex-col gap-10 bg-slate-100 rounded-md p-4">
+                  <div className="flex justify-between">
+                    <div className="flex items-center">
+                      <IconCash className="" color="gray" />
+                    </div>
+                    <Label className="text-xl text-left ">Total</Label>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-3xl font-thin align-bottom">Rs.</p>
+                    {/* <p className="text-4xl font-semibold">{total}</p> */}
+                    <CurrencyComponent
+                      amount={totalWithVat}
+                      currency="LKR"
+                      withoutCurrency
+                    />
+                  </div>
+                </div>
+              </div>
               {createCreditorInvoice.isPending ? (
                 <Button disabled>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -15,7 +15,7 @@ import IconButton from "@/components/button/IconButton.tsx";
 import { InvoiceItem } from "@/types/invoice/creditorInvoice";
 import { FormModal } from "@/components/modal/FormModal.tsx";
 import EditItem from "@/pages/dashboard/invoice/creditor/components/EditItem.tsx";
-import { CirclePlus, Pencil, Trash2, X } from "lucide-react";
+import { CirclePlus, Pencil, Settings, Trash2, X } from "lucide-react";
 import CancelIcon from "@/components/icon/CancelIcon.tsx";
 import CreatableSelect from "react-select/creatable";
 import { Input } from "@/components/ui/input.tsx";
@@ -28,6 +28,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
 import useReturnInvoiceStore from "@/pages/dashboard/returns/context/useReturnInvoiceStore";
+import DropDownSwitch from "../../cash/components/DropDownSwitch";
 
 const InvoiceTable: React.FC<{
   sparePartService: SparePartService;
@@ -142,11 +143,11 @@ const InvoiceTable: React.FC<{
             <TableRow>
               <TableHead className="w-[300px]">Item</TableHead>
               <TableHead>Item Code</TableHead>
-              <TableHead className="text-right">Quantity</TableHead>
+              <TableHead className="text-right">Qty.</TableHead>
               <TableHead className="text-right">Price</TableHead>
               <TableHead className="text-right">Total</TableHead>
-              {type !== "RETURN" && <TableHead>Outsource</TableHead>}
-              <TableHead className="flex justify-end items-center">
+              {/* {type !== "RETURN" && <TableHead>Outsource</TableHead>} */}
+              <TableHead className="flex justify-center items-center">
                 Action
               </TableHead>
             </TableRow>
@@ -167,7 +168,7 @@ const InvoiceTable: React.FC<{
                       item.quantity * item.discount
                     ).toFixed(2)}
                   </TableCell>
-                  {type !== "RETURN" && (
+                  {/* {type !== "RETURN" && (
                     <TableCell>
                       <Switch
                         checked={item.outsourced}
@@ -176,9 +177,9 @@ const InvoiceTable: React.FC<{
                         }
                       />
                     </TableCell>
-                  )}
+                  )} */}
                   <TableCell>
-                    <div className="flex justify-center items-center gap-4">
+                    <div className="flex justify-center items-center gap-2">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -220,7 +221,25 @@ const InvoiceTable: React.FC<{
                           </Tooltip>
                         </TooltipProvider>
                       )}
-
+                      {type !== "RETURN" && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <DropDownSwitch
+                                variant="ghost"
+                                icon={<Settings className="h-4 w-4" />}
+                                outsourced={item.outsourced}
+                                setOutSourced={(state) =>
+                                  setOutsourcedStatus(item, state)
+                                }
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{"Set Options for Item"}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
                       {/*<IconButton*/}
                       {/*    icon={<EditIcon height="15" width="15"/>}*/}
                       {/*    tooltipMsg="Edit Spare Part"*/}
@@ -252,6 +271,8 @@ const InvoiceTable: React.FC<{
                         }
                       : null
                   }
+                  menuPortalTarget={document.body}
+                  maxMenuHeight={200}
                 />
               </TableCell>
               <TableCell>
@@ -262,9 +283,10 @@ const InvoiceTable: React.FC<{
                     setNewItem((prev) => ({ ...prev, code: e.target.value }))
                   }
                   placeholder="Item code"
+                  className="w-[80px]"
                 />
               </TableCell>
-              <TableCell className="w-[100px]">
+              <TableCell className="w-[60px] justify-items-end">
                 <Input
                   type="number"
                   value={newItem.quantity}
@@ -275,7 +297,8 @@ const InvoiceTable: React.FC<{
                     }))
                   }
                   placeholder="Quantity"
-                  min={0}
+                  min={1}
+                  className="w-[60px] text-right"
                 />
               </TableCell>
               <TableCell>
@@ -290,6 +313,7 @@ const InvoiceTable: React.FC<{
                   }
                   placeholder="Price"
                   min={0}
+                  className="text-right"
                 />
               </TableCell>
 
@@ -299,11 +323,6 @@ const InvoiceTable: React.FC<{
                   (newItem.discount || 0)
                 ).toFixed(2)}
               </TableCell>
-              {type !== "RETURN" && (
-                <TableCell>
-                  <Switch disabled />
-                </TableCell>
-              )}
               <TableCell>
                 <IconButton
                   icon={<CirclePlus height="20" width="20" />}

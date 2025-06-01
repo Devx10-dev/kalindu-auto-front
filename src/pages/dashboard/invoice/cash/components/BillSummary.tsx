@@ -15,6 +15,10 @@ import InvoiceDetailedView from "../../components/InvoiceDetailedView";
 import useInvoiceStore from "../context/useCashInvoiceStore";
 import { convertArrayToNormalFormat } from "@/utils/dateTime";
 import PrintCashInvoice from "../../components/printCashInvoice";
+import IconCash from "@/components/icon/IconCash";
+import CurrencyComponent from "../../view/components/CurrencyComponent";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 
 const BillSummary = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +43,8 @@ const BillSummary = () => {
 
   const [invoiceData, setInvoiceData] = useState<InvoiceData>(null);
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [defaultVatPercentage, setDefaultVatPercentage] = useState(18);
+  const [vatIncluded, setVatIncluded] = useState(true);
 
   const axiosPrivate = useAxiosPrivate();
   const cashInvoiceService = new CashInvoiceService(axiosPrivate);
@@ -55,9 +61,10 @@ const BillSummary = () => {
     () => subtotal - (discountAmount || 0),
     [subtotal, discountAmount],
   );
+
   const totalWithVat = useMemo(
     () => discountedTotal + (vatAmount || 0),
-    [discountedTotal, vatAmount],
+    [discountedTotal, vatPercentage, vatAmount],
   );
 
   // Update the total price when discountedTotal or vatAmount changes
@@ -86,8 +93,21 @@ const BillSummary = () => {
   ) => {
     const percentage = Math.max(parseFloat(e.target.value), 0);
     setVatPercentage(percentage);
-    setVatAmount((discountedTotal * percentage) / 100);
   };
+
+  useEffect(() => {
+    if (vatPercentage >= 0) {
+      const vatAmount = (discountedTotal * vatPercentage) / 100;
+      setVatAmount(vatAmount);
+    }
+  }, [
+    vatPercentage,
+    discountedTotal,
+    vatAmount,
+    setVatAmount,
+    totalWithVat,
+    setTotalPrice,
+  ]);
 
   const handleVatAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const amount = Math.max(parseFloat(e.target.value), 0);
@@ -188,6 +208,17 @@ const BillSummary = () => {
     },
   ];
 
+  const handleVatIncludedChange = (checked: boolean) => {
+    setVatIncluded(checked);
+    if (checked) {
+      setVatPercentage(
+        vatPercentage > 0 ? vatPercentage : defaultVatPercentage,
+      );
+    } else {
+      setVatPercentage(0);
+    }
+  };
+
   return (
     <>
       <Card>
@@ -226,42 +257,73 @@ const BillSummary = () => {
                 onChange={handleDiscountAmountChange}
               />
             </div>
+            <Separator className="my-4" />
             <div className="d-flex justify-between mb-4">
-              <Label>VAT Percentage (%)</Label>
-              <Input
-                style={{
-                  maxWidth: "100px",
-                  textAlign: "right",
-                  padding: 2,
-                  maxHeight: 30,
-                }}
-                type="number"
-                value={vatPercentage}
-                onChange={handleVatPercentageChange}
-                min={0}
-                max={100}
+              <Label>Include VAT</Label>
+              <Switch
+                checked={vatIncluded}
+                onCheckedChange={handleVatIncludedChange}
               />
             </div>
-            <div className="d-flex justify-between mb-4">
-              <Label>VAT Amount (LKR)</Label>
-              <Input
-                style={{
-                  maxWidth: "100px",
-                  textAlign: "right",
-                  padding: 2,
-                  maxHeight: 30,
-                }}
-                type="number"
-                value={vatAmount}
-                onChange={handleVatAmountChange}
-              />
-            </div>
+            {vatIncluded && (
+              <>
+                <div className="d-flex justify-between mb-4">
+                  <Label>VAT Percentage (%)</Label>
+                  <Input
+                    style={{
+                      maxWidth: "100px",
+                      textAlign: "right",
+                      padding: 2,
+                      maxHeight: 30,
+                    }}
+                    type="number"
+                    value={vatPercentage}
+                    onChange={handleVatPercentageChange}
+                    min={0}
+                    max={100}
+                    disabled={!vatIncluded}
+                  />
+                </div>
+                <div className="d-flex justify-between mb-4">
+                  <Label>VAT Amount (LKR)</Label>
+                  <Input
+                    style={{
+                      maxWidth: "100px",
+                      textAlign: "right",
+                      padding: 2,
+                      maxHeight: 30,
+                    }}
+                    type="number"
+                    value={vatAmount}
+                    onChange={handleVatAmountChange}
+                    disabled={true}
+                  />
+                </div>
+              </>
+            )}
           </div>
+
           <div className="flex justify-start text-left mt-16">
             <div className="text-left">
-              <p className="text-xl font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-                Total : LKR {totalWithVat.toFixed(2)}
-              </p>
+              <div className="">
+                <div className="text-right flex-col gap-10 bg-slate-100 rounded-md p-4">
+                  <div className="flex justify-between">
+                    <div className="flex items-center">
+                      <IconCash className="" color="gray" />
+                    </div>
+                    <Label className="text-xl text-left ">Total</Label>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-3xl font-thin align-bottom">Rs.</p>
+                    {/* <p className="text-4xl font-semibold">{total}</p> */}
+                    <CurrencyComponent
+                      amount={totalWithVat}
+                      currency="LKR"
+                      withoutCurrency
+                    />
+                  </div>
+                </div>
+              </div>
               <div className="d-flex">
                 <Button
                   className="mt-4 mb-3"

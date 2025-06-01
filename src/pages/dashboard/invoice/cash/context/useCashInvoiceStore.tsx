@@ -10,7 +10,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
   // final bill summary items
   discountPercentage: 0,
   discountAmount: 0,
-  vatPercentage: 0,
+  vatPercentage: 18,
   vatAmount: 0,
   totalPrice: undefined,
 
@@ -164,7 +164,7 @@ const useCashInvoiceStore = create<InvoiceState>((set, get) => ({
       const now = new Date();
       const date = now.toISOString().slice(2, 10).replace(/-/g, "");
       const random = Math.floor(1000 + Math.random() * 9000);
-      return `INV-CRE-${date}${random}`;
+      return `INV-CASH-${date}${random}`;
     };
 
     const invoiceId = generateInvoiceId();

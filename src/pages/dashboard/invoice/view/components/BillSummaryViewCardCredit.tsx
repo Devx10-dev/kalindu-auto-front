@@ -16,12 +16,14 @@ import CurrencyComponent from "./CurrencyComponent";
 function BillSummaryViewCardCredit({
   total,
   vatPercentage,
+  vatAmount,
   discountPercentage,
   discountAmount,
   invoiceData,
 }: {
   total: number;
   vatPercentage: number;
+  vatAmount?: number;
   discountPercentage: number;
   discountAmount: number;
   invoiceData: InvoiceState;
@@ -77,27 +79,37 @@ function BillSummaryViewCardCredit({
           </h3>
           <div style={{ marginTop: "30px" }}>
             <div className="d-flex justify-between mb-2">
-              <OptionalLabel label="Discount (%)" style={{ fontSize: 14 }} />
+              <OptionalLabel label="Net Total" style={{ fontSize: 14 }} />
               <p className="text-right text-md font-regular">
                 {/* round the value of (discountAmount/(total - discountAmount) * 100)*/}
-                {round((discountAmount / (total - discountAmount)) * 100, 2)}%
+                LKR {round(total - vatAmount + discountAmount)}
               </p>
             </div>
             <div className="d-flex justify-between mb-2">
-              <OptionalLabel style={{ fontSize: 14 }} label="Discount Amount" />
+              <OptionalLabel
+                style={{ fontSize: 14 }}
+                label={`Discount (${discountPercentage}%)`}
+              />
+              <p className="text-right text-md font-regular text-red-500">
+                - (LKR {discountAmount})
+              </p>
+            </div>
+            <Separator className="my-2" />
+            <div className="d-flex justify-between mb-2">
+              <OptionalLabel
+                style={{ fontSize: 14 }}
+                label={`Discounted Total`}
+              />
               <p className="text-right text-md font-regular">
-                LKR {discountAmount}
+                LKR {round(total - vatAmount)}
               </p>
             </div>
             <div className="d-flex justify-between mb-2">
-              <OptionalLabel style={{ fontSize: 14 }} label="VAT (%)" />
-              <p className="text-right text-md font-regular">0%</p>
-            </div>
-            <div className="d-flex justify-between mb-2">
-              <OptionalLabel style={{ fontSize: 14 }} label="VAT Amount" />
-              <p className="text-right text-md font-regular">
-                LKR {(total - discountAmount) * (vatPercentage / 100)}
-              </p>
+              <OptionalLabel
+                style={{ fontSize: 14 }}
+                label={`VAT (${vatPercentage}%)`}
+              />
+              <p className="text-right text-md font-regular">LKR {vatAmount}</p>
             </div>
           </div>
           <Separator className="mt-8 mb-4" />

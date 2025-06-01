@@ -9,7 +9,14 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import useCashInvoiceStore from "../context/useCashInvoiceStore";
-import { CirclePlus, Pencil, PlusIcon, Trash2, X } from "lucide-react";
+import {
+  CirclePlus,
+  Pencil,
+  PlusIcon,
+  Settings,
+  Trash2,
+  X,
+} from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { InvoiceItem } from "@/types/invoice/cashInvoice";
 import { FormModal } from "@/components/modal/FormModal.tsx";
@@ -26,6 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
+import DropDownSwitch from "./DropDownSwitch";
 
 const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
   sparePartService,
@@ -116,18 +124,18 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
   };
 
   return (
-    <div>
-      <div className="no-scrollbar">
+    <div className="h-fit">
+      <div className="no-scrollbar h-full">
         <Table className="border rounded-md text-md mb-5 mt-5 overflow-x-auto">
           <TableBody>
             <TableRow>
               <TableHead className="w-[300px]">Item</TableHead>
               <TableHead>Item Code</TableHead>
-              <TableHead className="text-right">Quantity</TableHead>
+              <TableHead className="text-right">Qty.</TableHead>
               <TableHead className="text-right">Price</TableHead>
               <TableHead className="text-right">Total</TableHead>
-              <TableHead>Outsource</TableHead>
-              <TableHead className="flex justify-end items-center">
+              {/* <TableHead>Outsource</TableHead> */}
+              <TableHead className="flex justify-center items-center">
                 Action
               </TableHead>
             </TableRow>
@@ -136,9 +144,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                 <TableRow key={index}>
                   <TableCell className="w-[300px]">{item.name}</TableCell>
                   <TableCell>{item.code}</TableCell>
-                  <TableCell className="text-right w-[100px]">
-                    {item.quantity}
-                  </TableCell>
+                  <TableCell className="text-right">{item.quantity}</TableCell>
                   <TableCell className="text-right">{item.price}</TableCell>
                   <TableCell className="text-right">
                     {(
@@ -146,16 +152,16 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                       item.quantity * item.discount
                     ).toFixed(2)}
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Switch
                       checked={item.outsourced}
                       onCheckedChange={(state) =>
                         setOutsourcedStatus(item, state)
                       }
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
-                    <div className="flex justify-end items-center gap-4">
+                    <div className="flex justify-end items-center gap-2">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -171,7 +177,6 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -184,6 +189,23 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>{"Edit Item"}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <DropDownSwitch
+                              variant="ghost"
+                              icon={<Settings className="h-4 w-4" />}
+                              outsourced={item.outsourced}
+                              setOutSourced={(state) =>
+                                setOutsourcedStatus(item, state)
+                              }
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{"Set Options for Item"}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -213,6 +235,8 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                         }
                       : null
                   }
+                  menuPortalTarget={document.body}
+                  maxMenuHeight={200}
                 />
               </TableCell>
               <TableCell>
@@ -223,9 +247,10 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                     setNewItem((prev) => ({ ...prev, code: e.target.value }))
                   }
                   placeholder="Item code"
+                  className="w-[80px]"
                 />
               </TableCell>
-              <TableCell className="w-[100px]">
+              <TableCell className="w-[60px]">
                 <Input
                   type="number"
                   value={newItem.quantity}
@@ -236,7 +261,8 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                     }))
                   }
                   placeholder="Quantity"
-                  min={0}
+                  min={1}
+                  className="w-[60px] text-right "
                 />
               </TableCell>
               <TableCell>
@@ -251,6 +277,7 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                   }
                   placeholder="Price"
                   min={0}
+                  className="text-right"
                 />
               </TableCell>
 
@@ -260,10 +287,10 @@ const InvoiceTable: React.FC<{ sparePartService: SparePartService }> = ({
                   (newItem.discount || 0)
                 ).toFixed(2)}
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Switch disabled />
-              </TableCell>
-              <TableCell>
+              </TableCell> */}
+              <TableCell className="flex justify-center items-center">
                 <IconButton
                   icon={<CirclePlus height="20" width="20" />}
                   tooltipMsg="Add item"
