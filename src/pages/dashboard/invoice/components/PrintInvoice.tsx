@@ -94,7 +94,7 @@ function PrintInvoice({
       newLine +
       "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x0A" +
-      (invoiceData?.vat || "") +
+      ("-") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x0A" +
       " ".repeat(6) +
