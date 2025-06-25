@@ -22,7 +22,7 @@ function PrintInvoice({
 
   const handleVerticalAlignment = (
     existingRecordCount: number,
-    totalLines: number,
+    totalLines: number
   ) => {
     const newLine = "\n";
     return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
@@ -79,7 +79,7 @@ function PrintInvoice({
     // Reset printer and set initial settings
     cmds += reset;
 
-    cmds += newLine.repeat(1)
+    cmds += newLine.repeat(1);
 
     // Customer Details Section - Left aligned with specific spacing
     cmds +=
@@ -94,7 +94,7 @@ function PrintInvoice({
       newLine +
       "\x1B\x24\x1E\x00" +
       "\x1B\x4A\x0A" +
-      (invoiceData?.contactNo || "") +
+      (invoiceData?.vat || "") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x0A" +
       " ".repeat(6) +
@@ -122,30 +122,36 @@ function PrintInvoice({
           printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-      if (invoiceData?.vat != null) {
-        cmds += newLine + boldOn
-        cmds +=
-          "VAT [ID: 114501433-7000]".padEnd(48) +
-          "" +
-          printRightAlign("", 13) +
-          "" +
-          printRightAlign("", 7) +
-          printRightAlign(invoiceData?.vat || "", 12) +
-          boldOff +
-          newLine;
-      }
-      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 14);
+      // if (invoiceData?.vat != null) {
+      //   cmds += newLine + boldOn
+      //   cmds +=
+      //     "VAT [ID: 114501433-7000]".padEnd(48) +
+      //     "" +
+      //     printRightAlign("", 13) +
+      //     "" +
+      //     printRightAlign("", 7) +
+      //     printRightAlign(invoiceData?.vat || "", 12) +
+      //     boldOff +
+      //     newLine;
+      // }
+      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 13);
     }
 
     cmds +=
       boldOn +
       "\x1B\x24\x78\x00" +
-      " ".repeat(25) +
-      printRightAlign(invoiceData?.totalDiscount || "", 12) +
-      " ".repeat(4) +
-      printRightAlign("", 6) +
-      " ".repeat(1) +
-      printRightAlign(invoiceData?.totalPrice || "", 12) +
+      " ".repeat(2) +
+      "Discount:" +
+      " ".repeat(3) +
+      printRightAlign(invoiceData?.totalDiscount || "0.00", 8) +
+      " ".repeat(2) +
+      "Tax:" +
+      " ".repeat(3) +
+      printRightAlign(invoiceData?.vat || "0.00", 8) +
+      " ".repeat(2) +
+      "Total:" +
+      " ".repeat(2) +
+      printRightAlign(invoiceData?.totalPrice || "0.00", 10) +
       boldOff;
 
     // Final commands
