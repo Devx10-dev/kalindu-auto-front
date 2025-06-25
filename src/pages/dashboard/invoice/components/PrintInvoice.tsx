@@ -20,11 +20,6 @@ function PrintInvoice({
     return " ".repeat(Math.max(0, totalLength - strValue.length)) + strValue;
   };
 
-  const printLeftAlign = (value: string | number, totalLength: number) => {
-    const strValue = value.toString();
-    return strValue + " ".repeat(Math.max(0, totalLength - strValue.length));
-  };
-
   const handleVerticalAlignment = (
     existingRecordCount: number,
     totalLines: number,
@@ -61,6 +56,8 @@ function PrintInvoice({
     const reset = esc + "@"; // Reset printer
     const boldOn = esc + "E"; // Bold text on
     const boldOff = esc + "F"; // Bold text off
+    // Set print area width to 250mm
+    const rightMargin = "\x1B\x51\x64"; // 255mm
     const underlineOn = esc + "-1"; // Underline on
     const underlineOff = esc + "-0"; // Underline off
     const alignCenter = esc + "a1"; // Center alignment
@@ -70,6 +67,8 @@ function PrintInvoice({
     const condensedOff = esc + "\x12"; // Condensed printing OFF
     const doubleWidthOn = esc + "W1"; // Double width ON
     const doubleWidthOff = esc + "W0"; // Double width OFF
+    const doubleHeightOn = "\x1B\x77\x01"; // Correct Double Height ON
+    const doubleHeightOff = "\x1B\x77\x00"; // Reset to normal size
 
     const newLine = "\n"; // Line break
     const formFeed = "\x0C"; // Form feed
@@ -78,120 +77,77 @@ function PrintInvoice({
     let cmds = "";
 
     // Reset printer and set initial settings
-    cmds += reset + alignLeft;
+    cmds += reset;
 
-    // Company Header - Center aligned
-    cmds += alignCenter + boldOn;
-    cmds += "KALINDU AUTO (PVT) LTD." + newLine;
-    cmds += boldOff;
-    cmds += "Importers of Automobiles, Machinery & Body Parts" + newLine;
-    cmds += "No.260/1, Kandy Road, Yakkala." + newLine;
-    cmds += newLine;
+    // cmds += newLine.repeat(2)
 
-    // Contact info - right aligned
-    cmds += alignRight;
-    cmds += "Tel: 033-2234900" + newLine;
-    cmds += "Fax: 033-2234959" + newLine;
-    cmds += "Email: kalindua979@gmail.com" + newLine;
-    cmds += newLine;
-
-    // Tax Invoice header - Center aligned
-    cmds += alignCenter + boldOn;
-    cmds += "TAX INVOICE" + newLine;
-    cmds += boldOff;
-    cmds += alignRight;
-    cmds += "VAT NO.: 114501433-7000" + newLine;
-    cmds += newLine;
-
-    // Customer and Invoice details section
-    cmds += alignLeft;
-
-    // First row: Name and Inv. No.
+    // Customer Details Section - Left aligned with specific spacing
     cmds +=
-      printLeftAlign("Name", 12) +
-      printLeftAlign(invoiceData?.creditorName || "", 40) +
-      printRightAlign("Inv. No.", 15) +
-      printRightAlign((invoiceData?.invoiceId || "").slice(-10), 15) +
-      newLine;
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x55" +
+      +newLine +
+      (invoiceData?.creditorName || "") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x55" +
+      " ".repeat(12) +
+      // last 12 chrcters of invoice id
+      (invoiceData?.invoiceId || "").slice(-10) +
+      newLine +
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x0A" +
+      (invoiceData?.vat || "") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x0A" +
+      " ".repeat(12) +
+      (invoiceData?.issuedTime || "") +
+      newLine +
+      "\x1B\x24\x1E\x00" +
+      "\x1B\x4A\x08" +
+      (invoiceData?.vehicle || "") +
+      "\x1B\x24\x7D\x01" +
+      "\x1B\x61\x08" +
+      " ".repeat(12) +
+      (invoiceData?.type || "Credit");
 
-    // Second row: Customer VAT and Date
-    cmds +=
-      printLeftAlign("Customer", 12) +
-      printLeftAlign(invoiceData?.contactNo || "", 40) +
-      printRightAlign("Date", 15) +
-      printRightAlign(invoiceData?.issuedTime || "", 15) +
-      newLine;
+    cmds += newLine.repeat(3);
 
-    // Third row: Vehicle and Sale type
-    cmds +=
-      printLeftAlign("Vehicle", 12) +
-      printLeftAlign(invoiceData?.vehicle || "", 40) +
-      printRightAlign("Sale", 15) +
-      printRightAlign(invoiceData?.type || "CREDIT", 15) +
-      newLine;
-
-    cmds += newLine;
-
-    // Table header with underline
-    cmds += underlineOn;
-    cmds +=
-      printLeftAlign("Item", 35) +
-      printLeftAlign("Description", 25) +
-      printRightAlign("Rate", 8) +
-      printRightAlign("Qty", 6) +
-      printRightAlign("Price", 10) +
-      newLine;
-    cmds += underlineOff;
-
-    // Table Content
+    // // Table Content
     if (Array.isArray(invoiceData?.invoiceItems)) {
       invoiceData.invoiceItems.forEach((item) => {
         cmds +=
-          printLeftAlign(item.name || "", 35) +
-          printLeftAlign("", 25) + // Description column (empty in your data)
-          printRightAlign(item.price || "", 8) +
-          printRightAlign(item.quantity || "", 6) +
-          printRightAlign(item.price * item.quantity || "", 10) +
+          (item.name || "").padEnd(48) +
+          "" +
+          printRightAlign(item.price || "", 13) +
+          "" +
+          printRightAlign(item.quantity || "", 7) +
+          printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-
-      // VAT line
       if (invoiceData?.vat != null) {
-        cmds += newLine;
+        cmds += newLine + boldOn;
         cmds +=
-          printLeftAlign("VAT [ID: 114501433-7000]", 60) +
-          printRightAlign(invoiceData?.vat || "", 20) +
+          "VAT [ID: 114501433-7000]".padEnd(48) +
+          "" +
+          printRightAlign("", 13) +
+          "" +
+          printRightAlign("", 7) +
+          printRightAlign(invoiceData?.vat || "", 12) +
+          boldOff +
           newLine;
       }
-
-      // Add spacing for consistent layout
-      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length + 2, 15);
+      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 14);
     }
 
-    // Totals section - right aligned
-    cmds += newLine;
-    if (invoiceData?.totalDiscount) {
-      cmds += alignRight;
-      cmds += "Discount: " + (invoiceData?.totalDiscount || "") + newLine;
-    }
-
-    cmds += alignRight + boldOn;
-    cmds += "Total: " + (invoiceData?.totalPrice || "") + newLine;
-    cmds += boldOff;
-
-    cmds += newLine.repeat(3);
-
-    // Footer section
-    cmds += alignLeft;
     cmds +=
-      printLeftAlign("Prepared by:", 25) +
-      printLeftAlign("Approved by:", 25) +
-      printLeftAlign("Customer:", 25) +
-      newLine;
-
-    cmds += newLine.repeat(3);
-    cmds += alignRight;
-    cmds += "RECEIVED THE ITEMS IN GOOD CONDITION" + newLine;
+      boldOn +
+      "\x1B\x24\x78\x00" +
+      " ".repeat(25) +
+      printRightAlign(invoiceData?.totalDiscount || "", 12) +
+      " ".repeat(4) +
+      printRightAlign("", 6) +
+      " ".repeat(1) +
+      printRightAlign(invoiceData?.totalPrice || "", 12) +
+      boldOff;
 
     // Final commands
     cmds += formFeed + cutPaper;
