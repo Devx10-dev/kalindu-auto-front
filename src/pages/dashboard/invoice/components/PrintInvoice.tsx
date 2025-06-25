@@ -85,20 +85,19 @@ function PrintInvoice({
     cmds +=
       "\x1B\x24\x1E\x00" +
       "\x1B\x4A\x55" +
-      +newLine +
       (invoiceData?.creditorName || "") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x55" +
-      " ".repeat(12) +
+      " ".repeat(6) +
       // last 12 chrcters of invoice id
       (invoiceData?.invoiceId || "").slice(-10) +
       newLine +
       "\x1B\x24\x1E\x00" +
       "\x1B\x4A\x0A" +
-      (invoiceData?.vat || "") +
+      (invoiceData?.contactNo || "") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x0A" +
-      " ".repeat(12) +
+      " ".repeat(6) +
       (invoiceData?.issuedTime || "") +
       newLine +
       "\x1B\x24\x1E\x00" +
@@ -106,7 +105,7 @@ function PrintInvoice({
       (invoiceData?.vehicle || "") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x08" +
-      " ".repeat(12) +
+      " ".repeat(6) +
       (invoiceData?.type || "Credit");
 
     cmds += newLine.repeat(3);
@@ -124,7 +123,7 @@ function PrintInvoice({
           newLine;
       });
       if (invoiceData?.vat != null) {
-        cmds += newLine + boldOn;
+        cmds += newLine + boldOn
         cmds +=
           "VAT [ID: 114501433-7000]".padEnd(48) +
           "" +
