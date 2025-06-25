@@ -79,7 +79,7 @@ function PrintInvoice({
     // Reset printer and set initial settings
     cmds += reset;
 
-    // cmds += newLine.repeat(2)
+    cmds += newLine.repeat(1)
 
     // Customer Details Section - Left aligned with specific spacing
     cmds +=
