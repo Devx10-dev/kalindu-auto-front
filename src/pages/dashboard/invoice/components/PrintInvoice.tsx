@@ -83,7 +83,7 @@ function PrintInvoice({
 
     // Customer Details Section - Left aligned with specific spacing
     cmds +=
-      "\x1B\x24\x28\x00" +
+      "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x55" +
       (invoiceData?.creditorName || "") +
       "\x1B\x24\x7D\x01" +
@@ -92,7 +92,7 @@ function PrintInvoice({
       // last 12 chrcters of invoice id
       (invoiceData?.invoiceId || "").slice(-10) +
       newLine +
-      "\x1B\x24\x28\x00" +
+      "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x0A" +
       (invoiceData?.vat || "") +
       "\x1B\x24\x7D\x01" +
@@ -100,7 +100,7 @@ function PrintInvoice({
       " ".repeat(6) +
       (invoiceData?.issuedTime || "") +
       newLine +
-      "\x1B\x24\x28\x00" +
+      "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x08" +
       (invoiceData?.vehicle || "") +
       "\x1B\x24\x7D\x01" +
@@ -108,7 +108,7 @@ function PrintInvoice({
       " ".repeat(6) +
       (invoiceData?.type || "Credit");
 
-    cmds += newLine.repeat(3);
+    cmds += newLine.repeat(4);
 
     // // Table Content
     if (Array.isArray(invoiceData?.invoiceItems)) {
