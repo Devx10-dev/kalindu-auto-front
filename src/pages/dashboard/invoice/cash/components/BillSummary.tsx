@@ -196,7 +196,11 @@ const BillSummary = () => {
       content: (
         <PrintInvoice
           buttonRef={printButtonRef}
-          invoiceData={{ ...invoiceData, type: "CASH" }}
+          invoiceData={{
+            ...invoiceData,
+            type: "CASH",
+            totalPrice: invoiceData?.totalPrice + invoiceData?.vat,
+          }}
         />
       ),
       execute: () => {

@@ -100,7 +100,7 @@ function PrintInvoice({
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x0A" +
       " ".repeat(6) +
-      (invoiceData?.issuedTime || "") +
+      (invoiceData?.issuedTime.split(" ")[0] || "") +
       newLine +
       "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x08" +
