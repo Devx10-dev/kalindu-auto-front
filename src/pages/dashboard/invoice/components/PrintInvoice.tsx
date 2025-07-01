@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
 import * as JSPM from "jsprintmanager";
@@ -14,6 +15,7 @@ function PrintInvoice({
   console.log(invoiceData);
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
+  const [customerVatId, setCustomerVatId] = useState<string>("");
 
   const printRightAlign = (value: string | number, totalLength: number) => {
     const strValue = value.toString();
@@ -22,7 +24,7 @@ function PrintInvoice({
 
   const handleVerticalAlignment = (
     existingRecordCount: number,
-    totalLines: number
+    totalLines: number,
   ) => {
     const newLine = "\n";
     return newLine.repeat(Math.max(0, totalLines - existingRecordCount));
@@ -94,7 +96,7 @@ function PrintInvoice({
       newLine +
       "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x0A" +
-      ("-") +
+      (customerVatId || "") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x0A" +
       " ".repeat(6) +
@@ -162,12 +164,29 @@ function PrintInvoice({
   };
 
   return (
-    <Button
-      style={{ display: "none" }}
-      hidden={true}
-      ref={buttonRef}
-      onClick={() => handlePrint()}
-    />
+    <div>
+      {invoiceData?.vat > 0 && (
+        <div className="flex items-center justify-between mb-2 ">
+          {/* input to add the vat id of the customer*/}
+          <div className="flex items-center w-full">
+            <label className="mr-2 w-full">Customer VAT ID:</label>
+            <Input
+              type="text"
+              value={customerVatId}
+              onChange={(e) => setCustomerVatId(e.target.value)}
+              className="border rounded px-2 py-1 w-full"
+              placeholder="Enter Customer VAT ID"
+            />
+          </div>
+        </div>
+      )}
+      <Button
+        style={{ display: "none" }}
+        hidden={true}
+        ref={buttonRef}
+        onClick={() => handlePrint()}
+      />
+    </div>
   );
 }
 
