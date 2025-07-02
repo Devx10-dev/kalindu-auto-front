@@ -16,6 +16,7 @@ function PrintInvoice({
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
   const [customerVatId, setCustomerVatId] = useState<string>("");
+  const [vehicleNumber, setVehicleNumber] = useState<string>("");
 
   const printRightAlign = (value: string | number, totalLength: number) => {
     const strValue = value.toString();
@@ -96,7 +97,7 @@ function PrintInvoice({
       newLine +
       "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x0A" +
-      (customerVatId || "") +
+      (customerVatId || " ") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x0A" +
       " ".repeat(6) +
@@ -180,6 +181,19 @@ function PrintInvoice({
           </div>
         </div>
       )}
+      <div className="flex items-center justify-between mb-2 ">
+        {/* input to add the vat id of the customer*/}
+        <div className="flex items-center w-full">
+          <label className="mr-2 w-full">Vehicle Number:</label>
+          <Input
+            type="text"
+            value={vehicleNumber}
+            onChange={(e) => setVehicleNumber(e.target.value)}
+            className="border rounded px-2 py-1 w-full"
+            placeholder="Enter Customer VAT ID"
+          />
+        </div>
+      </div>
       <Button
         style={{ display: "none" }}
         hidden={true}
