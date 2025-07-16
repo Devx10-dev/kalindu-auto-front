@@ -28,6 +28,7 @@ import CommissionDetailsGrid from "./components/CommissionDetailsGrid";
 import InvoiceItemsGrid from "./components/InvoiceItemGrid";
 import OutsourceItemsGrid from "./components/OutSourceItemGrid";
 import StatusCard from "./components/StatusCard";
+import dateArrayToString from "@/utils/dateArrayToString";
 
 const dotSizeClasses = {
   sm: "h-2 w-2",
@@ -90,13 +91,14 @@ function SingleInvoice() {
         <CardHeader className="p-0 md:p-4">
           <PageHeader
             title={`Invoice No: ${invoiceDetails?.invoiceId}`}
-            description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
+            description={`Created on ${invoiceDetails ? dateArrayToString(invoiceDetails?.issuedTime, false, true) : ""}`}
             icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
             badge={
               <Badge className="bg-green-200 text-black rounded-md">
                 Cash Invoice
               </Badge>
             }
+            isLoading={invoiceLoading}
           />
         </CardHeader>
 

@@ -32,6 +32,7 @@ import InvoiceItemsGrid from "./components/InvoiceItemGrid";
 import { InvoiceSettledPieChart } from "./components/InvoiceSettledPieChart";
 import OutsourceItemsGrid from "./components/OutSourceItemGrid";
 import StatusCardCredit from "./components/StatusCardCredit";
+import dateArrayToString from "@/utils/dateArrayToString";
 
 const dotSizeClasses = {
   sm: "h-2 w-2",
@@ -135,13 +136,14 @@ function SingleInvoiceCredit() {
               <CardHeader className="p-0 md:p-4">
                 <PageHeader
                   title={`Invoice No: ${invoiceDetails?.invoiceId}`}
-                  description="Created on 2024-06-14 at 16:16:04 by b0a8ee5a-b0ec-49db-bef6-cd611b657ecf"
+                  description={`Created on ${invoiceDetails ? dateArrayToString(invoiceDetails?.issuedTime, false, true) : ""}`}
                   icon={<ReceiptIcon height="30" width="28" color="#162a3b" />}
                   badge={
                     <Badge className="bg-yellow-200 text-black rounded-md">
                       Credit Invoice
                     </Badge>
                   }
+                  isLoading={invoiceLoading}
                 />
               </CardHeader>
             </div>
