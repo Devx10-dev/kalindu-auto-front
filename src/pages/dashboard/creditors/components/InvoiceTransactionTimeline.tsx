@@ -1,7 +1,7 @@
 import IconButton from "@/components/button/IconButton";
 import CancelIcon from "@/components/icon/CancelIcon";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -18,12 +18,14 @@ import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import {
   Calendar,
   CheckCircle2,
+  ChevronDown,
   Coins,
   CreativeCommons,
   CreditCard,
   Edit2Icon,
   Landmark,
   LibrarySquare,
+  MessageSquare,
   Newspaper,
   PenBox,
   TriangleAlert,
@@ -44,6 +46,7 @@ import PriceComponent from "./PriceComponent";
 import { currencyAmountString } from "@/utils/analyticsUtils";
 import TransactionLoading from "./TransactionLoading";
 import NoInvoices from "./NoInvoices";
+import { useEffect, useState } from "react";
 
 function InvoiceTransactionTimeLine({
   invoiceId,
@@ -74,9 +77,13 @@ function InvoiceTransactionTimeLine({
 function generateTimelineComponent({
   transaction,
   invoiceId,
+  isRemarksExpanded,
+  setIsRemarksExpanded
 }: {
   transaction: any;
   invoiceId?: string;
+  isRemarksExpanded?: boolean;
+  setIsRemarksExpanded?: (value: boolean) => void;
 }) {
   switch (transaction.transactionType) {
     case "CASH":
@@ -256,62 +263,104 @@ function TransactionInvoiceCard({
   transaction: any;
   invoiceId?: string;
 }) {
+  const [isRemarksExpanded, setIsRemarksExpanded] = useState(false)
+  useEffect(() => {
+    if (transaction?.remark != null || transaction?.remark !== "") {
+      setIsRemarksExpanded(true);
+    }
+  }, [transaction]);
   return (
-    <Card className="w-full mt-2">
-      <CardHeader className="p-0">
-        <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-2">
-          <p className="text-sm">Total Amount</p>
-          <PriceComponent
-            content={currencyAmountString(transaction.totalPrice)}
-            contentType="currencyAmount"
-          />
-        </div>
-      </CardHeader>
-      <div className="w-full flex items-center justify-center">
-        <Separator className="w-full" />
-      </div>
-      <CardContent className="p-2">
-        {transaction.transactionInvoices &&
-        transaction.transactionInvoices.length > 0
-          ? transaction.transactionInvoices.map(
-              (invoice: any) =>
-                invoiceId == invoice.creditorInvoice.invoiceId && (
-                  <div className="flex items-center justify-between">
-                    <Link
-                      to={`/dashboard/invoice/creditor/${invoice.creditorInvoice.invoiceId}`}
-                    >
-                      <p className="text-xs">
-                        {invoice.creditorInvoice.invoiceId}
-                      </p>
-                    </Link>
-                    <PriceComponent
-                      content={currencyAmountString(invoice.settledAmount)}
-                      contentType="currencyAmount"
-                      bold={false}
-                    />
-                  </div>
-                ),
-            )
-          : transaction.creditorRefund == null && (
-              <div className="flex items-center justify-center gap-2">
-                <TriangleAlert className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <p className="text-xs">No invoice records found</p>
-              </div>
-            )}
-        {/* <Separator className="w-full my-2" /> */}
-        {transaction.creditorRefund && (
-          <div className="flex items-center justify-between mt-2">
-            <p className="text-xs">REFUNDS</p>
+    <>
+      <Card className="w-full mt-2">
+        <CardHeader className="p-0">
+          <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-2">
+            <p className="text-sm">Total Amount</p>
             <PriceComponent
-              content={currencyAmountString(
-                transaction.creditorRefund.refundAmount,
-              )}
+              content={currencyAmountString(transaction.totalPrice)}
               contentType="currencyAmount"
             />
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <div className="w-full flex items-center justify-center">
+          <Separator className="w-full" />
+        </div>
+        <CardContent className="p-2">
+          {transaction.transactionInvoices &&
+          transaction.transactionInvoices.length > 0
+            ? transaction.transactionInvoices.map(
+                (invoice: any) =>
+                  invoiceId == invoice.creditorInvoice.invoiceId && (
+                    <div className="flex items-center justify-between">
+                      <Link
+                        to={`/dashboard/invoice/creditor/${invoice.creditorInvoice.invoiceId}`}
+                      >
+                        <p className="text-xs">
+                          {invoice.creditorInvoice.invoiceId}
+                        </p>
+                      </Link>
+                      <PriceComponent
+                        content={currencyAmountString(invoice.settledAmount)}
+                        contentType="currencyAmount"
+                        bold={false}
+                      />
+                    </div>
+                  ),
+              )
+            : transaction.creditorRefund == null && (
+                <div className="flex items-center justify-center gap-2">
+                  <TriangleAlert className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <p className="text-xs">No invoice records found</p>
+                </div>
+              )}
+          {/* <Separator className="w-full my-2" /> */}
+          {transaction.creditorRefund && (
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs">REFUNDS</p>
+              <PriceComponent
+                content={currencyAmountString(
+                  transaction.creditorRefund.refundAmount,
+                )}
+                contentType="currencyAmount"
+              />
+            </div>
+          )}
+
+          <Separator className="mt-2" />
+
+          {/* Enhanced collapsible sections */}
+          <div>
+            {/* Transaction Notes */}
+            <div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between text-xs h-10 px-2 rounded-none hover:bg-muted/50"
+                onClick={() => setIsRemarksExpanded(!isRemarksExpanded)}
+              >
+                <span className="flex items-center gap-2">
+                  <MessageSquare className="w-3 h-3" />
+                  Transaction Remark
+                </span>
+                <ChevronDown
+                  className={`w-3 h-3 transition-transform duration-200 ${isRemarksExpanded ? "rotate-180" : ""}`}
+                />
+              </Button>
+              <div
+                className={`overflow-hidden transition-all duration-200 ${isRemarksExpanded ? "max-h-24" : "max-h-0"}`}
+              >
+                <div className="px-2 pb-3">
+                  <div className="text-xs text-muted-foreground leading-relaxed">
+                    {transaction?.remark || "No remarks provided."}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+        
+      </Card>
+
+    </>
   );
 }
 
