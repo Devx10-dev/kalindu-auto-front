@@ -42,10 +42,7 @@ const Summary = ({
     customerName,
     sourceInvoiceId,
     invoiceItemDTOList,
-    discountPercentage,
-    setDiscountPercentage,
     discountAmount,
-    setDiscountAmount,
     vatPercentage,
     setVatPercentage,
     vatAmount,
@@ -56,14 +53,16 @@ const Summary = ({
     purchaseDate,
     totalPrice,
     resetState,
-    invoiceId,
     newInvoiceType,
-    setNewInvoiceType,
     returnType,
     remainingDue,
     cashBackAmount,
     setReturnType,
-    setSelectedInvoiceId,
+    returnDiscountPercentage,
+    returnVatPercentage,
+    returnItemValue,
+    discountForSelectedReturnItems,
+    vatForSelectedReturnItems,
   } = useReturnInvoiceStore();
 
   const axiosPrivate = useAxiosPrivate();
@@ -102,94 +101,14 @@ const Summary = ({
     setTotalPrice(totalWithVat);
   }, [totalWithVat, setTotalPrice]);
 
-  const handleDiscountPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const percentage = Math.max(parseFloat(e.target.value), 0);
-    setDiscountPercentage(percentage);
-    setDiscountAmount((subtotal * percentage) / 100);
-  };
-
-  const handleDiscountAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const amount = Math.max(parseFloat(e.target.value), 0);
-    setDiscountAmount(amount);
-    setDiscountPercentage((amount / subtotal) * 100);
-  };
-
-  const handleVatPercentageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const percentage = Math.max(parseFloat(e.target.value), 0);
-    setVatPercentage(percentage);
-    setVatAmount((discountedTotal * percentage) / 100);
-  };
-
-  const handleVatAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const amount = Math.max(parseFloat(e.target.value), 0);
-    setVatAmount(amount);
-    setVatPercentage((amount / discountedTotal) * 100);
-  };
-
   const { toast } = useToast();
-  console.log(newInvoiceType);
-
-  async function printAndSaveInvoice() {
-    if (returnAmount === 0) {
-      toast({
-        title: "Invalid return details",
-        description: "Please add return details!",
-        variant: "destructive",
-      });
-
-      return;
-    }
-
-    try {
-      const requestData = getRequestData();
-      console.log(requestData);
-
-      const createdInvoice =
-        await returnInvoiceService.createReturnInvoice(requestData);
-      console.log("Cash invoice created:", requestData);
-      // Handle success response, such as printing the invoice or displaying a success message
-      toast({
-        title: "Invoice created successfully",
-        description: "The cash invoice has been created and printed.",
-        variant: "default",
-      });
-      cancelReturn();
-    } catch (error) {
-      console.error("Error creating cash invoice:", error);
-      // Handle error
-      toast({
-        title: "Error creating invoice",
-        description: "Failed to create the cash invoice. Please try again.",
-        variant: "destructive",
-      });
-    }
-  }
 
   const options: Option[] = [
     { id: "cash", icon: Coins, label: "Cash" },
     { id: "credit", icon: CreditCard, label: "Credit" },
-    // Added to show how it handles longer labels
   ];
 
-  const handleChange = (selectedId: string) => {
-    console.log("Selected:", selectedId);
-  };
-
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  // Dummy data for demonstration
-  const dummyReturnSummary = {
-    customerName: "John Doe",
-    sourceInvoiceId: "INV-001",
-    returnAmount: 100.0,
-    totalPrice: 150.0,
-  };
 
   const handlePrintInvoice = () => {
     setIsPopupOpen(true);
@@ -197,7 +116,6 @@ const Summary = ({
 
   const handleProceed = (cashbackOption?: string) => {
     console.log("Proceeding with cashback option:", cashbackOption);
-    // Here you would typically call your API to process the return
     setTimeout(() => {
       setIsPopupOpen(false);
     }, 3000); // Close the popup after 3 seconds to simulate API call
@@ -218,6 +136,14 @@ const Summary = ({
       }
     }
   }, [totalWithVat, netPaidAmount, cashBackAmount, setReturnType]);
+
+  useEffect(() => {
+    console.log(
+      "Discount for selected return items: ",
+      discountForSelectedReturnItems,
+    );
+    console.log("VAT for selected return items: ", vatForSelectedReturnItems);
+  }, [discountForSelectedReturnItems, vatForSelectedReturnItems]);
 
   return (
     <Card>
@@ -262,13 +188,53 @@ const Summary = ({
         <div className="flex flex-col">
           <div className="mt-5">
             <div className="d-flex align justify-between">
-              <p className="text-sm text-gray-500">Return Amount: </p>
+              <p className="text-sm text-gray-500">Return Item(s) Value: </p>
+              <AmountCard
+                amount={
+                  returnItemValue ? parseFloat(returnItemValue.toFixed(2)) : 0
+                }
+                color="#ffffffff"
+                fontStyle="font-semibold"
+              />
+            </div>
+            <div className="d-flex align justify-between mt-1">
+              <p className="text-sm text-gray-500">
+                Discount({returnDiscountPercentage}%):{" "}
+              </p>
+              <AmountCard
+                amount={
+                  discountForSelectedReturnItems
+                    ? parseFloat(discountForSelectedReturnItems.toFixed(2))
+                    : 0
+                }
+                color="#ffffffff"
+                fontStyle="font-semibold"
+                minus={true}
+              />
+            </div>
+            <div className="d-flex align justify-between mt-1">
+              <p className="text-sm text-gray-500">
+                VAT({returnVatPercentage}%):{" "}
+              </p>
+              <AmountCard
+                amount={
+                  vatForSelectedReturnItems
+                    ? parseFloat(vatForSelectedReturnItems.toFixed(2))
+                    : 0
+                }
+                color="#ffffffff"
+                fontStyle="font-semibold"
+              />
+            </div>
+            <div className="d-flex align justify-between mt-1">
+              <p className="text-sm text-gray-500">Total Return: </p>
               <AmountCard
                 amount={returnAmount ? parseFloat(returnAmount.toFixed(2)) : 0}
                 color="#FFAAAA"
                 fontStyle="font-semibold"
               />
             </div>
+            <hr className="mt-4 mb-4" />
             <div className="d-flex align justify-between mt-2">
               <p className="text-sm text-gray-500">Purchase Amount: </p>
               <AmountCard
@@ -314,23 +280,6 @@ const Summary = ({
                 {returnType}
               </Badge>
             </div>
-
-            {/* {sourceInvoiceId !== undefined &&
-              sourceInvoiceId.split("-")[1] === "CRE" && (
-                <div className="d-flex align justify-between">
-                  <p className="text-md text-gray-500">Is credit invoice?</p>
-                  <Switch
-                    defaultChecked
-                    onCheckedChange={(checked) =>
-                      setNewInvoiceType(checked ? "CRE" : "CASH")
-                    }
-                  />
-                </div>
-              )} */}
-            {/* <div className="p-4">
-              <h2 className="text-lg font-semibold mb-4">Select your device:</h2>
-              <IconRadioGroup options={options} onChange={handleChange} size="xs"/>
-            </div> */}
           </div>
         </div>
 
@@ -377,13 +326,6 @@ const Summary = ({
             >
               Create Return
             </Button>
-            {/* <Button
-                
-                onClick={() => printAndSaveInvoice()}
-              >
-                <Printer className={"mr-2"} />
-                Print Invoice
-              </Button> */}
             <Button
               className="mt-4 mb-3 bg-red-400 ml-2 text-white"
               onClick={cancelReturn}
@@ -402,15 +344,6 @@ const Summary = ({
             />
           </div>
         </div>
-
-        {/* <div className="flex justify-start text-left mt-8">
-          <div className="text-left">
-            <p className="text-lg font-semibold bg-slate-200 text-slate-900 pl-4 pt-2 pb-2 pr-4 rounded-md">
-              NET PAID : LKR {netPaidAmount ? netPaidAmount.toFixed(2) : 0}
-            </p>
-            
-          </div>
-        </div> */}
       </CardContent>
     </Card>
   );

@@ -23,7 +23,7 @@ import { OutsourcedItem } from "@/types/invoice/cash/cashInvoiceTypes";
 import { DummyInvoiceItem } from "@/types/invoice/dummy/dummyInvoiceTypes";
 import { BaseInvoice, InvoiceID } from "@/types/returns/returnsTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import { Fragment } from "react/jsx-runtime";
 import colors from "../../../assets/colors.json";
@@ -37,69 +37,7 @@ interface InvoiceOption {
   value: string;
 }
 
-interface LocalState {
-  searchTerm: string;
-  inputText: string;
-  returnedQuantities: { [key: string]: number };
-  totalReturnValue: number;
-  activeTab: string;
-  creditorSelectKey: number;
-  invoiceOptions: InvoiceOption[];
-}
-
-type LocalStateAction =
-  | { type: "SET_SEARCH_TERM"; payload: string }
-  | { type: "SET_INPUT_TEXT"; payload: string }
-  | { type: "SET_RETURNED_QUANTITY"; payload: { id: string; quantity: number } }
-  | { type: "RESET_RETURNED_QUANTITIES" }
-  | { type: "SET_TOTAL_RETURN_VALUE"; payload: number }
-  | { type: "SET_ACTIVE_TAB"; payload: string }
-  | { type: "INCREMENT_CREDITOR_SELECT_KEY" }
-  | { type: "SET_INVOICE_OPTIONS"; payload: InvoiceOption[] };
-
-const initialLocalState: LocalState = {
-  searchTerm: "",
-  inputText: "",
-  returnedQuantities: {},
-  totalReturnValue: 0,
-  activeTab: "cash",
-  creditorSelectKey: 0,
-  invoiceOptions: [],
-};
-
-function localStateReducer(
-  state: LocalState,
-  action: LocalStateAction,
-): LocalState {
-  switch (action.type) {
-    case "SET_SEARCH_TERM":
-      return { ...state, searchTerm: action.payload };
-    case "SET_INPUT_TEXT":
-      return { ...state, inputText: action.payload };
-    case "SET_RETURNED_QUANTITY":
-      return {
-        ...state,
-        returnedQuantities: {
-          ...state.returnedQuantities,
-          [action.payload.id]: action.payload.quantity,
-        },
-      };
-    case "RESET_RETURNED_QUANTITIES":
-      return { ...state, returnedQuantities: {} };
-    case "SET_TOTAL_RETURN_VALUE":
-      return { ...state, totalReturnValue: action.payload };
-    case "SET_ACTIVE_TAB":
-      return { ...state, activeTab: action.payload };
-    case "INCREMENT_CREDITOR_SELECT_KEY":
-      return { ...state, creditorSelectKey: state.creditorSelectKey + 1 };
-    case "SET_INVOICE_OPTIONS":
-      return { ...state, invoiceOptions: action.payload };
-    default:
-      return state;
-  }
-}
-
-function HandlingReturn() {
+function HandlingReturnOld() {
   const {
     sourceInvoiceId,
     setSourceInvoiceId,
@@ -139,14 +77,24 @@ function HandlingReturn() {
   } = useReturnInvoiceStore();
   const axiosPrivate = useAxiosPrivate();
 
-  const [localState, dispatch] = useReducer(
-    localStateReducer,
-    initialLocalState,
-  );
-  const debouncedSearchTerm = useDebounce(localState.searchTerm, 500);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const [returnedQuantities, setReturnedQuantities] = useState<{
+    [key: string]: number;
+  }>({});
+
+  const [totalReturnValue, setTotalReturnValue] = useState(0);
 
   const sparePartService = new SparePartService(axiosPrivate);
   const returnService = new ReturnService(axiosPrivate);
+
+  const [activeTab, setActiveTab] = useState<string>("cash");
+  const [tabCredit, setTabCredit] = useState(false);
+  const [tabCash, setTabCash] = useState(false);
+  const [creditorSelectKey, setCreditorSelectKey] = useState(0);
+
+  const [invoiceOptions, setInvoiceOptions] = useState<InvoiceOption[]>([]);
 
   const { data: baseInvoices, isLoading: baseInvoiceLoading } = useQuery<
     InvoiceID[]
@@ -167,91 +115,81 @@ function HandlingReturn() {
 
   useEffect(() => {
     if (baseInvoices) {
-      dispatch({
-        type: "SET_INVOICE_OPTIONS",
-        payload: baseInvoices.map((invoice) => ({
+      setInvoiceOptions(
+        baseInvoices.map((invoice) => ({
           label: invoice.invoiceID,
           value: invoice.invoiceID,
         })),
-      });
+      );
     }
   }, [baseInvoices]);
 
-  const handleInputChange = useCallback((inputValue: string) => {
-    dispatch({ type: "SET_INPUT_TEXT", payload: inputValue });
-    dispatch({ type: "SET_SEARCH_TERM", payload: inputValue });
-  }, []);
-
-  const hasInvoiceItems = useMemo(
-    () => Boolean(invoiceItemDTOList[0]),
-    [invoiceItemDTOList],
-  );
-  const shouldShowExchangeTab = useMemo(() => {
-    if (!hasInvoiceItems) return false;
-    if (newInvoiceType === "CRE" || newInvoiceType === "CASH") return true;
-    if (newInvoiceType === undefined) {
-      setNewInvoiceType("CASH");
-      return true;
-    }
-    return false;
-  }, [hasInvoiceItems, newInvoiceType, setNewInvoiceType]);
-
-  const handleReturnedQuantityChange = useCallback(
-    (itemCode: string, quantity: number, price: number, id: number) => {
-      addReturnItem({ id: id, returnedQuantity: quantity });
-      dispatch({
-        type: "SET_RETURNED_QUANTITY",
-        payload: { id: id.toString(), quantity },
-      });
-    },
-    [addReturnItem],
-  );
+  const handleInputChange = (inputValue: string) => {
+    setInputText(inputValue);
+    setSearchTerm(inputValue);
+  };
 
   useEffect(() => {
-    const totalValue = Object.keys(localState.returnedQuantities).reduce(
-      (acc, id) => {
-        const quantity = localState.returnedQuantities[id];
-        const item = selectedInvoice?.items.find(
-          (item) => item.id === Number(id),
-        );
-        return acc + (item ? quantity * item.price : 0);
-      },
-      0,
-    );
-    setReturnItemValue(totalValue);
-  }, [localState.returnedQuantities, selectedInvoice, setReturnItemValue]);
+    if (invoiceItemDTOList[0]) {
+      if (newInvoiceType === "CRE") {
+        setTabCash(true);
+      } else if (newInvoiceType === "CASH") {
+        setTabCredit(true);
+      } else if (newInvoiceType == undefined) {
+        setNewInvoiceType("CASH");
+        setTabCredit(true);
+      }
+    } else {
+      setTabCredit(false);
+      setTabCash(false);
+    }
+  }, [invoiceItemDTOList]);
 
-  const handleTabChange = useCallback((tab: string) => {
-    dispatch({ type: "SET_ACTIVE_TAB", payload: tab });
-  }, []);
+  const handleReturnedQuantityChange = (
+    itemCode: string,
+    quantity: number,
+    price: number,
+    id: number,
+  ) => {
+    addReturnItem({ id: id, returnedQuantity: quantity });
+    setReturnedQuantities((prev) => ({
+      ...prev,
+      [id]: quantity,
+    }));
+  };
 
-  const handleSourceInvoice = useCallback(
-    (baseInvoice: BaseInvoice) => {
-      console.log("BAAASE", baseInvoice);
-      if (baseInvoice === undefined || baseInvoice === null) return;
-
-      dispatch({ type: "RESET_RETURNED_QUANTITIES" });
-      setSelectedInvoice(baseInvoice);
-      setCustomer(baseInvoice?.customer);
-      setPurchaseDate(baseInvoice?.date);
-      setNewInvoiceType(findInvoiceType(baseInvoice?.invoiceId));
-      setSourceInvoiceId(baseInvoice?.invoiceId);
-      resetExchangeItemTable();
-      setNewInvoiceType(
-        baseInvoice?.invoiceId === undefined
-          ? ""
-          : baseInvoice?.invoiceId.split("-")[1],
+  useEffect(() => {
+    const totalValue = Object.keys(returnedQuantities).reduce((acc, id) => {
+      const quantity = returnedQuantities[id];
+      const item = selectedInvoice?.items.find(
+        (item) => item.id === Number(id),
       );
-    },
-    [
-      setSelectedInvoice,
-      setCustomer,
-      setPurchaseDate,
-      setNewInvoiceType,
-      setSourceInvoiceId,
-      resetExchangeItemTable,
-    ],
-  );
+      return acc + (item ? quantity * item.price : 0);
+    }, 0);
+    setReturnItemValue(totalValue);
+  }, [returnedQuantities, selectedInvoice]);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  const handleSourceInvoice = (baseInvoice: BaseInvoice) => {
+    console.log("BAAASE", baseInvoice);
+    if (baseInvoice === undefined || baseInvoice === null) return;
+
+    setReturnedQuantities({});
+    setSelectedInvoice(baseInvoice);
+    setCustomer(baseInvoice?.customer);
+    setPurchaseDate(baseInvoice?.date);
+    setNewInvoiceType(findInvoiceType(baseInvoice?.invoiceId));
+    setSourceInvoiceId(baseInvoice?.invoiceId);
+    resetExchangeItemTable();
+    setNewInvoiceType(
+      baseInvoice?.invoiceId === undefined
+        ? ""
+        : baseInvoice?.invoiceId.split("-")[1],
+    );
+  };
 
   useEffect(() => {
     if (selectedBaseInvoice === null) return;
@@ -402,7 +340,7 @@ function HandlingReturn() {
   useEffect(() => {
     setReturnAmount(
       returnItemValue -
-        discountForSelectedReturnItems +
+        discountForSelectedReturnItems -
         vatForSelectedReturnItems,
     );
   }, [
@@ -410,6 +348,8 @@ function HandlingReturn() {
     discountForSelectedReturnItems,
     vatForSelectedReturnItems,
   ]);
+
+  const [inputText, setInputText] = useState<string>("");
 
   return (
     <Fragment>
@@ -438,7 +378,7 @@ function HandlingReturn() {
                 // key={creditorSelectKey}
                 className="select-place-holder"
                 placeholder={"Search and select returned invoice"}
-                options={localState.invoiceOptions}
+                options={invoiceOptions}
                 onChange={(option) => {
                   // if cleared the selected invoice
                   if (option === null) {
@@ -453,7 +393,7 @@ function HandlingReturn() {
                 isLoading={baseInvoiceLoading}
                 isClearable={true}
                 isSearchable={true}
-                inputValue={localState.inputText}
+                inputValue={inputText}
                 noOptionsMessage={() =>
                   "No invoice found for given criteria, please try another one."
                 }
@@ -533,10 +473,7 @@ function HandlingReturn() {
                                     type="number"
                                     max={item.quantity + 1}
                                     min={0}
-                                    value={
-                                      localState.returnedQuantities[item.id] ||
-                                      ""
-                                    }
+                                    value={returnedQuantities[item.id] || ""}
                                     onChange={(e) => {
                                       const enteredValue = e.target.value;
                                       if (enteredValue === "") {
@@ -609,10 +546,8 @@ function HandlingReturn() {
 
           <div className="w-full lg:w-[25%]">
             <Summary
-              creditorSelectKey={localState.creditorSelectKey}
-              setCreditorSelectKey={() =>
-                dispatch({ type: "INCREMENT_CREDITOR_SELECT_KEY" })
-              }
+              creditorSelectKey={creditorSelectKey}
+              setCreditorSelectKey={setCreditorSelectKey}
               isDataLoading={selectedInvoiceLoading}
             />
           </div>
@@ -622,4 +557,4 @@ function HandlingReturn() {
   );
 }
 
-export default HandlingReturn;
+export default HandlingReturnOld;

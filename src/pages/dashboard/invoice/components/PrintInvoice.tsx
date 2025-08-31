@@ -53,7 +53,7 @@ function PrintInvoice({
     const cpj = new JSPM.ClientPrintJob();
     cpj.clientPrinter = printToDefault
       ? new JSPM.DefaultPrinter()
-      : new JSPM.InstalledPrinter(printToDefault);
+      : new JSPM.InstalledPrinter("Default");
 
     const esc = "\x1B"; // ESC character
     const reset = esc + "@"; // Reset printer
@@ -105,7 +105,7 @@ function PrintInvoice({
       newLine +
       "\x1B\x24\x3C\x00" +
       "\x1B\x4A\x08" +
-      (invoiceData?.vehicle ? invoiceData?.vehicle : (vehicleNumber || "")) +
+      (invoiceData?.vehicle ? invoiceData?.vehicle : vehicleNumber || "") +
       "\x1B\x24\x7D\x01" +
       "\x1B\x61\x08" +
       " ".repeat(6) +

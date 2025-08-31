@@ -53,7 +53,7 @@ function PrintCashInvoice({
     const cpj = new JSPM.ClientPrintJob();
     cpj.clientPrinter = printToDefault
       ? new JSPM.DefaultPrinter()
-      : new JSPM.InstalledPrinter(printToDefault);
+      : new JSPM.InstalledPrinter("Default");
 
     let issuedDate;
     if (invoiceData?.issuedTime) {

@@ -8,6 +8,8 @@ export interface BaseInvoice {
   invoiceType: string;
   totalPrice: number;
   settledAmount: number;
+  vat: number;
+  discount: number;
 }
 
 export type InvoiceItem = {
@@ -85,6 +87,17 @@ export type InvoiceState = {
 
   returnedCreditInvoice?: BaseInvoice;
   returnedInvoice?: BaseInvoice;
+  returnVatAmount?: number;
+  returnVatPercentage?: number;
+  returnDiscountAmount?: number;
+  returnDiscountPercentage?: number;
+  returnItemValue?: number;
+  discountForSelectedReturnItems?: number;
+  vatForSelectedReturnItems?: number;
+
+  setReturnItemValue: (returnItemValue: number) => void;
+  setDiscountForSelectedReturnItems: (discount: number) => void;
+  setVatForSelectedReturnItems: (vat: number) => void;
 
   setSourceInvoiceId: (sourceInvoiceId?: string) => void;
   setReturnType: (returnType?: string) => void;
@@ -129,6 +142,11 @@ export type InvoiceState = {
   addPayment: (payment: Payment) => void;
   removePayment: (payment: Payment) => void;
   setSelectedInvoiceId: (invoiceId?: string) => void;
+
+  setReturnVatAmount: (returnVatAmount: number) => void;
+  setReturnVatPercentage: (returnVatPercentage: number) => void;
+  setReturnDiscountAmount: (returnDiscountAmount: number) => void;
+  setReturnDiscountPercentage: (returnDiscountPercentage: number) => void;
 };
 
 export type InvoiceItem = {

@@ -78,7 +78,7 @@ function generateTimelineComponent({
   transaction,
   invoiceId,
   isRemarksExpanded,
-  setIsRemarksExpanded
+  setIsRemarksExpanded,
 }: {
   transaction: any;
   invoiceId?: string;
@@ -263,7 +263,7 @@ function TransactionInvoiceCard({
   transaction: any;
   invoiceId?: string;
 }) {
-  const [isRemarksExpanded, setIsRemarksExpanded] = useState(false)
+  const [isRemarksExpanded, setIsRemarksExpanded] = useState(false);
   useEffect(() => {
     if (transaction?.remark != null || transaction?.remark !== "") {
       setIsRemarksExpanded(true);
@@ -357,9 +357,7 @@ function TransactionInvoiceCard({
             </div>
           </div>
         </CardContent>
-        
       </Card>
-
     </>
   );
 }
