@@ -8,6 +8,7 @@ export default function CurrencyComponent({
   mainTextSize = "text-3xl", // Default size for the main text
   subTextSize = "text-sm", // Default size for the subtext
   fontStyle = "font-bold", // Default font style
+  minus = false,
 }: {
   amount: number;
   currency: string | undefined;
@@ -15,6 +16,7 @@ export default function CurrencyComponent({
   mainTextSize?: string; // Optional prop for main text size
   subTextSize?: string; // Optional prop for subtext size
   fontStyle?: string; // Optional prop for font style
+  minus?: boolean;
 }) {
   const [amountString, setAmountString] = useState<string>("");
   const [pre, setPre] = useState<string>("");
@@ -34,10 +36,13 @@ export default function CurrencyComponent({
     setPost(post);
   }, [amountString]);
 
+  // if minus add brackets
   return (
     <div className={`${fontStyle} ${mainTextSize}`}>
+      {minus && <span>(</span>}
       <span>{withoutCurrency == true ? pre.replace(/[^0-9]/g, "") : pre}</span>
       <span className={`${subTextSize} color-muted-foreground`}>.{post}</span>
+      {minus && <span>)</span>}
     </div>
   );
 }

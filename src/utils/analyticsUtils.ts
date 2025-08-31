@@ -371,6 +371,22 @@ function calculateTotalSummary(dailySummaries: DailySummery[]): TotalSummary {
   };
 }
 
+function getInvoiceTypeByInvoiceID(invoiceId: string): string {
+  const parts = invoiceId.split("-");
+  if (parts.length < 3) {
+    throw new Error("Invalid invoice ID format");
+  }
+  const invoiceType = parts[1];
+  if (invoiceType === "CASH") {
+    return "CASH";
+  }
+  if (invoiceType === "CRE") {
+    return "CREDIT";
+  }
+
+  throw new Error("Unknown invoice type");
+}
+
 export {
   currencyAmountString,
   getWeekNumber,
@@ -379,4 +395,5 @@ export {
   processMonthlyData,
   processYearlyData,
   calculateTotalSummary,
+  getInvoiceTypeByInvoiceID,
 };

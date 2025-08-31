@@ -6,11 +6,13 @@ function AmountCard({
   color,
   fontStyle = "font-bold",
   withoutCurrency = true,
+  minus = false,
 }: {
   amount: number;
   color: string;
   fontStyle?: string;
   withoutCurrency?: boolean;
+  minus?: boolean;
 }) {
   return (
     <p
@@ -30,6 +32,7 @@ function AmountCard({
         mainTextSize="text-md"
         subTextSize="text-xs"
         fontStyle={fontStyle}
+        minus={minus}
       />
     </p>
   );

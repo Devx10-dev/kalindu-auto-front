@@ -29,7 +29,15 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   discountAmount: 0,
   vatPercentage: 0,
   vatAmount: 0,
+  //Properties for returned invoice
+  returnItemValue: 0,
   returnAmount: 0,
+  returnVatAmount: 0,
+  returnVatPercentage: 0,
+  returnDiscountAmount: 0,
+  returnDiscountPercentage: 0,
+  discountForSelectedReturnItems: 0,
+  vatForSelectedReturnItems: 0,
   totalPrice: undefined,
   purchaseDate: undefined,
   //commissions details
@@ -99,10 +107,52 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       creditInvoice: creditInvoice,
     })),
 
+  setReturnItemValue: (returnItemValue: number) =>
+    set((state) => ({
+      ...state,
+      returnItemValue: returnItemValue,
+    })),
+
   setReturnAmount: (returnAmount: number) =>
     set((state) => ({
       ...state,
       returnAmount: returnAmount,
+    })),
+
+  setReturnVatAmount: (returnVatAmount: number) =>
+    set((state) => ({
+      ...state,
+      returnVatAmount: returnVatAmount,
+    })),
+
+  setReturnVatPercentage: (returnVatPercentage: number) =>
+    set((state) => ({
+      ...state,
+      returnVatPercentage: returnVatPercentage,
+    })),
+
+  setReturnDiscountAmount: (returnDiscountAmount: number) =>
+    set((state) => ({
+      ...state,
+      returnDiscountAmount: returnDiscountAmount,
+    })),
+
+  setReturnDiscountPercentage: (returnDiscountPercentage: number) =>
+    set((state) => ({
+      ...state,
+      returnDiscountPercentage: returnDiscountPercentage,
+    })),
+
+  setDiscountForSelectedReturnItems: (discount: number) =>
+    set((state) => ({
+      ...state,
+      discountForSelectedReturnItems: discount,
+    })),
+
+  setVatForSelectedReturnItems: (vat: number) =>
+    set((state) => ({
+      ...state,
+      vatForSelectedReturnItems: vat,
     })),
 
   setPurchaseDate: (purchaseDate: Array<number>) =>
@@ -281,6 +331,8 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
       vatPercentage: 0,
       vatAmount: 0,
       returnAmount: 0,
+      returnVatAmount: 0,
+      returnDiscountAmount: 0,
       totalPrice: undefined,
       purchaseDate: undefined,
       commissionName: undefined,
