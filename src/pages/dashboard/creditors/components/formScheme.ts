@@ -9,10 +9,10 @@ export const creditorFormSchema = z.object({
     .string({ required_error: "Shop name is Required" })
     .trim()
     .min(2, {
-      message: "Shop name must be at least 2 characters.",
+      message: "Creditor name must be at least 2 characters.",
     })
-    .max(30, {
-      message: "Shop name must not be longer than 30 characters.",
+    .max(50, {
+      message: "Creditor name must not be longer than 50 characters.",
     }),
 
   contactPersonName: z
