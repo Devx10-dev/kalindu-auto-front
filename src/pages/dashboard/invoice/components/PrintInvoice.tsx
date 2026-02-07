@@ -104,7 +104,7 @@ function PrintInvoice({
     const TOTALS_POS_NH = 0x01;
     const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
     const PRE_ITEMS_LINES = 5; // Gap between customer details and items
-    const MAX_ITEM_LINES = 31; // Max item lines for vertical alignment
+    const MAX_ITEM_LINES = 32; // Max item lines for vertical alignment
     const ADDRESS_MAX_LINES = 3; // Max lines for multiline address
     const ITEM_DESC_MAX_CHARS = 30; // Max chars per line for item description
 
