@@ -17,6 +17,9 @@ function PrintCashInvoice({
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
   const [customerVatId, setCustomerVatId] = useState<string>("");
+  const [vehicleNumber, setVehicleNumber] = useState<string>("");
+  const [customerAddress, setCustomerAddress] = useState<string>("");
+  const [customerContactNo, setCustomerContactNo] = useState<string>("");
 
   const printRightAlign = (value: string | number, totalLength: number) => {
     const strValue = value.toString();
@@ -40,6 +43,19 @@ function PrintCashInvoice({
     initializePrintManager();
   }, []);
 
+  // Pre-fill input fields from invoiceData when available
+  useEffect(() => {
+    if (invoiceData?.contactNo) {
+      setCustomerContactNo(invoiceData.contactNo);
+    }
+    if (invoiceData?.address) {
+      setCustomerAddress(invoiceData.address);
+    }
+    if (invoiceData?.vehicle) {
+      setVehicleNumber(invoiceData.vehicle);
+    }
+  }, [invoiceData]);
+
   const handlePrint = () => {
     if (!printToDefault) {
       return toast({
@@ -55,108 +71,119 @@ function PrintCashInvoice({
       ? new JSPM.DefaultPrinter()
       : new JSPM.InstalledPrinter("Default");
 
-    let issuedDate;
-    if (invoiceData?.issuedTime) {
-      issuedDate = invoiceData.issuedTime.split(" ")[0];
-    }
+    // ===== Adjustable Position Constants (dot units for ESC $ command) =====
+    // Tune these values via test printing on the new pre-printed form
+    const LEFT_POS_NL = 0x1e; // 30 dots (~12.7mm) - left field value start
+    const LEFT_POS_NH = 0x00;
+    const RIGHT_POS_NL = 0x7d; // 381 dots (~161mm) - right field value start
+    const RIGHT_POS_NH = 0x01;
+    const TOTALS_POS_NL = 0xc0; // 192 dots (~81mm) - totals value position
+    const TOTALS_POS_NH = 0x00;
+    const INITIAL_SKIP_LINES = 2; // Lines to skip past pre-printed header
+    const PRE_ITEMS_LINES = 2; // Gap between customer details and items
+    const MAX_ITEM_LINES = 18; // Max item lines for vertical alignment
 
-    console.log(issuedDate);
+    // Helper to build ESC $ absolute position command
+    const absPos = (nL: number, nH: number) =>
+      `\x1B\x24${String.fromCharCode(nL)}${String.fromCharCode(nH)}`;
+
+    const leftPos = absPos(LEFT_POS_NL, LEFT_POS_NH);
+    const rightPos = absPos(RIGHT_POS_NL, RIGHT_POS_NH);
+    const totalsPos = absPos(TOTALS_POS_NL, TOTALS_POS_NH);
 
     const esc = "\x1B"; // ESC character
     const reset = esc + "@"; // Reset printer
     const boldOn = esc + "E"; // Bold text on
     const boldOff = esc + "F"; // Bold text off
-    // Set print area width to 250mm
-    const rightMargin = "\x1B\x51\x64"; // 255mm
-    const underlineOn = esc + "-1"; // Underline on
-    const underlineOff = esc + "-0"; // Underline off
-    const alignCenter = esc + "a1"; // Center alignment
-    const alignLeft = esc + "a0"; // Left alignment
-    const alignRight = esc + "a2"; // Right alignment
-    const condensedOn = esc + "\x0F"; // Condensed printing ON
-    const condensedOff = esc + "\x12"; // Condensed printing OFF
-    const doubleWidthOn = esc + "W1"; // Double width ON
-    const doubleWidthOff = esc + "W0"; // Double width OFF
-    const doubleHeightOn = "\x1B\x77\x01"; // Correct Double Height ON
-    const doubleHeightOff = "\x1B\x77\x00"; // Reset to normal size
 
     const newLine = "\n"; // Line break
     const formFeed = "\x0C"; // Form feed
     const cutPaper = esc + "i"; // Cut paper command
+
+    let issuedDate = "";
+    if (invoiceData?.issuedTime) {
+      issuedDate = invoiceData.issuedTime.split(" ")[0];
+    }
 
     let cmds = "";
 
     // Reset printer and set initial settings
     cmds += reset;
 
-    // cmds += newLine.repeat(2)
+    // Skip past pre-printed header area
+    cmds += newLine.repeat(INITIAL_SKIP_LINES);
 
-    // Customer Details Section - Left aligned with specific spacing
+    // ===== Customer Details Section (5 rows) =====
+
+    // Row 1: Name + Inv. No.
     cmds +=
-      "\x1B\x24\x1E\x00" +
-      "\x1B\x4A\x55" +
+      leftPos +
       (invoiceData?.creditorName || "") +
-      "\x1B\x24\x7D\x01" +
-      "\x1B\x61\x55" +
+      rightPos +
       " ".repeat(6) +
-      // last 12 chrcters of invoice id
       (invoiceData?.invoiceId || "").slice(-10) +
-      newLine +
-      "\x1B\x24\x1E\x00" +
-      "\x1B\x4A\x0A" +
-      (customerVatId || "") +
-      "\x1B\x24\x7D\x01" +
-      "\x1B\x61\x0A" +
+      newLine;
+
+    // Row 2: Address + Date
+    cmds +=
+      leftPos +
+      (customerAddress || "") +
+      rightPos +
       " ".repeat(6) +
       (issuedDate || "") +
-      newLine +
-      "\x1B\x24\x1E\x00" +
-      "\x1B\x4A\x08" +
-      (invoiceData?.vehicle || "") +
-      "\x1B\x24\x7D\x01" +
-      "\x1B\x61\x08" +
+      newLine;
+
+    // Row 3: Customer VAT Reg. No. + Sale
+    cmds +=
+      leftPos +
+      (customerVatId || "") +
+      rightPos +
       " ".repeat(6) +
-      (invoiceData?.type || "Credit");
+      (invoiceData?.type || "Credit") +
+      newLine;
 
-    cmds += newLine.repeat(3);
+    // Row 4: Vehicle No.
+    cmds += leftPos + (vehicleNumber || "") + newLine;
 
-    // // Table Content
+    // Row 5: Contact No.
+    cmds += leftPos + (customerContactNo || "") + newLine;
+
+    // Gap between customer details and items table
+    cmds += newLine.repeat(PRE_ITEMS_LINES);
+
+    // ===== Items Table =====
+    // Columns: Description(35) | Price(10) | Discount gap(8) | Qty(5) | Value(12)
     if (Array.isArray(invoiceData?.invoiceItems)) {
       invoiceData.invoiceItems.forEach((item) => {
         cmds +=
-          (item.name || "").padEnd(48) +
-          "" +
-          printRightAlign(item.price || "", 13) +
-          "" +
-          printRightAlign(item.quantity || "", 7) +
+          (item.name || "").padEnd(35) +
+          printRightAlign(item.price || "", 10) +
+          " ".repeat(8) +
+          printRightAlign(item.quantity || "", 5) +
           printRightAlign(item.price * item.quantity || "", 12) +
           newLine;
       });
-      if (invoiceData?.vat != null) {
-        cmds += newLine + boldOn;
-        cmds +=
-          "VAT [ID: 114501433-7000]".padEnd(48) +
-          "" +
-          printRightAlign("", 13) +
-          "" +
-          printRightAlign("", 7) +
-          printRightAlign(invoiceData?.vat || "", 12) +
-          boldOff +
-          newLine;
-      }
-      cmds += handleVerticalAlignment(invoiceData.invoiceItems.length, 14);
+      cmds += handleVerticalAlignment(
+        invoiceData.invoiceItems.length,
+        MAX_ITEM_LINES,
+      );
     }
 
+    // ===== Totals Section (3 separate lines) =====
+    // Sub Total = totalPrice - vat (totalPrice may or may not include VAT depending on caller)
+    const totalAmount = invoiceData?.totalPrice || 0;
+    const vatAmount = invoiceData?.vat || 0;
+    const subTotal = totalAmount - vatAmount;
+
+    // Sub Total line
     cmds +=
-      boldOn +
-      "\x1B\x24\x78\x00" +
-      " ".repeat(25) +
-      printRightAlign(invoiceData?.totalDiscount || "", 12) +
-      " ".repeat(4) +
-      printRightAlign("", 6) +
-      " ".repeat(1) +
-      printRightAlign(invoiceData?.totalPrice + invoiceData?.vat || "", 12) +
-      boldOff;
+      boldOn + totalsPos + printRightAlign(subTotal.toFixed(2), 12) + newLine;
+
+    // VAT (18%) line
+    cmds += totalsPos + printRightAlign(vatAmount.toFixed(2), 12) + newLine;
+
+    // TOTAL line
+    cmds += totalsPos + printRightAlign(totalAmount.toFixed(2), 12) + boldOff;
 
     // Final commands
     cmds += formFeed + cutPaper;
@@ -168,8 +195,7 @@ function PrintCashInvoice({
   return (
     <div>
       {invoiceData?.vat > 0 && (
-        <div className="flex items-center justify-between mb-2 ">
-          {/* input to add the vat id of the customer*/}
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center w-full">
             <label className="mr-2 w-full">Customer VAT ID:</label>
             <Input
@@ -182,6 +208,42 @@ function PrintCashInvoice({
           </div>
         </div>
       )}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center w-full">
+          <label className="mr-2 w-full">Vehicle Number:</label>
+          <Input
+            type="text"
+            value={vehicleNumber}
+            onChange={(e) => setVehicleNumber(e.target.value)}
+            className="border rounded px-2 py-1 w-full"
+            placeholder="Enter Vehicle Number"
+          />
+        </div>
+      </div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center w-full">
+          <label className="mr-2 w-full">Address:</label>
+          <Input
+            type="text"
+            value={customerAddress}
+            onChange={(e) => setCustomerAddress(e.target.value)}
+            className="border rounded px-2 py-1 w-full"
+            placeholder="Enter Customer Address"
+          />
+        </div>
+      </div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center w-full">
+          <label className="mr-2 w-full">Contact No:</label>
+          <Input
+            type="text"
+            value={customerContactNo}
+            onChange={(e) => setCustomerContactNo(e.target.value)}
+            className="border rounded px-2 py-1 w-full"
+            placeholder="Enter Contact Number"
+          />
+        </div>
+      </div>
       <Button
         style={{ display: "none" }}
         hidden={true}

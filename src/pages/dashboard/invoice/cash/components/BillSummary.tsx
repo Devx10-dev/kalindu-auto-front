@@ -132,6 +132,7 @@ const BillSummary = () => {
           invoiceId: responseData.invoiceId.split("-")[2],
           issuedTime: convertArrayToNormalFormat(responseData.issuedTime),
           contactNo: "",
+          address: "",
           vehicle: responseData.vehicleNo,
           type: "CASH",
         });

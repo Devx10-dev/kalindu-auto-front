@@ -45,12 +45,16 @@ function BillSummaryViewCard({
     const invoiceD: InvoiceData = {
       commissions: [],
       contactNo: "",
+      address: "",
+      creditorName: invoiceData?.customerName,
       date: extractDateFromIssuedTime(invoiceData?.issuedTime),
+      issuedTime: extractDateFromIssuedTime(invoiceData?.issuedTime),
       invoiceId: invoiceData?.invoiceId.split("-")[2],
       invoiceItems: invoiceData?.invoiceItems ?? [],
       totalDiscount: invoiceData?.discountAmount,
       totalPrice: invoiceData?.totalPrice,
       vat: invoiceData?.vat,
+      type: "CASH",
     };
 
     setInvoiceDetails(invoiceD);

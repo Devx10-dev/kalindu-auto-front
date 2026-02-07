@@ -87,6 +87,7 @@ const BillSummary: React.FC = () => {
           invoiceId: responseData.invoiceId.toString().split("-")[2],
           issuedTime: extractDateFromIssuedTime(responseData.issuedTime),
           contactNo: responseData.creditor.primaryContact,
+          address: responseData.creditor?.address || "",
           vehicle: "",
           type: "CREDIT",
         };
