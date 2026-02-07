@@ -103,7 +103,7 @@ function PrintInvoice({
     const TOTALS_POS_NL = 0x7d; //300 dots - totals value position (rightmost)
     const TOTALS_POS_NH = 0x01;
     const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
-    const PRE_ITEMS_LINES = 5; // Gap between customer details and items
+    const PRE_ITEMS_LINES = 4; // Gap between customer details and items
     const MAX_ITEM_LINES = 32; // Max item lines for vertical alignment
     const ADDRESS_MAX_LINES = 3; // Max lines for multiline address
     const ITEM_DESC_MAX_CHARS = 30; // Max chars per line for item description
@@ -206,6 +206,7 @@ function PrintInvoice({
       }
     }
 
+    cmds += newLine; // Gap after address
     // Row: Customer VAT Reg. No. (always output a space to preserve row even if empty)
     cmds += leftPosVatId + (customerVatId || " ") + newLine + microFeed(14);
 
