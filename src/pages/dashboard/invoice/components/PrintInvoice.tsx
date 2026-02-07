@@ -98,7 +98,7 @@ function PrintInvoice({
     const LEFT_POS_NH = 0x00;
     const RIGHT_POS_NL = 0x7d; // 381 dots (~161mm) - right field value start
     const RIGHT_POS_NH = 0x01;
-    const TOTALS_POS_NL = 0x40; // 320 dots - totals value position (further right)
+    const TOTALS_POS_NL = 0x90; // 400 dots - totals value position (rightmost)
     const TOTALS_POS_NH = 0x01;
     const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
     const PRE_ITEMS_LINES = 5; // Gap between customer details and items
@@ -153,10 +153,27 @@ function PrintInvoice({
     // 2mm gap between Name and Address (~4 dots at 60dpi ≈ 1/180*14)
     cmds += microFeed(14);
 
-    // Row 2: Address (multiline - up to 3 lines) + Date on first line
-    const addressLines = customerAddress
-      ? customerAddress.split("\n").slice(0, ADDRESS_MAX_LINES)
+    // Row 2: Address (multiline - up to 3 lines, 30 char limit per line) + Date on first line
+    // Split address: first by newlines, then wrap each line at 30 chars
+    const ADDRESS_LINE_MAX_CHARS = 30;
+    const rawAddressLines = customerAddress
+      ? customerAddress.split("\n")
       : [""];
+    const addressLines: string[] = [];
+    for (const line of rawAddressLines) {
+      if (line.length <= ADDRESS_LINE_MAX_CHARS) {
+        addressLines.push(line);
+      } else {
+        for (let c = 0; c < line.length; c += ADDRESS_LINE_MAX_CHARS) {
+          addressLines.push(line.substring(c, c + ADDRESS_LINE_MAX_CHARS));
+        }
+      }
+      if (addressLines.length >= ADDRESS_MAX_LINES) break;
+    }
+    // Pad to exactly ADDRESS_MAX_LINES so rows always occupy space
+    while (addressLines.length < ADDRESS_MAX_LINES) {
+      addressLines.push("");
+    }
 
     // First address line + Date
     cmds +=
@@ -199,7 +216,7 @@ function PrintInvoice({
     cmds += newLine.repeat(PRE_ITEMS_LINES);
 
     // ===== Items Table =====
-    // Columns: Description(30 max, wraps) | Price(10) | Discount gap(8) | Qty(10) | Value(16 - rightmost)
+    // Columns: Description(30 max, wraps) | Price(12) | Discount gap(10) | Qty(12) | Value(18 - rightmost)
     // Description wrapping: if name > 30 chars, split into multiple lines.
     // Extra lines count toward total printed lines to reduce vertical alignment padding.
     let totalPrintedLines = 0;
@@ -210,10 +227,10 @@ function PrintInvoice({
           // Single line item
           cmds +=
             itemName.padEnd(ITEM_DESC_MAX_CHARS) +
-            printRightAlign(item.price || "", 10) +
-            " ".repeat(8) +
-            printRightAlign(item.quantity || "", 10) +
-            printRightAlign(item.price * item.quantity || "", 16) +
+            printRightAlign(item.price || "", 12) +
+            " ".repeat(10) +
+            printRightAlign(item.quantity || "", 12) +
+            printRightAlign(item.price * item.quantity || "", 18) +
             newLine;
           totalPrintedLines += 1;
         } else {
@@ -225,10 +242,10 @@ function PrintInvoice({
           // First line: description chunk + price/qty/value
           cmds +=
             descLines[0].padEnd(ITEM_DESC_MAX_CHARS) +
-            printRightAlign(item.price || "", 10) +
-            " ".repeat(8) +
-            printRightAlign(item.quantity || "", 10) +
-            printRightAlign(item.price * item.quantity || "", 16) +
+            printRightAlign(item.price || "", 12) +
+            " ".repeat(10) +
+            printRightAlign(item.quantity || "", 12) +
+            printRightAlign(item.price * item.quantity || "", 18) +
             newLine;
           totalPrintedLines += 1;
           // Remaining description lines: only description, no numbers
@@ -241,31 +258,29 @@ function PrintInvoice({
       cmds += handleVerticalAlignment(totalPrintedLines, MAX_ITEM_LINES);
     }
 
-    // ===== Totals Section (3 separate lines, right-aligned) =====
-    const alignRight = esc + "a2"; // Right alignment
-    const alignLeft = esc + "a0"; // Left alignment
+    // ===== Totals Section (3 separate lines, positioned rightmost) =====
     const totalAmount = invoiceData?.totalPrice || 0;
     const vatAmount = invoiceData?.vat || 0;
     const subTotal = totalAmount - vatAmount;
 
-    cmds += boldOn + alignRight;
+    cmds += boldOn;
 
     // Sub Total line
-    cmds += subTotal.toFixed(2) + newLine;
+    cmds += totalsPos + printRightAlign(subTotal.toFixed(2), 12) + newLine;
 
     // 2mm gap before VAT
     cmds += microFeed(14);
 
     // VAT (18%) line
-    cmds += vatAmount.toFixed(2) + newLine;
+    cmds += totalsPos + printRightAlign(vatAmount.toFixed(2), 12) + newLine;
 
     // 2 lines gap before TOTAL
     cmds += newLine.repeat(2);
 
     // TOTAL line
-    cmds += totalAmount.toFixed(2);
+    cmds += totalsPos + printRightAlign(totalAmount.toFixed(2), 12);
 
-    cmds += boldOff + alignLeft;
+    cmds += boldOff;
 
     // Final commands
     cmds += formFeed + cutPaper;
