@@ -270,7 +270,7 @@ function PrintInvoice({
     cmds += boldOn;
 
     // 2mm gap before totals
-    cmds += microFeed(14);
+    cmds += microFeed(28);
 
     // Sub Total line
     cmds += totalsPos + printRightAlign(subTotal.toFixed(2), 12) + newLine;
