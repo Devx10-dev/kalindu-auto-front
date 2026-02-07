@@ -85,6 +85,7 @@ function PrintCashInvoice({
     const PRE_ITEMS_LINES = 8; // Gap between customer details and items
     const MAX_ITEM_LINES = 30; // Max item lines for vertical alignment
     const ADDRESS_MAX_LINES = 3; // Max lines for multiline address
+    const ITEM_DESC_MAX_CHARS = 30; // Max chars per line for item description
 
     // Helper to build ESC $ absolute position command
     const absPos = (nL: number, nH: number) =>
@@ -166,53 +167,86 @@ function PrintCashInvoice({
       }
     }
 
-    // Row: Customer VAT Reg. No.
-    cmds += leftPos + (customerVatId || "") + newLine;
+    // Row: Customer VAT Reg. No. (always output a space to preserve row even if empty)
+    cmds += leftPos + (customerVatId || " ") + newLine;
 
-    // Row: Vehicle No.
-    cmds += leftPos + (vehicleNumber || "") + newLine;
+    // Row: Vehicle No. (always output a space to preserve row even if empty)
+    cmds += leftPos + (vehicleNumber || " ") + newLine;
 
-    // Row: Contact No.
-    cmds += leftPos + (customerContactNo || "") + newLine;
+    // Row: Contact No. (always output a space to preserve row even if empty)
+    cmds += leftPos + (customerContactNo || " ") + newLine;
 
     // Gap between customer details and items table
     cmds += newLine.repeat(PRE_ITEMS_LINES);
 
     // ===== Items Table =====
-    // Columns: Description(35) | Price(10) | Discount gap(8) | Qty(10) | Value(16 - rightmost)
+    // Columns: Description(30 max, wraps) | Price(10) | Discount gap(8) | Qty(10) | Value(16 - rightmost)
+    // Description wrapping: if name > 30 chars, split into multiple lines.
+    // Extra lines count toward total printed lines to reduce vertical alignment padding.
+    let totalPrintedLines = 0;
     if (Array.isArray(invoiceData?.invoiceItems)) {
       invoiceData.invoiceItems.forEach((item) => {
-        cmds +=
-          (item.name || "").padEnd(35) +
-          printRightAlign(item.price || "", 10) +
-          " ".repeat(8) +
-          printRightAlign(item.quantity || "", 10) +
-          printRightAlign(item.price * item.quantity || "", 16) +
-          newLine;
+        const itemName = item.name || "";
+        if (itemName.length <= ITEM_DESC_MAX_CHARS) {
+          // Single line item
+          cmds +=
+            itemName.padEnd(ITEM_DESC_MAX_CHARS) +
+            printRightAlign(item.price || "", 10) +
+            " ".repeat(8) +
+            printRightAlign(item.quantity || "", 10) +
+            printRightAlign(item.price * item.quantity || "", 16) +
+            newLine;
+          totalPrintedLines += 1;
+        } else {
+          // Multi-line: split description into chunks of ITEM_DESC_MAX_CHARS
+          const descLines: string[] = [];
+          for (let c = 0; c < itemName.length; c += ITEM_DESC_MAX_CHARS) {
+            descLines.push(itemName.substring(c, c + ITEM_DESC_MAX_CHARS));
+          }
+          // First line: description chunk + price/qty/value
+          cmds +=
+            descLines[0].padEnd(ITEM_DESC_MAX_CHARS) +
+            printRightAlign(item.price || "", 10) +
+            " ".repeat(8) +
+            printRightAlign(item.quantity || "", 10) +
+            printRightAlign(item.price * item.quantity || "", 16) +
+            newLine;
+          totalPrintedLines += 1;
+          // Remaining description lines: only description, no numbers
+          for (let d = 1; d < descLines.length; d++) {
+            cmds += descLines[d].padEnd(ITEM_DESC_MAX_CHARS) + newLine;
+            totalPrintedLines += 1;
+          }
+        }
       });
-      cmds += handleVerticalAlignment(
-        invoiceData.invoiceItems.length,
-        MAX_ITEM_LINES,
-      );
+      cmds += handleVerticalAlignment(totalPrintedLines, MAX_ITEM_LINES);
     }
 
-    // ===== Totals Section (3 separate lines) =====
+    // ===== Totals Section (3 separate lines, right-aligned) =====
+    const alignRight = esc + "a2"; // Right alignment
+    const alignLeft = esc + "a0"; // Left alignment
     const totalAmount = invoiceData?.totalPrice || 0;
     const vatAmount = invoiceData?.vat || 0;
     const subTotal = totalAmount - vatAmount;
 
+    cmds += boldOn + alignRight;
+
     // Sub Total line
-    cmds +=
-      boldOn + totalsPos + printRightAlign(subTotal.toFixed(2), 12) + newLine;
+    cmds += subTotal.toFixed(2) + newLine;
+
+    // 2mm gap before VAT
+    cmds += microFeed(14);
 
     // VAT (18%) line
-    cmds += totalsPos + printRightAlign(vatAmount.toFixed(2), 12) + newLine;
+    cmds += vatAmount.toFixed(2) + newLine;
 
     // 2 lines gap before TOTAL
     cmds += newLine.repeat(2);
 
     // TOTAL line
-    cmds += totalsPos + printRightAlign(totalAmount.toFixed(2), 12) + boldOff;
+    cmds += totalAmount.toFixed(2);
+
+    cmds += boldOff + alignLeft;
 
     // Final commands
     cmds += formFeed + cutPaper;
