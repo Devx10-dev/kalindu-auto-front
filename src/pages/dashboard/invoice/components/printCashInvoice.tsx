@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
 import * as JSPM from "jsprintmanager";
@@ -73,19 +74,24 @@ function PrintCashInvoice({
 
     // ===== Adjustable Position Constants (dot units for ESC $ command) =====
     // Tune these values via test printing on the new pre-printed form
-    const LEFT_POS_NL = 0x1e; // 30 dots (~12.7mm) - left field value start
+    // 1cm ≈ 24 dots at 60dpi
+    const LEFT_POS_NL = 0x36; // 54 dots (~22.7mm / ~1cm more right than before)
     const LEFT_POS_NH = 0x00;
     const RIGHT_POS_NL = 0x7d; // 381 dots (~161mm) - right field value start
     const RIGHT_POS_NH = 0x01;
-    const TOTALS_POS_NL = 0xc0; // 192 dots (~81mm) - totals value position
-    const TOTALS_POS_NH = 0x00;
-    const INITIAL_SKIP_LINES = 2; // Lines to skip past pre-printed header
-    const PRE_ITEMS_LINES = 2; // Gap between customer details and items
-    const MAX_ITEM_LINES = 18; // Max item lines for vertical alignment
+    const TOTALS_POS_NL = 0x10; // 272 dots - totals value position (further right)
+    const TOTALS_POS_NH = 0x01;
+    const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
+    const PRE_ITEMS_LINES = 8; // Gap between customer details and items
+    const MAX_ITEM_LINES = 30; // Max item lines for vertical alignment
+    const ADDRESS_MAX_LINES = 3; // Max lines for multiline address
 
     // Helper to build ESC $ absolute position command
     const absPos = (nL: number, nH: number) =>
       `\x1B\x24${String.fromCharCode(nL)}${String.fromCharCode(nH)}`;
+
+    // ESC J n - advance print position vertically by n/180 inch (micro line feed)
+    const microFeed = (n: number) => `\x1B\x4A${String.fromCharCode(n)}`;
 
     const leftPos = absPos(LEFT_POS_NL, LEFT_POS_NH);
     const rightPos = absPos(RIGHT_POS_NL, RIGHT_POS_NH);
@@ -113,7 +119,7 @@ function PrintCashInvoice({
     // Skip past pre-printed header area
     cmds += newLine.repeat(INITIAL_SKIP_LINES);
 
-    // ===== Customer Details Section (5 rows) =====
+    // ===== Customer Details Section =====
 
     // Row 1: Name + Inv. No.
     cmds +=
@@ -124,43 +130,62 @@ function PrintCashInvoice({
       (invoiceData?.invoiceId || "").slice(-10) +
       newLine;
 
-    // Row 2: Address + Date
+    // 2mm gap between Name and Address (~4 dots at 60dpi ≈ 1/180*14)
+    cmds += microFeed(14);
+
+    // Row 2: Address (multiline - up to 3 lines) + Date on first line
+    const addressLines = customerAddress
+      ? customerAddress.split("\n").slice(0, ADDRESS_MAX_LINES)
+      : [""];
+
+    // First address line + Date
     cmds +=
       leftPos +
-      (customerAddress || "") +
+      (addressLines[0] || "") +
       rightPos +
       " ".repeat(6) +
       (issuedDate || "") +
       newLine;
 
-    // Row 3: Customer VAT Reg. No. + Sale
-    cmds +=
-      leftPos +
-      (customerVatId || "") +
-      rightPos +
-      " ".repeat(6) +
-      (invoiceData?.type || "Credit") +
-      newLine;
+    // Additional address lines + Sale type on second address line
+    for (let i = 1; i < ADDRESS_MAX_LINES; i++) {
+      if (i === 1) {
+        // Second address line + Sale
+        cmds +=
+          leftPos +
+          (addressLines[i] || "") +
+          rightPos +
+          " ".repeat(6) +
+          (invoiceData?.type || "Credit") +
+          newLine;
+      } else {
+        // Third address line (no right-side field)
+        cmds += leftPos + (addressLines[i] || "") + newLine;
+      }
+    }
 
-    // Row 4: Vehicle No.
+    // Row: Customer VAT Reg. No.
+    cmds += leftPos + (customerVatId || "") + newLine;
+
+    // Row: Vehicle No.
     cmds += leftPos + (vehicleNumber || "") + newLine;
 
-    // Row 5: Contact No.
+    // Row: Contact No.
     cmds += leftPos + (customerContactNo || "") + newLine;
 
     // Gap between customer details and items table
     cmds += newLine.repeat(PRE_ITEMS_LINES);
 
     // ===== Items Table =====
-    // Columns: Description(35) | Price(10) | Discount gap(8) | Qty(5) | Value(12)
+    // Columns: Description(35) | Price(10) | Discount gap(5) | Qty(8 - moved 1.5cm right) | Value(14 - rightmost)
     if (Array.isArray(invoiceData?.invoiceItems)) {
       invoiceData.invoiceItems.forEach((item) => {
         cmds +=
           (item.name || "").padEnd(35) +
           printRightAlign(item.price || "", 10) +
-          " ".repeat(8) +
-          printRightAlign(item.quantity || "", 5) +
-          printRightAlign(item.price * item.quantity || "", 12) +
+          " ".repeat(5) +
+          printRightAlign(item.quantity || "", 8) +
+          printRightAlign(item.price * item.quantity || "", 14) +
           newLine;
       });
       cmds += handleVerticalAlignment(
@@ -170,7 +195,6 @@ function PrintCashInvoice({
     }
 
     // ===== Totals Section (3 separate lines) =====
-    // Sub Total = totalPrice - vat (totalPrice may or may not include VAT depending on caller)
     const totalAmount = invoiceData?.totalPrice || 0;
     const vatAmount = invoiceData?.vat || 0;
     const subTotal = totalAmount - vatAmount;
@@ -181,6 +205,9 @@ function PrintCashInvoice({
 
     // VAT (18%) line
     cmds += totalsPos + printRightAlign(vatAmount.toFixed(2), 12) + newLine;
+
+    // 2 lines gap before TOTAL
+    cmds += newLine.repeat(2);
 
     // TOTAL line
     cmds += totalsPos + printRightAlign(totalAmount.toFixed(2), 12) + boldOff;
@@ -223,12 +250,12 @@ function PrintCashInvoice({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center w-full">
           <label className="mr-2 w-full">Address:</label>
-          <Input
-            type="text"
+          <Textarea
             value={customerAddress}
             onChange={(e) => setCustomerAddress(e.target.value)}
             className="border rounded px-2 py-1 w-full"
-            placeholder="Enter Customer Address"
+            placeholder="Enter Customer Address (use Enter for new lines, max 3 lines)"
+            rows={3}
           />
         </div>
       </div>
