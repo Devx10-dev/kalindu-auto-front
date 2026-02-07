@@ -28,7 +28,8 @@ function BillSummaryViewCardCredit({
   discountAmount: number;
   invoiceData: InvoiceState;
 }) {
-  const printButtonRef = useRef<HTMLButtonElement>(null);
+  const printButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [printDialogOpen, setPrintDialogOpen] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState<InvoiceData | null>(
     null,
   );
@@ -135,7 +136,7 @@ function BillSummaryViewCardCredit({
             <div className="flex-space-between w-full">
               <Button
                 className="mt-4 mb-3 w-full"
-                onClick={() => printButtonRef.current.click()}
+                onClick={() => setPrintDialogOpen(true)}
               >
                 <Printer className={"mr-2"} /> Print Invoice
               </Button>
@@ -143,7 +144,13 @@ function BillSummaryViewCardCredit({
           </div>
         </CardContent>
       </Card>
-      <PrintInvoice buttonRef={printButtonRef} invoiceData={invoiceDetails} />
+      <PrintInvoice
+        buttonRef={printButtonRef}
+        invoiceData={invoiceDetails}
+        popupMode
+        dialogOpen={printDialogOpen}
+        onDialogOpenChange={setPrintDialogOpen}
+      />
     </>
   );
 }

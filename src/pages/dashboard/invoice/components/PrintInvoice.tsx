@@ -1,4 +1,12 @@
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,11 +17,16 @@ import { useEffect, useState } from "react";
 function PrintInvoice({
   buttonRef,
   invoiceData,
+  popupMode,
+  dialogOpen,
+  onDialogOpenChange,
 }: {
-  buttonRef: React.MutableRefObject<HTMLButtonElement>;
-  invoiceData: InvoiceData;
+  buttonRef: React.MutableRefObject<HTMLButtonElement | null>;
+  invoiceData: InvoiceData | null;
+  popupMode?: boolean;
+  dialogOpen?: boolean;
+  onDialogOpenChange?: (open: boolean) => void;
 }) {
-  console.log(invoiceData);
   const { toast } = useToast();
   const [printToDefault, setPrintToDefault] = useState<boolean>(true);
   const [customerVatId, setCustomerVatId] = useState<string>("");
@@ -57,6 +70,13 @@ function PrintInvoice({
   }, [invoiceData]);
 
   const handlePrint = () => {
+    if (!invoiceData) {
+      return toast({
+        title: "No invoice data",
+        description: "Please wait for the invoice to load before printing.",
+        variant: "destructive",
+      });
+    }
     if (!printToDefault) {
       return toast({
         title: "Printer Selection Required",
@@ -218,7 +238,84 @@ function PrintInvoice({
 
     cpj.printerCommands = cmds.trim();
     cpj.sendToClient();
+    if (popupMode) {
+      onDialogOpenChange?.(false);
+    }
   };
+
+  const inputFields = (
+    <div className="space-y-3">
+      {invoiceData?.vat > 0 && (
+        <div className="flex items-center justify-between">
+          <label className="mr-2 w-36 shrink-0">Customer VAT ID:</label>
+          <Input
+            type="text"
+            value={customerVatId}
+            onChange={(e) => setCustomerVatId(e.target.value)}
+            className="border rounded px-2 py-1 flex-1"
+            placeholder="Enter Customer VAT ID"
+          />
+        </div>
+      )}
+      <div className="flex items-center justify-between">
+        <label className="mr-2 w-36 shrink-0">Vehicle Number:</label>
+        <Input
+          type="text"
+          value={vehicleNumber}
+          onChange={(e) => setVehicleNumber(e.target.value)}
+          className="border rounded px-2 py-1 flex-1"
+          placeholder="Enter Vehicle Number"
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <label className="mr-2 w-36 shrink-0">Address:</label>
+        <Input
+          type="text"
+          value={customerAddress}
+          onChange={(e) => setCustomerAddress(e.target.value)}
+          className="border rounded px-2 py-1 flex-1"
+          placeholder="Enter Customer Address"
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <label className="mr-2 w-36 shrink-0">Contact No:</label>
+        <Input
+          type="text"
+          value={customerContactNo}
+          onChange={(e) => setCustomerContactNo(e.target.value)}
+          className="border rounded px-2 py-1 flex-1"
+          placeholder="Enter Contact Number"
+        />
+      </div>
+    </div>
+  );
+
+  if (popupMode) {
+    return (
+      <>
+        <Dialog open={dialogOpen} onOpenChange={onDialogOpenChange}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Print Invoice</DialogTitle>
+              <DialogDescription>
+                Enter customer details to include on the printed invoice.
+              </DialogDescription>
+            </DialogHeader>
+            {inputFields}
+            <DialogFooter>
+              <Button onClick={() => handlePrint()}>Print</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <Button
+          style={{ display: "none" }}
+          hidden
+          ref={buttonRef}
+          onClick={() => handlePrint()}
+        />
+      </>
+    );
+  }
 
   return (
     <div>
@@ -274,7 +371,7 @@ function PrintInvoice({
       </div>
       <Button
         style={{ display: "none" }}
-        hidden={true}
+        hidden
         ref={buttonRef}
         onClick={() => handlePrint()}
       />

@@ -1,24 +1,22 @@
-import InvoiceTable from "./components/InvoiceTable";
-import AddItem from "./components/AddItem";
-import BillSummary from "./components/BillSummary";
-import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
-import useAxiosPrivate from "@/hooks/usePrivateAxios";
-import CreditorInvoiceAPI from "./api/creditorInvoiceAPI";
-import { useQuery } from "@tanstack/react-query";
-import Select from "react-select";
-import useCreditorInvoiceStore from "./context/useCreditorInvoiceStore";
-import { ReceiptIcon } from "lucide-react";
 import PageHeader from "@/components/card/PageHeader";
-import { Label } from "@/components/ui/label";
-import React, { useEffect, useState } from "react";
-import { SparePartService } from "@/service/sparePartInventory/sparePartService.ts";
+import { RequiredLabel } from "@/components/formElements/FormLabel.tsx";
+import PlusIcon from "@/components/icon/PlusIcon.tsx";
 import { FormModal } from "@/components/modal/FormModal.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import PlusIcon from "@/components/icon/PlusIcon.tsx";
 import { CardContent, CardHeader } from "@/components/ui/card.tsx";
+import useAxiosPrivate from "@/hooks/usePrivateAxios";
 import Commissions from "@/pages/dashboard/invoice/creditor/components/Commisions.tsx";
+import { SparePartService } from "@/service/sparePartInventory/sparePartService.ts";
+import { useQuery } from "@tanstack/react-query";
+import { ReceiptIcon } from "lucide-react";
+import React, { useState } from "react";
+import Select from "react-select";
 import CreditorAPI from "../../creditors/api/CreditorAPI";
-import { RequiredLabel } from "@/components/formElements/FormLabel.tsx";
+import AddItem from "./components/AddItem";
+import BillSummary from "./components/BillSummary";
+import InvoiceTable from "./components/InvoiceTable";
+import OutsourcedItemDetails from "./components/OutSourcedItemDetails";
+import useCreditorInvoiceStore from "./context/useCreditorInvoiceStore";
 
 const CreditorInvoiceBase: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
