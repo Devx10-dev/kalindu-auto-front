@@ -98,7 +98,7 @@ function PrintInvoice({
     const LEFT_POS_NH = 0x00;
     const RIGHT_POS_NL = 0x7d; // 381 dots (~161mm) - right field value start
     const RIGHT_POS_NH = 0x01;
-    const TOTALS_POS_NL = 0x90; // 400 dots - totals value position (rightmost)
+    const TOTALS_POS_NL = 0x7d; //300 dots - totals value position (rightmost)
     const TOTALS_POS_NH = 0x01;
     const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
     const PRE_ITEMS_LINES = 5; // Gap between customer details and items
@@ -114,7 +114,7 @@ function PrintInvoice({
     const microFeed = (n: number) => `\x1B\x4A${String.fromCharCode(n)}`;
 
     const leftPos = absPos(LEFT_POS_NL, LEFT_POS_NH);
-    const leftPosVatId = absPos(LEFT_POS_NL + 10, LEFT_POS_NH); // Slightly indented for VAT ID
+    const leftPosVatId = absPos(LEFT_POS_NL + 80, LEFT_POS_NH); // Slightly indented for VAT ID
     const rightPos = absPos(RIGHT_POS_NL, RIGHT_POS_NH);
     const totalsPos = absPos(TOTALS_POS_NL, TOTALS_POS_NH);
 
@@ -156,7 +156,7 @@ function PrintInvoice({
 
     // Row 2: Address (multiline - up to 3 lines, 30 char limit per line) + Date on first line
     // Split address: first by newlines, then wrap each line at 30 chars
-    const ADDRESS_LINE_MAX_CHARS = 30;
+    const ADDRESS_LINE_MAX_CHARS = 32;
     const rawAddressLines = customerAddress
       ? customerAddress.split("\n")
       : [""];
@@ -205,10 +205,10 @@ function PrintInvoice({
     }
 
     // Row: Customer VAT Reg. No. (always output a space to preserve row even if empty)
-    cmds += leftPosVatId + (customerVatId || " ") + newLine + newLine;
+    cmds += leftPosVatId + (customerVatId || " ") + newLine + microFeed(14);
 
     // Row: Vehicle No. (always output a space to preserve row even if empty)
-    cmds += leftPos + (vehicleNumber || " ") + newLine + newLine;
+    cmds += leftPos + (vehicleNumber || " ") + newLine + microFeed(14);
 
     // Row: Contact No. (always output a space to preserve row even if empty)
     cmds += leftPos + (customerContactNo || " ") + newLine;
