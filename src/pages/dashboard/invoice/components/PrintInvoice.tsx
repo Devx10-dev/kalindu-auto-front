@@ -114,6 +114,7 @@ function PrintInvoice({
     const microFeed = (n: number) => `\x1B\x4A${String.fromCharCode(n)}`;
 
     const leftPos = absPos(LEFT_POS_NL, LEFT_POS_NH);
+    const leftPosVatId = absPos(LEFT_POS_NL + 10, LEFT_POS_NH); // Slightly indented for VAT ID
     const rightPos = absPos(RIGHT_POS_NL, RIGHT_POS_NH);
     const totalsPos = absPos(TOTALS_POS_NL, TOTALS_POS_NH);
 
@@ -204,10 +205,10 @@ function PrintInvoice({
     }
 
     // Row: Customer VAT Reg. No. (always output a space to preserve row even if empty)
-    cmds += leftPos + (customerVatId || " ") + newLine;
+    cmds += leftPosVatId + (customerVatId || " ") + newLine + newLine;
 
     // Row: Vehicle No. (always output a space to preserve row even if empty)
-    cmds += leftPos + (vehicleNumber || " ") + newLine;
+    cmds += leftPos + (vehicleNumber || " ") + newLine + newLine;
 
     // Row: Contact No. (always output a space to preserve row even if empty)
     cmds += leftPos + (customerContactNo || " ") + newLine;
@@ -228,7 +229,7 @@ function PrintInvoice({
           cmds +=
             itemName.padEnd(ITEM_DESC_MAX_CHARS) +
             printRightAlign(item.price || "", 12) +
-            " ".repeat(10) +
+            " ".repeat(8) +
             printRightAlign(item.quantity || "", 12) +
             printRightAlign(item.price * item.quantity || "", 18) +
             newLine;
@@ -243,7 +244,7 @@ function PrintInvoice({
           cmds +=
             descLines[0].padEnd(ITEM_DESC_MAX_CHARS) +
             printRightAlign(item.price || "", 12) +
-            " ".repeat(10) +
+            " ".repeat(8) +
             printRightAlign(item.quantity || "", 12) +
             printRightAlign(item.price * item.quantity || "", 18) +
             newLine;
