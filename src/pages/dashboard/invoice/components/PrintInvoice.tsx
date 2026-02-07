@@ -96,13 +96,15 @@ function PrintInvoice({
     // 1cm ≈ 24 dots at 60dpi
     const LEFT_POS_NL = 0x36; // 54 dots (~22.7mm / ~1cm more right than before)
     const LEFT_POS_NH = 0x00;
+    // 100 dots (slightly more right than regular left pos for better alignment)
+    const LEFT_POS_VAT_ID_NL = 0x64; // 100 dots
     const RIGHT_POS_NL = 0x7d; // 381 dots (~161mm) - right field value start
     const RIGHT_POS_NH = 0x01;
     const TOTALS_POS_NL = 0x7d; //300 dots - totals value position (rightmost)
     const TOTALS_POS_NH = 0x01;
     const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
     const PRE_ITEMS_LINES = 5; // Gap between customer details and items
-    const MAX_ITEM_LINES = 30; // Max item lines for vertical alignment
+    const MAX_ITEM_LINES = 31; // Max item lines for vertical alignment
     const ADDRESS_MAX_LINES = 3; // Max lines for multiline address
     const ITEM_DESC_MAX_CHARS = 30; // Max chars per line for item description
 
@@ -114,7 +116,7 @@ function PrintInvoice({
     const microFeed = (n: number) => `\x1B\x4A${String.fromCharCode(n)}`;
 
     const leftPos = absPos(LEFT_POS_NL, LEFT_POS_NH);
-    const leftPosVatId = absPos(LEFT_POS_NL + 80, LEFT_POS_NH); // Slightly indented for VAT ID
+    const leftPosVatId = absPos(LEFT_POS_VAT_ID_NL , LEFT_POS_NH); // Slightly indented for VAT ID
     const rightPos = absPos(RIGHT_POS_NL, RIGHT_POS_NH);
     const totalsPos = absPos(TOTALS_POS_NL, TOTALS_POS_NH);
 
