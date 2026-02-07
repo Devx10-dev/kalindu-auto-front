@@ -78,8 +78,8 @@ function PrintInvoice({
     const RIGHT_POS_NH = 0x01;
     const TOTALS_POS_NL = 0xc0; // 192 dots (~81mm) - totals value position
     const TOTALS_POS_NH = 0x00;
-    const INITIAL_SKIP_LINES = 6; // Lines to skip past pre-printed header
-    const PRE_ITEMS_LINES = 6; // Gap between customer details and items
+    const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
+    const PRE_ITEMS_LINES = 8; // Gap between customer details and items
     const MAX_ITEM_LINES = 18; // Max item lines for vertical alignment
 
     // Helper to build ESC $ absolute position command
