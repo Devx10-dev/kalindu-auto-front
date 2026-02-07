@@ -78,10 +78,10 @@ function PrintInvoice({
     const LEFT_POS_NH = 0x00;
     const RIGHT_POS_NL = 0x7d; // 381 dots (~161mm) - right field value start
     const RIGHT_POS_NH = 0x01;
-    const TOTALS_POS_NL = 0x10; // 272 dots - totals value position (further right)
+    const TOTALS_POS_NL = 0x40; // 320 dots - totals value position (further right)
     const TOTALS_POS_NH = 0x01;
     const INITIAL_SKIP_LINES = 7; // Lines to skip past pre-printed header
-    const PRE_ITEMS_LINES = 8; // Gap between customer details and items
+    const PRE_ITEMS_LINES = 5; // Gap between customer details and items
     const MAX_ITEM_LINES = 30; // Max item lines for vertical alignment
     const ADDRESS_MAX_LINES = 3; // Max lines for multiline address
 
@@ -149,6 +149,8 @@ function PrintInvoice({
     // Additional address lines + Sale type on second address line
     for (let i = 1; i < ADDRESS_MAX_LINES; i++) {
       if (i === 1) {
+        // 2mm micro feed so Sale aligns lower on the form
+        cmds += microFeed(14);
         // Second address line + Sale
         cmds +=
           leftPos +
@@ -176,15 +178,15 @@ function PrintInvoice({
     cmds += newLine.repeat(PRE_ITEMS_LINES);
 
     // ===== Items Table =====
-    // Columns: Description(35) | Price(10) | Discount gap(5) | Qty(8 - moved 1.5cm right) | Value(12 - rightmost)
+    // Columns: Description(35) | Price(10) | Discount gap(8) | Qty(10) | Value(16 - rightmost)
     if (Array.isArray(invoiceData?.invoiceItems)) {
       invoiceData.invoiceItems.forEach((item) => {
         cmds +=
           (item.name || "").padEnd(35) +
           printRightAlign(item.price || "", 10) +
-          " ".repeat(5) +
-          printRightAlign(item.quantity || "", 8) +
-          printRightAlign(item.price * item.quantity || "", 14) +
+          " ".repeat(8) +
+          printRightAlign(item.quantity || "", 10) +
+          printRightAlign(item.price * item.quantity || "", 16) +
           newLine;
       });
       cmds += handleVerticalAlignment(
