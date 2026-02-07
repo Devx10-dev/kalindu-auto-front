@@ -198,7 +198,7 @@ function PrintInvoice({
           (addressLines[i] || "") +
           rightPos +
           " ".repeat(6) +
-          (invoiceData?.type || "Credit") +
+          (invoiceData?.type || "Credit") 
           newLine;
       } else {
         // Third address line (no right-side field)
@@ -268,6 +268,9 @@ function PrintInvoice({
 
     cmds += boldOn;
 
+    // 2mm gap before totals
+    cmds += microFeed(14);
+
     // Sub Total line
     cmds += totalsPos + printRightAlign(subTotal.toFixed(2), 12) + newLine;
 
@@ -278,7 +281,7 @@ function PrintInvoice({
     cmds += totalsPos + printRightAlign(vatAmount.toFixed(2), 12) + newLine;
 
     // 2 lines gap before TOTAL
-    cmds += newLine.repeat(2);
+    cmds += newLine.repeat(3);
 
     // TOTAL line
     cmds += totalsPos + printRightAlign(totalAmount.toFixed(2), 12);
