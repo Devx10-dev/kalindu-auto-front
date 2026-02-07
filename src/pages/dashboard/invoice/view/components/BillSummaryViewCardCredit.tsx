@@ -61,6 +61,7 @@ function BillSummaryViewCardCredit({
       totalDiscount: invoiceData?.totalDiscount,
       totalPrice: invoiceData?.totalPrice,
       contactNo: invoiceData?.creditor.primaryContact,
+      address: invoiceData?.creditor?.address || "",
       // vehicle: invoiceData?.vehicleNo,
       date: extractDateFromIssuedTime(invoiceData?.issuedTime),
       type: "CREDIT",

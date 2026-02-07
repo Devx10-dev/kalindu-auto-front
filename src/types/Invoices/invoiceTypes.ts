@@ -29,6 +29,7 @@ export interface InvoiceData {
   totalDiscount?: number;
   totalPrice?: number;
   contactNo?: string;
+  address?: string;
   vehicle?: string;
   date?: string;
   type?: string;
