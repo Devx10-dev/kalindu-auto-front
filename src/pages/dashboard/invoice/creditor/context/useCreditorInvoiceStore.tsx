@@ -182,25 +182,33 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
 }));
 
 /**
- * Generates a unique invoice ID in the format INV-CRE-YYMMDDXXXX
+ * Generates a unique invoice ID in the format YYMMM_CR01_XXXXX
  *
- * @returns {string} The generated invoice ID
+ * Format: YYMMM_QQQQ_XXXXX  (as per invoice serial number specification)
+ *   - YY:   Last two digits of the calendar year
+ *   - MMM:  First three characters of the month name in uppercase (e.g. OCT)
+ *   - CR01: Organisational code for credit invoices
+ *   - XXXXX: Monthly sequential serial number persisted in localStorage,
+ *            automatically resets at the start of each new month
  *
- * @description
- * This function creates a unique invoice ID using the following components:
- * 1. A fixed prefix: 'INV-CRE-'
- * 2. Current date in YYMMDD format:
- *    - Uses toISOString() to get the date in ISO format (YYYY-MM-DD)
- *    - Slices from index 2 to 10 to get 'YY-MM-DD'
- *    - Removes hyphens to get 'YYMMDD'
- * 3. A random 4-digit number:
- *    - Generates a number between 1000 and 9999
+ * Example: 25OCT_CR01_1  (first credit invoice in October 2025)
  */
 const generateInvoiceId = (): string => {
+  const MONTH_NAMES = [
+    "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+    "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+  ];
   const now = new Date();
-  const date = now.toISOString().slice(2, 10).replace(/-/g, "");
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `INV-CRE-${date}${random}`;
+  const yy = now.getFullYear().toString().slice(2);
+  const mmm = MONTH_NAMES[now.getMonth()];
+  const periodKey = `${yy}${mmm}`;
+
+  const storageKey = `cre_invoice_serial_${periodKey}`;
+  const current = parseInt(localStorage.getItem(storageKey) ?? "0", 10);
+  const next = current + 1;
+  localStorage.setItem(storageKey, next.toString());
+
+  return `${periodKey}_CR01_${next}`;
 };
 
 export default useCreditorInvoiceStore;
