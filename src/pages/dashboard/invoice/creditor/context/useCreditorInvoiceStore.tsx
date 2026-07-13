@@ -137,9 +137,7 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
 
   getRequestData: () => {
     const state = get();
-    const invoiceId = generateInvoiceId();
     return {
-      invoiceId: invoiceId,
       creditorId: state.creditorID,
       totalPrice: state.totalPrice,
       totalDiscount: state.discountAmount,
@@ -180,35 +178,5 @@ const useCreditorInvoiceStore = create<InvoiceState>((set, get) => ({
       invoiceItemDTOList: [],
     }),
 }));
-
-/**
- * Generates a unique invoice ID in the format YYMMM_CR01_XXXXX
- *
- * Format: YYMMM_QQQQ_XXXXX  (as per invoice serial number specification)
- *   - YY:   Last two digits of the calendar year
- *   - MMM:  First three characters of the month name in uppercase (e.g. OCT)
- *   - CR01: Organisational code for credit invoices
- *   - XXXXX: Monthly sequential serial number persisted in localStorage,
- *            automatically resets at the start of each new month
- *
- * Example: 25OCT_CR01_1  (first credit invoice in October 2025)
- */
-const generateInvoiceId = (): string => {
-  const MONTH_NAMES = [
-    "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-    "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
-  ];
-  const now = new Date();
-  const yy = now.getFullYear().toString().slice(2);
-  const mmm = MONTH_NAMES[now.getMonth()];
-  const periodKey = `${yy}${mmm}`;
-
-  const storageKey = `cre_invoice_serial_${periodKey}`;
-  const current = parseInt(localStorage.getItem(storageKey) ?? "0", 10);
-  const next = current + 1;
-  localStorage.setItem(storageKey, next.toString());
-
-  return `${periodKey}_CR01_${next}`;
-};
 
 export default useCreditorInvoiceStore;

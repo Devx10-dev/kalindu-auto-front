@@ -42,6 +42,17 @@ class CreditInvoiceService extends Service {
     }
   }
 
+  async fetchNextInvoiceSerial(): Promise<string> {
+    try {
+      const response = await this.api.get<{ invoiceSerial: string }>(
+        `${CREDIT_INVOICE_URL}/next-serial`,
+      );
+      return response.data.invoiceSerial;
+    } catch (error) {
+      throw new Error("Failed to fetch next invoice serial");
+    }
+  }
+
   async createCreditInvoice(
     creditInvoiceData: InvoiceState,
   ): Promise<InvoiceState> {
