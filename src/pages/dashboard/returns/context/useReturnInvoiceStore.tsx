@@ -349,7 +349,13 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
   getRequestData: () => {
     const state = get();
 
+    // Credit invoice IDs are generated server-side (see CreditInvoiceService#generateNextInvoiceId).
+    // Only cash exchange invoices still need a client-generated ID here.
     const generateInvoiceId = () => {
+      if (state.newInvoiceType !== "CASH") {
+        return undefined;
+      }
+
       const now = new Date();
       const year = now.getFullYear().toString().slice(2); // Last two digits of the year
       const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Month (0-indexed, so +1)
@@ -362,9 +368,7 @@ const useReturnInvoiceStore = create<InvoiceState>((set, get) => ({
         .toString()
         .padStart(4, "0");
 
-      console.log(state.newInvoiceType);
-      const invoiceType = state.newInvoiceType == "CASH" ? "CASH" : "CRE";
-      return `INV-${invoiceType}-${year}${month}${day}${uniqueNumber}`;
+      return `INV-CASH-${year}${month}${day}${uniqueNumber}`;
     };
 
     const invoiceId = generateInvoiceId();

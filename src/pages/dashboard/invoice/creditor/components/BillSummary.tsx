@@ -84,7 +84,7 @@ const BillSummary: React.FC = () => {
         const formattedInvoiceData = {
           ...(responseData as unknown as InvoiceData),
           creditorName: responseData.creditor.shopName,
-          invoiceId: responseData.invoiceId.toString().split("-")[2],
+          invoiceId: responseData.invoiceId?.toString() ?? "",
           issuedTime: extractDateFromIssuedTime(responseData.issuedTime),
           contactNo: responseData.creditor.primaryContact,
           address: responseData.creditor?.address || "",
