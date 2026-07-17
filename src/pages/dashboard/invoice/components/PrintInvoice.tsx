@@ -149,8 +149,8 @@ function PrintInvoice({
       leftPos +
       (invoiceData?.creditorName || "") +
       rightPos +
-      " ".repeat(6) +
-      (invoiceData?.invoiceId || "").slice(-10) +
+      " ".repeat(3) +
+      (invoiceData?.invoiceId || "") +
       newLine;
 
     // 2mm gap between Name and Address (~4 dots at 60dpi ≈ 1/180*14)
@@ -183,7 +183,7 @@ function PrintInvoice({
       leftPos +
       (addressLines[0] || "") +
       rightPos +
-      " ".repeat(6) +
+      " ".repeat(3) +
       (issuedDate || "") +
       newLine;
 
@@ -197,7 +197,7 @@ function PrintInvoice({
           leftPos +
           (addressLines[i] || "") +
           rightPos +
-          " ".repeat(6) +
+          " ".repeat(3) +
           (invoiceData?.type || "Credit");
         newLine;
       } else {
