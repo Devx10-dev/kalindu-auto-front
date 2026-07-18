@@ -19,7 +19,7 @@ import taxInvoiceTemplate from "./tax_invoice_dotmatrix.html?raw";
 // Developer-controlled switch: false = existing JSPrintManager/ESC-command
 // dot-matrix print, true = new HTML template printed via the browser's
 // native print dialog. Flip this to change the print method for everyone.
-const USE_NEW_TAX_INVOICE_FORMAT = false;
+const USE_NEW_TAX_INVOICE_FORMAT = true;
 
 // The pre-printed form's items area has fixed physical space for this many
 // rows; extra items beyond this are clipped so the summary section below
