@@ -234,14 +234,11 @@ function HandlingReturn() {
       setSelectedInvoice(baseInvoice);
       setCustomer(baseInvoice?.customer);
       setPurchaseDate(baseInvoice?.date);
-      setNewInvoiceType(findInvoiceType(baseInvoice?.invoiceId));
       setSourceInvoiceId(baseInvoice?.invoiceId);
       resetExchangeItemTable();
-      setNewInvoiceType(
-        baseInvoice?.invoiceId === undefined
-          ? ""
-          : baseInvoice?.invoiceId.split("-")[1],
-      );
+      // Invoice type comes from the backend response now; the ID format is
+      // government-defined and can no longer be relied on to derive the type.
+      setNewInvoiceType(baseInvoice?.invoiceType);
     },
     [
       setSelectedInvoice,
@@ -260,12 +257,6 @@ function HandlingReturn() {
     handleSourceInvoice(selectedBaseInvoice);
     // }
   }, [selectedBaseInvoice, sourceInvoiceId]);
-
-  const findInvoiceType = (invoiceId: string): string => {
-    const parts = invoiceId?.split("-");
-    const invoiceType = parts[1];
-    return invoiceType;
-  };
 
   const subtotal = useMemo(() => {
     return invoiceItemDTOList.reduce(
@@ -287,7 +278,7 @@ function HandlingReturn() {
 
   useEffect(() => {
     if (selectedInvoice) {
-      setSelectedInvoiceType(selectedInvoice.invoiceId.split("-")[1]);
+      setSelectedInvoiceType(selectedInvoice.invoiceType);
     }
   }, [selectedInvoice]);
 
@@ -348,7 +339,7 @@ function HandlingReturn() {
   // set vat related settings
   useEffect(() => {
     if (selectedInvoice) {
-      const invoiceType = findInvoiceType(sourceInvoiceId);
+      const invoiceType = selectedInvoice?.invoiceType;
       console.log("Invoice Type: ", invoiceType);
       console.log("Selected Invoice VAT: ", selectedInvoice?.vat);
       console.log(
