@@ -11,8 +11,35 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { InvoiceData } from "@/types/Invoices/invoiceTypes";
+import { numberToWords } from "@/utils/numberToWords";
 import * as JSPM from "jsprintmanager";
 import { useEffect, useState } from "react";
+import taxInvoiceTemplate from "./tax_invoice_dotmatrix.html?raw";
+
+// Developer-controlled switch: false = existing JSPrintManager/ESC-command
+// dot-matrix print, true = new HTML template printed via the browser's
+// native print dialog. Flip this to change the print method for everyone.
+const USE_NEW_TAX_INVOICE_FORMAT = false;
+
+// The pre-printed form's items area has fixed physical space for this many
+// rows; extra items beyond this are clipped so the summary section below
+// always lands in the same fixed position on the page.
+const FIXED_TAX_INVOICE_ITEM_ROWS = 17;
+
+const escapeHtml = (value: string | number | undefined | null) =>
+  String(value ?? "").replace(
+    /[&<>"']/g,
+    (char) =>
+      (
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        }) as Record<string, string>
+      )[char],
+  );
 
 function PrintInvoice({
   buttonRef,
@@ -33,6 +60,8 @@ function PrintInvoice({
   const [vehicleNumber, setVehicleNumber] = useState<string>("");
   const [customerAddress, setCustomerAddress] = useState<string>("");
   const [customerContactNo, setCustomerContactNo] = useState<string>("");
+  const [additionalInfo, setAdditionalInfo] = useState<string>("");
+  const [modeOfPayment, setModeOfPayment] = useState<string>("");
 
   const printRightAlign = (value: string | number, totalLength: number) => {
     const strValue = value.toString();
@@ -67,7 +96,106 @@ function PrintInvoice({
     if (invoiceData?.vehicle) {
       setVehicleNumber(invoiceData.vehicle);
     }
+    if (invoiceData?.type) {
+      setModeOfPayment(invoiceData.type);
+    }
   }, [invoiceData]);
+
+  // Builds the populated tax-invoice HTML string from the template, filling
+  // in whatever the backend gave us plus the values the user entered in this
+  // dialog (VAT ID, vehicle no, address, contact no aren't always available
+  // from the backend, so they're collected here the same way the existing
+  // print flow already does).
+  const buildTaxInvoiceHtml = (data: InvoiceData) => {
+    const today = new Date();
+    const todayFormatted = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    const totalAmount = data.totalPrice || 0;
+    const vatAmount = data.vat || 0;
+    const subTotal = totalAmount - vatAmount;
+    const vatPercentage =
+      subTotal > 0 ? Math.round((vatAmount / subTotal) * 100) : 0;
+
+    const items = Array.isArray(data.invoiceItems) ? data.invoiceItems : [];
+    const rows = items.slice(0, FIXED_TAX_INVOICE_ITEM_ROWS).map(
+      (item) => `
+      <tr>
+        <td class="col-ref">${escapeHtml(item.code)}</td>
+        <td class="col-desc">${escapeHtml(item.name)}</td>
+        <td class="col-qty">${escapeHtml(item.quantity)}</td>
+        <td class="col-unit">${escapeHtml((item.price || 0).toFixed(2))}</td>
+        <td class="col-amt">${escapeHtml(((item.price || 0) * (item.quantity || 0)).toFixed(2))}</td>
+      </tr>`,
+    );
+    while (rows.length < FIXED_TAX_INVOICE_ITEM_ROWS) {
+      rows.push(
+        `\n      <tr><td class="col-ref">&nbsp;</td><td class="col-desc">&nbsp;</td><td class="col-qty">&nbsp;</td><td class="col-unit">&nbsp;</td><td class="col-amt">&nbsp;</td></tr>`,
+      );
+    }
+
+    const purchaserAddress = (customerAddress || "").replace(/\n/g, "<br>");
+
+    return taxInvoiceTemplate
+      .replace(/{{INVOICE_DATE}}/g, escapeHtml(todayFormatted))
+      .replace(/{{INVOICE_NO}}/g, escapeHtml(data.invoiceId))
+      .replace(/{{PURCHASER_TIN}}/g, escapeHtml(customerVatId))
+      .replace(/{{PURCHASER_NAME}}/g, escapeHtml(data.creditorName))
+      .replace(/{{PURCHASER_ADDRESS}}/g, purchaserAddress)
+      .replace(/{{PURCHASER_TEL}}/g, escapeHtml(customerContactNo))
+      .replace(/{{DATE_OF_SUPPLY}}/g, escapeHtml(todayFormatted))
+      .replace(/{{ADDITIONAL_INFO}}/g, escapeHtml(additionalInfo))
+      .replace(/{{ITEM_ROWS}}/g, rows.join(""))
+      .replace(/{{TOTAL_VALUE}}/g, escapeHtml(subTotal.toFixed(2)))
+      .replace(/{{VAT_PERCENTAGE}}/g, escapeHtml(vatPercentage))
+      .replace(/{{VAT_AMOUNT}}/g, escapeHtml(vatAmount.toFixed(2)))
+      .replace(/{{TOTAL_AMOUNT}}/g, escapeHtml(totalAmount.toFixed(2)))
+      .replace(/{{TOTAL_WORDS}}/g, escapeHtml(numberToWords(totalAmount)))
+      .replace(/{{MODE_OF_PAYMENT}}/g, escapeHtml(modeOfPayment));
+  };
+
+  // Prints an HTML string via the browser's native print dialog (no
+  // JSPrintManager involved) by loading it into a hidden iframe and
+  // triggering window.print() on it - same experience as any normal
+  // browser print (preview, printer selection, etc).
+  const printHtmlViaBrowser = (html: string) => {
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "fixed";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    document.body.appendChild(iframe);
+
+    const cleanup = () => {
+      document.body.removeChild(iframe);
+    };
+
+    iframe.onload = () => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+    };
+    iframe.contentWindow?.addEventListener("afterprint", cleanup);
+
+    const doc = iframe.contentDocument;
+    if (!doc) {
+      cleanup();
+      return;
+    }
+    doc.open();
+    doc.write(html);
+    doc.close();
+  };
+
+  const handlePrintNewFormat = () => {
+    const html = buildTaxInvoiceHtml(invoiceData);
+    printHtmlViaBrowser(html);
+    if (popupMode) {
+      onDialogOpenChange?.(false);
+    }
+  };
 
   const handlePrint = () => {
     if (!invoiceData) {
@@ -76,6 +204,9 @@ function PrintInvoice({
         description: "Please wait for the invoice to load before printing.",
         variant: "destructive",
       });
+    }
+    if (USE_NEW_TAX_INVOICE_FORMAT) {
+      return handlePrintNewFormat();
     }
     if (!printToDefault) {
       return toast({
@@ -343,6 +474,26 @@ function PrintInvoice({
           placeholder="Enter Contact Number"
         />
       </div>
+      <div className="flex items-center justify-between">
+        <label className="mr-2 w-36 shrink-0">Additional Info:</label>
+        <Input
+          type="text"
+          value={additionalInfo}
+          onChange={(e) => setAdditionalInfo(e.target.value)}
+          className="border rounded px-2 py-1 flex-1"
+          placeholder="Enter Additional Information"
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <label className="mr-2 w-36 shrink-0">Mode of Payment:</label>
+        <Input
+          type="text"
+          value={modeOfPayment}
+          onChange={(e) => setModeOfPayment(e.target.value)}
+          className="border rounded px-2 py-1 flex-1"
+          placeholder="e.g. Cash, Credit, Cheque"
+        />
+      </div>
     </div>
   );
 
@@ -422,6 +573,30 @@ function PrintInvoice({
             onChange={(e) => setCustomerContactNo(e.target.value)}
             className="border rounded px-2 py-1 w-full"
             placeholder="Enter Contact Number"
+          />
+        </div>
+      </div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center w-full">
+          <label className="mr-2 w-full">Additional Info:</label>
+          <Input
+            type="text"
+            value={additionalInfo}
+            onChange={(e) => setAdditionalInfo(e.target.value)}
+            className="border rounded px-2 py-1 w-full"
+            placeholder="Enter Additional Information"
+          />
+        </div>
+      </div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center w-full">
+          <label className="mr-2 w-full">Mode of Payment:</label>
+          <Input
+            type="text"
+            value={modeOfPayment}
+            onChange={(e) => setModeOfPayment(e.target.value)}
+            className="border rounded px-2 py-1 w-full"
+            placeholder="e.g. Cash, Credit, Cheque"
           />
         </div>
       </div>

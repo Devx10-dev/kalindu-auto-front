@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tax Invoice – Dot Matrix</title>
+    <style>
+      /* ── Page setup: 9.5 × 11 inch continuous paper ── */
+      @page {
+        size: 9.5in 11in;
+        margin: 0.35in 0.4in 0.35in 0.4in;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 11pt;
+        color: #000;
+        background: #fff;
+        width: 9.5in;
+        min-height: 11in;
+      }
+
+      .invoice {
+        width: 100%;
+        height: 10.3in; /* page height minus @page top/bottom margins */
+        padding: 10pt;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Title ── */
+      .title-row {
+        text-align: center;
+        margin-bottom: 6pt;
+      }
+      .title-box {
+        display: inline-block;
+        border: 2px solid #000;
+        padding: 3pt 20pt;
+        font-size: 13pt;
+        font-weight: bold;
+        letter-spacing: 3px;
+      }
+
+      /* ── Generic table used for layout ── */
+      .layout-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0;
+      }
+      .layout-table td {
+        border: none;
+        padding: 3pt 5pt;
+        vertical-align: top;
+        font-size: 10.5pt;
+      }
+
+      /* ── Label bold style ── */
+      .lbl {
+        font-weight: bold;
+      }
+
+      /* ── Tall info block ── */
+      .info-cell {
+        height: 1.3in;
+        width: 50%;
+      }
+      .info-cell p {
+        line-height: 1.7;
+      }
+
+      /* ── Single-line row cells ── */
+      .single-line {
+        height: 0.28in;
+        width: 50%;
+      }
+
+      /* ── Full-width single-line ── */
+      .full-cell {
+        height: 0.28in;
+      }
+
+      /* ── Fixed-size items area: reserves the same physical space regardless of
+     item count, so the footer below always sits in the same place ── */
+      .items-section {
+        height: 5.55in; /* header row (0.45in) + 17 data rows (0.3in each) */
+        overflow: hidden;
+      }
+
+      /* ── Items table ── */
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0;
+      }
+      .items-table th {
+        border: none;
+        padding: 3pt 4pt;
+        font-size: 10pt;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+        height: 0.45in;
+      }
+      .items-table td {
+        border: none;
+        padding: 2pt 4pt;
+        height: 0.3in;
+        font-size: 10pt;
+      }
+
+      /* Column widths */
+      .col-ref {
+        width: 12%;
+      }
+      .col-desc {
+        width: 38%;
+      }
+      .col-qty {
+        width: 12%;
+        text-align: center;
+      }
+      .col-unit {
+        width: 15%;
+        text-align: right;
+      }
+      .col-amt {
+        width: 23%;
+        text-align: right;
+      }
+
+      /* ── Summary rows ── */
+      .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .summary-table td {
+        border: none;
+        padding: 3pt 5pt;
+        font-size: 10.5pt;
+        height: 0.28in;
+      }
+      .summary-table .s-label {
+        width: 77%;
+      }
+      .summary-table .s-value {
+        width: 23%;
+        text-align: right;
+      }
+
+      /* ── Words / Mode rows ── */
+      .words-cell {
+        height: 0.28in;
+      }
+
+      /* ── Footer (summary + words + mode of payment): always pinned to the
+     bottom of the fixed-height invoice box, regardless of item count ── */
+      .footer-section {
+        margin-top: auto;
+      }
+
+      /* ── Print: hide browser chrome ── */
+      @media print {
+        body {
+          margin: 0;
+        }
+        .no-print {
+          display: none;
+        }
+      }
+
+      /* ── Screen preview ── */
+      @media screen {
+        body {
+          background: #ccc;
+          padding: 20px;
+          width: auto;
+        }
+        .invoice {
+          background: #fff;
+          width: 9.5in;
+          min-height: 11in;
+          margin: 0 auto;
+          padding: 0.35in 0.4in;
+          box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+        }
+        .print-btn {
+          display: block;
+          margin: 0 auto 16px;
+          padding: 8px 24px;
+          font-size: 14px;
+          cursor: pointer;
+          font-family: sans-serif;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="print-btn no-print" onclick="window.print()">
+      🖨 Print / Save as PDF
+    </button>
+
+    <div class="invoice">
+      <!-- Title -->
+      <div class="title-row">
+        <span class="title-box">TAX INVOICE</span>
+      </div>
+
+      <!-- Row 1: Date of Invoice | Tax Invoice No. -->
+      <table class="layout-table">
+        <tr>
+          <td class="single-line">
+            <span class="lbl">Date of Invoice:</span>&nbsp;{{INVOICE_DATE}}
+          </td>
+          <td class="single-line">
+            <span class="lbl">Tax Invoice No. :</span>&nbsp;{{INVOICE_NO}}
+          </td>
+        </tr>
+      </table>
+
+      <!-- Row 2: Supplier | Purchaser -->
+      <table class="layout-table">
+        <tr>
+          <td class="info-cell">
+            <p><span class="lbl">Supplier's TIN : 114501433-7000</span></p>
+            <p>
+              <span class="lbl">Supplier's Name : KALINDU AUTO (PVT) LTD.</span>
+            </p>
+            <p>
+              <span class="lbl">Address : No.250/1, Kandy Road, Yakkala.</span>
+            </p>
+            <p>&nbsp;</p>
+            <p><span class="lbl">Telephone No.: 033-2234900</span></p>
+          </td>
+          <td class="info-cell">
+            <p>
+              <span class="lbl">Purchaser's TIN :</span>&nbsp;{{PURCHASER_TIN}}
+            </p>
+            <p>
+              <span class="lbl">Purchaser's Name :</span
+              >&nbsp;{{PURCHASER_NAME}}
+            </p>
+            <p><span class="lbl">Address :</span>&nbsp;{{PURCHASER_ADDRESS}}</p>
+            <p>&nbsp;</p>
+            <p>
+              <span class="lbl">Telephone No.:</span>&nbsp;{{PURCHASER_TEL}}
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Row 3: Date of Supply | Place of Supply -->
+      <table class="layout-table">
+        <tr>
+          <td class="single-line">
+            <span class="lbl">Date of Supply :</span>&nbsp;{{DATE_OF_SUPPLY}}
+          </td>
+          <td class="single-line">
+            <span class="lbl">Place of Supply : KALINDU AUTO (PVT) LTD.</span
+            >&nbsp;
+          </td>
+        </tr>
+      </table>
+
+      <!-- Row 4: Additional Information -->
+      <table class="layout-table">
+        <tr>
+          <td class="full-cell" colspan="2">
+            <span class="lbl">Additional Information if any:</span>&nbsp;
+          </td>
+        </tr>
+        <tr>
+          <td class="full-cell" colspan="2">
+            <span class="lbl">{{ADDITIONAL_INFO}}</span>&nbsp;
+          </td>
+        </tr>
+      </table>
+
+      <!-- Items Table (fixed-height area; clipped, not pushed by overflow) -->
+      <div class="items-section">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th class="col-ref">Reference</th>
+              <th class="col-desc">Description of Goods or Services</th>
+              <th class="col-qty">Quantity</th>
+              <th class="col-unit">Unit Price</th>
+              <th class="col-amt">Amount Excluding VAT (Rs.)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ITEM_ROWS}}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer: summary + words + mode of payment, pinned to the bottom -->
+      <div class="footer-section">
+        <!-- Summary -->
+        <table class="summary-table">
+          <tr>
+            <td class="s-label">
+              <span class="lbl">Total Value of Supply:</span>
+            </td>
+            <td class="s-value">{{TOTAL_VALUE}}</td>
+          </tr>
+          <tr>
+            <td class="s-label">
+              <span class="lbl"
+                >VAT Amount (Total Value of Supply @ {{VAT_PERCENTAGE}}%)</span
+              >
+            </td>
+            <td class="s-value">{{VAT_AMOUNT}}</td>
+          </tr>
+          <tr>
+            <td class="s-label">
+              <span class="lbl">Total Amount/consideration including VAT:</span>
+            </td>
+            <td class="s-value">{{TOTAL_AMOUNT}}</td>
+          </tr>
+        </table>
+
+        <!-- Total in Words -->
+        <table class="layout-table">
+          <tr>
+            <td class="words-cell" colspan="2">
+              <span class="lbl">Total Amount in words:</span
+              >&nbsp;{{TOTAL_WORDS}}
+            </td>
+          </tr>
+        </table>
+
+        <!-- Mode of Payment -->
+        <table class="layout-table">
+          <tr>
+            <td class="words-cell" colspan="2">
+              <span class="lbl">Mode of Payment:</span>&nbsp;{{MODE_OF_PAYMENT}}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!-- /invoice -->
+  </body>
+</html>
