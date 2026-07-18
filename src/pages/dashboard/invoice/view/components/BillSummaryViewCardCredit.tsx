@@ -57,7 +57,9 @@ function BillSummaryViewCardCredit({
       commissions: invoiceData?.commissions,
       creditorId: invoiceData?.creditor.creditorID,
       creditorName: invoiceData?.creditor.shopName,
-      invoiceId: invoiceData?.invoiceId?.toString().split("-")[2],
+      // Credit invoice IDs now follow the government-defined format (e.g.
+      // "26JUL_CR01_21"), which is no longer split on "-". Use the full ID.
+      invoiceId: invoiceData?.invoiceId?.toString(),
       invoiceItems: invoiceData?.invoiceItems,
       totalDiscount: invoiceData?.totalDiscount,
       totalPrice: invoiceData?.totalPrice,
